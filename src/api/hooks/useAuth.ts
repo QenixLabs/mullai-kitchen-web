@@ -8,9 +8,11 @@ import { authKeys } from "@/api/query-keys";
 import { userApi } from "@/api/user.api";
 import type {
   IAuthSession,
+  IForgotPasswordRequest,
   ILoginRequest,
   IRefreshTokenRequest,
   IRegisterRequest,
+  IResetPasswordRequest,
 } from "@/api/types/auth.types";
 import type { IUser } from "@/api/types/user.types";
 import { useUserStore } from "@/providers/user-store-provider";
@@ -77,6 +79,18 @@ export function useLogout() {
       clearSession();
       queryClient.removeQueries({ queryKey: authKeys.all() });
     },
+  });
+}
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (payload: IForgotPasswordRequest) => authApi.forgotPassword(payload),
+  });
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: (payload: IResetPasswordRequest) => authApi.resetPassword(payload),
   });
 }
 

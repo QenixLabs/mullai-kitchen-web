@@ -16,6 +16,15 @@ export interface IRefreshTokenRequest {
   refresh_token: string;
 }
 
+export interface IForgotPasswordRequest {
+  email: string;
+}
+
+export interface IResetPasswordRequest {
+  token: string;
+  new_password: string;
+}
+
 export interface IAuthSession {
   access_token: string;
   refresh_token: string;

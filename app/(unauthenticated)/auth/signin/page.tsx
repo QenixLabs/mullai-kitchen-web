@@ -1,66 +1,99 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { useLogin } from "@/api/hooks/useAuth";
+import { AuthFooterLinks, AuthFormCard, AuthHeader, AuthHighlights, AuthShell } from "@/components/Auth";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function SignInPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const loginMutation = useLogin();
-  const [email, setEmail] = useState("admin@example.com");
-  const [password, setPassword] = useState("Password123");
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    loginMutation.mutate({ email, password });
+    await loginMutation.mutateAsync({ email, password });
+    router.push("/dashboard");
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-md items-center px-6 py-16">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full rounded-2xl border border-black/10 bg-white p-8 shadow-sm"
-      >
-        <h1 className="text-2xl font-semibold text-slate-900">Sign In</h1>
-        <p className="mt-2 text-sm text-slate-600">Authenticate and populate Zustand user state.</p>
+    <AuthShell side={<AuthHighlights />}>
+      {/* Existing user link at top */}
+      <div className="mb-6 text-center">
+        <span className="text-sm text-gray-600">
+          Do not have an account?{" "}
+          <Link className="font-semibold text-orange-600 hover:text-orange-700" href="/auth/signup">
+            Sign up
+          </Link>
+        </span>
+      </div>
 
-        <label className="mt-6 block text-sm font-medium text-slate-700" htmlFor="email">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 outline-none ring-amber-200 focus:ring"
-          required
-        />
+      <AuthHeader
+        title="Welcome back"
+        subtitle="Sign in to manage your subscriptions and track your orders."
+      />
 
-        <label className="mt-4 block text-sm font-medium text-slate-700" htmlFor="password">
-          Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 outline-none ring-amber-200 focus:ring"
-          required
-        />
+      <AuthFormCard footer={<AuthFooterLinks prompt="Forgot your password?" actionLabel="Reset it" actionHref="/auth/forgot-password" />}>
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div className="grid gap-2">
+            <Label htmlFor="email" className="text-gray-700">
+              Email address
+            </Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              placeholder="your@email.com"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+              className="h-12 rounded-lg !border-slate-300 !bg-white text-slate-900 placeholder:text-slate-400 dark:!bg-white focus-visible:border-orange-500 focus-visible:ring-orange-200"
+            />
+          </div>
 
-        {loginMutation.isError ? (
-          <p className="mt-4 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">
-            {loginMutation.error instanceof Error ? loginMutation.error.message : "Failed to sign in"}
-          </p>
-        ) : null}
+          <div className="grid gap-2">
+            <Label htmlFor="password" className="text-gray-700">
+              Password
+            </Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+              className="h-12 rounded-lg !border-slate-300 !bg-white text-slate-900 placeholder:text-slate-400 dark:!bg-white focus-visible:border-orange-500 focus-visible:ring-orange-200"
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={loginMutation.isPending}
-          className="mt-6 w-full rounded-lg bg-amber-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          {loginMutation.isPending ? "Signing in..." : "Sign In"}
-        </button>
-      </form>
-    </main>
+          {loginMutation.isError ? (
+            <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800">
+              <AlertTitle>Sign in failed</AlertTitle>
+              <AlertDescription>
+                {(loginMutation.error as Error)?.message ?? "Unable to sign in. Please try again."}
+              </AlertDescription>
+            </Alert>
+          ) : null}
+
+          <Button
+            className="h-11 w-full rounded-lg bg-orange-600 font-semibold text-white hover:bg-orange-700"
+            type="submit"
+            disabled={loginMutation.isPending}
+          >
+            {loginMutation.isPending ? "Signing in..." : "Sign in with email"}
+          </Button>
+        </form>
+      </AuthFormCard>
+    </AuthShell>
   );
 }

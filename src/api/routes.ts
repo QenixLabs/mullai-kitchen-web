@@ -3,6 +3,8 @@ export const AUTH_ROUTES = {
   REGISTER: "/auth/register",
   LOGOUT: "/auth/logout",
   REFRESH: "/auth/refresh",
+  FORGOT_PASSWORD: "/auth/forgot-password",
+  RESET_PASSWORD: "/auth/reset-password",
 } as const;
 
 export const USER_ROUTES = {

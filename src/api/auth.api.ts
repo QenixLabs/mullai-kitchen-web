@@ -3,9 +3,11 @@ import { AUTH_ROUTES } from "@/api/routes";
 import type { ApiResponse } from "@/api/types/api-response.types";
 import type {
   IAuthSession,
+  IForgotPasswordRequest,
   ILoginRequest,
   IRefreshTokenRequest,
   IRegisterRequest,
+  IResetPasswordRequest,
 } from "@/api/types/auth.types";
 
 export const authApi = {
@@ -23,5 +25,11 @@ export const authApi = {
   },
   logout: async (): Promise<void> => {
     await apiClient.post(AUTH_ROUTES.LOGOUT);
+  },
+  forgotPassword: async (payload: IForgotPasswordRequest): Promise<void> => {
+    await apiClient.post(AUTH_ROUTES.FORGOT_PASSWORD, payload);
+  },
+  resetPassword: async (payload: IResetPasswordRequest): Promise<void> => {
+    await apiClient.post(AUTH_ROUTES.RESET_PASSWORD, payload);
   },
 };
