@@ -8,3 +8,11 @@ export const AUTH_ROUTES = {
 export const USER_ROUTES = {
   ME: "/users/profile/me",
 } as const;
+
+export const CUSTOMER_ROUTES = {
+  PLANS: "/customer/plans",
+  MENU_PREVIEW: (planId: string) => `/customer/plans/${planId}/menu-preview`,
+  SERVICEABILITY_CHECK: "/customer/serviceability/check",
+  CHECKOUT_PREPARE: "/customer/checkout/prepare",
+  CHECKOUT_CREATE_ORDER: "/customer/checkout/create-order",
+} as const;
