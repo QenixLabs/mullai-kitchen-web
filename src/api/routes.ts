@@ -17,4 +17,6 @@ export const CUSTOMER_ROUTES = {
   SERVICEABILITY_CHECK: "/customer/serviceability/check",
   CHECKOUT_PREPARE: "/customer/checkout/prepare",
   CHECKOUT_CREATE_ORDER: "/customer/checkout/create-order",
+  ADDRESSES: "/customer/addresses",
+  PROFILE: "/customer/profile",
 } as const;

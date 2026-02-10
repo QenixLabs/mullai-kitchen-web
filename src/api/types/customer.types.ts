@@ -1,3 +1,40 @@
+export type AddressType = 'Home' | 'Office';
+
+export interface Address {
+  _id: string;
+  user_id: string;
+  type: AddressType;
+  full_address: string;
+  area: string;
+  pincode: string;
+  city: string;
+  state: string;
+  landmark?: string;
+  mapped_outlet_id: string;
+  mapped_outlet_name?: string;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateAddressDto {
+  type: AddressType;
+  full_address: string;
+  area: string;
+  pincode: string;
+  city: string;
+  state: string;
+  landmark?: string;
+}
+
+export interface UpdateProfileDto {
+  dietary_preferences?: string;
+  special_instructions?: string;
+  preferred_contact_time?: string;
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+}
+
 export interface QueryCustomerPlans {
   page?: number;
   limit?: number;

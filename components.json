@@ -10,8 +10,8 @@
     "cssVariables": true
   },
   "aliases": {
-    "components": "@/src/components",
-    "ui": "@/src/components/ui",
+    "components": "@/components",
+    "ui": "@/components/ui",
     "utils": "@/lib/utils"
   },
   "registries": {

@@ -10,3 +10,12 @@ export const customerKeys = {
   serviceability: () => ["customer", "serviceability"] as const,
   checkoutPreview: () => ["customer", "checkout-preview"] as const,
 };
+
+export const addressKeys = {
+  all: () => ["customer", "addresses"] as const,
+  lists: () => ["customer", "addresses", "list"] as const,
+};
+
+export const profileKeys = {
+  profile: () => ["customer", "profile"] as const,
+};
