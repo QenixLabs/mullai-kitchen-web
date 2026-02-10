@@ -3,6 +3,7 @@
 import { Suspense, useCallback, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useStore } from "zustand";
+import { Clock3, MapPin, Salad, Sparkles } from "lucide-react";
 
 import { useCustomerPlans, useMenuPreview, useServiceability } from "@/api/hooks/useCustomer";
 import type { PlanBrowseItem, QueryCustomerPlans, ServiceabilityResponse } from "@/api/types/customer.types";
@@ -11,6 +12,7 @@ import { MenuPreviewSheet } from "@/components/customer/plans/MenuPreviewSheet";
 import { PincodeChecker } from "@/components/customer/plans/PincodeChecker";
 import { PlanGrid } from "@/components/customer/plans/PlanGrid";
 import { SearchBar } from "@/components/customer/plans/SearchBar";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
 import { createPlanIntentStore } from "@/stores/plan-intent-store";
 
@@ -132,7 +134,7 @@ function PlansContent() {
 
   const menuPreviewQuery = useMenuPreview(menuPlan?._id);
 
-  const plans = plansQuery.data?.plans ?? [];
+  const plans = useMemo(() => plansQuery.data?.plans ?? [], [plansQuery.data?.plans]);
   const selectedPlanId = useStore(planIntentStore, (store) => store.planId);
 
   const filteredPlans = useMemo(() => {
@@ -145,6 +147,9 @@ function PlansContent() {
       return matchesSearch && matchesDuration;
     });
   }, [plans, searchQuery, selectedDurations]);
+
+  const activeFilterCount = selectedDurations.length + selectedMealTypes.length + (checkedPincodeState ? 1 : 0);
+  const hasSearch = searchQuery.trim().length > 0;
 
   const handleDurationChange = (durations: string[]) => {
     setSelectedDurations(durations);
@@ -201,51 +206,150 @@ function PlansContent() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-      <section className="rounded-2xl border border-orange-100 bg-gradient-to-br from-orange-50 to-amber-50 p-6 sm:p-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-orange-700">Mullai Kitchen Plans</p>
-        <h1 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl">Choose a meal plan that fits your week</h1>
-        <p className="mt-3 max-w-2xl text-sm text-gray-600 sm:text-base">
-          Browse flexible plans, preview menus, and save your selection for quick checkout.
-        </p>
+    <main className="relative mx-auto w-full max-w-7xl overflow-hidden px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+      <div className="pointer-events-none absolute -top-20 -left-24 h-64 w-64 rounded-full bg-orange-200/30 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 top-32 h-72 w-72 rounded-full bg-amber-200/30 blur-3xl" />
+
+      <section className="relative overflow-hidden rounded-3xl border border-orange-100 bg-gradient-to-br from-orange-100 via-orange-50 to-amber-100 p-5 shadow-sm sm:p-8">
+        <div className="grid gap-6 lg:grid-cols-[1.2fr_auto] lg:items-end">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-700">Mullai Kitchen Plans</p>
+            <h1 className="mt-2 text-2xl font-bold leading-tight text-gray-900 sm:text-3xl lg:text-4xl">
+              Fresh Meals, Crafted for Your Week
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm text-gray-700 sm:text-base">
+              Explore balanced meal plans, preview each menu, and pick what works best for your routine.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-gray-800">Chef-curated menus</span>
+              <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-gray-800">Flexible durations</span>
+              <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-gray-800">Quick checkout flow</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-1 lg:min-w-52">
+            <Card className="border-orange-200/70 bg-white/80">
+              <CardContent className="flex items-center gap-3 p-3">
+                <div className="rounded-md bg-orange-100 p-2 text-orange-700">
+                  <Salad className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Available plans</p>
+                  <p className="text-sm font-semibold text-gray-900">{plans.length}</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-orange-200/70 bg-white/80">
+              <CardContent className="flex items-center gap-3 p-3">
+                <div className="rounded-md bg-orange-100 p-2 text-orange-700">
+                  <Sparkles className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Visible now</p>
+                  <p className="text-sm font-semibold text-gray-900">{filteredPlans.length}</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-orange-200/70 bg-white/80">
+              <CardContent className="flex items-center gap-3 p-3">
+                <div className="rounded-md bg-orange-100 p-2 text-orange-700">
+                  <Clock3 className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Delivery check</p>
+                  <p className="text-sm font-semibold text-gray-900">{checkedPincodeState ? "Enabled" : "Pending"}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </section>
 
-      <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
-        <SearchBar
-          value={searchInput}
-          onValueChange={handleSearchChange}
-          onSearch={handleSearch}
-          placeholder="Search by plan name or description"
-          className="w-full"
-        />
-      </section>
+      <section className="mt-6 grid gap-4 lg:grid-cols-[minmax(300px,360px)_1fr] lg:items-start">
+        <aside className="space-y-4 lg:sticky lg:top-6">
+          <Card className="border-orange-100 bg-white/90">
+            <CardContent className="space-y-4 p-4 sm:p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Search and filter</p>
+                  <p className="text-sm text-gray-700">Find a plan in seconds</p>
+                </div>
+                {activeFilterCount > 0 ? (
+                  <span className="rounded-full bg-orange-100 px-2.5 py-1 text-xs font-medium text-orange-800">
+                    {activeFilterCount} active
+                  </span>
+                ) : null}
+              </div>
 
-      <section className="mt-4 grid gap-4 xl:grid-cols-[1.1fr_1fr]">
-        <FilterChips
-          selectedDurations={selectedDurations}
-          selectedMealTypes={selectedMealTypes}
-          onDurationChange={handleDurationChange}
-          onMealTypeChange={handleMealTypeChange}
-        />
+              <SearchBar
+                value={searchInput}
+                onValueChange={handleSearchChange}
+                onSearch={handleSearch}
+                placeholder="Search by plan name or description"
+                className="w-full"
+              />
+            </CardContent>
+          </Card>
 
-        <PincodeChecker
-          onCheck={handlePincodeCheck}
-          onCheckResult={handlePincodeResult}
-          initialPincode={checkedPincodeState ?? ""}
-        />
-      </section>
+          <FilterChips
+            selectedDurations={selectedDurations}
+            selectedMealTypes={selectedMealTypes}
+            onDurationChange={handleDurationChange}
+            onMealTypeChange={handleMealTypeChange}
+            className="border-orange-100 bg-white/90"
+          />
 
-      <section className="mt-6">
-        <PlanGrid
-          plans={filteredPlans}
-          onViewMenu={handleViewMenu}
-          onSelectPlan={handleSelectPlan}
-          isLoading={plansQuery.isLoading}
-          isError={plansQuery.isError}
-          errorMessage={plansQuery.error instanceof Error ? plansQuery.error.message : undefined}
-          selectingPlanId={selectingPlanId}
-          selectedPlanId={selectedPlanId}
-        />
+          <PincodeChecker
+            onCheck={handlePincodeCheck}
+            onCheckResult={handlePincodeResult}
+            initialPincode={checkedPincodeState ?? ""}
+            className="border-orange-100 bg-white/90"
+          />
+        </aside>
+
+        <section className="space-y-4">
+          <Card className="border-orange-100 bg-white/90">
+            <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4 sm:p-5">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Plan Menu</h2>
+                <p className="text-sm text-gray-600">
+                  {plansQuery.isLoading
+                    ? "Loading plans..."
+                    : `${filteredPlans.length} plan${filteredPlans.length === 1 ? "" : "s"} matching your preferences`}
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {hasSearch ? (
+                  <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
+                    Search applied
+                  </span>
+                ) : null}
+                {checkedPincodeState ? (
+                  <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-800">
+                    <MapPin className="mr-1 h-3.5 w-3.5" />
+                    {checkedPincodeState}
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800">
+                    Pincode not verified
+                  </span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <PlanGrid
+            plans={filteredPlans}
+            onViewMenu={handleViewMenu}
+            onSelectPlan={handleSelectPlan}
+            isLoading={plansQuery.isLoading}
+            isError={plansQuery.isError}
+            errorMessage={plansQuery.error instanceof Error ? plansQuery.error.message : undefined}
+            selectingPlanId={selectingPlanId}
+            selectedPlanId={selectedPlanId}
+            className="xl:grid-cols-2 2xl:grid-cols-3"
+          />
+        </section>
       </section>
 
       <MenuPreviewSheet
