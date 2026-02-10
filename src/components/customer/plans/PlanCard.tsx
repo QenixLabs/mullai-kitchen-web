@@ -96,7 +96,7 @@ export function PlanCard({
           disabled={isSelecting}
           aria-label={`Select ${plan.name} plan`}
         >
-          {isSelecting ? "Selecting..." : isSelected ? "Selected" : "Select Plan"}
+          {isSelecting ? "Redirecting..." : isSelected ? "Selected" : "Select Plan"}
         </Button>
       </CardFooter>
     </Card>

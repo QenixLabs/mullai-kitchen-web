@@ -3,6 +3,7 @@
 import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+import { AuthenticatedNavbar } from "@/components/navigation/AuthenticatedNavbar";
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
 
 interface AuthenticatedLayoutProps {
@@ -28,5 +29,10 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
     return <div className="p-6 text-sm text-slate-600">Redirecting to sign in...</div>;
   }
 
-  return <div className="min-h-screen bg-slate-50">{children}</div>;
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <AuthenticatedNavbar />
+      {children}
+    </div>
+  );
 }

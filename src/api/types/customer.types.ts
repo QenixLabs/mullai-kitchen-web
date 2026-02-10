@@ -33,6 +33,7 @@ export interface UpdateProfileDto {
   preferred_contact_time?: string;
   emergency_contact_name?: string;
   emergency_contact_phone?: string;
+  onboarding_completed?: boolean;
 }
 
 export interface QueryCustomerPlans {

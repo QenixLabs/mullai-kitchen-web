@@ -1,7 +1,10 @@
 "use client";
 
+import Link from "next/link";
+
 import { useLogout, useMyProfile } from "@/api/hooks/useAuth";
 import { useCurrentUser } from "@/hooks/use-user-store";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
   const user = useCurrentUser();
@@ -13,6 +16,9 @@ export default function DashboardPage() {
       <section className="rounded-2xl border border-black/10 bg-white p-8 shadow-sm">
         <h1 className="text-3xl font-semibold text-slate-900">Dashboard</h1>
         <p className="mt-2 text-slate-600">Welcome back, {user?.name ?? user?.email ?? "User"}.</p>
+        <Button asChild className="mt-5 bg-orange-600 text-white hover:bg-orange-700">
+          <Link href="/plans">Browse Plans</Link>
+        </Button>
       </section>
 
       <section className="rounded-2xl border border-black/10 bg-white p-8 shadow-sm">

@@ -90,6 +90,9 @@ export default function OnboardingPage() {
     try {
       const result: SubmitOnboardingResponse = await submitOnboarding.mutateAsync({
         addresses,
+        profile: {
+          onboarding_completed: true,
+        },
       });
 
       const mergedUser = result.user ?? user;

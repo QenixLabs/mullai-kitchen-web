@@ -9,6 +9,7 @@ import { useCustomerPlans, useMenuPreview, useServiceability } from "@/api/hooks
 import type { PlanBrowseItem, QueryCustomerPlans, ServiceabilityResponse } from "@/api/types/customer.types";
 import { FilterChips } from "@/components/customer/plans/FilterChips";
 import { MenuPreviewSheet } from "@/components/customer/plans/MenuPreviewSheet";
+import { PlanDetailsPanel } from "@/components/customer/plans/PlanDetailsPanel";
 import { PincodeChecker } from "@/components/customer/plans/PincodeChecker";
 import { PlanGrid } from "@/components/customer/plans/PlanGrid";
 import { SearchBar } from "@/components/customer/plans/SearchBar";
@@ -136,6 +137,7 @@ function PlansContent() {
 
   const plans = useMemo(() => plansQuery.data?.plans ?? [], [plansQuery.data?.plans]);
   const selectedPlanId = useStore(planIntentStore, (store) => store.planId);
+  const [selectedPlanForDetailsId, setSelectedPlanForDetailsId] = useState<string | null>(null);
 
   const filteredPlans = useMemo(() => {
     const normalizedSearch = searchQuery.trim().toLowerCase();
@@ -150,6 +152,20 @@ function PlansContent() {
 
   const activeFilterCount = selectedDurations.length + selectedMealTypes.length + (checkedPincodeState ? 1 : 0);
   const hasSearch = searchQuery.trim().length > 0;
+
+  const selectedPlanForDetails = useMemo(() => {
+    if (filteredPlans.length === 0) {
+      return null;
+    }
+
+    const preferredPlanId = selectedPlanForDetailsId ?? selectedPlanId;
+
+    if (!preferredPlanId) {
+      return filteredPlans[0];
+    }
+
+    return filteredPlans.find((plan) => plan._id === preferredPlanId) ?? filteredPlans[0];
+  }, [filteredPlans, selectedPlanForDetailsId, selectedPlanId]);
 
   const handleDurationChange = (durations: string[]) => {
     setSelectedDurations(durations);
@@ -193,9 +209,22 @@ function PlansContent() {
   };
 
   const handleSelectPlan = (plan: PlanBrowseItem) => {
-    setSelectingPlanId(plan._id);
-
+    setSelectedPlanForDetailsId(plan._id);
     setPlanIntent(plan._id, plan);
+    setCheckedPincode(checkedPincodeState);
+
+    const currentSearch = searchParams.toString();
+    setSourceRoute(currentSearch.length > 0 ? `/plans?${currentSearch}` : "/plans");
+  };
+
+  const handleProceedToCheckout = () => {
+    if (!selectedPlanForDetails) {
+      return;
+    }
+
+    setSelectingPlanId(selectedPlanForDetails._id);
+
+    setPlanIntent(selectedPlanForDetails._id, selectedPlanForDetails);
     setCheckedPincode(checkedPincodeState);
 
     const currentSearch = searchParams.toString();
@@ -265,7 +294,7 @@ function PlansContent() {
         </div>
       </section>
 
-      <section className="mt-6 grid gap-4 lg:grid-cols-[minmax(300px,360px)_1fr] lg:items-start">
+      <section className="mt-6 grid gap-4 lg:grid-cols-[minmax(260px,320px)_minmax(0,1fr)] lg:items-start xl:grid-cols-[minmax(260px,320px)_minmax(0,1fr)_minmax(300px,360px)]">
         <aside className="space-y-4 lg:sticky lg:top-6">
           <Card className="border-orange-100 bg-white/90">
             <CardContent className="space-y-4 p-4 sm:p-5">
@@ -346,10 +375,26 @@ function PlansContent() {
             isError={plansQuery.isError}
             errorMessage={plansQuery.error instanceof Error ? plansQuery.error.message : undefined}
             selectingPlanId={selectingPlanId}
-            selectedPlanId={selectedPlanId}
-            className="xl:grid-cols-2 2xl:grid-cols-3"
+            selectedPlanId={selectedPlanForDetails?._id ?? selectedPlanId}
+            className="xl:grid-cols-2"
           />
         </section>
+
+        <aside className="space-y-4 xl:sticky xl:top-6">
+          <PlanDetailsPanel
+            plan={selectedPlanForDetails}
+            checkedPincode={checkedPincodeState}
+            onProceedToCheckout={handleProceedToCheckout}
+            onViewMenu={() => {
+              if (!selectedPlanForDetails) {
+                return;
+              }
+
+              handleViewMenu(selectedPlanForDetails);
+            }}
+            isCheckingOut={Boolean(selectedPlanForDetails && selectingPlanId === selectedPlanForDetails._id)}
+          />
+        </aside>
       </section>
 
       <MenuPreviewSheet
