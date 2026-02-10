@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 export interface OnboardingCompleteProps {
   addressesCount: number;
-  hasProfileDetails: boolean;
+  hasProfileDetails?: boolean;
   className?: string;
   redirectSeconds?: number;
   onRedirect?: () => void;
@@ -15,7 +15,7 @@ export interface OnboardingCompleteProps {
 
 export function OnboardingComplete({
   addressesCount,
-  hasProfileDetails,
+  hasProfileDetails = false,
   className,
   redirectSeconds = 2,
   onRedirect,

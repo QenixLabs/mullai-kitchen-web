@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useStore } from "zustand";
 import { useForm } from "react-hook-form";
 
@@ -39,7 +39,7 @@ const getSafeRedirectPath = (redirectTo: string | null): string | null => {
   return redirectTo;
 };
 
-export default function SignInPage() {
+function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const user = useUserStore((store) => store.user);
@@ -161,5 +161,13 @@ export default function SignInPage() {
         </Form>
       </AuthFormCard>
     </AuthShell>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
+      <SignInForm />
+    </Suspense>
   );
 }

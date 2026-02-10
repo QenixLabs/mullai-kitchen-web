@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useStore } from "zustand";
 import { useForm } from "react-hook-form";
 
@@ -47,7 +47,7 @@ const SIGNUP_STEPS = [
   { id: "review", title: "Review", description: "Confirm & create" },
 ];
 
-export default function SignUpPage() {
+function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const user = useUserStore((store) => store.user);
@@ -331,5 +331,13 @@ export default function SignUpPage() {
         </div>
       </AuthFormCard>
     </AuthShell>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
+      <SignUpForm />
+    </Suspense>
   );
 }

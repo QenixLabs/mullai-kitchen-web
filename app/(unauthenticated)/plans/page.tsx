@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useStore } from "zustand";
 
@@ -42,7 +42,7 @@ const getSearchText = (plan: PlanBrowseItem): string => {
   return `${plan.name} ${plan.description ?? ""}`.toLowerCase();
 };
 
-export default function PlansPage() {
+function PlansContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const hasHydrated = useAuthHydrated();
@@ -261,5 +261,13 @@ export default function PlansPage() {
         }}
       />
     </main>
+  );
+}
+
+export default function PlansPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
+      <PlansContent />
+    </Suspense>
   );
 }

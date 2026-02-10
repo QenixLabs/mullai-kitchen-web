@@ -6,35 +6,15 @@ import { useStore } from "zustand";
 
 import { useOnboarding } from "@/api/hooks/useOnboarding";
 import type { SubmitOnboardingResponse } from "@/api/hooks/useOnboarding";
-import type { UpdateProfileDto } from "@/api/types/customer.types";
 import { AddressFormStep } from "@/components/customer/onboarding/AddressFormStep";
 import { OnboardingComplete } from "@/components/customer/onboarding/OnboardingComplete";
 import { OnboardingShell } from "@/components/customer/onboarding/OnboardingShell";
-import { ProfileDetailsStep } from "@/components/customer/onboarding/ProfileDetailsStep";
 import { WelcomeStep } from "@/components/customer/onboarding/WelcomeStep";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuthHydrated, useCurrentUser, useIsAuthenticated } from "@/hooks/use-user-store";
 import { useUserStore } from "@/providers/user-store-provider";
 import { createOnboardingStore } from "@/stores/onboarding-store";
 import { createPlanIntentStore } from "@/stores/plan-intent-store";
-
-const PHONE_PATTERN = /^\+?[0-9\s-]{10,15}$/;
-
-const hasProfileData = (profile: UpdateProfileDto | null): profile is UpdateProfileDto => {
-  if (!profile) {
-    return false;
-  }
-
-  return Object.values(profile).some((value) => typeof value === "string" && value.trim().length > 0);
-};
-
-const isValidProfilePayload = (profile: UpdateProfileDto | null): boolean => {
-  if (!profile?.emergency_contact_phone) {
-    return true;
-  }
-
-  return PHONE_PATTERN.test(profile.emergency_contact_phone.trim());
-};
 
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error && error.message.trim().length > 0) {
@@ -57,13 +37,11 @@ export default function OnboardingPage() {
   const currentStep = useStore(onboardingStore, (store) => store.currentStep);
   const addresses = useStore(onboardingStore, (store) => store.addresses);
   const defaultAddressIndex = useStore(onboardingStore, (store) => store.defaultAddressIndex);
-  const profileDetails = useStore(onboardingStore, (store) => store.profileDetails);
   const nextStep = useStore(onboardingStore, (store) => store.nextStep);
   const prevStep = useStore(onboardingStore, (store) => store.prevStep);
   const addAddress = useStore(onboardingStore, (store) => store.addAddress);
   const removeAddress = useStore(onboardingStore, (store) => store.removeAddress);
   const setDefaultAddress = useStore(onboardingStore, (store) => store.setDefaultAddress);
-  const setProfileDetails = useStore(onboardingStore, (store) => store.setProfileDetails);
   const resetOnboarding = useStore(onboardingStore, (store) => store.reset);
   const planIntentId = useStore(planIntentStore, (store) => store.planId);
 
@@ -72,7 +50,6 @@ export default function OnboardingPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [completionSummary, setCompletionSummary] = useState<{
     addressesCount: number;
-    hasProfileDetails: boolean;
   } | null>(null);
 
   const hasPlanIntent = Boolean(planIntentId);
@@ -102,26 +79,17 @@ export default function OnboardingPage() {
     router.replace(hasPlanIntent ? "/checkout" : "/plans");
   };
 
-  const submitFlow = async (profileOverride?: UpdateProfileDto | null) => {
+  const submitFlow = async () => {
     if (addresses.length === 0) {
       setErrorMessage("Please add at least one address to continue.");
       return;
     }
 
-    const profileToSubmit = profileOverride ?? profileDetails;
-    if (!isValidProfilePayload(profileToSubmit)) {
-      setErrorMessage("Please enter a valid emergency contact phone number or clear the field.");
-      return;
-    }
-
     setErrorMessage(null);
-
-    const payloadProfile = hasProfileData(profileToSubmit) ? profileToSubmit : undefined;
 
     try {
       const result: SubmitOnboardingResponse = await submitOnboarding.mutateAsync({
         addresses,
-        profile: payloadProfile,
       });
 
       const mergedUser = result.user ?? user;
@@ -134,7 +102,6 @@ export default function OnboardingPage() {
 
       setCompletionSummary({
         addressesCount: addresses.length,
-        hasProfileDetails: Boolean(payloadProfile),
       });
 
       resetOnboarding();
@@ -156,11 +123,6 @@ export default function OnboardingPage() {
         setErrorMessage("Please add at least one address to continue.");
         return;
       }
-      nextStep();
-      return;
-    }
-
-    if (currentStep === 2) {
       await submitFlow();
     }
   };
@@ -183,21 +145,17 @@ export default function OnboardingPage() {
 
   return (
     <OnboardingShell
-      currentStep={isCompleted ? 3 : currentStep}
-      totalSteps={4}
+      currentStep={isCompleted ? 2 : currentStep}
+      totalSteps={3}
       onBack={prevStep}
       onNext={() => {
         void handleNext();
-      }}
-      onSkip={() => {
-        void submitFlow(null);
       }}
       canProceed={canProceed}
       isNavigating={submitOnboarding.isPending}
       showBackButton={!isCompleted}
       showNextButton={!isCompleted}
-      showSkipButton={!isCompleted && currentStep === 2}
-      nextLabel={currentStep === 2 ? "Complete onboarding" : "Next"}
+      nextLabel={currentStep === 1 ? "Complete onboarding" : "Next"}
     >
       {errorMessage ? (
         <Alert variant="destructive" className="mb-5 border-red-200 bg-red-50 text-red-800">
@@ -209,7 +167,6 @@ export default function OnboardingPage() {
       {isCompleted && completionSummary ? (
         <OnboardingComplete
           addressesCount={completionSummary.addressesCount}
-          hasProfileDetails={completionSummary.hasProfileDetails}
           onRedirect={handleRedirectAfterCompletion}
         />
       ) : null}
@@ -230,10 +187,6 @@ export default function OnboardingPage() {
           onRemoveAddress={removeAddress}
           onSetDefault={setDefaultAddress}
         />
-      ) : null}
-
-      {!isCompleted && currentStep === 2 ? (
-        <ProfileDetailsStep value={profileDetails} onChange={setProfileDetails} />
       ) : null}
     </OnboardingShell>
   );
