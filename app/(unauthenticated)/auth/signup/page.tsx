@@ -110,7 +110,7 @@ function SignUpForm() {
     router.push("/plans");
   };
 
-  const formValues = form.getValues();
+  const formValues = form.watch();
   const canContinueFromProfile =
     formValues.name.trim().length > 1 &&
     formValues.email.trim().length > 0 &&
