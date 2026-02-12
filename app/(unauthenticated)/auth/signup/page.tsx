@@ -114,7 +114,7 @@ function SignUpForm() {
   const canContinueFromProfile =
     formValues.name.trim().length > 1 &&
     formValues.email.trim().length > 0 &&
-    formValues.phone.trim().length > 0 &&
+    formValues.phone.trim().length === 10 &&
     !form.formState.errors.name &&
     !form.formState.errors.email &&
     !form.formState.errors.phone;
@@ -198,14 +198,25 @@ function SignUpForm() {
                     <FormItem>
                       <FormLabel className="text-gray-700">Phone number</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          id="phone"
-                          type="tel"
-                          autoComplete="tel"
-                          placeholder="+91 98765 43210"
-                          className="h-11 rounded-lg border-gray-300"
-                        />
+                        <div className="flex w-full items-center">
+                          <span className="inline-flex h-11 items-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 px-3 text-sm font-semibold text-gray-700">
+                            +91
+                          </span>
+                          <Input
+                            {...field}
+                            id="phone"
+                            type="tel"
+                            autoComplete="tel-national"
+                            inputMode="numeric"
+                            value={field.value ?? ""}
+                            onChange={(event) => {
+                              const digitsOnly = event.target.value.replace(/\D/g, "").slice(0, 10);
+                              field.onChange(digitsOnly);
+                            }}
+                            placeholder="9876543210"
+                            className="h-11 rounded-l-none border-l-0 border-gray-300"
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -272,7 +283,7 @@ function SignUpForm() {
                 <div className="grid gap-2 text-sm">
                   <p><span className="font-medium text-gray-700">Name:</span> {formValues.name}</p>
                   <p><span className="font-medium text-gray-700">Email:</span> {formValues.email}</p>
-                  <p><span className="font-medium text-gray-700">Phone:</span> {formValues.phone}</p>
+                  <p><span className="font-medium text-gray-700">Phone:</span> +91 {formValues.phone}</p>
                 </div>
                 <p className="text-xs text-gray-500">You can go back and edit any details before creating your account.</p>
               </div>

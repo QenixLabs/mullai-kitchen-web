@@ -8,13 +8,13 @@ import { useOnboarding } from "@/api/hooks/useOnboarding";
 import type { SubmitOnboardingResponse } from "@/api/hooks/useOnboarding";
 import { AddressFormStep } from "@/components/customer/onboarding/AddressFormStep";
 import { OnboardingComplete } from "@/components/customer/onboarding/OnboardingComplete";
+import { ProfileDetailsStep } from "@/components/customer/onboarding/ProfileDetailsStep";
 import { OnboardingShell } from "@/components/customer/onboarding/OnboardingShell";
 import { WelcomeStep } from "@/components/customer/onboarding/WelcomeStep";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuthHydrated, useCurrentUser, useIsAuthenticated } from "@/hooks/use-user-store";
 import { useUserStore } from "@/providers/user-store-provider";
 import { createOnboardingStore } from "@/stores/onboarding-store";
-import { createPlanIntentStore } from "@/stores/plan-intent-store";
 
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error && error.message.trim().length > 0) {
@@ -32,7 +32,6 @@ export default function OnboardingPage() {
   const setUser = useUserStore((store) => store.setUser);
 
   const [onboardingStore] = useState(() => createOnboardingStore());
-  const [planIntentStore] = useState(() => createPlanIntentStore());
 
   const currentStep = useStore(onboardingStore, (store) => store.currentStep);
   const addresses = useStore(onboardingStore, (store) => store.addresses);
@@ -42,8 +41,9 @@ export default function OnboardingPage() {
   const addAddress = useStore(onboardingStore, (store) => store.addAddress);
   const removeAddress = useStore(onboardingStore, (store) => store.removeAddress);
   const setDefaultAddress = useStore(onboardingStore, (store) => store.setDefaultAddress);
+  const profileDetails = useStore(onboardingStore, (store) => store.profileDetails);
+  const setProfileDetails = useStore(onboardingStore, (store) => store.setProfileDetails);
   const resetOnboarding = useStore(onboardingStore, (store) => store.reset);
-  const planIntentId = useStore(planIntentStore, (store) => store.planId);
 
   const { submitOnboarding } = useOnboarding();
 
@@ -52,7 +52,6 @@ export default function OnboardingPage() {
     addressesCount: number;
   } | null>(null);
 
-  const hasPlanIntent = Boolean(planIntentId);
   const isCompleted = completionSummary !== null;
 
   useEffect(() => {
@@ -71,12 +70,12 @@ export default function OnboardingPage() {
     }
 
     if (user.onboarding_completed) {
-      router.replace("/checkout");
+      router.replace("/plans");
     }
   }, [hasHydrated, router, user]);
 
   const handleRedirectAfterCompletion = () => {
-    router.replace(hasPlanIntent ? "/checkout" : "/plans");
+    router.replace("/plans");
   };
 
   const submitFlow = async () => {
@@ -90,17 +89,12 @@ export default function OnboardingPage() {
     try {
       const result: SubmitOnboardingResponse = await submitOnboarding.mutateAsync({
         addresses,
-        profile: {
-          onboarding_completed: true,
-        },
+        profile: profileDetails ?? {},
       });
 
       const mergedUser = result.user ?? user;
       if (mergedUser) {
-        setUser({
-          ...mergedUser,
-          onboarding_completed: true,
-        });
+        setUser(mergedUser);
       }
 
       setCompletionSummary({
@@ -126,6 +120,11 @@ export default function OnboardingPage() {
         setErrorMessage("Please add at least one address to continue.");
         return;
       }
+      nextStep();
+      return;
+    }
+
+    if (currentStep === 2) {
       await submitFlow();
     }
   };
@@ -143,7 +142,11 @@ export default function OnboardingPage() {
   }
 
   if (user?.onboarding_completed) {
-    return <div className="p-6 text-sm text-slate-600">Redirecting to checkout...</div>;
+    return (
+      <div className="p-6 text-sm text-slate-600">
+        Redirecting to plans...
+      </div>
+    );
   }
 
   return (
@@ -158,7 +161,7 @@ export default function OnboardingPage() {
       isNavigating={submitOnboarding.isPending}
       showBackButton={!isCompleted}
       showNextButton={!isCompleted}
-      nextLabel={currentStep === 1 ? "Complete onboarding" : "Next"}
+      nextLabel={currentStep === 2 ? "Complete onboarding" : "Next"}
     >
       {errorMessage ? (
         <Alert variant="destructive" className="mb-5 border-red-200 bg-red-50 text-red-800">
@@ -190,6 +193,10 @@ export default function OnboardingPage() {
           onRemoveAddress={removeAddress}
           onSetDefault={setDefaultAddress}
         />
+      ) : null}
+
+      {!isCompleted && currentStep === 2 ? (
+        <ProfileDetailsStep value={profileDetails} onChange={setProfileDetails} />
       ) : null}
     </OnboardingShell>
   );

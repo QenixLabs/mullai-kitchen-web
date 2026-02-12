@@ -2,6 +2,9 @@
 
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { Drumstick, Leaf } from "lucide-react";
+import type { CallbacksOptions } from "timepicker-ui";
+import { Timepicker } from "timepicker-ui-react";
 
 import type { UpdateProfileDto } from "@/api/types/customer.types";
 import { profileFormSchema, type ProfileFormData } from "@/lib/validations";
@@ -28,20 +31,53 @@ const EMPTY_PROFILE: ProfileFormData = {
   emergency_contact_phone: "",
 };
 
+const DIETARY_PREFERENCE_OPTIONS = ["Veg", "Non-Veg"] as const;
+
+type TimepickerUpdatePayload = Parameters<NonNullable<CallbacksOptions["onUpdate"]>>[0];
+
+const formatPreferredContactTime = (value: TimepickerUpdatePayload): string => {
+  const hour = `${value.hour}`.padStart(2, "0");
+  const minutes = `${value.minutes}`.padStart(2, "0");
+
+  if (value.type) {
+    return `${hour}:${minutes} ${value.type}`;
+  }
+
+  return `${hour}:${minutes}`;
+};
+
+const normalizeEmergencyPhoneForInput = (value: string | undefined): string => {
+  if (!value) {
+    return "";
+  }
+
+  const digits = value.replace(/\D/g, "");
+
+  if (digits.length === 12 && digits.startsWith("91")) {
+    return digits.slice(2);
+  }
+
+  return digits.slice(-10);
+};
+
 const fromDto = (value: UpdateProfileDto | null | undefined): ProfileFormData => ({
   ...EMPTY_PROFILE,
-  dietary_preferences: value?.dietary_preferences ?? "",
+  dietary_preferences: DIETARY_PREFERENCE_OPTIONS.includes(
+    value?.dietary_preferences as (typeof DIETARY_PREFERENCE_OPTIONS)[number],
+  )
+    ? (value?.dietary_preferences as (typeof DIETARY_PREFERENCE_OPTIONS)[number])
+    : "",
   special_instructions: value?.special_instructions ?? "",
   preferred_contact_time: value?.preferred_contact_time ?? "",
   emergency_contact_name: value?.emergency_contact_name ?? "",
-  emergency_contact_phone: value?.emergency_contact_phone ?? "",
+  emergency_contact_phone: normalizeEmergencyPhoneForInput(value?.emergency_contact_phone),
 });
 
 const toDto = (value: ProfileFormData): UpdateProfileDto | null => {
   const payload: UpdateProfileDto = {};
 
-  if (value.dietary_preferences?.trim()) {
-    payload.dietary_preferences = value.dietary_preferences.trim();
+  if (value.dietary_preferences && DIETARY_PREFERENCE_OPTIONS.includes(value.dietary_preferences)) {
+    payload.dietary_preferences = value.dietary_preferences;
   }
   if (value.special_instructions?.trim()) {
     payload.special_instructions = value.special_instructions.trim();
@@ -53,7 +89,7 @@ const toDto = (value: ProfileFormData): UpdateProfileDto | null => {
     payload.emergency_contact_name = value.emergency_contact_name.trim();
   }
   if (value.emergency_contact_phone?.trim()) {
-    payload.emergency_contact_phone = value.emergency_contact_phone.trim();
+    payload.emergency_contact_phone = `+91${value.emergency_contact_phone.trim()}`;
   }
 
   return Object.keys(payload).length > 0 ? payload : null;
@@ -153,11 +189,30 @@ export function ProfileDetailsStep({
               <FormItem>
                 <FormLabel className="text-gray-700">Dietary preferences</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="Vegetarian, low oil, no garlic..."
-                    className="h-11 rounded-lg border-gray-300 bg-white"
-                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    {DIETARY_PREFERENCE_OPTIONS.map((option) => {
+                      const isSelected = field.value === option;
+                      const Icon = option === "Veg" ? Leaf : Drumstick;
+
+                      return (
+                        <Button
+                          key={option}
+                          type="button"
+                          variant="outline"
+                          className={cn(
+                            "h-11 rounded-lg border-gray-300 bg-white font-medium text-gray-700 hover:border-orange-400 hover:bg-orange-50/60 hover:text-orange-700",
+                            isSelected && "border-orange-600 bg-orange-100 text-orange-800 shadow-sm",
+                          )}
+                          onClick={() => {
+                            field.onChange(isSelected ? "" : option);
+                          }}
+                        >
+                          <Icon className="size-4" />
+                          {option}
+                        </Button>
+                      );
+                    })}
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -190,10 +245,30 @@ export function ProfileDetailsStep({
                 <FormItem>
                   <FormLabel className="text-gray-700">Preferred contact time</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="9:00 AM - 11:00 AM"
-                      className="h-11 rounded-lg border-gray-300 bg-white"
+                    <Timepicker
+                      value={field.value || ""}
+                      placeholder="Select preferred contact time"
+                      className="h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-700 outline-none"
+                      options={{
+                        clock: {
+                          type: "12h",
+                          autoSwitchToMinutes: true,
+                        },
+                        ui: {
+                          mobile: true,
+                          cssClass: "mk-onboarding-timepicker",
+                        },
+                        labels: {
+                          ok: "Set time",
+                          cancel: "Close",
+                        },
+                      }}
+                      onUpdate={(nextValue) => {
+                        field.onChange(formatPreferredContactTime(nextValue));
+                      }}
+                      onConfirm={(nextValue) => {
+                        field.onChange(formatPreferredContactTime(nextValue));
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -227,11 +302,23 @@ export function ProfileDetailsStep({
               <FormItem>
                 <FormLabel className="text-gray-700">Emergency contact phone</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="+91 98765 43210"
-                    className="h-11 rounded-lg border-gray-300 bg-white"
-                  />
+                  <div className="flex w-full items-center">
+                    <span className="inline-flex h-11 items-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 px-3 text-sm font-semibold text-gray-700">
+                      +91
+                    </span>
+                    <Input
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(event) => {
+                        const digitsOnly = event.target.value.replace(/\D/g, "").slice(0, 10);
+                        field.onChange(digitsOnly);
+                      }}
+                      inputMode="numeric"
+                      autoComplete="tel-national"
+                      placeholder="9876543210"
+                      className="h-11 rounded-l-none border-l-0 border-gray-300 bg-white"
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -1,10 +1,11 @@
 "use client";
 
 import { Home, MapPin, Trash2, Building2, PlusCircle } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import type { CreateAddressDto } from "@/api/types/customer.types";
+import { useServiceability } from "@/api/hooks/useCustomer";
 import { addressFormSchema, type AddressFormData } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -31,6 +32,8 @@ const EMPTY_ADDRESS: AddressFormData = {
   state: "",
   landmark: "",
 };
+
+const PINCODE_LENGTH = 6;
 
 const normalizeAddressPayload = (payload: AddressFormData): CreateAddressDto => {
   const landmark = payload.landmark?.trim();
@@ -75,6 +78,12 @@ export function AddressFormStep({
   showInlineContinue = false,
   onContinue,
 }: AddressFormStepProps) {
+  const { mutateAsync: checkServiceability } = useServiceability();
+  const [pincodeNotice, setPincodeNotice] = useState<{
+    status: "not-serviceable" | "error";
+    message: string;
+  } | null>(null);
+
   const form = useForm<AddressFormData>({
     resolver: zodResolver(addressFormSchema),
     defaultValues: EMPTY_ADDRESS,
@@ -84,6 +93,7 @@ export function AddressFormStep({
   const canContinue = addresses.length > 0;
   const { isValid, dirtyFields } = form.formState;
   const isFormDirty = Object.keys(dirtyFields).length > 0;
+  const pincodeValue = form.watch("pincode");
 
   const helperMessage = useMemo(() => {
     if (canContinue) {
@@ -92,6 +102,47 @@ export function AddressFormStep({
 
     return "Add at least one address, then continue.";
   }, [addresses.length, canContinue]);
+
+  useEffect(() => {
+    if (pincodeValue.length !== PINCODE_LENGTH) {
+      setPincodeNotice(null);
+      return;
+    }
+
+    const pincodeToCheck = pincodeValue;
+    const timeoutId = setTimeout(() => {
+      void checkServiceability({ pincode: pincodeToCheck })
+        .then((result) => {
+          if (form.getValues("pincode") !== pincodeToCheck) {
+            return;
+          }
+
+          if (!result.isServiceable) {
+            setPincodeNotice({
+              status: "not-serviceable",
+              message: "We do not serve this pincode yet. You can still save this address.",
+            });
+            return;
+          }
+
+          setPincodeNotice(null);
+        })
+        .catch(() => {
+          if (form.getValues("pincode") !== pincodeToCheck) {
+            return;
+          }
+
+          setPincodeNotice({
+            status: "error",
+            message: "Unable to verify pincode serviceability right now.",
+          });
+        });
+    }, 400);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [checkServiceability, form, pincodeValue]);
 
   const handleAddAddress = async () => {
     const valid = await form.trigger();
@@ -271,6 +322,18 @@ export function AddressFormStep({
                       </div>
                     </FormControl>
                     <FormMessage />
+                    {pincodeNotice ? (
+                      <p
+                        className={cn(
+                          "text-xs",
+                          pincodeNotice.status === "not-serviceable"
+                            ? "text-amber-700"
+                            : "text-gray-500",
+                        )}
+                      >
+                        {pincodeNotice.message}
+                      </p>
+                    ) : null}
                   </FormItem>
                 )}
               />

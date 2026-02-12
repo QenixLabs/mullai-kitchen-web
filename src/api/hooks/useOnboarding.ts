@@ -39,12 +39,7 @@ export function useOnboarding() {
         payload.addresses.map((address) => addressApi.create(address)),
       );
 
-      const profile = payload.profile;
-      const hasProfileUpdates = Boolean(
-        profile && Object.values(profile).some((value) => value !== undefined),
-      );
-
-      const user = hasProfileUpdates && profile ? await profileApi.update(profile) : null;
+      const user = await profileApi.update(payload.profile ?? {});
 
       return {
         addresses: createdAddresses,
