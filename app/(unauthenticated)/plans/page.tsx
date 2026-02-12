@@ -17,7 +17,6 @@ import type {
 import { FilterChips } from "@/components/customer/plans/FilterChips";
 import { HeroSection } from "@/components/customer/plans/HeroSection";
 import { MenuPreviewSheet } from "@/components/customer/plans/MenuPreviewSheet";
-import { PincodeChecker } from "@/components/customer/plans/PincodeChecker";
 import { PlanGrid } from "@/components/customer/plans/PlanGrid";
 import { SearchBar } from "@/components/customer/plans/SearchBar";
 import { WhyChooseSection } from "@/components/customer/plans/WhyChooseSection";
@@ -25,6 +24,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
+import { Sparkles } from "lucide-react";
 import { createPlanIntentStore } from "@/stores/plan-intent-store";
 
 const DURATION_OPTIONS = ["Weekly", "Monthly"] as const;
@@ -266,17 +266,15 @@ function PlansContent() {
 
   return (
     <main className="relative mx-auto w-full max-w-7xl overflow-hidden px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-      {/* Hero Section with Inline Pincode Checker */}
       <HeroSection
         onPincodeCheck={handlePincodeCheck}
         onPincodeResult={handlePincodeResult}
         initialPincode={checkedPincodeState ?? ""}
-        className="mb-8"
+        className="mb-10"
       />
 
-      {/* Search and Horizontal Filter Section */}
-      <section className="mb-8 space-y-4">
-        <Card className="border-orange-100 bg-white/90">
+      <section className="mb-10 space-y-4">
+        <Card className="rounded-2xl border-orange-100 bg-white shadow-[0_14px_38px_-34px_rgba(15,23,42,0.65)]">
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div className="flex-1">
@@ -289,13 +287,13 @@ function PlansContent() {
                 />
               </div>
 
-              {(activeFilterCount > 0 || hasSearch) && (
-                <div className="flex flex-wrap items-center gap-2">
-                  {hasSearch && (
+                {(activeFilterCount > 0 || hasSearch) && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    {hasSearch && (
                     <span className="rounded-full bg-sky-100 px-3 py-1.5 text-xs font-medium text-sky-800">
                       Search active
                     </span>
-                  )}
+                    )}
                   {activeFilterCount > 0 && (
                     <span className="rounded-full bg-orange-100 px-3 py-1.5 text-xs font-medium text-orange-800">
                       {activeFilterCount} filter{activeFilterCount > 1 ? "s" : ""} active
@@ -306,7 +304,7 @@ function PlansContent() {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="h-8 rounded-full border border-gray-300 bg-white text-xs text-gray-700 hover:bg-gray-50"
+                      className="h-8 rounded-full border border-orange-200 bg-white text-xs text-gray-700 hover:bg-orange-50"
                       onClick={() => {
                         if (hasSearch) handleClearSearch();
                         if (activeFilterCount > 0) {
@@ -334,15 +332,20 @@ function PlansContent() {
         </Card>
       </section>
 
-      {/* Plans Grid Section */}
       <section className="mb-4">
-        <div className="mb-4">
-          <h2 className="text-xl font-bold text-gray-900">
-            Available Plans
-            <span className="ml-2 text-sm font-normal text-gray-600">
-              ({filteredPlans.length} plan{filteredPlans.length !== 1 ? "s" : ""})
-            </span>
-          </h2>
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-orange-600">
+              <Sparkles className="h-3.5 w-3.5" />
+              curated plans
+            </p>
+            <h2 className="mt-1 text-2xl font-black tracking-tight text-gray-900 sm:text-3xl">
+              Choose your meal plan
+            </h2>
+          </div>
+          <p className="rounded-full border border-orange-100 bg-orange-50 px-3 py-1 text-sm font-medium text-gray-700">
+            {filteredPlans.length} plan{filteredPlans.length !== 1 ? "s" : ""}
+          </p>
         </div>
 
         <PlanGrid
@@ -360,9 +363,8 @@ function PlansContent() {
           className="xl:grid-cols-3"
         />
 
-        {/* Pincode Not Verified Notice */}
         {!checkedPincodeState && !plansQuery.isLoading && filteredPlans.length > 0 && (
-          <Alert className="mt-6 border-amber-200 bg-amber-50 text-amber-800">
+          <Alert className="mt-6 rounded-xl border-amber-200 bg-amber-50 text-amber-800">
             <AlertTitle>Verify your pincode</AlertTitle>
             <AlertDescription>
               Please check your pincode above to see plans available in your area and proceed to checkout.
@@ -371,10 +373,7 @@ function PlansContent() {
         )}
       </section>
 
-      {/* Why Choose Section */}
       <WhyChooseSection className="mt-12" />
-
-      {/* Menu Preview Sheet */}
       <MenuPreviewSheet
         open={isMenuSheetOpen}
         onOpenChange={setIsMenuSheetOpen}

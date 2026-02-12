@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Clock3, Star, UtensilsCrossed } from "lucide-react";
 
 import type { PlanBrowseItem } from "@/api/types/customer.types";
@@ -29,6 +30,12 @@ export function PlanCard({
   isSelected = false,
   className,
 }: PlanCardProps) {
+  const [imageLoadFailed, setImageLoadFailed] = useState(false);
+
+  useEffect(() => {
+    setImageLoadFailed(false);
+  }, [plan.image_url]);
+
   // Calculate monthly price from duration (approximate)
   const getMonthlyPrice = (): number | null => {
     const durationLower = plan.duration.toLowerCase();
@@ -42,48 +49,43 @@ export function PlanCard({
   };
 
   const monthlyPrice = getMonthlyPrice();
-  const hasImage = Boolean(plan.image_url);
+  const fallbackImage = "/images/plans/why-choose.jpg";
+  const imageSrc = !plan.image_url || imageLoadFailed ? fallbackImage : plan.image_url;
+  const isFallback = !plan.image_url || imageLoadFailed;
 
   return (
     <Card
       className={cn(
-        "group overflow-hidden border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md card-shadow",
-        isSelected && "border-orange-400 ring-2 ring-orange-100",
+        "group overflow-hidden rounded-2xl border-orange-100 bg-white shadow-[0_16px_40px_-30px_rgba(15,23,42,0.35)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_-35px_rgba(234,88,12,0.45)]",
+        isSelected && "border-orange-400 ring-2 ring-orange-200",
         className,
       )}
     >
-      {/* Image Area */}
-      {hasImage ? (
-        <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-orange-50 to-amber-50">
-          <img
-            src={plan.image_url}
-            alt={plan.name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
-          />
-          {plan.badge && (
-            <Badge className="absolute left-3 top-3 bg-orange-600 text-white">
-              {plan.badge}
-            </Badge>
+      <div className="relative w-full overflow-hidden">
+        <img
+          src={imageSrc}
+          alt={plan.name}
+          className={cn(
+            " h-auto w-full object-cover transition-transform duration-300 group-hover:scale-105",
+            isFallback && "object-contain p-4 sm:p-6",
           )}
-        </div>
-      ) : (
-        <div className="relative flex h-48 w-full items-center justify-center bg-gradient-to-br from-orange-100 via-orange-50 to-amber-50">
-          <UtensilsCrossed className="h-16 w-16 text-orange-300" aria-hidden="true" />
-          {plan.badge && (
-            <Badge className="absolute left-3 top-3 bg-orange-600 text-white">
-              {plan.badge}
-            </Badge>
-          )}
-        </div>
-      )}
+          // sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          loading="lazy"
+          onError={() => setImageLoadFailed(true)}
+        />
+        {plan.badge && (
+          <Badge className="absolute left-3 top-3 bg-orange-600 text-white">
+            {plan.badge}
+          </Badge>
+        )}
+      </div>
 
-      <CardHeader className="gap-3 px-5 pb-2 pt-4 sm:px-5">
+      <CardHeader className="gap-3 px-5 pb-2 pt-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div className="space-y-1.5">
-            <CardTitle className="text-lg font-semibold text-gray-900">{plan.name}</CardTitle>
+            <CardTitle className="text-lg font-bold text-gray-900">{plan.name}</CardTitle>
             <div className="flex items-center gap-3">
-              <div className="inline-flex items-center gap-1 rounded-full bg-orange-50 px-2.5 py-1 text-xs font-medium text-orange-700">
+              <div className="inline-flex items-center gap-1 rounded-full border border-orange-100 bg-orange-50 px-2.5 py-1 text-xs font-semibold text-orange-700">
                 <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
                 {plan.duration}
               </div>
@@ -96,10 +98,10 @@ export function PlanCard({
             </div>
           </div>
           <div className="text-right">
-            <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Starting from</p>
-            <p className="text-xl font-bold text-gray-900">{currencyFormatter.format(plan.price)}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">Starting from</p>
+            <p className="text-2xl font-black leading-none text-gray-900">{currencyFormatter.format(plan.price)}</p>
             {monthlyPrice && monthlyPrice !== plan.price && (
-              <p className="text-xs text-gray-500">
+              <p className="mt-1 text-xs text-gray-500">
                 ~{currencyFormatter.format(monthlyPrice)}/month
               </p>
             )}
@@ -107,11 +109,11 @@ export function PlanCard({
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4 px-5 pb-4 sm:px-5">
-        {plan.description ? <p className="text-sm leading-relaxed text-gray-600 line-clamp-2">{plan.description}</p> : null}
+      <CardContent className="space-y-4 px-5 pb-4">
+        {plan.description ? <p className="line-clamp-2 text-sm leading-relaxed text-gray-600">{plan.description}</p> : null}
 
-        <div className="space-y-2">
-          <p className="flex items-center gap-2 text-sm font-medium text-gray-700">
+        <div className="space-y-2 rounded-xl border border-orange-100 bg-orange-50/50 p-3">
+          <p className="flex items-center gap-2 text-sm font-semibold text-gray-700">
             <UtensilsCrossed className="h-4 w-4 text-orange-600" aria-hidden="true" />
             Meals included
           </p>
@@ -120,7 +122,7 @@ export function PlanCard({
               {plan.meals_included.map((meal) => (
                 <li
                   key={`${plan._id}-${meal}`}
-                  className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700"
+                  className="rounded-full border border-orange-100 bg-white px-2.5 py-1 text-xs font-medium text-gray-700"
                 >
                   {meal}
                 </li>
@@ -136,7 +138,7 @@ export function PlanCard({
         <Button
           type="button"
           variant="outline"
-          className="w-full border-gray-300 hover:bg-gray-50"
+          className="w-full border-orange-200 bg-white hover:bg-orange-50 hover:text-orange-700"
           onClick={() => onViewMenu(plan)}
           aria-label={`View menu for ${plan.name}`}
         >

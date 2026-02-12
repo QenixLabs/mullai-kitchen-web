@@ -31,11 +31,11 @@ export function PlanGrid({
 }: PlanGridProps) {
   if (isLoading) {
     return (
-      <div className={cn("grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3", className)} aria-label="Loading plans">
+      <div className={cn("grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3", className)} aria-label="Loading plans">
         {Array.from({ length: loadingCount }).map((_, index) => (
           <div
             key={`plan-skeleton-${index}`}
-            className="h-72 animate-pulse rounded-xl border border-gray-200 bg-white/80"
+            className="h-[27rem] animate-pulse rounded-2xl border border-orange-100 bg-white"
             aria-hidden="true"
           />
         ))}
@@ -54,7 +54,7 @@ export function PlanGrid({
 
   if (plans.length === 0) {
     return (
-      <div className={cn("rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center", className)}>
+      <div className={cn("rounded-2xl border border-dashed border-orange-200 bg-orange-50/40 p-10 text-center", className)}>
         <h3 className="text-lg font-semibold text-gray-900">No plans found</h3>
         <p className="mt-2 text-sm text-gray-600">
           Try adjusting your filters or search term to see more meal plans.
@@ -64,7 +64,7 @@ export function PlanGrid({
   }
 
   return (
-    <div className={cn("grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3", className)}>
+    <div className={cn("grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3", className)}>
       {plans.map((plan) => (
         <PlanCard
           key={plan._id}

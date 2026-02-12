@@ -78,76 +78,93 @@ export function HeroSection({
   };
 
   return (
-    <section className={cn("relative overflow-hidden rounded-3xl border border-orange-100 bg-gradient-to-br from-orange-50 via-orange-50/80 to-amber-50/60 p-6 sm:p-10", className)}>
-      <div className="absolute inset-0 bg-[url('/images/plan_bg.png')] bg-cover bg-center opacity-20" />
+    <section
+      className={cn(
+        "relative overflow-hidden rounded-[2rem] border border-orange-100/80 bg-[radial-gradient(circle_at_15%_20%,#fff_0,#fff7ed_45%,#ffedd5_100%)] p-6 shadow-[0_22px_60px_-40px_rgba(234,88,12,0.45)] sm:p-8 lg:p-10",
+        className,
+      )}
+    >
+      <div className="pointer-events-none absolute -left-12 top-8 h-44 w-44 rounded-full bg-orange-200/30 blur-3xl" />
+      <div className="pointer-events-none absolute -right-12 bottom-8 h-52 w-52 rounded-full bg-amber-200/30 blur-3xl" />
 
-      <div className="relative z-10 mx-auto max-w-4xl">
-        <Badge variant="outline" className="mb-4 border-orange-300 bg-white/90 text-orange-800">
-          <MapPin className="mr-1 h-3 w-3" />
-          Serving across Chennai
-        </Badge>
+      <div className="relative z-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+        <div>
+          <Badge variant="outline" className="mb-4 border-orange-300 bg-white/90 text-orange-800">
+            <MapPin className="mr-1 h-3 w-3" />
+            Serving across Chennai
+          </Badge>
 
-        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
-          Fresh, Home-Cooked Meals
-          <span className="block text-orange-600">Delivered Daily</span>
-        </h1>
+          <h1 className="text-3xl font-black leading-tight tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
+            Fresh, home-cooked meals
+            <span className="block text-orange-600">delivered daily.</span>
+          </h1>
 
-        <p className="mt-4 max-w-2xl text-lg text-gray-700 sm:text-xl">
-          Discover healthy, chef-curated meal plans tailored to your taste. Flexible subscriptions, transparent pricing, and delivery right to your doorstep.
-        </p>
+          <p className="mt-4 max-w-xl text-base text-gray-700 sm:text-lg">
+            Discover healthy, chef-curated meal plans tailored to your taste. Flexible subscriptions, transparent
+            pricing, and doorstep delivery.
+          </p>
 
-        <div className="mt-8">
+          <div className="mt-5 flex flex-wrap items-center gap-2.5">
+            <Badge variant="secondary" className="bg-white/90 text-gray-700">Adyar</Badge>
+            <Badge variant="secondary" className="bg-white/90 text-gray-700">Besant Nagar</Badge>
+            <Badge variant="secondary" className="bg-white/90 text-gray-700">T. Nagar</Badge>
+            <Badge variant="secondary" className="bg-white/90 text-gray-700">Velachery</Badge>
+            <Badge variant="secondary" className="bg-white/90 text-gray-700">R.A. Puram</Badge>
+            <span className="text-sm font-medium text-gray-600">and 30+ areas</span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-orange-100 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-orange-700">Check Serviceability</p>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleCheck)} className="flex flex-col gap-3 sm:flex-row sm:items-start">
-              <div className="flex-1">
-                <FormField
-                  control={form.control}
-                  name="pincode"
-                  render={({ field }) => (
-                    <FormItem className="relative">
-                      <FormControl>
-                        <div className="relative">
-                          <MapPin
-                            className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
-                            aria-hidden="true"
-                          />
-                          <Input
-                            {...field}
-                            type="text"
-                            inputMode="numeric"
-                            maxLength={6}
-                            onChange={(event) => {
-                              const digitsOnly = event.target.value.replace(/\D/g, "").slice(0, 6);
-                              field.onChange(digitsOnly);
-                              setErrorMessage(null);
-                              setResult(null);
-                            }}
-                            placeholder="Enter your pincode"
-                            className="h-14 rounded-xl border-gray-300 bg-white pl-12 text-lg"
-                            aria-label="Pincode"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+            <form onSubmit={form.handleSubmit(handleCheck)} className="space-y-3">
+              <FormField
+                control={form.control}
+                name="pincode"
+                render={({ field }) => (
+                  <FormItem className="relative">
+                    <FormControl>
+                      <div className="relative">
+                        <MapPin
+                          className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-orange-400"
+                          aria-hidden="true"
+                        />
+                        <Input
+                          {...field}
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={6}
+                          onChange={(event) => {
+                            const digitsOnly = event.target.value.replace(/\D/g, "").slice(0, 6);
+                            field.onChange(digitsOnly);
+                            setErrorMessage(null);
+                            setResult(null);
+                          }}
+                          placeholder="Enter your pincode"
+                          className="h-12 rounded-xl border-orange-200 bg-white pl-12 text-base"
+                          aria-label="Pincode"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <Button
                 type="submit"
-                className="h-14 rounded-xl bg-orange-600 px-8 text-lg font-semibold text-white hover:bg-orange-700"
+                className="h-12 w-full rounded-xl bg-orange-600 text-sm font-semibold text-white hover:bg-orange-700"
                 disabled={isChecking || !isValid}
                 aria-label="Check pincode serviceability"
               >
-                <SearchCheck className="mr-2 h-5 w-5" aria-hidden="true" />
-                {isChecking ? "Checking..." : "Check Serviceability"}
+                <SearchCheck className="mr-2 h-4 w-4" aria-hidden="true" />
+                {isChecking ? "Checking..." : "Check serviceability"}
               </Button>
             </form>
           </Form>
 
           {errorMessage ? (
-            <Alert variant="destructive" className="mt-4 border-red-200 bg-red-50 text-red-800">
+            <Alert variant="destructive" className="mt-3 border-red-200 bg-red-50 text-red-800">
               <AlertTitle>Could not verify this pincode</AlertTitle>
               <AlertDescription>{errorMessage}</AlertDescription>
             </Alert>
@@ -155,7 +172,7 @@ export function HeroSection({
 
           {result ? (
             result.isServiceable ? (
-              <Alert className="mt-4 border-emerald-200 bg-emerald-50 text-emerald-800">
+              <Alert className="mt-3 border-emerald-200 bg-emerald-50 text-emerald-800">
                 <AlertTitle>Service available in your area</AlertTitle>
                 <AlertDescription>
                   {getOutletName(result)
@@ -164,7 +181,7 @@ export function HeroSection({
                 </AlertDescription>
               </Alert>
             ) : (
-              <Alert variant="destructive" className="mt-4 border-amber-200 bg-amber-50 text-amber-800">
+              <Alert variant="destructive" className="mt-3 border-amber-200 bg-amber-50 text-amber-800">
                 <AlertTitle>Service not available yet</AlertTitle>
                 <AlertDescription>
                   We are not delivering to this pincode at the moment. Try a nearby pincode.
@@ -172,25 +189,6 @@ export function HeroSection({
               </Alert>
             )
           ) : null}
-        </div>
-
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Badge variant="secondary" className="bg-white/90 text-gray-700">
-            Adyar
-          </Badge>
-          <Badge variant="secondary" className="bg-white/90 text-gray-700">
-            Besant Nagar
-          </Badge>
-          <Badge variant="secondary" className="bg-white/90 text-gray-700">
-            T. Nagar
-          </Badge>
-          <Badge variant="secondary" className="bg-white/90 text-gray-700">
-            Velachery
-          </Badge>
-          <Badge variant="secondary" className="bg-white/90 text-gray-700">
-            R.A. Puram
-          </Badge>
-          <span className="text-sm text-gray-600">and 30+ areas</span>
         </div>
       </div>
     </section>

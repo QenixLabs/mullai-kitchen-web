@@ -45,72 +45,80 @@ export function FilterChips({
   // Horizontal layout variant
   if (layout === "horizontal") {
     return (
-      <section className={cn("flex flex-wrap items-center gap-3", className)}>
-        <span className="text-sm font-medium text-gray-700">Duration:</span>
-        <div className="flex flex-wrap gap-2">
-          {durationOptions.map((duration) => {
-            const isActive = selectedDurations.includes(duration);
-            return (
-              <button
-                key={duration}
-                type="button"
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200",
-                  isActive
-                    ? "border-orange-500 bg-orange-500 text-white shadow-sm"
-                    : "border-gray-300 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50",
-                )}
-                onClick={() => onDurationChange(toggleItem(selectedDurations, duration))}
-                aria-pressed={isActive}
-                aria-label={`Filter by ${duration} duration`}
-              >
-                {duration}
-              </button>
-            );
-          })}
-        </div>
+      <section
+        className={cn(
+          "rounded-2xl border border-orange-100 bg-gradient-to-r from-white via-orange-50/40 to-amber-50/50 p-3 sm:p-4",
+          className,
+        )}
+      >
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wide text-gray-600">Duration</span>
+            {durationOptions.map((duration) => {
+              const isActive = selectedDurations.includes(duration);
+              return (
+                <button
+                  key={duration}
+                  type="button"
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-all",
+                    isActive
+                      ? "border-orange-500 bg-orange-500 text-white shadow-sm shadow-orange-200"
+                      : "border-orange-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700",
+                  )}
+                  onClick={() => onDurationChange(toggleItem(selectedDurations, duration))}
+                  aria-pressed={isActive}
+                  aria-label={`Filter by ${duration} duration`}
+                >
+                  {isActive ? <Check className="h-3.5 w-3.5" /> : null}
+                  {duration}
+                </button>
+              );
+            })}
+          </div>
 
-        <div className="h-6 w-px bg-gray-300" aria-hidden="true" />
-
-        <span className="text-sm font-medium text-gray-700">Meal type:</span>
-        <div className="flex flex-wrap gap-2">
-          {mealTypeOptions.map((mealType) => {
-            const isActive = selectedMealTypes.includes(mealType);
-            return (
-              <button
-                key={mealType}
-                type="button"
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200",
-                  isActive
-                    ? "border-orange-500 bg-orange-500 text-white shadow-sm"
-                    : "border-gray-300 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50",
-                )}
-                onClick={() => onMealTypeChange(toggleItem(selectedMealTypes, mealType))}
-                aria-pressed={isActive}
-                aria-label={`Filter by ${mealType} meals`}
-              >
-                {mealType}
-              </button>
-            );
-          })}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wide text-gray-600">Meal Type</span>
+            {mealTypeOptions.map((mealType) => {
+              const isActive = selectedMealTypes.includes(mealType);
+              return (
+                <button
+                  key={mealType}
+                  type="button"
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-all",
+                    isActive
+                      ? "border-orange-500 bg-orange-500 text-white shadow-sm shadow-orange-200"
+                      : "border-orange-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700",
+                  )}
+                  onClick={() => onMealTypeChange(toggleItem(selectedMealTypes, mealType))}
+                  aria-pressed={isActive}
+                  aria-label={`Filter by ${mealType} meals`}
+                >
+                  {isActive ? <Check className="h-3.5 w-3.5" /> : null}
+                  {mealType}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {hasFilters && (
-          <>
-            <div className="h-6 w-px bg-gray-300" aria-hidden="true" />
+          <div className="mt-3 flex items-center gap-3 border-t border-orange-100 pt-3">
             <Badge variant="secondary" className="gap-1.5 bg-orange-100 text-orange-800">
               {activeFilterCount} active
-              <button
-                type="button"
-                className="ml-1 hover:text-orange-900"
-                onClick={clearAllFilters}
-                aria-label="Clear all filters"
-              >
-                <X className="h-3 w-3" />
-              </button>
             </Badge>
-          </>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-8 rounded-full px-3 text-xs text-gray-700 hover:bg-white hover:text-orange-700"
+              onClick={clearAllFilters}
+            >
+              <X className="mr-1.5 h-3.5 w-3.5" />
+              Clear filters
+            </Button>
+          </div>
         )}
       </section>
     );
