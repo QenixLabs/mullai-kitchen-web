@@ -13,7 +13,6 @@ interface PlanGridProps {
   isLoading?: boolean;
   isError?: boolean;
   errorMessage?: string;
-  selectingPlanId?: string | null;
   selectedPlanId?: string | null;
   loadingCount?: number;
   className?: string;
@@ -26,7 +25,6 @@ export function PlanGrid({
   isLoading = false,
   isError = false,
   errorMessage,
-  selectingPlanId,
   selectedPlanId,
   loadingCount = 6,
   className,
@@ -73,7 +71,6 @@ export function PlanGrid({
           plan={plan}
           onViewMenu={onViewMenu}
           onSelectPlan={onSelectPlan}
-          isSelecting={selectingPlanId === plan._id}
           isSelected={selectedPlanId === plan._id}
         />
       ))}

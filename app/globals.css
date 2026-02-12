@@ -94,3 +94,7 @@ body {
   --tp-hover-bg: #ffedd5;
   --tp-border-radius: 18px;
 }
+
+.card-shadow {
+  box-shadow: 0 10px 30px -15px rgba(234, 88, 12, 0.15);
+}

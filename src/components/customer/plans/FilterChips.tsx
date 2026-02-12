@@ -2,6 +2,7 @@
 
 import { CalendarDays, Check, SlidersHorizontal, UtensilsCrossed, X } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +14,7 @@ interface FilterChipsProps {
   className?: string;
   durationOptions?: readonly string[];
   mealTypeOptions?: readonly string[];
+  layout?: "card" | "horizontal";
 }
 
 const defaultDurationOptions = ["Weekly", "Monthly"] as const;
@@ -30,6 +32,7 @@ export function FilterChips({
   className,
   durationOptions = defaultDurationOptions,
   mealTypeOptions = defaultMealTypeOptions,
+  layout = "card",
 }: FilterChipsProps) {
   const hasFilters = selectedDurations.length > 0 || selectedMealTypes.length > 0;
   const activeFilterCount = selectedDurations.length + selectedMealTypes.length;
@@ -39,6 +42,81 @@ export function FilterChips({
     onMealTypeChange([]);
   };
 
+  // Horizontal layout variant
+  if (layout === "horizontal") {
+    return (
+      <section className={cn("flex flex-wrap items-center gap-3", className)}>
+        <span className="text-sm font-medium text-gray-700">Duration:</span>
+        <div className="flex flex-wrap gap-2">
+          {durationOptions.map((duration) => {
+            const isActive = selectedDurations.includes(duration);
+            return (
+              <button
+                key={duration}
+                type="button"
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200",
+                  isActive
+                    ? "border-orange-500 bg-orange-500 text-white shadow-sm"
+                    : "border-gray-300 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50",
+                )}
+                onClick={() => onDurationChange(toggleItem(selectedDurations, duration))}
+                aria-pressed={isActive}
+                aria-label={`Filter by ${duration} duration`}
+              >
+                {duration}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="h-6 w-px bg-gray-300" aria-hidden="true" />
+
+        <span className="text-sm font-medium text-gray-700">Meal type:</span>
+        <div className="flex flex-wrap gap-2">
+          {mealTypeOptions.map((mealType) => {
+            const isActive = selectedMealTypes.includes(mealType);
+            return (
+              <button
+                key={mealType}
+                type="button"
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200",
+                  isActive
+                    ? "border-orange-500 bg-orange-500 text-white shadow-sm"
+                    : "border-gray-300 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50",
+                )}
+                onClick={() => onMealTypeChange(toggleItem(selectedMealTypes, mealType))}
+                aria-pressed={isActive}
+                aria-label={`Filter by ${mealType} meals`}
+              >
+                {mealType}
+              </button>
+            );
+          })}
+        </div>
+
+        {hasFilters && (
+          <>
+            <div className="h-6 w-px bg-gray-300" aria-hidden="true" />
+            <Badge variant="secondary" className="gap-1.5 bg-orange-100 text-orange-800">
+              {activeFilterCount} active
+              <button
+                type="button"
+                className="ml-1 hover:text-orange-900"
+                onClick={clearAllFilters}
+                aria-label="Clear all filters"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          </>
+        )}
+      </section>
+    );
+  }
+
+  // Original card layout
   return (
     <section
       className={cn(

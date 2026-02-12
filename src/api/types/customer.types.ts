@@ -52,6 +52,9 @@ export interface PlanBrowseItem {
   price: number;
   valid_from: string;
   valid_until?: string;
+  image_url?: string;
+  rating?: number;
+  badge?: string;
 }
 
 export interface ServiceabilityInfo {
