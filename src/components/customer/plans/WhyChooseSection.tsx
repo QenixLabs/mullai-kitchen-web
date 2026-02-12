@@ -1,5 +1,3 @@
-"use client";
-
 import { CalendarClock, Leaf, ShieldCheck, Sparkles } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -8,6 +6,7 @@ interface WhyChooseSectionProps {
   className?: string;
 }
 
+// Static data - can be at module level for Server Components
 const highlights = [
   {
     icon: ShieldCheck,
@@ -32,6 +31,7 @@ const stats = [
   { label: "Avg. rating", value: "4.8/5" },
 ];
 
+// Server Component - no interactivity, renders on server for better SEO and initial load
 export function WhyChooseSection({ className }: WhyChooseSectionProps) {
   return (
     <section className={cn("relative py-14 sm:py-16", className)}>

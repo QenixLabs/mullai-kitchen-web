@@ -1,7 +1,7 @@
 "use client";
 
 import { MapPin, SearchCheck } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import type { ServiceabilityResponse } from "@/api/types/customer.types";
@@ -27,6 +27,7 @@ interface HeroSectionProps {
   className?: string;
 }
 
+// Module-level helper - no recreation on render
 const getOutletName = (result: ServiceabilityResponse): string | null => {
   if (!result.outlet) {
     return null;
@@ -49,6 +50,9 @@ export function HeroSection({
   const [isChecking, setIsChecking] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [result, setResult] = useState<ServiceabilityResponse | null>(null);
+
+  // Memoize outlet name to prevent redundant getOutletName calls
+  const outletName = useMemo(() => (result ? getOutletName(result) : null), [result]);
 
   const form = useForm<PincodeFormData>({
     resolver: zodResolver(pincodeSchema),
@@ -175,8 +179,8 @@ export function HeroSection({
               <Alert className="mt-3 border-emerald-200 bg-emerald-50 text-emerald-800">
                 <AlertTitle>Service available in your area</AlertTitle>
                 <AlertDescription>
-                  {getOutletName(result)
-                    ? `Orders from this pincode will be handled by ${getOutletName(result)}.`
+                  {outletName
+                    ? `Orders from this pincode will be handled by ${outletName}.`
                     : "Your pincode is serviceable."}
                 </AlertDescription>
               </Alert>

@@ -32,6 +32,27 @@ const groupMealsByType = (meals: MenuPreviewMeal[]): Record<string, MenuPreviewM
   }, {});
 };
 
+// Hoisted loading skeleton - prevents recreation on every render
+const MenuLoadingSkeleton = () => (
+  <div className="space-y-4" aria-label="Loading menu preview">
+    {Array.from({ length: 4 }).map((_, index) => (
+      <div key={index} className="space-y-2 rounded-xl border border-gray-200 p-4">
+        <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
+        <div className="h-3 w-full animate-pulse rounded bg-gray-100" />
+        <div className="h-3 w-4/5 animate-pulse rounded bg-gray-100" />
+      </div>
+    ))}
+  </div>
+);
+
+// Hoisted empty state - prevents recreation on every render
+const EmptyMenuState = () => (
+  <div className="rounded-xl border border-dashed border-gray-300 p-6 text-center">
+    <h3 className="text-base font-semibold text-gray-900">No menu available</h3>
+    <p className="mt-2 text-sm text-gray-600">We are preparing this menu. Please check back soon.</p>
+  </div>
+);
+
 export function MenuPreviewSheet({
   open,
   onOpenChange,
@@ -105,17 +126,7 @@ export function MenuPreviewSheet({
         </div>
 
         <div className="max-h-[calc(90vh-73px)] overflow-y-auto px-4 py-4 sm:max-h-full sm:px-6 sm:py-5">
-          {isLoading ? (
-            <div className="space-y-4" aria-label="Loading menu preview">
-              {Array.from({ length: 4 }).map((_, index) => (
-                <div key={`menu-loading-${index}`} className="space-y-2 rounded-xl border border-gray-200 p-4">
-                  <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
-                  <div className="h-3 w-full animate-pulse rounded bg-gray-100" />
-                  <div className="h-3 w-4/5 animate-pulse rounded bg-gray-100" />
-                </div>
-              ))}
-            </div>
-          ) : null}
+          {isLoading ? <MenuLoadingSkeleton /> : null}
 
           {!isLoading && isError ? (
             <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800">
@@ -140,12 +151,7 @@ export function MenuPreviewSheet({
             </Alert>
           ) : null}
 
-          {!isLoading && !isError && (!menu || menu.length === 0) ? (
-            <div className="rounded-xl border border-dashed border-gray-300 p-6 text-center">
-              <h3 className="text-base font-semibold text-gray-900">No menu available</h3>
-              <p className="mt-2 text-sm text-gray-600">We are preparing this menu. Please check back soon.</p>
-            </div>
-          ) : null}
+          {!isLoading && !isError && (!menu || menu.length === 0) ? <EmptyMenuState /> : null}
 
           {!isLoading && !isError && menu && menu.length > 0 ? (
             <div className="space-y-4">
