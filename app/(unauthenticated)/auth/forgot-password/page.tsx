@@ -9,6 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 export default function ForgotPasswordPage() {
   const forgotMutation = useForgotPassword();
@@ -25,9 +26,12 @@ export default function ForgotPasswordPage() {
     <AuthShell side={<AuthHighlights />}>
       {/* Back to sign in link at top */}
       <div className="mb-6 text-center">
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-gray-500">
           Remembered your password?{" "}
-          <Link className="font-semibold text-orange-600 hover:text-orange-700" href="/auth/signin">
+          <Link
+            className="font-semibold text-[#FF6B35] hover:text-[#E85A25] transition-colors"
+            href="/auth/signin"
+          >
             Go back to sign in
           </Link>
         </span>
@@ -41,7 +45,7 @@ export default function ForgotPasswordPage() {
       <AuthFormCard footer={<AuthFooterLinks prompt="Need an account?" actionLabel="Create one" actionHref="/auth/signup" />}>
         <form className="space-y-5" onSubmit={handleSubmit}>
           <div className="grid gap-2">
-            <Label htmlFor="email" className="text-gray-700">
+            <Label htmlFor="email" className="text-sm font-medium text-gray-700">
               Email address
             </Label>
             <Input
@@ -53,7 +57,11 @@ export default function ForgotPasswordPage() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               required
-              className="h-11 rounded-lg border-gray-300"
+              className={cn(
+                "h-11 rounded-xl border-gray-200 bg-gray-50 text-gray-900",
+                "placeholder:text-gray-400",
+                "focus:border-[#FF6B35] focus:bg-white focus:ring-[#FF6B35]/20"
+              )}
             />
           </div>
 
@@ -74,7 +82,13 @@ export default function ForgotPasswordPage() {
           ) : null}
 
           <Button
-            className="h-11 w-full rounded-lg bg-orange-600 font-semibold text-white hover:bg-orange-700"
+            className={cn(
+              "h-11 w-full rounded-xl font-semibold text-white shadow-md transition-all duration-300",
+              "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
+              "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
+              "active:scale-[0.98]",
+              "disabled:opacity-70 disabled:cursor-not-allowed"
+            )}
             type="submit"
             disabled={forgotMutation.isPending}
           >

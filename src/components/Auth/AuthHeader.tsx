@@ -10,10 +10,16 @@ interface AuthHeaderProps {
 
 export function AuthHeader({ title, subtitle, helper }: AuthHeaderProps) {
   return (
-    <header className="mb-8 space-y-4">
+    <header className="mb-8 space-y-3">
       <div className="space-y-2">
-        <h1 className={cn("text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl")}>{title}</h1>
-        {subtitle ? <p className="max-w-md text-sm text-gray-600 sm:text-base">{subtitle}</p> : null}
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+          {title}
+        </h1>
+        {subtitle ? (
+          <p className="max-w-md text-sm leading-relaxed text-gray-500 sm:text-base">
+            {subtitle}
+          </p>
+        ) : null}
       </div>
       {helper ? <div className="text-sm text-gray-500">{helper}</div> : null}
     </header>

@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Stepper } from "@/components/ui/stepper";
 import { useUserStore } from "@/providers/user-store-provider";
 import { createPlanIntentStore } from "@/stores/plan-intent-store";
+import { cn } from "@/lib/utils";
 
 const AUTH_ROUTES = new Set(["/auth/signin", "/auth/signup"]);
 
@@ -46,6 +47,28 @@ const SIGNUP_STEPS = [
   { id: "security", title: "Security", description: "Password & terms" },
   { id: "review", title: "Review", description: "Confirm & create" },
 ];
+
+const inputBaseClass = cn(
+  "h-11 rounded-xl border-gray-200 bg-gray-50 text-gray-900",
+  "placeholder:text-gray-400",
+  "focus:border-[#FF6B35] focus:bg-white focus:ring-[#FF6B35]/20"
+);
+
+const primaryButtonClass = cn(
+  "h-11 rounded-xl font-semibold text-white shadow-md transition-all duration-300",
+  "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
+  "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
+  "active:scale-[0.98]",
+  "disabled:opacity-70 disabled:cursor-not-allowed"
+);
+
+const outlineButtonClass = cn(
+  "h-11 rounded-xl font-medium transition-all duration-300",
+  "border-2 border-gray-200 bg-white text-gray-600",
+  "hover:border-[#FF6B35]/30 hover:bg-orange-50 hover:text-[#FF6B35]",
+  "active:scale-[0.98]",
+  "disabled:opacity-50 disabled:cursor-not-allowed"
+);
 
 function SignUpForm() {
   const router = useRouter();
@@ -129,9 +152,12 @@ function SignUpForm() {
     <AuthShell side={<AuthHighlights />}>
       {/* Existing user link at top */}
       <div className="mb-6 text-center">
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-gray-500">
           Already have an account?{" "}
-          <Link className="font-semibold text-orange-600 hover:text-orange-700" href="/auth/signin">
+          <Link
+            className="font-semibold text-[#FF6B35] hover:text-[#E85A25] transition-colors"
+            href="/auth/signin"
+          >
             Log in
           </Link>
         </span>
@@ -154,7 +180,7 @@ function SignUpForm() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-700">Full name</FormLabel>
+                      <FormLabel className="text-sm font-medium text-gray-700">Full name</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -162,7 +188,7 @@ function SignUpForm() {
                           type="text"
                           autoComplete="name"
                           placeholder="Anika Raman"
-                          className="h-11 rounded-lg border-gray-300"
+                          className={inputBaseClass}
                         />
                       </FormControl>
                       <FormMessage />
@@ -175,7 +201,7 @@ function SignUpForm() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-700">Email address</FormLabel>
+                      <FormLabel className="text-sm font-medium text-gray-700">Email address</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -183,7 +209,7 @@ function SignUpForm() {
                           type="email"
                           autoComplete="email"
                           placeholder="your@email.com"
-                          className="h-11 rounded-lg border-gray-300"
+                          className={inputBaseClass}
                         />
                       </FormControl>
                       <FormMessage />
@@ -196,10 +222,10 @@ function SignUpForm() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-700">Phone number</FormLabel>
+                      <FormLabel className="text-sm font-medium text-gray-700">Phone number</FormLabel>
                       <FormControl>
                         <div className="flex w-full items-center">
-                          <span className="inline-flex h-11 items-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 px-3 text-sm font-semibold text-gray-700">
+                          <span className="inline-flex h-11 items-center rounded-l-xl border border-r-0 border-gray-200 bg-gray-100 px-3 text-sm font-semibold text-gray-700">
                             +91
                           </span>
                           <Input
@@ -214,7 +240,7 @@ function SignUpForm() {
                               field.onChange(digitsOnly);
                             }}
                             placeholder="9876543210"
-                            className="h-11 rounded-l-none border-l-0 border-gray-300"
+                            className="h-11 rounded-l-none rounded-r-xl border-l-0 border-gray-200 bg-gray-50 focus:border-[#FF6B35] focus:bg-white focus:ring-[#FF6B35]/20"
                           />
                         </div>
                       </FormControl>
@@ -232,7 +258,7 @@ function SignUpForm() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-700">Password</FormLabel>
+                      <FormLabel className="text-sm font-medium text-gray-700">Password</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -240,7 +266,7 @@ function SignUpForm() {
                           type="password"
                           autoComplete="new-password"
                           placeholder="Create a strong password"
-                          className="h-11 rounded-lg border-gray-300"
+                          className={inputBaseClass}
                         />
                       </FormControl>
                       <FormMessage />
@@ -255,16 +281,16 @@ function SignUpForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="flex items-start gap-3 rounded-lg border border-gray-200 p-3">
+                        <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-gray-50 p-4 transition-colors hover:bg-orange-50/50">
                           <Checkbox
                             id="terms"
                             checked={field.value}
                             onCheckedChange={(checked) => field.onChange(checked === true)}
-                            className="mt-0.5 border-gray-300"
+                            className="mt-0.5 border-gray-300 data-[state=checked]:bg-[#FF6B35] data-[state=checked]:border-[#FF6B35]"
                           />
-                          <label htmlFor="terms" className="text-sm text-gray-600 cursor-pointer">
+                          <label htmlFor="terms" className="text-sm text-gray-600 cursor-pointer leading-relaxed">
                             I accept the{" "}
-                            <Link href="/terms" className="font-semibold text-orange-600 hover:text-orange-700">
+                            <Link href="/terms" className="font-semibold text-[#FF6B35] hover:text-[#E85A25] transition-colors">
                               Terms and Conditions
                             </Link>
                           </label>
@@ -278,12 +304,21 @@ function SignUpForm() {
             ) : null}
 
             {currentStep === 2 ? (
-              <div className="space-y-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600">Review details</h3>
-                <div className="grid gap-2 text-sm">
-                  <p><span className="font-medium text-gray-700">Name:</span> {formValues.name}</p>
-                  <p><span className="font-medium text-gray-700">Email:</span> {formValues.email}</p>
-                  <p><span className="font-medium text-gray-700">Phone:</span> +91 {formValues.phone}</p>
+              <div className="space-y-4 rounded-xl border border-gray-200 bg-gray-50 p-5">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Review details</h3>
+                <div className="grid gap-2.5 text-sm">
+                  <div className="flex gap-2">
+                    <span className="font-medium text-gray-500">Name:</span>
+                    <span className="text-gray-900">{formValues.name}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="font-medium text-gray-500">Email:</span>
+                    <span className="text-gray-900">{formValues.email}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="font-medium text-gray-500">Phone:</span>
+                    <span className="text-gray-900">+91 {formValues.phone}</span>
+                  </div>
                 </div>
                 <p className="text-xs text-gray-500">You can go back and edit any details before creating your account.</p>
               </div>
@@ -298,13 +333,13 @@ function SignUpForm() {
               </Alert>
             ) : null}
 
-            <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 pt-3 sm:flex-row sm:items-center sm:justify-between">
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleBack}
                 disabled={currentStep === 0 || registerMutation.isPending}
-                className="h-11 w-full rounded-lg border-gray-300 sm:w-auto"
+                className={cn(outlineButtonClass, "w-full sm:w-auto")}
               >
                 Back
               </Button>
@@ -312,7 +347,7 @@ function SignUpForm() {
               <div className="w-full sm:w-auto">
                 {currentStep < SIGNUP_STEPS.length - 1 ? (
                   <Button
-                    className="h-11 w-full rounded-lg bg-orange-600 px-8 font-semibold text-white hover:bg-orange-700 sm:w-auto"
+                    className={cn(primaryButtonClass, "w-full sm:w-auto px-8")}
                     type="button"
                     onClick={handleNext}
                     disabled={
@@ -325,7 +360,7 @@ function SignUpForm() {
                   </Button>
                 ) : (
                   <Button
-                    className="h-11 w-full rounded-lg bg-orange-600 px-8 font-semibold text-white hover:bg-orange-700 sm:w-auto"
+                    className={cn(primaryButtonClass, "w-full sm:w-auto px-8")}
                     type="submit"
                     disabled={registerMutation.isPending}
                   >
@@ -347,7 +382,7 @@ function SignUpForm() {
 
 export default function SignUpPage() {
   return (
-    <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
+    <Suspense fallback={<div className="p-6 text-center text-gray-500">Loading...</div>}>
       <SignUpForm />
     </Suspense>
   );

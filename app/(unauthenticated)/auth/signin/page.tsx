@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useUserStore } from "@/providers/user-store-provider";
 import { createPlanIntentStore } from "@/stores/plan-intent-store";
+import { cn } from "@/lib/utils";
 
 const AUTH_ROUTES = new Set(["/auth/signin", "/auth/signup"]);
 
@@ -83,9 +84,12 @@ function SignInForm() {
     <AuthShell side={<AuthHighlights />}>
       {/* Existing user link at top */}
       <div className="mb-6 text-center">
-        <span className="text-sm text-gray-600">
-          Do not have an account?{" "}
-          <Link className="font-semibold text-orange-600 hover:text-orange-700" href="/auth/signup">
+        <span className="text-sm text-gray-500">
+          Don't have an account?{" "}
+          <Link
+            className="font-semibold text-[#FF6B35] hover:text-[#E85A25] transition-colors"
+            href="/auth/signup"
+          >
             Sign up
           </Link>
         </span>
@@ -104,7 +108,7 @@ function SignInForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700">Email address</FormLabel>
+                  <FormLabel className="text-sm font-medium text-gray-700">Email address</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -112,7 +116,11 @@ function SignInForm() {
                       type="email"
                       autoComplete="email"
                       placeholder="your@email.com"
-                      className="h-12 rounded-lg !border-slate-300 !bg-white text-slate-900 placeholder:text-slate-400 dark:!bg-white focus-visible:border-orange-500 focus-visible:ring-orange-200"
+                      className={cn(
+                        "h-11 rounded-xl border-gray-200 bg-gray-50 text-gray-900",
+                        "placeholder:text-gray-400",
+                        "focus:border-[#FF6B35] focus:bg-white focus:ring-[#FF6B35]/20"
+                      )}
                     />
                   </FormControl>
                   <FormMessage />
@@ -125,7 +133,7 @@ function SignInForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700">Password</FormLabel>
+                  <FormLabel className="text-sm font-medium text-gray-700">Password</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -133,7 +141,11 @@ function SignInForm() {
                       type="password"
                       autoComplete="current-password"
                       placeholder="Enter your password"
-                      className="h-12 rounded-lg !border-slate-300 !bg-white text-slate-900 placeholder:text-slate-400 dark:!bg-white focus-visible:border-orange-500 focus-visible:ring-orange-200"
+                      className={cn(
+                        "h-11 rounded-xl border-gray-200 bg-gray-50 text-gray-900",
+                        "placeholder:text-gray-400",
+                        "focus:border-[#FF6B35] focus:bg-white focus:ring-[#FF6B35]/20"
+                      )}
                     />
                   </FormControl>
                   <FormMessage />
@@ -151,7 +163,13 @@ function SignInForm() {
             ) : null}
 
             <Button
-              className="h-11 w-full rounded-lg bg-orange-600 font-semibold text-white hover:bg-orange-700"
+              className={cn(
+                "h-11 w-full rounded-xl font-semibold text-white shadow-md transition-all duration-300",
+                "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
+                "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
+                "active:scale-[0.98]",
+                "disabled:opacity-70 disabled:cursor-not-allowed"
+              )}
               type="submit"
               disabled={loginMutation.isPending}
             >
@@ -166,7 +184,7 @@ function SignInForm() {
 
 export default function SignInPage() {
   return (
-    <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
+    <Suspense fallback={<div className="p-6 text-center text-gray-500">Loading...</div>}>
       <SignInForm />
     </Suspense>
   );

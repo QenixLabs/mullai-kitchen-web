@@ -16,15 +16,21 @@ export function AuthFooterLinks({
   secondaryHref,
 }: AuthFooterLinksProps) {
   return (
-    <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+    <div className="flex flex-col gap-2 text-sm text-gray-500">
       <p>
         {prompt}{" "}
-        <Link className="font-semibold text-primary transition hover:text-primary/80" href={actionHref}>
+        <Link
+          className="font-semibold text-[#FF6B35] transition-colors hover:text-[#E85A25]"
+          href={actionHref}
+        >
           {actionLabel}
         </Link>
       </p>
       {secondaryLabel && secondaryHref ? (
-        <Link className="text-xs font-medium text-muted-foreground transition hover:text-foreground" href={secondaryHref}>
+        <Link
+          className="text-xs font-medium text-gray-400 transition-colors hover:text-gray-600"
+          href={secondaryHref}
+        >
           {secondaryLabel}
         </Link>
       ) : null}

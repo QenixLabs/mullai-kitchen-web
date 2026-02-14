@@ -10,10 +10,17 @@ interface AuthShellProps {
 
 export function AuthShell({ children, side, className }: AuthShellProps) {
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-b from-amber-50 to-stone-100 p-4 sm:p-8">
+    <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-orange-50 via-amber-50 to-stone-100 p-4 sm:p-8">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -right-40 -top-40 h-80 w-80 rounded-full bg-[#FF6B35]/5 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-orange-200/30 blur-3xl" />
+      </div>
+
       <div
         className={cn(
-          "w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl",
+          "relative w-full max-w-5xl overflow-hidden rounded-3xl bg-white",
+          "shadow-[0_4px_40px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.05)]",
           "grid lg:grid-cols-2",
           className
         )}
@@ -26,9 +33,9 @@ export function AuthShell({ children, side, className }: AuthShellProps) {
         {/* Brand Side - Right */}
         {side ? (
           <aside className="relative hidden lg:block">
-            <div className="absolute inset-0 bg-[linear-gradient(155deg,#f97316_0%,#fb8c1b_62%,#ff6a4d_100%)]">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B35] via-[#FF7A45] to-[#FF8F65]">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_88%,rgba(255,102,102,0.2),transparent_45%)]" />
-              {/* Subtle wave pattern overlay */}
+              {/* Subtle pattern overlay */}
               <div
                 className="absolute inset-0 opacity-10"
                 style={{
