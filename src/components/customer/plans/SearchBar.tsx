@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, X } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,19 +26,18 @@ export function SearchBar({
   disabled = false,
   className,
 }: SearchBarProps) {
-  useEffect(() => {
-    if (!onSearch) {
-      return;
-    }
+  const onSearchRef = useRef(onSearch);
+  onSearchRef.current = onSearch;
 
+  useEffect(() => {
     const timer = window.setTimeout(() => {
-      onSearch(value);
+      onSearchRef.current?.(value);
     }, debounceMs);
 
     return () => {
       window.clearTimeout(timer);
     };
-  }, [debounceMs, onSearch, value]);
+  }, [debounceMs, value]);
 
   return (
     <div className={cn("relative", className)}>
