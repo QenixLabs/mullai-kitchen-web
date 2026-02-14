@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Sparkles, Calendar, UtensilsCrossed } from "lucide-react";
+import { Check, Sparkles, Calendar, UtensilsCrossed, ArrowRight, Clock, Flame } from "lucide-react";
 
 import type { PlanBrowseItem } from "@/api/types/customer.types";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +14,7 @@ interface PlanCardProps {
   onSelectPlan: (plan: PlanBrowseItem) => void;
   isSelected?: boolean;
   className?: string;
+  variant?: "default" | "compact";
 }
 
 const currencyFormatter = new Intl.NumberFormat("en-IN", {
@@ -28,6 +29,7 @@ export function PlanCard({
   onSelectPlan,
   isSelected = false,
   className,
+  variant = "default",
 }: PlanCardProps) {
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -41,7 +43,109 @@ export function PlanCard({
   const isFallback = !plan.image_url || imageLoadFailed;
   const isWeekly = plan.duration.toLowerCase().includes("week");
   const periodLabel = isWeekly ? "week" : "month";
+  const mealsPerDay = plan.meals_included.length;
 
+  // Compact variant for mobile horizontal scroll
+  if (variant === "compact") {
+    return (
+      <article
+        className={cn(
+          "group relative flex w-[280px] flex-col overflow-hidden rounded-2xl bg-white shrink-0",
+          "shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)]",
+          "transition-all duration-300",
+          isSelected && "ring-2 ring-[#FF6B35] ring-offset-2",
+          className
+        )}
+      >
+        {/* Selection indicator */}
+        {isSelected && (
+          <div className="absolute right-2 top-2 z-20 flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-lg">
+            <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} />
+          </div>
+        )}
+
+        {/* Image */}
+        <div className="relative h-32 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+          <img
+            src={imageSrc}
+            alt={plan.name}
+            className={cn(
+              "h-full w-full object-cover transition-transform duration-500",
+              isFallback && "object-contain p-4"
+            )}
+            loading="lazy"
+            onError={() => setImageLoadFailed(true)}
+          />
+
+          {/* Badge */}
+          {plan.badge && (
+            <Badge className="absolute left-3 top-3 z-10 gap-1 border-0 bg-[#FF6B35] px-2 py-1 text-[10px] text-white">
+              <Sparkles className="h-2.5 w-2.5" />
+              {plan.badge}
+            </Badge>
+          )}
+
+          {/* Price on image */}
+          <div className="absolute bottom-2 right-2 z-10 text-right">
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-xl font-bold text-white">
+                {currencyFormatter.format(plan.price)}
+              </span>
+              <span className="text-xs text-white/80">/{periodLabel}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex flex-1 flex-col p-4">
+          <div className="mb-3">
+            <div className="mb-1 flex items-center gap-2">
+              <span className={cn(
+                "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium",
+                isWeekly ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+              )}>
+                <Calendar className="h-2.5 w-2.5" />
+                {isWeekly ? "Weekly" : "Monthly"}
+              </span>
+              <span className="text-[10px] text-gray-400">{mealsPerDay} meals/day</span>
+            </div>
+            <h3 className="text-base font-bold text-gray-900">{plan.name}</h3>
+          </div>
+
+          {/* Meals - horizontal scroll */}
+          <div className="mb-4 flex gap-1.5 overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {plan.meals_included.map((meal) => (
+              <span
+                key={`${plan._id}-${meal}`}
+                className="inline-flex shrink-0 items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-600"
+              >
+                <Check className="h-2.5 w-2.5 text-[#FF6B35]" />
+                {meal}
+              </span>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <Button
+            type="button"
+            className={cn(
+              "mt-auto h-10 rounded-xl font-semibold text-white shadow-md transition-all duration-300",
+              "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
+              "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
+              "active:scale-[0.98]"
+            )}
+            onClick={() => onSelectPlan(plan)}
+          >
+            Get Started
+            <ArrowRight className="ml-1 h-4 w-4" />
+          </Button>
+        </div>
+      </article>
+    );
+  }
+
+  // Default variant - sophisticated card design
   return (
     <article
       className={cn(
@@ -65,14 +169,14 @@ export function PlanCard({
       )}
 
       {/* Image section with gradient overlay */}
-      <div className="relative h-48 overflow-hidden sm:h-56">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+      <div className="relative h-44 overflow-hidden sm:h-52 lg:h-48">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         <img
           src={imageSrc}
           alt={plan.name}
           className={cn(
             "h-full w-full object-cover transition-transform duration-700 ease-out",
-            isHovered && "scale-110",
+            isHovered && "scale-105",
             isFallback && "object-contain p-6"
           )}
           loading="lazy"
@@ -90,7 +194,7 @@ export function PlanCard({
         )}
 
         {/* Plan type indicator */}
-        <div className="absolute bottom-4 left-4 z-10 flex items-center gap-2">
+        <div className="absolute bottom-3 left-3 z-10 flex items-center gap-2">
           <div className={cn(
             "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium backdrop-blur-md",
             isWeekly
@@ -103,11 +207,11 @@ export function PlanCard({
         </div>
 
         {/* Price tag on image */}
-        <div className="absolute bottom-4 right-4 z-10">
-          <div className="flex flex-col items-end">
-            <span className="text-xs font-medium text-white/80">Starting from</span>
+        <div className="absolute bottom-3 right-3 z-10">
+          <div className="flex flex-col items-end rounded-xl bg-black/30 px-3 py-2 backdrop-blur-sm">
+            <span className="text-[10px] font-medium uppercase tracking-wide text-white/70">From</span>
             <div className="flex items-baseline gap-0.5">
-              <span className="text-3xl font-bold text-white">
+              <span className="text-2xl font-bold text-white sm:text-3xl">
                 {currencyFormatter.format(plan.price)}
               </span>
               <span className="text-sm font-medium text-white/80">/{periodLabel}</span>
@@ -117,10 +221,10 @@ export function PlanCard({
       </div>
 
       {/* Content section */}
-      <div className="flex flex-1 flex-col p-5">
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
         {/* Title and description */}
-        <div className="mb-4">
-          <h3 className="mb-1.5 text-xl font-bold tracking-tight text-gray-900">
+        <div className="mb-3 sm:mb-4">
+          <h3 className="mb-1 text-lg font-bold tracking-tight text-gray-900 sm:text-xl">
             {plan.name}
           </h3>
           {plan.description && (
@@ -130,21 +234,33 @@ export function PlanCard({
           )}
         </div>
 
+        {/* Quick stats */}
+        <div className="mb-4 flex items-center gap-4 text-xs text-gray-500">
+          <div className="flex items-center gap-1.5">
+            <Clock className="h-3.5 w-3.5 text-[#FF6B35]" />
+            <span>{isWeekly ? "7 days" : "30 days"}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Flame className="h-3.5 w-3.5 text-[#FF6B35]" />
+            <span>{mealsPerDay} meals/day</span>
+          </div>
+        </div>
+
         {/* Meals included */}
-        <div className="mb-5 flex-1">
-          <div className="mb-2.5 flex items-center gap-2">
+        <div className="mb-4 flex-1 sm:mb-5">
+          <div className="mb-2 flex items-center gap-2">
             <UtensilsCrossed className="h-4 w-4 text-[#FF6B35]" />
-            <span className="text-sm font-semibold text-gray-700">Meals Included</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-gray-600 sm:text-sm">Meals Included</span>
           </div>
           {plan.meals_included.length > 0 ? (
-            <ul className="grid grid-cols-2 gap-2" aria-label={`Meals in ${plan.name}`}>
+            <ul className="grid grid-cols-2 gap-1.5 sm:gap-2" aria-label={`Meals in ${plan.name}`}>
               {plan.meals_included.map((meal) => (
                 <li
                   key={`${plan._id}-${meal}`}
-                  className="flex items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-700 transition-colors group-hover:bg-orange-50"
+                  className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-2.5 py-1.5 text-xs text-gray-700 transition-colors group-hover:bg-orange-50 sm:px-3 sm:py-2 sm:text-sm"
                 >
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF6B35]/10">
-                    <Check className="h-3 w-3 text-[#FF6B35]" strokeWidth={3} />
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#FF6B35]/10 sm:h-5 sm:w-5">
+                    <Check className="h-2.5 w-2.5 text-[#FF6B35] sm:h-3 sm:w-3" strokeWidth={3} />
                   </span>
                   <span className="font-medium">{meal}</span>
                 </li>
@@ -156,11 +272,11 @@ export function PlanCard({
         </div>
 
         {/* Action buttons */}
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-2 sm:gap-2.5">
           <Button
             type="button"
             className={cn(
-              "relative h-11 overflow-hidden rounded-xl font-semibold text-white shadow-md transition-all duration-300",
+              "relative h-10 overflow-hidden rounded-xl font-semibold text-white shadow-md transition-all duration-300 sm:h-11",
               "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
               "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
               "active:scale-[0.98]",
@@ -171,17 +287,12 @@ export function PlanCard({
           >
             <span className="relative z-10 flex items-center justify-center gap-2">
               Get Started Now
-              <svg
+              <ArrowRight
                 className={cn(
                   "h-4 w-4 transition-transform duration-300",
                   isHovered && "translate-x-1"
                 )}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
+              />
             </span>
           </Button>
 
@@ -189,7 +300,7 @@ export function PlanCard({
             type="button"
             variant="outline"
             className={cn(
-              "h-10 rounded-xl font-medium transition-all duration-300",
+              "h-9 rounded-xl font-medium transition-all duration-300 sm:h-10",
               "border-2 border-gray-200 bg-white text-gray-600",
               "hover:border-[#FF6B35]/30 hover:bg-orange-50 hover:text-[#FF6B35]",
               "active:scale-[0.98]"

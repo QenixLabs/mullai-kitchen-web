@@ -4,7 +4,8 @@ import type { PlanBrowseItem } from "@/api/types/customer.types";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 
-import { PlanCard } from "@/components/customer/plans/PlanCard";
+import { PlanCard } from "./PlanCard";
+import { SearchX, Loader2 } from "lucide-react";
 
 interface PlanGridProps {
   plans: PlanBrowseItem[];
@@ -20,15 +21,28 @@ interface PlanGridProps {
 
 // Hoisted loading skeleton - prevents recreation on every render
 const PlanLoadingSkeleton = ({ count, className }: { count: number; className?: string }) => (
-  <div className={cn("grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3", className)} aria-label="Loading plans">
-    {Array.from({ length: count }).map((_, index) => (
-      <div
-        key={index}
-        className="h-[27rem] animate-pulse rounded-2xl border border-orange-100 bg-white"
-        aria-hidden="true"
-      />
-    ))}
-  </div>
+  <>
+    {/* Mobile: Horizontal scroll skeletons */}
+    <div className={cn("flex gap-4 overflow-x-auto pb-4 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:hidden", className)}>
+      {Array.from({ length: count }).map((_, index) => (
+        <div
+          key={index}
+          className="h-[340px] w-[280px] shrink-0 animate-pulse rounded-2xl border border-orange-100 bg-white"
+          aria-hidden="true"
+        />
+      ))}
+    </div>
+    {/* Desktop: Grid skeletons */}
+    <div className={cn("hidden grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 sm:grid", className)} aria-label="Loading plans">
+      {Array.from({ length: count }).map((_, index) => (
+        <div
+          key={index}
+          className="h-[26rem] animate-pulse rounded-2xl border border-orange-100 bg-white"
+          aria-hidden="true"
+        />
+      ))}
+    </div>
+  </>
 );
 
 // Hoisted error alert - prevents recreation on every render
@@ -41,11 +55,21 @@ const PlanErrorAlert = ({ message, className }: { message?: string; className?: 
 
 // Hoisted empty state - prevents recreation on every render
 const NoPlansFound = ({ className }: { className?: string }) => (
-  <div className={cn("rounded-2xl border border-dashed border-orange-200 bg-orange-50/40 p-10 text-center", className)}>
+  <div className={cn("flex flex-col items-center justify-center rounded-2xl border border-dashed border-orange-200 bg-orange-50/40 p-10 text-center", className)}>
+    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
+      <SearchX className="h-8 w-8 text-orange-500" />
+    </div>
     <h3 className="text-lg font-semibold text-gray-900">No plans found</h3>
-    <p className="mt-2 text-sm text-gray-600">
-      Try adjusting your filters or search term to see more meal plans.
+    <p className="mt-2 max-w-sm text-sm text-gray-600">
+      Try adjusting your search or check back later for new meal plans.
     </p>
+  </div>
+);
+
+// Loading spinner for inline loading states
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center py-12">
+    <Loader2 className="h-8 w-8 animate-spin text-[#FF6B35]" />
   </div>
 );
 
@@ -73,16 +97,49 @@ export function PlanGrid({
   }
 
   return (
-    <div className={cn("grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3", className)}>
-      {plans.map((plan) => (
-        <PlanCard
-          key={plan._id}
-          plan={plan}
-          onViewMenu={onViewMenu}
-          onSelectPlan={onSelectPlan}
-          isSelected={selectedPlanId === plan._id}
-        />
-      ))}
+    <div className={cn("space-y-4", className)}>
+      {/* Mobile: Horizontal scroll view */}
+      <div className="flex gap-4 overflow-x-auto pb-4 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:hidden">
+        {plans.map((plan) => (
+          <PlanCard
+            key={plan._id}
+            plan={plan}
+            onViewMenu={onViewMenu}
+            onSelectPlan={onSelectPlan}
+            isSelected={selectedPlanId === plan._id}
+            variant="compact"
+          />
+        ))}
+      </div>
+
+      {/* Scroll indicator for mobile */}
+      {plans.length > 1 && (
+        <div className="flex items-center justify-center gap-1.5 sm:hidden">
+          {plans.map((_, index) => (
+            <div
+              key={index}
+              className={cn(
+                "h-1.5 rounded-full transition-all duration-300",
+                index === 0 ? "w-4 bg-[#FF6B35]" : "w-1.5 bg-gray-300"
+              )}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Tablet & Desktop: Grid view */}
+      <div className="hidden grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 sm:grid">
+        {plans.map((plan) => (
+          <PlanCard
+            key={plan._id}
+            plan={plan}
+            onViewMenu={onViewMenu}
+            onSelectPlan={onSelectPlan}
+            isSelected={selectedPlanId === plan._id}
+            variant="default"
+          />
+        ))}
+      </div>
     </div>
   );
 }

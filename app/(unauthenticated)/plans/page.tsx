@@ -22,7 +22,7 @@ import { LocalFavoritesSection } from "@/components/customer/plans/LocalFavorite
 import { MenuPreviewSheet } from "@/components/customer/plans/MenuPreviewSheet";
 import { PlanGrid } from "@/components/customer/plans/PlanGrid";
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ChevronRight } from "lucide-react";
 import { createPlanIntentStore } from "@/stores/plan-intent-store";
 
 const normalizePincode = (value: string | null): string | null => {
@@ -163,23 +163,31 @@ function PlansContent() {
         <HowItWorksSection className="mb-12" />
 
         {/* Plans Section */}
-        <section className="mb-12">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
+        <section className="mb-8 sm:mb-12">
+          <div className="mb-5 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
             <div>
-              <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-orange-600">
-                <Sparkles className="h-3.5 w-3.5" />
+              <p className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#FF6B35] sm:text-xs">
+                <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 Curated Plans
               </p>
-              <h2 className="mt-1 text-2xl font-black tracking-tight text-gray-900 sm:text-3xl">
+              <h2 className="mt-1 text-xl font-black tracking-tight text-gray-900 sm:text-2xl lg:text-3xl">
                 Select Your Subscription
               </h2>
-              <p className="mt-2 text-base text-gray-600">
+              <p className="mt-1 text-sm text-gray-600 sm:mt-2 sm:text-base">
                 Flexible plans for every appetite and lifestyle.
               </p>
             </div>
-            <p className="rounded-full border border-orange-100 bg-orange-50 px-4 py-2 text-sm font-medium text-gray-700">
-              {plans.length} plan{plans.length !== 1 ? "s" : ""} available
-            </p>
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-100 bg-orange-50 px-3 py-1.5 text-xs font-medium text-gray-700 sm:px-4 sm:py-2 sm:text-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#FF6B35]" />
+                {plans.length} plan{plans.length !== 1 ? "s" : ""} available
+              </span>
+              {/* Swipe hint for mobile */}
+              <span className="flex items-center gap-1 text-xs text-gray-400 sm:hidden">
+                Swipe to browse
+                <ChevronRight className="h-3 w-3" />
+              </span>
+            </div>
           </div>
 
           <PlanGrid
@@ -194,7 +202,7 @@ function PlansContent() {
                 : undefined
             }
             selectedPlanId={selectedPlanId}
-            className="xl:grid-cols-3"
+            className=""
           />
         </section>
 
