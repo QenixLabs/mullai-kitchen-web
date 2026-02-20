@@ -22,7 +22,7 @@ import { LocalFavoritesSection } from "@/components/customer/plans/LocalFavorite
 import { MenuPreviewSheet } from "@/components/customer/plans/MenuPreviewSheet";
 import { PlanGrid } from "@/components/customer/plans/PlanGrid";
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
-import { Sparkles, ChevronRight } from "lucide-react";
+import { Sparkles, ChevronRight, Leaf, Drumstick, UtensilsCrossed } from "lucide-react";
 import { createPlanIntentStore } from "@/stores/plan-intent-store";
 
 const normalizePincode = (value: string | null): string | null => {
@@ -66,6 +66,14 @@ function PlansContent() {
   const [menuPlan, setMenuPlan] = useState<PlanBrowseItem | null>(null);
   const [isMenuSheetOpen, setIsMenuSheetOpen] = useState(false);
 
+  // Filter state
+  type DietFilter = "all" | "veg" | "non-veg";
+  type MealTypeFilter = "Breakfast" | "Lunch" | "Dinner";
+  const MEAL_TYPES: MealTypeFilter[] = ["Breakfast", "Lunch", "Dinner"];
+
+  const [dietFilter, setDietFilter] = useState<DietFilter>("all");
+  const [mealTypeFilters, setMealTypeFilters] = useState<Set<MealTypeFilter>>(new Set());
+
   const syncUrlState = useCallback(
     (nextState: {
       pincode?: string | null;
@@ -104,6 +112,30 @@ function PlansContent() {
     () => plansQuery.data?.plans ?? [],
     [plansQuery.data?.plans],
   );
+
+  const toggleMealType = (type: MealTypeFilter) => {
+    setMealTypeFilters((prev) => {
+      const next = new Set(prev);
+      if (next.has(type)) next.delete(type);
+      else next.add(type);
+      return next;
+    });
+  };
+
+  const filteredPlans = useMemo(() => {
+    let result = plans;
+
+    // Meal type filter: keep plans that include ALL selected meal types
+    if (mealTypeFilters.size > 0) {
+      result = result.filter((plan) =>
+        Array.from(mealTypeFilters).every((mt) =>
+          plan.meals_included.map((m) => m.toLowerCase()).includes(mt.toLowerCase())
+        )
+      );
+    }
+
+    return result;
+  }, [plans, mealTypeFilters]);
   const selectedPlanId = useStore(planIntentStore, (store) => store.planId);
 
   const handlePincodeCheck = async (
@@ -164,7 +196,7 @@ function PlansContent() {
 
         {/* Plans Section */}
         <section className="mb-8 sm:mb-12">
-          <div className="mb-5 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+          <div className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
             <div>
               <p className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#FF6B35] sm:text-xs">
                 <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
@@ -180,7 +212,7 @@ function PlansContent() {
             <div className="flex items-center gap-3">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-100 bg-orange-50 px-3 py-1.5 text-xs font-medium text-gray-700 sm:px-4 sm:py-2 sm:text-sm">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#FF6B35]" />
-                {plans.length} plan{plans.length !== 1 ? "s" : ""} available
+                {filteredPlans.length} plan{filteredPlans.length !== 1 ? "s" : ""} available
               </span>
               {/* Swipe hint for mobile */}
               <span className="flex items-center gap-1 text-xs text-gray-400 sm:hidden">
@@ -190,8 +222,106 @@ function PlansContent() {
             </div>
           </div>
 
+          {/* ── Filter Bar ── */}
+          <div className="mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
+            {/* Veg / Non-Veg toggle */}
+            <div className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white p-1 shadow-sm">
+              <button
+                id="filter-diet-all"
+                onClick={() => setDietFilter("all")}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                  dietFilter === "all"
+                    ? "bg-gray-900 text-white shadow-sm"
+                    : "text-gray-500 hover:text-gray-800"
+                }`}
+              >
+                All
+              </button>
+              <button
+                id="filter-diet-veg"
+                onClick={() => setDietFilter("veg")}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                  dietFilter === "veg"
+                    ? "bg-green-600 text-white shadow-sm"
+                    : "text-gray-500 hover:text-green-700"
+                }`}
+              >
+                <Leaf className="h-3 w-3" />
+                Veg
+              </button>
+              <button
+                id="filter-diet-nonveg"
+                onClick={() => setDietFilter("non-veg")}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                  dietFilter === "non-veg"
+                    ? "bg-red-500 text-white shadow-sm"
+                    : "text-gray-500 hover:text-red-600"
+                }`}
+              >
+                <Drumstick className="h-3 w-3" />
+                Non-Veg
+              </button>
+            </div>
+
+            {/* Divider */}
+            <div className="h-6 w-px bg-gray-200" />
+
+            {/* Meal Type chips */}
+            <div className="flex items-center gap-1.5">
+              <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                <UtensilsCrossed className="h-3 w-3" />
+                Meal
+              </span>
+              {MEAL_TYPES.map((type) => {
+                const isActive = mealTypeFilters.has(type);
+                const colorMap: Record<string, string> = {
+                  Breakfast: isActive
+                    ? "bg-amber-500 text-white border-amber-500"
+                    : "border-amber-200 text-amber-700 hover:bg-amber-50",
+                  Lunch: isActive
+                    ? "bg-[#FF6B35] text-white border-[#FF6B35]"
+                    : "border-orange-200 text-orange-700 hover:bg-orange-50",
+                  Dinner: isActive
+                    ? "bg-indigo-600 text-white border-indigo-600"
+                    : "border-indigo-200 text-indigo-700 hover:bg-indigo-50",
+                };
+                return (
+                  <button
+                    key={type}
+                    id={`filter-meal-${type.toLowerCase()}`}
+                    onClick={() => toggleMealType(type)}
+                    className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                      colorMap[type]
+                    }`}
+                  >
+                    {isActive && (
+                      <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-white/25 text-[9px] font-bold">
+                        ✓
+                      </span>
+                    )}
+                    {type}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Clear filters */}
+            {(dietFilter !== "all" || mealTypeFilters.size > 0) && (
+              <button
+                id="filter-clear"
+                onClick={() => {
+                  setDietFilter("all");
+                  setMealTypeFilters(new Set());
+                }}
+                className="ml-auto text-xs font-medium text-gray-400 underline-offset-2 hover:text-[#FF6B35] hover:underline"
+              >
+                Clear filters
+              </button>
+            )}
+          </div>
+
           <PlanGrid
-            plans={plans}
+            plans={filteredPlans}
             onViewMenu={handleViewMenu}
             onSelectPlan={handleSelectPlan}
             isLoading={plansQuery.isLoading}
