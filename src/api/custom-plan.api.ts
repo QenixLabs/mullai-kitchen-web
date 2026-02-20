@@ -1,6 +1,5 @@
 import { apiClient } from "@/api/client";
 import { CUSTOMER_ROUTES } from "@/api/routes";
-import type { ApiResponse } from "@/api/types/api-response.types";
 import type {
   CreateCustomPlanDto,
   CustomPlanResponse,
@@ -10,44 +9,46 @@ import type {
 } from "@/api/types/customer.types";
 
 export const customPlanApi = {
-  create: async (payload: CreateCustomPlanDto): Promise<{ data: CustomPlanResponse }> => {
-    const response = await apiClient.post<ApiResponse<{ data: CustomPlanResponse }>>(
+  create: async (payload: CreateCustomPlanDto): Promise<CustomPlanResponse> => {
+    const response = await apiClient.post<CustomPlanResponse>(
       CUSTOMER_ROUTES.CUSTOM_PLANS,
-      payload
+      payload,
     );
-    return response.data.data;
+    return response.data;
   },
 
-  list: async (params?: QueryCustomPlans): Promise<PaginatedCustomPlansResponse> => {
-    const response = await apiClient.get<ApiResponse<PaginatedCustomPlansResponse>>(
+  list: async (
+    params?: QueryCustomPlans,
+  ): Promise<PaginatedCustomPlansResponse> => {
+    const response = await apiClient.get<PaginatedCustomPlansResponse>(
       CUSTOMER_ROUTES.CUSTOM_PLANS,
-      { params }
+      { params },
     );
-    return response.data.data;
+    return response.data;
   },
 
-  getById: async (planId: string): Promise<{ data: CustomPlanResponse }> => {
-    const response = await apiClient.get<ApiResponse<{ data: CustomPlanResponse }>>(
-      CUSTOMER_ROUTES.CUSTOM_PLAN(planId)
+  getById: async (planId: string): Promise<CustomPlanResponse> => {
+    const response = await apiClient.get<CustomPlanResponse>(
+      CUSTOMER_ROUTES.CUSTOM_PLAN(planId),
     );
-    return response.data.data;
+    return response.data;
   },
 
   update: async (
     planId: string,
-    payload: UpdateCustomPlanDto
-  ): Promise<{ data: CustomPlanResponse }> => {
-    const response = await apiClient.patch<ApiResponse<{ data: CustomPlanResponse }>>(
+    payload: UpdateCustomPlanDto,
+  ): Promise<CustomPlanResponse> => {
+    const response = await apiClient.patch<CustomPlanResponse>(
       CUSTOMER_ROUTES.CUSTOM_PLAN(planId),
-      payload
+      payload,
     );
-    return response.data.data;
+    return response.data;
   },
 
-  delete: async (planId: string): Promise<{ success: boolean }> => {
-    const response = await apiClient.delete<ApiResponse<{ success: boolean }>>(
-      CUSTOMER_ROUTES.CUSTOM_PLAN(planId)
+  delete: async (planId: string): Promise<boolean> => {
+    const response = await apiClient.delete<{ success: boolean }>(
+      CUSTOMER_ROUTES.CUSTOM_PLAN(planId),
     );
-    return response.data.data;
+    return response.data.success;
   },
 };

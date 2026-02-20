@@ -21,8 +21,17 @@ import { HowItWorksSection } from "@/components/customer/plans/HowItWorksSection
 import { LocalFavoritesSection } from "@/components/customer/plans/LocalFavoritesSection";
 import { MenuPreviewSheet } from "@/components/customer/plans/MenuPreviewSheet";
 import { PlanGrid } from "@/components/customer/plans/PlanGrid";
+import { CustomPlanBuilderDialog } from "@/components/customer/plans/CustomPlanBuilderDialog";
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
-import { Sparkles, ChevronRight, Leaf, Drumstick, UtensilsCrossed } from "lucide-react";
+import {
+  Sparkles,
+  ChevronRight,
+  Leaf,
+  Drumstick,
+  UtensilsCrossed,
+  PenLine,
+  ArrowRight,
+} from "lucide-react";
 import { createPlanIntentStore } from "@/stores/plan-intent-store";
 
 const normalizePincode = (value: string | null): string | null => {
@@ -65,6 +74,7 @@ function PlansContent() {
   );
   const [menuPlan, setMenuPlan] = useState<PlanBrowseItem | null>(null);
   const [isMenuSheetOpen, setIsMenuSheetOpen] = useState(false);
+  const [isCustomPlanOpen, setIsCustomPlanOpen] = useState(false);
 
   // Filter state
   type DietFilter = "all" | "veg" | "non-veg";
@@ -72,12 +82,12 @@ function PlansContent() {
   const MEAL_TYPES: MealTypeFilter[] = ["Breakfast", "Lunch", "Dinner"];
 
   const [dietFilter, setDietFilter] = useState<DietFilter>("all");
-  const [mealTypeFilters, setMealTypeFilters] = useState<Set<MealTypeFilter>>(new Set());
+  const [mealTypeFilters, setMealTypeFilters] = useState<Set<MealTypeFilter>>(
+    new Set(),
+  );
 
   const syncUrlState = useCallback(
-    (nextState: {
-      pincode?: string | null;
-    }) => {
+    (nextState: { pincode?: string | null }) => {
       const params = new URLSearchParams(searchParams.toString());
 
       if (nextState.pincode !== undefined) {
@@ -129,8 +139,10 @@ function PlansContent() {
     if (mealTypeFilters.size > 0) {
       result = result.filter((plan) =>
         Array.from(mealTypeFilters).every((mt) =>
-          plan.meals_included.map((m) => m.toLowerCase()).includes(mt.toLowerCase())
-        )
+          plan.meals_included
+            .map((m) => m.toLowerCase())
+            .includes(mt.toLowerCase()),
+        ),
       );
     }
 
@@ -178,6 +190,28 @@ function PlansContent() {
     router.push(isSignedIn ? "/checkout" : "/auth/signin?redirect=/checkout");
   };
 
+  const handleCustomPlanClick = () => {
+    const isSignedIn = hasHydrated && isAuthenticated;
+    if (!isSignedIn) {
+      const currentSearch = searchParams.toString();
+      const from =
+        currentSearch.length > 0 ? `/plans?${currentSearch}` : "/plans";
+      router.push(`/auth/signin?redirect=${encodeURIComponent(from)}`);
+      return;
+    }
+    setIsCustomPlanOpen(true);
+  };
+
+  const handleCustomPlanCreated = (plan: PlanBrowseItem) => {
+    setPlanIntent(plan._id, plan);
+    setCheckedPincode(checkedPincodeState);
+    const currentSearch = searchParams.toString();
+    setSourceRoute(
+      currentSearch.length > 0 ? `/plans?${currentSearch}` : "/plans",
+    );
+    router.push("/checkout");
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -212,7 +246,8 @@ function PlansContent() {
             <div className="flex items-center gap-3">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-100 bg-orange-50 px-3 py-1.5 text-xs font-medium text-gray-700 sm:px-4 sm:py-2 sm:text-sm">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#FF6B35]" />
-                {filteredPlans.length} plan{filteredPlans.length !== 1 ? "s" : ""} available
+                {filteredPlans.length} plan
+                {filteredPlans.length !== 1 ? "s" : ""} available
               </span>
               {/* Swipe hint for mobile */}
               <span className="flex items-center gap-1 text-xs text-gray-400 sm:hidden">
@@ -320,6 +355,41 @@ function PlansContent() {
             )}
           </div>
 
+          {/* ── Build Your Own Plan Banner ── */}
+          <div className="mb-8 overflow-hidden rounded-2xl border border-orange-100 bg-orange-50 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(255,107,53,0.08)]">
+            <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:gap-6 sm:p-6">
+              {/* Icon */}
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#FF6B35] shadow-md shadow-orange-200">
+                <PenLine className="h-5 w-5 text-white" />
+              </div>
+
+              {/* Text */}
+              <div className="flex-1">
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#FF6B35]">
+                  Fully Customisable
+                </p>
+                <h3 className="mt-0.5 text-base font-black text-gray-900 sm:text-lg">
+                  Build Your Own Plan
+                </h3>
+                <p className="mt-0.5 text-sm text-gray-500">
+                  Choose your meals, duration, and diet — we&apos;ll price it
+                  just for you.
+                </p>
+              </div>
+
+              {/* CTA */}
+              <button
+                id="custom-plan-cta"
+                onClick={handleCustomPlanClick}
+                className="group inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#FF6B35] px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-orange-200/60 transition-all duration-300 hover:bg-[#E85A25] hover:shadow-lg hover:shadow-orange-200/80 active:scale-[0.97]"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Get Started
+                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+              </button>
+            </div>
+          </div>
+
           <PlanGrid
             plans={filteredPlans}
             onViewMenu={handleViewMenu}
@@ -355,6 +425,14 @@ function PlansContent() {
           onRetry={() => {
             void menuPreviewQuery.refetch();
           }}
+        />
+
+        {/* Custom Plan Builder Dialog */}
+        <CustomPlanBuilderDialog
+          open={isCustomPlanOpen}
+          onOpenChange={setIsCustomPlanOpen}
+          onPlanCreated={handleCustomPlanCreated}
+          checkedPincode={checkedPincodeState}
         />
       </main>
 

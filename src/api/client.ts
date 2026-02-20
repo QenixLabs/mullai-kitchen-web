@@ -15,6 +15,14 @@ export interface ApiError {
   statusCode: number;
 }
 
+// Callback to notify when auth state changes
+export type AuthStateCallback = (session: IAuthSession | null) => void;
+let authStateCallback: AuthStateCallback | null = null;
+
+export function setAuthStateCallback(callback: AuthStateCallback | null) {
+  authStateCallback = callback;
+}
+
 export const apiClient = axios.create({
   baseURL: getApiBaseUrl(),
   timeout: 15000,
@@ -25,9 +33,16 @@ export const apiClient = axios.create({
 
 type RetryableRequestConfig = InternalAxiosRequestConfig & {
   _retry?: boolean;
+  _refreshAttempted?: boolean;
 };
 
 let refreshAccessTokenPromise: Promise<string | null> | null = null;
+
+const notifyAuthStateChange = (session: IAuthSession | null) => {
+  if (authStateCallback) {
+    authStateCallback(session);
+  }
+};
 
 const refreshAccessToken = async (): Promise<string | null> => {
   if (refreshAccessTokenPromise) {
@@ -37,11 +52,12 @@ const refreshAccessToken = async (): Promise<string | null> => {
   const refreshToken = getRefreshToken();
   if (!refreshToken) {
     clearTokenPair();
+    notifyAuthStateChange(null);
     return null;
   }
 
   refreshAccessTokenPromise = axios
-    .post<ApiResponse<IAuthSession>>(
+    .post<IAuthSession>(
       `${getApiBaseUrl()}${AUTH_ROUTES.REFRESH}`,
       { refresh_token: refreshToken },
       {
@@ -50,18 +66,21 @@ const refreshAccessToken = async (): Promise<string | null> => {
       },
     )
     .then((response) => {
-      const session = response.data.data;
+      const session = response.data;
 
       if (!session?.access_token || !session?.refresh_token) {
         clearTokenPair();
+        notifyAuthStateChange(null);
         return null;
       }
 
       setTokenPair(session.access_token, session.refresh_token);
+      notifyAuthStateChange(session);
       return session.access_token;
     })
     .catch(() => {
       clearTokenPair();
+      notifyAuthStateChange(null);
       return null;
     })
     .finally(() => {
@@ -70,6 +89,19 @@ const refreshAccessToken = async (): Promise<string | null> => {
 
   return refreshAccessTokenPromise;
 };
+
+// Extract error message from various response structures
+function getErrorMessage(error: any): string | undefined {
+  if (!error) return undefined;
+
+  // Try different structures:
+  // 1. { message, data, success } - error response from backend
+  if (error.message) return error.message;
+  if (error.data?.message) return error.data.message;
+
+  // 2. Direct message on error object
+  return undefined;
+}
 
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = getAccessToken();
@@ -82,23 +114,37 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 });
 
 apiClient.interceptors.response.use(
-  (response: AxiosResponse) => response,
-  async (error: AxiosError<{ message?: string; statusCode?: number }>) => {
+  (response: AxiosResponse) => {
+    // If backend returns { data, success, message }, unwrap the inner data
+    // Otherwise, return as-is (backend already returns direct data)
+    const responseData = response.data as any;
+    if (responseData && typeof responseData === 'object' && 'data' in responseData) {
+      return { ...response, data: responseData.data };
+    }
+    return response;
+  },
+  async (error: AxiosError) => {
     const originalRequest = error.config as RetryableRequestConfig | undefined;
-    const responseMessage = error.response?.data?.message;
+    const responseMessage = getErrorMessage(error.response?.data);
     const isRefreshRequest = originalRequest?.url?.includes(AUTH_ROUTES.REFRESH) ?? false;
-    const isAuthFailure =
-      error.response?.status === 401 &&
-      (responseMessage === "Invalid token" || responseMessage === "Token expired");
+    const isAuthFailure = error.response?.status === 401 && !isRefreshRequest;
 
-    if (originalRequest && !originalRequest._retry && !isRefreshRequest && isAuthFailure) {
+    if (originalRequest && !originalRequest._retry && isAuthFailure) {
       originalRequest._retry = true;
+      originalRequest._refreshAttempted = true;
 
       const newAccessToken = await refreshAccessToken();
+
       if (newAccessToken) {
         originalRequest.headers = originalRequest.headers ?? {};
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return apiClient.request(originalRequest);
+      } else {
+        // Refresh failed - clear tokens and redirect to login
+        notifyAuthStateChange(null);
+        if (typeof window !== 'undefined') {
+          window.location.href = '/auth/signin';
+        }
       }
     }
 
