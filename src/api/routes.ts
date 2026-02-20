@@ -19,4 +19,6 @@ export const CUSTOMER_ROUTES = {
   CHECKOUT_CREATE_ORDER: "/customer/checkout/create-order",
   ADDRESSES: "/customer/addresses",
   PROFILE: "/customer/profile",
+  CUSTOM_PLANS: "/customer/custom-plans",
+  CUSTOM_PLAN: (planId: string) => `/customer/custom-plans/${planId}`,
 } as const;

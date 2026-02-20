@@ -9,6 +9,8 @@ export const customerKeys = {
   menuPreview: (planId: string) => ["customer", "menu-preview", planId] as const,
   serviceability: () => ["customer", "serviceability"] as const,
   checkoutPreview: () => ["customer", "checkout-preview"] as const,
+  customPlans: (params?: unknown) => ["customer", "custom-plans", params] as const,
+  customPlan: (planId: string) => ["customer", "custom-plan", planId] as const,
 };
 
 export const addressKeys = {
