@@ -1,4 +1,8 @@
-export type AddressType = 'Home' | 'Office';
+// ===========================================
+// Address Types
+// ===========================================
+
+export type AddressType = 'HOME' | 'OFFICE' | 'OTHER';
 
 export interface Address {
   _id: string;
@@ -35,6 +39,31 @@ export interface UpdateProfileDto {
   emergency_contact_phone?: string;
 }
 
+// ===========================================
+// Serviceability & Checkout Types
+// ===========================================
+
+export interface ServiceabilityInfo {
+  is_serviceable: boolean;
+  outlet?: {
+    id: string;
+    name?: string;
+  };
+  message?: string;
+}
+
+export interface ServiceabilityResponse {
+  isServiceable: boolean;
+  outlet: {
+    _id: string;
+    [key: string]: unknown;
+  } | null;
+}
+
+// ===========================================
+// Plan Types
+// ===========================================
+
 export interface QueryCustomerPlans {
   page?: number;
   limit?: number;
@@ -57,15 +86,6 @@ export interface PlanBrowseItem {
   badge?: string;
 }
 
-export interface ServiceabilityInfo {
-  is_serviceable: boolean;
-  outlet?: {
-    id: string;
-    name?: string;
-  };
-  message?: string;
-}
-
 export interface PaginatedPlanResponse {
   plans: PlanBrowseItem[];
   pagination: {
@@ -79,15 +99,9 @@ export interface PaginatedPlanResponse {
   serviceability?: ServiceabilityInfo;
 }
 
-export interface MenuPreviewResponse {
-  plan_id: string;
-  menu: MenuPreviewDay[];
-}
-
-export interface MenuPreviewDay {
-  day: string;
-  meals: MenuPreviewMeal[];
-}
+// ===========================================
+// Menu Types
+// ===========================================
 
 export interface MenuPreviewMeal {
   meal_type: string;
@@ -95,15 +109,19 @@ export interface MenuPreviewMeal {
   recipe_name: string;
 }
 
-export interface OutletResponse {
-  _id: string;
-  [key: string]: unknown;
+export interface MenuPreviewDay {
+  day: string;
+  meals: MenuPreviewMeal[];
 }
 
-export interface ServiceabilityResponse {
-  isServiceable: boolean;
-  outlet: OutletResponse | null;
+export interface MenuPreviewResponse {
+  plan_id: string;
+  menu: MenuPreviewDay[];
 }
+
+// ===========================================
+// Checkout Types
+// ===========================================
 
 export interface CheckoutPreviewResponse {
   plan: {
