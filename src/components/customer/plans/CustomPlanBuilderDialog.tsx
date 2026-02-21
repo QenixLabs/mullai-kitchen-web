@@ -6,13 +6,10 @@ import {
   Drumstick,
   CalendarDays,
   UtensilsCrossed,
-  ArrowLeft,
-  ArrowRight,
   Check,
-  Sparkles,
   MapPin,
   Loader2,
-  ChefHat,
+  Sparkles,
 } from "lucide-react";
 
 import {
@@ -22,7 +19,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useCreateCustomPlan } from "@/api/hooks/useCustomPlans";
 import { useAddresses } from "@/api/hooks/useOnboarding";
@@ -38,12 +34,10 @@ type MealType = "Breakfast" | "Lunch" | "Dinner";
 
 const MEAL_TYPES: MealType[] = ["Breakfast", "Lunch", "Dinner"];
 const DURATION_OPTIONS = [7, 14, 28, 30];
-
 const STEP_COUNT = 4;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/** Maps a CustomPlanResponse to the PlanBrowseItem shape used by the intent store */
 function adaptCustomPlan(cp: CustomPlanResponse): PlanBrowseItem {
   return {
     _id: cp._id,
@@ -56,37 +50,11 @@ function adaptCustomPlan(cp: CustomPlanResponse): PlanBrowseItem {
   };
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function StepIndicator({ current, total }: { current: number; total: number }) {
-  return (
-    <div className="flex items-center gap-2 mb-6">
-      {Array.from({ length: total }).map((_, i) => (
-        <div
-          key={i}
-          className={cn(
-            "h-1.5 rounded-full flex-1 transition-all duration-500",
-            i < current
-              ? "bg-[#FF6B35]"
-              : i === current
-                ? "bg-[#FF6B35]/60"
-                : "bg-gray-200",
-          )}
-        />
-      ))}
-      <span className="text-xs text-gray-400 shrink-0">
-        {current + 1}/{total}
-      </span>
-    </div>
-  );
-}
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 interface CustomPlanBuilderDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Called with the adapted PlanBrowseItem after successful creation */
   onPlanCreated: (plan: PlanBrowseItem) => void;
   checkedPincode?: string | null;
 }
@@ -159,191 +127,178 @@ export function CustomPlanBuilderDialog({
       });
 
       const adapted = adaptCustomPlan(result);
-      // Close the dialog FIRST, then reset, then navigate.
-      // Calling handleReset() before onOpenChange(false) triggers a
-      // re-render that races with the close signal and keeps the dialog open.
       onOpenChange(false);
       handleReset();
       onPlanCreated(adapted);
     } catch (err) {
-      // Error is surfaced via createCustomPlan.isError / createCustomPlan.error
       console.error("Failed to create custom plan:", err);
     }
   }
 
-  const mealColorMap: Record<
-    MealType,
-    { active: string; inactive: string; dot: string }
-  > = {
-    Breakfast: {
-      active: "bg-amber-500 text-white border-amber-500 shadow-amber-200",
-      inactive: "border-amber-200 text-amber-700 hover:bg-amber-50",
-      dot: "bg-amber-500",
-    },
-    Lunch: {
-      active: "bg-[#FF6B35] text-white border-[#FF6B35] shadow-orange-200",
-      inactive: "border-orange-200 text-orange-700 hover:bg-orange-50",
-      dot: "bg-[#FF6B35]",
-    },
-    Dinner: {
-      active: "bg-indigo-600 text-white border-indigo-600 shadow-indigo-200",
-      inactive: "border-indigo-200 text-indigo-700 hover:bg-indigo-50",
-      dot: "bg-indigo-600",
-    },
-  };
-
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md rounded-3xl border-0 p-0 shadow-2xl overflow-hidden">
-        {/* Header banner */}
-        <div className="relative bg-[#FF6B35] px-6 pt-6 pb-8">
-          <div className="absolute inset-0 opacity-10 [background-image:radial-gradient(circle_at_70%_20%,white_1px,transparent_1px)] [background-size:20px_20px]" />
-          <DialogHeader className="relative">
-            <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
-              <ChefHat className="h-5 w-5 text-white" />
-            </div>
-            <DialogTitle className="text-xl font-black text-white leading-tight">
+      <DialogContent className="max-w-[480px] p-0 overflow-hidden bg-white rounded-3xl shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] gap-0 border-0">
+        {/* Progress Bar Container */}
+        <div className="w-full bg-gray-100 h-1.5 flex gap-1 px-4 mt-4">
+          {Array.from({ length: STEP_COUNT }).map((_, i) => (
+            <div
+              key={i}
+              className={cn(
+                "flex-1 h-1.5 rounded-full transition-all duration-300",
+                i < step
+                  ? "bg-[#FF6B35]"
+                  : i === step
+                    ? "bg-[#FF6B35]/50"
+                    : "bg-gray-200",
+              )}
+            />
+          ))}
+        </div>
+
+        {/* Unified Header */}
+        <div className="px-6 pt-5 pb-2">
+          <DialogHeader>
+            <DialogTitle className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
               Build Your Own Plan
             </DialogTitle>
-            <DialogDescription className="text-white/80 text-sm mt-0.5">
-              Curated exactly for your taste and schedule.
+            <DialogDescription className="text-sm text-gray-500 font-medium">
+              Customize your meals, duration, and delivery details.
             </DialogDescription>
           </DialogHeader>
         </div>
 
-        {/* Body */}
-        <div className="px-6 pb-6 pt-5">
-          <StepIndicator current={step} total={STEP_COUNT} />
-
-          {/* ── Step 0: Diet Preference ─────────────────────────────── */}
+        {/* Dynamic Body Content */}
+        <div className="px-6 py-4 min-h-[340px]">
+          {/* STEP 1: Preference */}
           {step === 0 && (
-            <div>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-gray-400">
-                Step 1
-              </p>
-              <h3 className="mb-4 text-lg font-bold text-gray-900">
-                What&apos;s your food preference?
+            <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+              <h3 className="text-lg font-semibold text-gray-900">
+                How would you like your meals?
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                {(["VEG", "NON_VEG"] as DietPreference[]).map((pref) => {
-                  const isVeg = pref === "VEG";
-                  const isActive = preference === pref;
-                  return (
-                    <button
-                      key={pref}
-                      onClick={() => setPreference(pref)}
-                      className={cn(
-                        "group flex flex-col items-center gap-3 rounded-2xl border-2 p-5 transition-all duration-200",
-                        isActive
-                          ? isVeg
-                            ? "border-green-500 bg-green-50 shadow-lg shadow-green-100"
-                            : "border-red-500 bg-red-50 shadow-lg shadow-red-100"
-                          : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50",
-                      )}
-                    >
-                      <div
-                        className={cn(
-                          "flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-200",
-                          isActive
-                            ? isVeg
-                              ? "bg-green-500"
-                              : "bg-red-500"
-                            : "bg-gray-100 group-hover:bg-gray-200",
-                        )}
-                      >
-                        {isVeg ? (
-                          <Leaf
-                            className={cn(
-                              "h-6 w-6 transition-colors",
-                              isActive ? "text-white" : "text-gray-500",
-                            )}
-                          />
-                        ) : (
-                          <Drumstick
-                            className={cn(
-                              "h-6 w-6 transition-colors",
-                              isActive ? "text-white" : "text-gray-500",
-                            )}
-                          />
-                        )}
-                      </div>
-                      <span
-                        className={cn(
-                          "text-sm font-bold",
-                          isActive
-                            ? isVeg
-                              ? "text-green-700"
-                              : "text-red-600"
-                            : "text-gray-700",
-                        )}
-                      >
-                        {isVeg ? "Vegetarian" : "Non-Veg"}
-                      </span>
-                      {isActive && (
-                        <div
-                          className={cn(
-                            "flex h-5 w-5 items-center justify-center rounded-full",
-                            isVeg ? "bg-green-500" : "bg-red-500",
-                          )}
-                        >
-                          <Check
-                            className="h-3 w-3 text-white"
-                            strokeWidth={3}
-                          />
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
+                <button
+                  onClick={() => setPreference("VEG")}
+                  className={cn(
+                    "relative flex flex-col items-center gap-3 p-5 rounded-2xl bg-white transition-all duration-500",
+                    "border-2",
+                    preference === "VEG"
+                      ? "border-[#FF6B35] ring-2 ring-[#FF6B35] ring-offset-2 ring-offset-white shadow-[0_4px_20px_rgba(255,107,53,0.2),0_8px_40px_rgba(0,0,0,0.1)]"
+                      : "border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(255,107,53,0.15),0_8px_40px_rgba(0,0,0,0.1)] hover:-translate-y-0.5",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "p-3 rounded-xl transition-colors duration-300",
+                      preference === "VEG"
+                        ? "bg-[#FF6B35] text-white"
+                        : "bg-green-50 text-green-600 group-hover:bg-green-100",
+                    )}
+                  >
+                    <Leaf className="w-6 h-6" />
+                  </div>
+                  <div className="text-center">
+                    <span className="block font-semibold text-gray-900">
+                      Vegetarian
+                    </span>
+                    <span className="text-xs text-gray-500 mt-1">
+                      Plant-based & dairy
+                    </span>
+                  </div>
+                  {preference === "VEG" && (
+                    <div className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-lg">
+                      <Check className="h-3 w-3 text-white" strokeWidth={3} />
+                    </div>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => setPreference("NON_VEG")}
+                  className={cn(
+                    "relative flex flex-col items-center gap-3 p-5 rounded-2xl bg-white transition-all duration-500",
+                    "border-2",
+                    preference === "NON_VEG"
+                      ? "border-[#FF6B35] ring-2 ring-[#FF6B35] ring-offset-2 ring-offset-white shadow-[0_4px_20px_rgba(255,107,53,0.2),0_8px_40px_rgba(0,0,0,0.1)]"
+                      : "border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(255,107,53,0.15),0_8px_40px_rgba(0,0,0,0.1)] hover:-translate-y-0.5",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "p-3 rounded-xl transition-colors duration-300",
+                      preference === "NON_VEG"
+                        ? "bg-[#FF6B35] text-white"
+                        : "bg-red-50 text-red-600 group-hover:bg-red-100",
+                    )}
+                  >
+                    <Drumstick className="w-6 h-6" />
+                  </div>
+                  <div className="text-center">
+                    <span className="block font-semibold text-gray-900">
+                      Non-Vegetarian
+                    </span>
+                    <span className="text-xs text-gray-500 mt-1">
+                      Includes meat
+                    </span>
+                  </div>
+                  {preference === "NON_VEG" && (
+                    <div className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-lg">
+                      <Check className="h-3 w-3 text-white" strokeWidth={3} />
+                    </div>
+                  )}
+                </button>
               </div>
             </div>
           )}
 
-          {/* ── Step 1: Meal Types ──────────────────────────────────── */}
+          {/* STEP 2: Meals */}
           {step === 1 && (
-            <div>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-gray-400">
-                Step 2
-              </p>
-              <h3 className="mb-1 text-lg font-bold text-gray-900">
-                Which meals would you like?
-              </h3>
-              <p className="mb-4 text-sm text-gray-500">
-                Select all that apply.
-              </p>
-              <div className="flex flex-col gap-3">
+            <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="space-y-1">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Which meals should we include?
+                </h3>
+                <p className="text-sm text-gray-500">
+                  Select all that apply for your deliveries.
+                </p>
+              </div>
+              <div className="space-y-3">
                 {MEAL_TYPES.map((meal) => {
-                  const isActive = meals.has(meal);
-                  const colors = mealColorMap[meal];
+                  const isSelected = meals.has(meal);
                   return (
                     <button
                       key={meal}
                       onClick={() => toggleMeal(meal)}
                       className={cn(
-                        "flex items-center gap-4 rounded-xl border-2 px-4 py-3.5 transition-all duration-200",
-                        isActive
-                          ? `${colors.active} shadow-md`
-                          : `${colors.inactive} bg-white`,
+                        "w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-500 border-2",
+                        isSelected
+                          ? "border-[#FF6B35] bg-orange-50/50 shadow-[0_4px_20px_rgba(255,107,53,0.15),0_8px_40px_rgba(0,0,0,0.1)]"
+                          : "border-gray-100 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] hover:border-[#FF6B35]/30 hover:shadow-[0_4px_20px_rgba(255,107,53,0.1rem),0_8px_40px_rgba(0,0,0,0.05)] hover:-translate-y-0.5",
                       )}
                     >
-                      <span
-                        className={cn(
-                          "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
-                          isActive ? "bg-white/25" : "bg-gray-100",
-                        )}
-                      >
-                        <UtensilsCrossed
+                      <div className="flex items-center gap-4">
+                        <div
                           className={cn(
-                            "h-4 w-4",
-                            isActive ? "text-white" : "text-gray-500",
+                            "w-10 h-10 rounded-xl flex items-center justify-center transition-colors duration-300",
+                            isSelected
+                              ? "bg-gradient-to-r from-[#FF6B35] to-[#FF8555] text-white shadow-md"
+                              : "bg-gray-100 text-gray-500",
                           )}
-                        />
-                      </span>
-                      <span className="flex-1 text-left text-sm font-semibold">
-                        {meal}
-                      </span>
-                      {isActive && (
-                        <Check className="h-4 w-4 text-white" strokeWidth={3} />
+                        >
+                          <UtensilsCrossed className="w-5 h-5" />
+                        </div>
+                        <span className="font-semibold text-gray-900">
+                          {meal}
+                        </span>
+                      </div>
+
+                      {isSelected ? (
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-md">
+                          <Check
+                            className="h-3 w-3 text-white"
+                            strokeWidth={3}
+                          />
+                        </div>
+                      ) : (
+                        <div className="h-6 w-6 rounded-full border-2 border-gray-200" />
                       )}
                     </button>
                   );
@@ -352,144 +307,132 @@ export function CustomPlanBuilderDialog({
             </div>
           )}
 
-          {/* ── Step 2: Duration & Start Date ──────────────────────── */}
+          {/* STEP 3: Duration & Date */}
           {step === 2 && (
-            <div>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-gray-400">
-                Step 3
-              </p>
-              <h3 className="mb-4 text-lg font-bold text-gray-900">
-                Duration & start date
-              </h3>
-
-              {/* Days */}
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Number of days
-              </p>
-              <div className="mb-5 grid grid-cols-4 gap-2">
-                {DURATION_OPTIONS.map((d) => (
-                  <button
-                    key={d}
-                    onClick={() => setDays(d)}
-                    className={cn(
-                      "flex flex-col items-center rounded-xl border-2 py-3 text-sm font-bold transition-all duration-200",
-                      days === d
-                        ? "border-[#FF6B35] bg-orange-50 text-[#FF6B35] shadow-sm"
-                        : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50",
-                    )}
-                  >
-                    <span className="text-base font-black">{d}</span>
-                    <span className="text-[10px] font-medium text-gray-400">
-                      days
-                    </span>
-                  </button>
-                ))}
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium text-gray-700">
+                  Plan Duration
+                </h3>
+                <div className="grid grid-cols-4 gap-2.5">
+                  {DURATION_OPTIONS.map((d) => (
+                    <button
+                      key={d}
+                      onClick={() => setDays(d)}
+                      className={cn(
+                        "flex flex-col items-center justify-center py-4 rounded-2xl border-2 transition-all duration-300",
+                        days === d
+                          ? "border-[#FF6B35] bg-[#FF6B35] text-white shadow-md ring-2 ring-[#FF6B35] ring-offset-2 ring-offset-white"
+                          : "border-gray-100 bg-white text-gray-700 hover:border-[#FF6B35]/30 hover:bg-orange-50 hover:text-[#FF6B35] shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)]",
+                      )}
+                    >
+                      <span className="text-xl font-bold">{d}</span>
+                      <span
+                        className={cn(
+                          "text-[10px] font-semibold uppercase tracking-wider mt-0.5",
+                          days === d ? "text-white/90" : "text-gray-500",
+                        )}
+                      >
+                        Days
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {/* Start Date */}
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Start date
-              </p>
-              <div className="relative">
-                <CalendarDays className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                <input
-                  type="date"
-                  min={minDate}
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className={cn(
-                    "w-full rounded-xl border-2 bg-white py-3 pl-10 pr-4 text-sm font-medium text-gray-700 outline-none transition-all duration-200",
-                    startDate
-                      ? "border-[#FF6B35]"
-                      : "border-gray-200 focus:border-[#FF6B35]",
-                  )}
-                />
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium text-gray-700">
+                  Start Date
+                </h3>
+                <div className="relative">
+                  <CalendarDays className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                  <input
+                    type="date"
+                    min={minDate}
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className={cn(
+                      "w-full h-12 pl-12 pr-4 rounded-xl border-2 bg-gray-50 text-gray-900 font-medium outline-none transition-all duration-300",
+                      "placeholder:text-gray-400 focus:bg-white focus:border-[#FF6B35] focus:ring focus:ring-[#FF6B35]/20",
+                      startDate && "border-[#FF6B35]/50 bg-white",
+                    )}
+                  />
+                </div>
               </div>
             </div>
           )}
 
-          {/* ── Step 3: Address ─────────────────────────────────────── */}
+          {/* STEP 4: Address */}
           {step === 3 && (
-            <div>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-gray-400">
-                Step 4
-              </p>
-              <h3 className="mb-1 text-lg font-bold text-gray-900">
-                Delivery address
-              </h3>
-              <p className="mb-4 text-sm text-gray-500">
-                Where should we deliver?
-              </p>
+            <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="space-y-1">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Delivery Address
+                </h3>
+                <p className="text-sm text-gray-500">
+                  Select where we should deliver your meals.
+                </p>
+              </div>
 
               {addressesQuery.isLoading ? (
-                <div className="flex items-center justify-center py-10">
-                  <Loader2 className="h-6 w-6 animate-spin text-[#FF6B35]" />
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="w-6 h-6 animate-spin text-[#FF6B35]" />
                 </div>
               ) : addresses.length === 0 ? (
-                <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-gray-200 py-8 text-center">
-                  <MapPin className="h-8 w-8 text-gray-300" />
-                  <p className="text-sm font-medium text-gray-500">
-                    No saved addresses yet.
+                <div className="text-center py-10 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50">
+                  <MapPin className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+                  <p className="text-base text-gray-700 font-semibold">
+                    No saved addresses
                   </p>
-                  <p className="text-xs text-gray-400">
-                    Please add an address from your profile first.
+                  <p className="text-sm text-gray-500 mt-1">
+                    Please add an address in your profile first.
                   </p>
                 </div>
               ) : (
-                <div className="flex flex-col gap-2.5">
+                <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1">
                   {addresses.map((addr) => {
-                    const isActive = addressId === addr._id;
+                    const isSelected = addressId === addr._id;
                     return (
                       <button
                         key={addr._id}
                         onClick={() => setAddressId(addr._id)}
                         className={cn(
-                          "flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-all duration-200",
-                          isActive
-                            ? "border-[#FF6B35] bg-orange-50 shadow-sm"
-                            : "border-gray-200 bg-white hover:border-gray-300",
+                          "w-full flex items-start gap-4 p-4 rounded-2xl transition-all duration-500 border-2 text-left group",
+                          isSelected
+                            ? "border-[#FF6B35] bg-orange-50/50 shadow-[0_4px_20px_rgba(255,107,53,0.15),0_8px_40px_rgba(0,0,0,0.1)] ring-1 ring-[#FF6B35]"
+                            : "border-gray-100 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] hover:border-[#FF6B35]/30 hover:shadow-[0_4px_20px_rgba(255,107,53,0.1rem),0_8px_40px_rgba(0,0,0,0.05)] hover:-translate-y-0.5",
                         )}
                       >
                         <div
                           className={cn(
-                            "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
-                            isActive ? "bg-[#FF6B35]" : "bg-gray-100",
+                            "w-10 h-10 shrink-0 rounded-xl flex justify-center items-center transition-colors",
+                            isSelected
+                              ? "bg-gradient-to-r from-[#FF6B35] to-[#FF8555] text-white shadow-md"
+                              : "bg-gray-100 text-gray-500 group-hover:bg-orange-50 group-hover:text-[#FF6B35]",
                           )}
                         >
-                          <MapPin
-                            className={cn(
-                              "h-4 w-4",
-                              isActive ? "text-white" : "text-gray-400",
-                            )}
-                          />
+                          <MapPin className="w-5 h-5" />
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={cn(
-                                "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase",
-                                isActive
-                                  ? "bg-orange-200 text-orange-700"
-                                  : "bg-gray-100 text-gray-500",
-                              )}
-                            >
+                        <div className="flex-1 min-w-0 pt-0.5">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="text-sm font-bold text-gray-900 capitalize">
                               {addr.type}
                             </span>
                             {addr.is_default && (
-                              <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold uppercase text-green-700">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FF6B35]/10 text-[#FF6B35] shrink-0">
                                 Default
                               </span>
                             )}
                           </div>
-                          <p className="mt-1 wrap-break-word text-sm font-medium text-gray-800">
+                          <p className="text-sm text-gray-600 font-medium break-words leading-relaxed">
                             {addr.full_address}
                           </p>
-                          <p className="text-xs text-gray-500">
-                            {addr.area}, {addr.city} – {addr.pincode}
+                          <p className="text-xs text-gray-400 mt-1.5 font-medium break-words">
+                            {addr.area}, {addr.city} {addr.pincode}
                           </p>
                         </div>
-                        {isActive && (
-                          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#FF6B35]">
+                        {isSelected && (
+                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-md shrink-0 mt-2">
                             <Check
                               className="h-3 w-3 text-white"
                               strokeWidth={3}
@@ -502,76 +445,81 @@ export function CustomPlanBuilderDialog({
                 </div>
               )}
 
-              {/* Error */}
               {createCustomPlan.isError && (
-                <p className="mt-4 rounded-lg bg-red-50 px-4 py-2.5 text-xs font-medium text-red-600">
+                <div className="p-4 rounded-xl bg-red-50 text-red-800 text-sm font-medium border border-red-200">
                   {createCustomPlan.error instanceof Error
                     ? createCustomPlan.error.message
-                    : "Something went wrong. Please try again."}
-                </p>
+                    : "An error occurred. Please try again."}
+                </div>
               )}
             </div>
           )}
+        </div>
 
-          {/* ── Navigation ──────────────────────────────────────────── */}
-          <div className="mt-6 flex items-center gap-3">
-            {step > 0 && (
-              <Button
-                variant="outline"
-                className="h-11 flex-1 rounded-xl border-2 border-gray-200 font-semibold text-gray-700 hover:border-gray-300 hover:bg-gray-50"
-                onClick={() => setStep((s) => s - 1)}
-                disabled={createCustomPlan.isPending}
-              >
-                <ArrowLeft className="mr-1.5 h-4 w-4" />
-                Back
-              </Button>
-            )}
+        {/* Footer Navigation */}
+        <div className="p-4 sm:px-6 sm:py-5 bg-gray-50 flex items-center gap-3 w-full border-t border-gray-100 rounded-b-3xl">
+          {step > 0 && (
+            <button
+              type="button"
+              onClick={() => setStep((s) => s - 1)}
+              disabled={createCustomPlan.isPending}
+              className={cn(
+                "h-11 px-6 rounded-xl font-medium transition-all duration-300",
+                "border-2 border-gray-200 bg-white text-gray-600",
+                "hover:border-[#FF6B35]/30 hover:bg-orange-50 hover:text-[#FF6B35]",
+                "active:scale-[0.98]",
+                "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white disabled:hover:text-gray-600",
+              )}
+            >
+              Back
+            </button>
+          )}
 
-            {step < STEP_COUNT - 1 ? (
-              <Button
-                className={cn(
-                  "h-11 flex-1 rounded-xl font-bold text-white shadow-md transition-all duration-300",
-                  "bg-[#FF6B35]",
-                  "hover:bg-[#E85A25] hover:shadow-lg hover:shadow-orange-200/50",
-                  "active:scale-[0.98]",
-                  "disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100",
-                )}
-                disabled={!canAdvance}
-                onClick={() => setStep((s) => s + 1)}
-              >
-                Continue
-                <ArrowRight className="ml-1.5 h-4 w-4" />
-              </Button>
-            ) : (
-              <Button
-                className={cn(
-                  "h-11 flex-1 rounded-xl font-bold text-white shadow-md transition-all duration-300",
-                  "bg-[#FF6B35]",
-                  "hover:bg-[#E85A25] hover:shadow-lg hover:shadow-orange-200/50",
-                  "active:scale-[0.98]",
-                  "disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100",
-                )}
-                disabled={
-                  !canAdvance ||
-                  createCustomPlan.isPending ||
-                  addresses.length === 0
-                }
-                onClick={handleSubmit}
-              >
-                {createCustomPlan.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating…
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-1.5 h-4 w-4" />
-                    Confirm Plan
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
+          {step < STEP_COUNT - 1 ? (
+            <button
+              type="button"
+              disabled={!canAdvance}
+              onClick={() => setStep((s) => s + 1)}
+              className={cn(
+                "flex-1 h-11 rounded-xl font-semibold text-white shadow-md transition-all duration-300",
+                "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
+                "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
+                "active:scale-[0.98]",
+                "disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:active:scale-100",
+              )}
+            >
+              Continue
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled={
+                !canAdvance ||
+                createCustomPlan.isPending ||
+                addresses.length === 0
+              }
+              onClick={handleSubmit}
+              className={cn(
+                "flex-1 h-11 rounded-xl font-semibold text-white shadow-md transition-all duration-300 flex items-center justify-center gap-2",
+                "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
+                "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
+                "active:scale-[0.98]",
+                "disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:active:scale-100",
+              )}
+            >
+              {createCustomPlan.isPending ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-5 h-5" />
+                  Confirm & Checkout
+                </>
+              )}
+            </button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
