@@ -267,89 +267,100 @@ function PlansContent() {
           </div>
 
           {/* ── Filter Bar ── */}
-          <div className="mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
-            {/* Veg / Non-Veg toggle */}
-            <div className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white p-1 shadow-sm">
-              <button
-                id="filter-diet-all"
-                onClick={() => setDietFilter("all")}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                  dietFilter === "all"
-                    ? "bg-gray-900 text-white shadow-sm"
-                    : "text-gray-500 hover:text-gray-800"
-                }`}
-              >
-                All
-              </button>
-              <button
-                id="filter-diet-veg"
-                onClick={() => setDietFilter("veg")}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                  dietFilter === "veg"
-                    ? "bg-green-600 text-white shadow-sm"
-                    : "text-gray-500 hover:text-green-700"
-                }`}
-              >
-                <Leaf className="h-3 w-3" />
-                Veg
-              </button>
-              <button
-                id="filter-diet-nonveg"
-                onClick={() => setDietFilter("non-veg")}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                  dietFilter === "non-veg"
-                    ? "bg-red-500 text-white shadow-sm"
-                    : "text-gray-500 hover:text-red-600"
-                }`}
-              >
-                <Drumstick className="h-3 w-3" />
-                Non-Veg
-              </button>
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            {/* Diet & Meal Filters */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Veg / Non-Veg cards */}
+              <div className="flex items-stretch gap-2 rounded-2xl border border-gray-100 bg-white p-1.5 shadow-sm">
+                <button
+                  id="filter-diet-all"
+                  onClick={() => setDietFilter("all")}
+                  className={`relative overflow-hidden rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-300 ${
+                    dietFilter === "all"
+                      ? "bg-gray-900 text-white shadow-md"
+                      : "bg-gray-50 text-gray-500 hover:bg-gray-100"
+                  }`}
+                >
+                  {dietFilter === "all" && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-gray-500 to-gray-400" />
+                  )}
+                  All Meals
+                </button>
+                <button
+                  id="filter-diet-veg"
+                  onClick={() => setDietFilter("veg")}
+                  className={`relative overflow-hidden rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-300 ${
+                    dietFilter === "veg"
+                      ? "bg-green-600 text-white shadow-md"
+                      : "bg-green-50 text-green-600 hover:bg-green-100"
+                  }`}
+                >
+                  {dietFilter === "veg" && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-green-400 to-green-500" />
+                  )}
+                  <Leaf className="inline-block h-4 w-4 mr-1.5" />
+                  Veg
+                </button>
+                <button
+                  id="filter-diet-nonveg"
+                  onClick={() => setDietFilter("non-veg")}
+                  className={`relative overflow-hidden rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-300 ${
+                    dietFilter === "non-veg"
+                      ? "bg-red-500 text-white shadow-md"
+                      : "bg-red-50 text-red-600 hover:bg-red-100"
+                  }`}
+                >
+                  {dietFilter === "non-veg" && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-red-400 to-red-500" />
+                  )}
+                  <Drumstick className="inline-block h-4 w-4 mr-1.5" />
+                  Non-Veg
+                </button>
+              </div>
+
+              {/* Meal Type cards */}
+              <div className="flex items-center gap-2">
+                {MEAL_TYPES.map((type) => {
+                  const isActive = mealTypeFilters.has(type);
+                  const iconMap = {
+                    Breakfast: "🍳",
+                    Lunch: "🍱",
+                    Dinner: "🌙"
+                  };
+                  const baseClass = `relative group flex items-center gap-2 rounded-xl border-2 px-4 py-2.5 text-sm font-semibold transition-all duration-300 cursor-pointer ${isActive ? "shadow-md transform scale-105" : "shadow-sm hover:scale-[1.02]"}`;
+                  const colorClasses = {
+                    Breakfast: isActive
+                      ? "border-amber-500 bg-amber-50 text-amber-800"
+                      : "border-amber-200 bg-amber-50/50 text-amber-700 hover:border-amber-400 hover:bg-amber-50",
+                    Lunch: isActive
+                      ? "border-[#FF6B35] bg-orange-50 text-orange-800"
+                      : "border-orange-200 bg-orange-50/50 text-orange-700 hover:border-orange-400 hover:bg-orange-50",
+                    Dinner: isActive
+                      ? "border-indigo-600 bg-indigo-50 text-indigo-800"
+                      : "border-indigo-200 bg-indigo-50/50 text-indigo-700 hover:border-indigo-400 hover:bg-indigo-50"
+                  };
+
+                  return (
+                    <button
+                      key={type}
+                      id={`filter-meal-${type.toLowerCase()}`}
+                      onClick={() => toggleMealType(type)}
+                      className={`${baseClass} ${colorClasses[type]}`}
+                    >
+                      <span className="text-base">{iconMap[type]}</span>
+                      <span>{type}</span>
+                      {isActive && (
+                        <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[10px] font-bold shadow-md ring-2 ring-inset">
+                          ✓
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Divider */}
-            <div className="h-6 w-px bg-gray-200" />
-
-            {/* Meal Type chips */}
-            <div className="flex items-center gap-1.5">
-              <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-                <UtensilsCrossed className="h-3 w-3" />
-                Meal
-              </span>
-              {MEAL_TYPES.map((type) => {
-                const isActive = mealTypeFilters.has(type);
-                const colorMap: Record<string, string> = {
-                  Breakfast: isActive
-                    ? "bg-amber-500 text-white border-amber-500"
-                    : "border-amber-200 text-amber-700 hover:bg-amber-50",
-                  Lunch: isActive
-                    ? "bg-[#FF6B35] text-white border-[#FF6B35]"
-                    : "border-orange-200 text-orange-700 hover:bg-orange-50",
-                  Dinner: isActive
-                    ? "bg-indigo-600 text-white border-indigo-600"
-                    : "border-indigo-200 text-indigo-700 hover:bg-indigo-50",
-                };
-                return (
-                  <button
-                    key={type}
-                    id={`filter-meal-${type.toLowerCase()}`}
-                    onClick={() => toggleMealType(type)}
-                    className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                      colorMap[type]
-                    }`}
-                  >
-                    {isActive && (
-                      <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-white/25 text-[9px] font-bold">
-                        ✓
-                      </span>
-                    )}
-                    {type}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Clear filters */}
+            {/* Clear filters button */}
             {(dietFilter !== "all" || mealTypeFilters.size > 0) && (
               <button
                 id="filter-clear"
@@ -357,9 +368,12 @@ function PlansContent() {
                   setDietFilter("all");
                   setMealTypeFilters(new Set());
                 }}
-                className="ml-auto text-xs font-medium text-gray-400 underline-offset-2 hover:text-[#FF6B35] hover:underline"
+                className="inline-flex items-center gap-2 rounded-full border-2 border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-500 transition-all duration-300 hover:border-[#FF6B35] hover:text-[#FF6B35] hover:bg-orange-50 active:scale-95"
               >
-                Clear filters
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Reset
               </button>
             )}
           </div>
