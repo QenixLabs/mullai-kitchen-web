@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, User, LogOut } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Menu, X, User, LogOut, Home, Calendar, UserCircle } from 'lucide-react';
 
 import { useAuthHydrated, useIsAuthenticated, useCurrentUser } from '@/hooks/use-user-store';
 import { useLogout } from '@/api/hooks/useAuth';
@@ -21,10 +22,18 @@ const AUTH_NAV_ITEMS = [
   { href: '/plans', label: 'Plans' },
 ] as const;
 
+const MOBILE_BOTTOM_NAV_ITEMS = [
+  { href: '/dashboard', icon: Home, label: 'Dashboard' },
+  { href: '/plans', icon: Calendar, label: 'Plans' },
+  { href: '/dashboard/settings', icon: UserCircle, label: 'Profile' },
+] as const;
+
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
+  const pathname = usePathname();
   const hasHydrated = useAuthHydrated();
   const isAuthenticated = useIsAuthenticated();
   const user = useCurrentUser();
@@ -39,6 +48,13 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const handleLogout = () => {
     logoutMutation.mutate();
   };
@@ -46,13 +62,17 @@ export function Navbar() {
   // Don't render auth-dependent UI until hydrated
   const showAuthUI = hasHydrated;
 
+  // Show hamburger menu only for unauthenticated users
+  const showHamburger = !isAuthenticated;
+
   return (
-    <header
-      className={cn(
-        'sticky top-0 z-50 transition-shadow duration-300',
-        isScrolled ? 'shadow-md' : ''
-      )}
-    >
+    <>
+      <header
+        className={cn(
+          'sticky top-0 z-50 transition-shadow duration-300',
+          isScrolled ? 'shadow-md' : ''
+        )}
+      >
       {/* Background with backdrop blur */}
       <div className="border-b border-gray-200 bg-white/95 backdrop-blur">
         <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
@@ -138,20 +158,22 @@ export function Navbar() {
               </div>
             )}
 
-            {/* Mobile menu button */}
-            <div className="flex md:hidden">
-              <button
-                type="button"
-                className="inline-flex items-center justify-center rounded-md p-2 text-[#333333] hover:bg-gray-100 hover:text-[#FF6B35] focus:outline-none"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                {isMobileMenuOpen ? (
-                  <X className="h-6 w-6" aria-hidden="true" />
-                ) : (
-                  <Menu className="h-6 w-6" aria-hidden="true" />
-                )}
-              </button>
-            </div>
+            {/* Mobile menu button - Only for unauthenticated users */}
+            {showHamburger && (
+              <div className="flex md:hidden">
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center rounded-md p-2 text-[#333333] hover:bg-gray-100 hover:text-[#FF6B35] focus:outline-none"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                  {isMobileMenuOpen ? (
+                    <X className="h-6 w-6" aria-hidden="true" />
+                  ) : (
+                    <Menu className="h-6 w-6" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -188,49 +210,49 @@ export function Navbar() {
             </div>
           </div>
         )}
-
-        {/* Mobile menu - Authenticated */}
-        {isMobileMenuOpen && showAuthUI && isAuthenticated && (
-          <div className="md:hidden border-t border-gray-200 bg-white">
-            <div className="space-y-1 px-4 pb-3 pt-2">
-              {AUTH_NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-orange-100"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-            <div className="space-y-2 border-t border-gray-200 px-4 pb-4 pt-4">
-              <span className="block px-3 py-2 text-sm text-gray-600">
-                {user?.name ?? user?.email ?? 'Customer'}
-              </span>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full border-[#666666] text-[#666666] hover:border-[#FF6B35] hover:text-[#FF6B35]"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  handleLogout();
-                }}
-                disabled={logoutMutation.isPending}
-              >
-                {logoutMutation.isPending ? (
-                  'Signing out...'
-                ) : (
-                  <>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign out
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        )}
       </div>
     </header>
+
+    {/* Floating Bottom Navigation - Authenticated Mobile Only */}
+    {isMobile && isAuthenticated && showAuthUI && (
+      <nav className="fixed bottom-4 left-4 right-4 z-50 rounded-2xl border border-orange-200 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-sm md:hidden">
+        <div className="flex items-center justify-around">
+          {MOBILE_BOTTOM_NAV_ITEMS.map((item) => {
+            const isActive = pathname === item.href;
+            const Icon = item.icon;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'flex flex-col items-center gap-1 transition-all',
+                  isActive ? 'text-[#FF6B35]' : 'text-gray-500 hover:text-gray-700'
+                )}
+              >
+                <Icon className={cn('h-6 w-6', isActive ? 'scale-110' : '')} />
+                <span className="text-xs font-medium">{item.label}</span>
+              </Link>
+            );
+          })}
+
+          {/* User Profile / Logout */}
+          <div className="relative group">
+            <button
+              type="button"
+              className="flex flex-col items-center gap-1 text-gray-500 transition-all hover:text-gray-700"
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
+            >
+              <LogOut className="h-6 w-6" />
+              <span className="text-xs font-medium">
+                {logoutMutation.isPending ? '...' : 'Logout'}
+              </span>
+            </button>
+          </div>
+        </div>
+      </nav>
+    )}
+  </>
   );
 }
