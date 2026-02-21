@@ -14,7 +14,7 @@ import type {
   QueryCustomerPlans,
   ServiceabilityResponse,
 } from "@/api/types/customer.types";
-import Header from "@/components/customer/layout/Header";
+import { Navbar } from "@/components/navigation/Navbar";
 import Footer from "@/components/customer/layout/Footer";
 import { HeroSection } from "@/components/customer/plans/HeroSection";
 import { HowItWorksSection } from "@/components/customer/plans/HowItWorksSection";
@@ -214,47 +214,56 @@ function PlansContent() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <Navbar />
 
       <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-        {/* Hero Section */}
-        <HeroSection
-          onPincodeCheck={handlePincodeCheck}
-          onPincodeResult={handlePincodeResult}
-          initialPincode={checkedPincodeState ?? ""}
-          className="mb-10"
-        />
+        {/* Hero Section - Only for unauthenticated */}
+        {!isAuthenticated && (
+          <HeroSection
+            onPincodeCheck={handlePincodeCheck}
+            onPincodeResult={handlePincodeResult}
+            initialPincode={checkedPincodeState ?? ""}
+            className="mb-10"
+          />
+        )}
 
-        {/* How It Works Section */}
-        <HowItWorksSection className="mb-12" />
+        {/* How It Works Section - Only for unauthenticated */}
+        {!isAuthenticated && <HowItWorksSection className="mb-12" />}
 
         {/* Plans Section */}
-        <section className="mb-8 sm:mb-12">
-          <div className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
-            <div>
-              <p className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#FF6B35] sm:text-xs">
-                <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                Curated Plans
-              </p>
-              <h2 className="mt-1 text-xl font-black tracking-tight text-gray-900 sm:text-2xl lg:text-3xl">
-                Select Your Subscription
-              </h2>
-              <p className="mt-1 text-sm text-gray-600 sm:mt-2 sm:text-base">
-                Flexible plans for every appetite and lifestyle.
-              </p>
+        <section
+          className={isAuthenticated ? "mb-8 sm:mb-12" : "mb-8 sm:mb-12"}
+        >
+          {/* Section Header - Only for unauthenticated */}
+          {!isAuthenticated && (
+            <div className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+              <div>
+                <p className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#FF6B35] sm:text-xs">
+                  <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                  Curated Plans
+                </p>
+                <h2 className="mt-1 text-xl font-black tracking-tight text-gray-900 sm:text-2xl lg:text-3xl">
+                  Select Your Subscription
+                </h2>
+                <p className="mt-1 text-sm text-gray-600 sm:mt-2 sm:text-base">
+                  Flexible plans for every appetite and lifestyle.
+                </p>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-100 bg-orange-50 px-3 py-1.5 text-xs font-medium text-gray-700 sm:px-4 sm:py-2 sm:text-sm">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#FF6B35]" />
-                {filteredPlans.length} plan
-                {filteredPlans.length !== 1 ? "s" : ""} available
-              </span>
-              {/* Swipe hint for mobile */}
-              <span className="flex items-center gap-1 text-xs text-gray-400 sm:hidden">
-                Swipe to browse
-                <ChevronRight className="h-3 w-3" />
-              </span>
-            </div>
+          )}
+
+          {/* Plans count badge - Show for all users */}
+          <div className="mb-5 flex items-center gap-3 sm:mb-6 sm:justify-end">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-100 bg-orange-50 px-3 py-1.5 text-xs font-medium text-gray-700 sm:px-4 sm:py-2 sm:text-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#FF6B35]" />
+              {filteredPlans.length} plan
+              {filteredPlans.length !== 1 ? "s" : ""} available
+            </span>
+            {/* Swipe hint for mobile */}
+            <span className="flex items-center gap-1 text-xs text-gray-400 sm:hidden">
+              Swipe to browse
+              <ChevronRight className="h-3 w-3" />
+            </span>
           </div>
 
           {/* ── Filter Bar ── */}
@@ -356,39 +365,56 @@ function PlansContent() {
           </div>
 
           {/* ── Build Your Own Plan Banner ── */}
-          <div className="mb-8 overflow-hidden rounded-2xl border border-orange-100 bg-orange-50 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(255,107,53,0.08)]">
-            <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:gap-6 sm:p-6">
-              {/* Icon */}
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#FF6B35] shadow-md shadow-orange-200">
-                <PenLine className="h-5 w-5 text-white" />
-              </div>
+          {!isAuthenticated && (
+            <div className="mb-8 overflow-hidden rounded-2xl border border-orange-100 bg-orange-50 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(255,107,53,0.08)]">
+              <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:gap-6 sm:p-6">
+                {/* Icon */}
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#FF6B35] shadow-md shadow-orange-200">
+                  <PenLine className="h-5 w-5 text-white" />
+                </div>
 
-              {/* Text */}
-              <div className="flex-1">
-                <p className="text-xs font-semibold uppercase tracking-widest text-[#FF6B35]">
-                  Fully Customisable
-                </p>
-                <h3 className="mt-0.5 text-base font-black text-gray-900 sm:text-lg">
-                  Build Your Own Plan
-                </h3>
-                <p className="mt-0.5 text-sm text-gray-500">
-                  Choose your meals, duration, and diet — we&apos;ll price it
-                  just for you.
-                </p>
-              </div>
+                {/* Text */}
+                <div className="flex-1">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-[#FF6B35]">
+                    Fully Customisable
+                  </p>
+                  <h3 className="mt-0.5 text-base font-black text-gray-900 sm:text-lg">
+                    Build Your Own Plan
+                  </h3>
+                  <p className="mt-0.5 text-sm text-gray-500">
+                    Choose your meals, duration, and diet — we&apos;ll price it
+                    just for you.
+                  </p>
+                </div>
 
-              {/* CTA */}
+                {/* CTA */}
+                <button
+                  id="custom-plan-cta"
+                  onClick={handleCustomPlanClick}
+                  className="group inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#FF6B35] px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-orange-200/60 transition-all duration-300 hover:bg-[#E85A25] hover:shadow-lg hover:shadow-orange-200/80 active:scale-[0.97]"
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Get Started
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {isAuthenticated && (
+            <div className="mb-8 flex justify-end">
+              {/* Simple button for authenticated */}
               <button
                 id="custom-plan-cta"
                 onClick={handleCustomPlanClick}
-                className="group inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#FF6B35] px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-orange-200/60 transition-all duration-300 hover:bg-[#E85A25] hover:shadow-lg hover:shadow-orange-200/80 active:scale-[0.97]"
+                className="group inline-flex items-center gap-2 rounded-xl bg-[#FF6B35] px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-orange-200/60 transition-all duration-300 hover:bg-[#E85A25] hover:shadow-lg hover:shadow-orange-200/80 active:scale-[0.97]"
               >
-                <Sparkles className="h-3.5 w-3.5" />
-                Get Started
-                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+                <PenLine className="h-4 w-4" />
+                Build Your Own Plan
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
               </button>
             </div>
-          </div>
+          )}
 
           <PlanGrid
             plans={filteredPlans}
@@ -406,8 +432,8 @@ function PlansContent() {
           />
         </section>
 
-        {/* Local Favorites Section */}
-        <LocalFavoritesSection className="mb-0" />
+        {/* Local Favorites Section - Only for unauthenticated */}
+        {!isAuthenticated && <LocalFavoritesSection className="mb-0" />}
 
         {/* Menu Preview Sheet */}
         <MenuPreviewSheet
@@ -436,7 +462,8 @@ function PlansContent() {
         />
       </main>
 
-      <Footer />
+      {/* Footer - Only for unauthenticated */}
+      {!isAuthenticated && <Footer />}
     </div>
   );
 }
