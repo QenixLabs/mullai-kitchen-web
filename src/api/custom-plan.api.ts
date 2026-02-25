@@ -2,6 +2,9 @@ import { apiClient } from "@/api/client";
 import { CUSTOMER_ROUTES } from "@/api/routes";
 import type {
   CreateCustomPlanDto,
+  CustomPlanMenuPreviewParams,
+  CustomPlanMenuPreviewResponse,
+  CustomPlanPricingResponse,
   CustomPlanResponse,
   PaginatedCustomPlansResponse,
   QueryCustomPlans,
@@ -50,5 +53,28 @@ export const customPlanApi = {
       CUSTOMER_ROUTES.CUSTOM_PLAN(planId),
     );
     return response.data.success;
+  },
+
+  getPricing: async (
+    params: CustomPlanMenuPreviewParams,
+  ): Promise<CustomPlanPricingResponse> => {
+    const response = await apiClient.get<CustomPlanPricingResponse>(
+      CUSTOMER_ROUTES.CUSTOM_PLAN_PRICING,
+      { params },
+    );
+    return response.data;
+  },
+
+  getMenuPreview: async (
+    params: CustomPlanMenuPreviewParams,
+  ): Promise<CustomPlanMenuPreviewResponse> => {
+    const response = await apiClient.get<CustomPlanMenuPreviewResponse>(
+      CUSTOMER_ROUTES.CUSTOM_PLAN_MENU_PREVIEW(
+        params.preference,
+        params.meal_types,
+        params.days,
+      ),
+    );
+    return response.data;
   },
 };

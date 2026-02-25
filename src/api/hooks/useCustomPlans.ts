@@ -6,6 +6,7 @@ import { customPlanApi } from "@/api/custom-plan.api";
 import { customerKeys } from "@/api/query-keys";
 import type {
   CreateCustomPlanDto,
+  CustomPlanMenuPreviewParams,
   QueryCustomPlans,
   UpdateCustomPlanDto,
 } from "@/api/types/customer.types";
@@ -57,5 +58,21 @@ export function useDeleteCustomPlan() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: customerKeys.customPlans() });
     },
+  });
+}
+
+export function useCustomPlanPricing(params: CustomPlanMenuPreviewParams | null) {
+  return useQuery({
+    queryKey: customerKeys.customPlanPricing(params),
+    queryFn: () => customPlanApi.getPricing(params!),
+    enabled: params !== null && params.meal_types.length > 0 && params.days > 0,
+  });
+}
+
+export function useCustomPlanMenuPreview(params: CustomPlanMenuPreviewParams | null) {
+  return useQuery({
+    queryKey: customerKeys.customPlanMenuPreview(params),
+    queryFn: () => customPlanApi.getMenuPreview(params!),
+    enabled: params !== null && params.meal_types.length > 0 && params.days > 0,
   });
 }

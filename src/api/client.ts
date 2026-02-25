@@ -8,7 +8,12 @@ import { AUTH_ROUTES } from "@/api/routes";
 import type { ApiResponse } from "@/api/types/api-response.types";
 import type { IAuthSession } from "@/api/types/auth.types";
 import { getApiBaseUrl } from "@/lib/env";
-import { clearTokenPair, getAccessToken, getRefreshToken, setTokenPair } from "@/lib/storage";
+import {
+  clearTokenPair,
+  getAccessToken,
+  getRefreshToken,
+  setTokenPair,
+} from "@/lib/storage";
 
 export interface ApiError {
   message: string;
@@ -28,6 +33,9 @@ export const apiClient = axios.create({
   timeout: 15000,
   headers: {
     "Content-Type": "application/json",
+  },
+  paramsSerializer: {
+    indexes: null, // This will serialize as meal_types=A&meal_types=B instead of meal_types[]=A
   },
 });
 
@@ -118,7 +126,11 @@ apiClient.interceptors.response.use(
     // If backend returns { data, success, message }, unwrap the inner data
     // Otherwise, return as-is (backend already returns direct data)
     const responseData = response.data as any;
-    if (responseData && typeof responseData === 'object' && 'data' in responseData) {
+    if (
+      responseData &&
+      typeof responseData === "object" &&
+      "data" in responseData
+    ) {
       return { ...response, data: responseData.data };
     }
     return response;
@@ -126,7 +138,8 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as RetryableRequestConfig | undefined;
     const responseMessage = getErrorMessage(error.response?.data);
-    const isRefreshRequest = originalRequest?.url?.includes(AUTH_ROUTES.REFRESH) ?? false;
+    const isRefreshRequest =
+      originalRequest?.url?.includes(AUTH_ROUTES.REFRESH) ?? false;
     const isAuthFailure = error.response?.status === 401 && !isRefreshRequest;
 
     if (originalRequest && !originalRequest._retry && isAuthFailure) {
@@ -142,8 +155,8 @@ apiClient.interceptors.response.use(
       } else {
         // Refresh failed - clear tokens and redirect to login
         notifyAuthStateChange(null);
-        if (typeof window !== 'undefined') {
-          window.location.href = '/auth/signin';
+        if (typeof window !== "undefined") {
+          window.location.href = "/auth/signin";
         }
       }
     }

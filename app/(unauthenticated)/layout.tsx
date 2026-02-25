@@ -15,7 +15,8 @@ export default function UnauthenticatedLayout({ children }: UnauthenticatedLayou
   const isAuthenticated = useIsAuthenticated();
   const pathname = usePathname();
   const router = useRouter();
-  const canAccessWhenAuthenticated = pathname?.startsWith("/plans") ?? false;
+  const canAccessWhenAuthenticated =
+    pathname?.startsWith("/plans") || pathname?.startsWith("/custom-plan-builder");
 
   useEffect(() => {
     if (hasHydrated && isAuthenticated && !canAccessWhenAuthenticated) {

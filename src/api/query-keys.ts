@@ -11,6 +11,8 @@ export const customerKeys = {
   checkoutPreview: () => ["customer", "checkout-preview"] as const,
   customPlans: (params?: unknown) => ["customer", "custom-plans", params] as const,
   customPlan: (planId: string) => ["customer", "custom-plan", planId] as const,
+  customPlanPricing: (params: unknown) => ["customer", "custom-plan-pricing", params] as const,
+  customPlanMenuPreview: (params: unknown) => ["customer", "custom-plan-menu-preview", params] as const,
 };
 
 export const addressKeys = {

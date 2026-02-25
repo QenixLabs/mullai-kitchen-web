@@ -243,3 +243,45 @@ export interface PaginatedCustomPlansResponse {
     has_prev: boolean;
   };
 }
+
+// ===========================================
+// Custom Plan Pricing & Menu Preview Types
+// ===========================================
+
+export interface CustomPlanPricingResponse {
+  price_per_meal: number;
+  total_meals: number;
+  subtotal: number;
+  bulk_discount: {
+    percentage: number;
+    amount: number;
+  };
+  total: number;
+}
+
+export interface CustomPlanMenuPreviewParams {
+  preference: 'VEG' | 'NON_VEG';
+  meal_types: string[];
+  days: number;
+  preview_days?: number;
+}
+
+export interface MenuPreviewRecipe {
+  recipe_id: string;
+  recipe_name: string;
+  recipe_image?: string;
+}
+
+export interface MenuPreviewMeal {
+  meal_type: string;
+  recipe: MenuPreviewRecipe;
+}
+
+export interface MenuPreviewDay {
+  day: string;
+  meals: MenuPreviewMeal[];
+}
+
+export interface CustomPlanMenuPreviewResponse {
+  menu: MenuPreviewDay[];
+}

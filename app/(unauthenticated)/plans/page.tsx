@@ -21,7 +21,6 @@ import { HowItWorksSection } from "@/components/customer/plans/HowItWorksSection
 import { LocalFavoritesSection } from "@/components/customer/plans/LocalFavoritesSection";
 import { MenuPreviewSheet } from "@/components/customer/plans/MenuPreviewSheet";
 import { PlanGrid } from "@/components/customer/plans/PlanGrid";
-import { CustomPlanBuilderDialog } from "@/components/customer/plans/CustomPlanBuilderDialog";
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
 import {
   Sparkles,
@@ -33,6 +32,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { createPlanIntentStore } from "@/stores/plan-intent-store";
+import { cn } from "@/lib/utils";
 
 const normalizePincode = (value: string | null): string | null => {
   if (!value) {
@@ -74,7 +74,6 @@ function PlansContent() {
   );
   const [menuPlan, setMenuPlan] = useState<PlanBrowseItem | null>(null);
   const [isMenuSheetOpen, setIsMenuSheetOpen] = useState(false);
-  const [isCustomPlanOpen, setIsCustomPlanOpen] = useState(false);
 
   // Filter state
   type DietFilter = "all" | "veg" | "non-veg";
@@ -191,32 +190,28 @@ function PlansContent() {
   };
 
   const handleCustomPlanClick = () => {
-    const isSignedIn = hasHydrated && isAuthenticated;
-    if (!isSignedIn) {
-      const currentSearch = searchParams.toString();
-      const from =
-        currentSearch.length > 0 ? `/plans?${currentSearch}` : "/plans";
-      router.push(`/auth/signin?redirect=${encodeURIComponent(from)}`);
-      return;
-    }
-    setIsCustomPlanOpen(true);
-  };
-
-  const handleCustomPlanCreated = (plan: PlanBrowseItem) => {
-    setPlanIntent(plan._id, plan);
-    setCheckedPincode(checkedPincodeState);
     const currentSearch = searchParams.toString();
-    setSourceRoute(
-      currentSearch.length > 0 ? `/plans?${currentSearch}` : "/plans",
-    );
-    router.push("/checkout");
+    const from =
+      currentSearch.length > 0 ? `/plans?${currentSearch}` : "/plans";
+
+    // Save current state for redirect back
+    setSourceRoute(from);
+    setCheckedPincode(checkedPincodeState);
+
+    // Navigate to custom plan builder
+    router.push("/custom-plan-builder");
   };
 
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+      <main
+        className={cn(
+          "mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10",
+          isAuthenticated && "pb-28 sm:pb-8",
+        )}
+      >
         {/* Hero Section - Only for unauthenticated */}
         {!isAuthenticated && (
           <HeroSection
@@ -325,7 +320,7 @@ function PlansContent() {
                   const iconMap = {
                     Breakfast: "🍳",
                     Lunch: "🍱",
-                    Dinner: "🌙"
+                    Dinner: "🌙",
                   };
                   const baseClass = `relative group flex items-center gap-2 rounded-xl border-2 px-4 py-2.5 text-sm font-semibold transition-all duration-300 cursor-pointer ${isActive ? "shadow-md transform scale-105" : "shadow-sm hover:scale-[1.02]"}`;
                   const colorClasses = {
@@ -337,7 +332,7 @@ function PlansContent() {
                       : "border-orange-200 bg-orange-50/50 text-orange-700 hover:border-orange-400 hover:bg-orange-50",
                     Dinner: isActive
                       ? "border-indigo-600 bg-indigo-50 text-indigo-800"
-                      : "border-indigo-200 bg-indigo-50/50 text-indigo-700 hover:border-indigo-400 hover:bg-indigo-50"
+                      : "border-indigo-200 bg-indigo-50/50 text-indigo-700 hover:border-indigo-400 hover:bg-indigo-50",
                   };
 
                   return (
@@ -370,8 +365,18 @@ function PlansContent() {
                 }}
                 className="inline-flex items-center gap-2 rounded-full border-2 border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-500 transition-all duration-300 hover:border-[#FF6B35] hover:text-[#FF6B35] hover:bg-orange-50 active:scale-95"
               >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
                 Reset
               </button>
@@ -417,7 +422,6 @@ function PlansContent() {
 
           {isAuthenticated && (
             <div className="mb-8 flex justify-end">
-              {/* Simple button for authenticated */}
               <button
                 id="custom-plan-cta"
                 onClick={handleCustomPlanClick}
@@ -465,14 +469,6 @@ function PlansContent() {
           onRetry={() => {
             void menuPreviewQuery.refetch();
           }}
-        />
-
-        {/* Custom Plan Builder Dialog */}
-        <CustomPlanBuilderDialog
-          open={isCustomPlanOpen}
-          onOpenChange={setIsCustomPlanOpen}
-          onPlanCreated={handleCustomPlanCreated}
-          checkedPincode={checkedPincodeState}
         />
       </main>
 

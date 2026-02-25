@@ -19,6 +19,13 @@ export const CUSTOMER_ROUTES = {
   CHECKOUT_CREATE_ORDER: "/customer/checkout/create-order",
   ADDRESSES: "/customer/addresses",
   PROFILE: "/customer/profile",
-  CUSTOM_PLANS: "/customer/custom-plans",
-  CUSTOM_PLAN: (planId: string) => `/customer/custom-plans/${planId}`,
+  CUSTOM_PLANS: "/customer/build-plan",
+  CUSTOM_PLAN: (planId: string) => `/customer/build-plan/${planId}`,
+  CUSTOM_PLAN_PRICING: "/customer/build-plan/pricing",
+  CUSTOM_PLAN_MENU_PREVIEW: (
+    preference: string,
+    meals: string[],
+    days: number,
+  ) =>
+    `/customer/build-plan/menu-preview?preference=${preference}&meal_types=${meals.join(",")}&days=${days}`,
 } as const;
