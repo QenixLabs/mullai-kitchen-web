@@ -24,15 +24,23 @@ import {
 import { useStore } from "zustand";
 import { motion } from "motion/react";
 
-import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
+import { useAuthHydrated, useIsAuthenticated, useCurrentUser } from "@/hooks/use-user-store";
 import { usePaymentStore } from "@/hooks/use-payment-store";
 import { createPlanIntentStore } from "@/stores/plan-intent-store";
 import { useAddressList } from "@/api/hooks/useAddress";
 import { useCreateOrder, useWalletBalance } from "@/api/hooks/usePayment";
+import { useCreateAddress } from "@/api/hooks/useCreateAddress";
 import { loadRazorpayScript, openRazorpayCheckout } from "@/lib/razorpay";
 import type { Address } from "@/api/types/customer.types";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "@/components/ui/date-picker";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { AddressFormStep } from "@/components/customer/onboarding/AddressFormStep";
 import { format, addDays } from "date-fns";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -191,6 +199,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const hasHydrated = useAuthHydrated();
   const isAuthenticated = useIsAuthenticated();
+  const user = useCurrentUser();
 
   const [planIntentStore] = useState(() => createPlanIntentStore());
 
@@ -227,8 +236,12 @@ export default function CheckoutPage() {
 
   // Mutation for creating payment orders
   const createOrderMutation = useCreateOrder();
+  const createAddressMutation = useCreateAddress();
 
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [showAddressDialog, setShowAddressDialog] = useState(false);
+  const [showWalletInfo, setShowWalletInfo] = useState(false);
+  const [tempAddresses, setTempAddresses] = useState<any[]>([]);
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>("wallet");
   const [applyWallet, setApplyWallet] = useState(true);
 
@@ -349,10 +362,9 @@ export default function CheckoutPage() {
         onFailure: handlePaymentFailure,
         onDismiss: handlePaymentDismissed,
         prefill: {
-          // TODO: Get user data from auth store
-          // name: user.name,
-          // email: user.email,
-          // contact: user.phone,
+          name: user?.name || "",
+          email: user?.email || "",
+          contact: user?.phone || "",
         },
       });
     } catch (err) {
@@ -454,7 +466,7 @@ export default function CheckoutPage() {
                     />
                   ))
                 )}
-                <AddNewAddressCard onClick={() => {}} />
+                <AddNewAddressCard onClick={() => setShowAddressDialog(true)} />
               </div>
 
               {/* Start Date Selector */}
@@ -490,6 +502,7 @@ export default function CheckoutPage() {
                   upon delivery confirmation.{" "}
                   <button
                     type="button"
+                    onClick={() => setShowWalletInfo(true)}
                     className="font-medium text-orange-500 hover:underline"
                   >
                     Learn more about how it works.
@@ -787,31 +800,82 @@ export default function CheckoutPage() {
                   </p>
                 </div>
               </div>
-              <button
-                type="button"
+              <a
+                href="mailto:support@mullaikitchen.com?subject=Checkout Support"
                 className="text-xs font-semibold text-orange-500 underline underline-offset-2 hover:text-orange-600"
               >
                 Chat
-              </button>
+              </a>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── Delivery zones map footer ─────────────────────── */}
-      <div className="relative mt-4 h-40 w-full overflow-hidden sm:h-48">
-        <iframe
-          title="Mullai Kitchen Delivery Zones"
-          src="https://www.openstreetmap.org/export/embed.html?bbox=-74.05%2C40.68%2C-73.90%2C40.82&layer=mapnik"
-          className="h-full w-full border-0 opacity-60 grayscale"
-          loading="lazy"
-        />
-        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-          <p className="rounded-full bg-black/60 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-white">
-            Delivering to 12 Neighborhood Zones Across Manhattan
+      {/* ── Delivery zones info footer ─────────────────────── */}
+      <div className="mt-4 flex items-center justify-center rounded-2xl border border-orange-200 bg-orange-50 px-6 py-6">
+        <div className="flex items-center gap-3">
+          <MapPin className="h-6 w-6 text-orange-600" />
+          <p className="text-sm font-semibold text-gray-900">
+            We deliver to selected serviceable pincodes. Enter your address during checkout to check availability.
           </p>
         </div>
       </div>
+
+      {/* ── Address Dialog ────────────────────────────────── */}
+      {showAddressDialog && (
+        <Dialog open={showAddressDialog} onOpenChange={setShowAddressDialog}>
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Add New Address</DialogTitle>
+            </DialogHeader>
+            <AddressFormStep
+              addresses={tempAddresses}
+              defaultAddressIndex={tempAddresses.length > 0 ? 0 : -1}
+              onAddAddress={async (address) => {
+                await createAddressMutation.mutateAsync(address);
+                setShowAddressDialog(false);
+                setTempAddresses([]);
+              }}
+              onRemoveAddress={(index) => {
+                setTempAddresses((prev) => prev.filter((_, i) => i !== index));
+              }}
+              onSetDefault={(index) => {
+                setTempAddresses((prev) => {
+                  const newAddresses = [...prev];
+                  const selected = newAddresses.splice(index, 1)[0];
+                  return [selected, ...newAddresses];
+                });
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* ── Wallet Info Dialog ─────────────────────────────── */}
+      {showWalletInfo && (
+        <Dialog open={showWalletInfo} onOpenChange={setShowWalletInfo}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>How Two-Phase Wallet Works</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 text-sm text-gray-700">
+              <div>
+                <p className="font-semibold text-gray-900">Phase 1: Reservation</p>
+                <p>When you subscribe, funds are first reserved from your wallet to guarantee your subscription slot.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">Phase 2: Deduction</p>
+                <p>Actual deductions happen only when meals are delivered and confirmed. Any reserved but unused funds remain in your wallet.</p>
+              </div>
+              <div className="rounded-lg bg-orange-50 p-3">
+                <p className="text-xs text-orange-800">
+                  <strong>Benefit:</strong> Your balance stays secure even before delivery starts.
+                </p>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
