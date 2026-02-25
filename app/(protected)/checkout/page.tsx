@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   CheckCircle2,
   CreditCard,
   Info,
+  Loader2,
   Lock,
   MapPin,
   MessageCircle,
@@ -15,45 +16,28 @@ import {
   QrCode,
   Shield,
   Wallet,
+  WalletCards,
+  X,
+  XCircle,
+  Calendar,
 } from "lucide-react";
 import { useStore } from "zustand";
+import { motion } from "motion/react";
 
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
+import { usePaymentStore } from "@/hooks/use-payment-store";
 import { createPlanIntentStore } from "@/stores/plan-intent-store";
+import { useAddressList } from "@/api/hooks/useAddress";
+import { useCreateOrder, useWalletBalance } from "@/api/hooks/usePayment";
+import { loadRazorpayScript, openRazorpayCheckout } from "@/lib/razorpay";
+import type { Address } from "@/api/types/customer.types";
 import { cn } from "@/lib/utils";
+import { DatePicker } from "@/components/ui/date-picker";
+import { format, addDays } from "date-fns";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 type PaymentMethod = "wallet" | "card" | "upi";
-
-interface MockAddress {
-  id: string;
-  label: string;
-  line1: string;
-  line2: string;
-  country: string;
-  isDefault?: boolean;
-}
-
-// ─── Constants ───────────────────────────────────────────────────────────────
-
-const MOCK_ADDRESSES: MockAddress[] = [
-  {
-    id: "home",
-    label: "Home",
-    line1: "123 Main St, Apartment 4B",
-    line2: "New York, NY 10001",
-    country: "United States",
-    isDefault: true,
-  },
-  {
-    id: "work",
-    label: "Work",
-    line1: "456 Business Ave, Floor 12",
-    line2: "New York, NY 10010",
-    country: "United States",
-  },
-];
 
 const DELIVERY_FEE = 12.5;
 const ESTIMATED_TAXES_RATE = 0.05;
@@ -98,7 +82,7 @@ function AddressCard({
   selected,
   onClick,
 }: {
-  address: MockAddress;
+  address: Address;
   selected: boolean;
   onClick: () => void;
 }) {
@@ -115,16 +99,20 @@ function AddressCard({
     >
       <div className="flex w-full items-center justify-between">
         <span className="flex items-center gap-1.5 text-sm font-semibold text-gray-900">
-          {address.label}
-          {address.isDefault && selected && (
+          {address.type}
+          {address.is_default && selected && (
             <CheckCircle2 className="h-3.5 w-3.5 text-orange-500" />
           )}
         </span>
         <Pencil className="h-3.5 w-3.5 text-gray-400" />
       </div>
-      <p className="text-xs text-gray-600">{address.line1}</p>
-      <p className="text-xs text-gray-600">{address.line2}</p>
-      <p className="text-xs text-gray-500">{address.country}</p>
+      <p className="text-xs text-gray-600">{address.full_address}</p>
+      <p className="text-xs text-gray-600">
+        {address.area}, {address.city}
+      </p>
+      <p className="text-xs text-gray-500">
+        {address.state} - {address.pincode}
+      </p>
     </button>
   );
 }
@@ -149,6 +137,7 @@ function PaymentOption({
   icon,
   badge,
   selected,
+  disabled = false,
   onClick,
 }: {
   id: PaymentMethod;
@@ -157,17 +146,21 @@ function PaymentOption({
   icon: React.ReactNode;
   badge?: React.ReactNode;
   selected: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       className={cn(
         "flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-all",
-        selected
-          ? "border-orange-400 bg-orange-50/60"
-          : "border-gray-200 bg-white hover:border-orange-200",
+        disabled
+          ? "cursor-not-allowed opacity-50"
+          : selected
+            ? "border-orange-400 bg-orange-50/60"
+            : "border-gray-200 bg-white hover:border-orange-200",
       )}
     >
       {/* Radio circle */}
@@ -206,10 +199,73 @@ export default function CheckoutPage() {
 
   const hasPlanIntent = Boolean(planId && plan);
 
-  const [selectedAddressId, setSelectedAddressId] = useState("home");
-  const [selectedPayment, setSelectedPayment] =
-    useState<PaymentMethod>("wallet");
-  const WALLET_BALANCE = 145.2;
+  // Payment state from store
+  const paymentStore = usePaymentStore();
+  const {
+    status: paymentStatus,
+    orderId,
+    keyId,
+    amount,
+    errorMessage: paymentError,
+  } = paymentStore;
+
+  // React Query hooks for addresses and wallet balance
+  const {
+    data: addresses,
+    isLoading: addressesLoading,
+    error: addressesError,
+  } = useAddressList();
+
+  const {
+    data: walletData,
+    isLoading: walletLoading,
+    error: walletError,
+    refetch: refetchWallet,
+  } = useWalletBalance();
+
+  const walletBalance = walletData?.balance ?? null;
+
+  // Mutation for creating payment orders
+  const createOrderMutation = useCreateOrder();
+
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>("wallet");
+  const [applyWallet, setApplyWallet] = useState(true);
+
+  // Start date (default to tomorrow)
+  const [startDate, setStartDate] = useState<Date>(() => {
+    return addDays(new Date(), 1);
+  });
+
+  // Handle date change with type safety
+  const handleStartDateChange = (date: Date | undefined) => {
+    if (date) {
+      setStartDate(date);
+    }
+  };
+
+  // Set default address when addresses are loaded
+  useEffect(() => {
+    if (addresses && addresses.length > 0 && !selectedAddressId) {
+      const defaultAddr = addresses.find((a) => a.is_default) ?? addresses[0];
+      if (defaultAddr) setSelectedAddressId(defaultAddr._id);
+    }
+  }, [addresses, selectedAddressId]);
+
+  // Reset payment state on mount so a stale "processing" status from a
+  // previous attempt never locks the button after a page reload.
+  useEffect(() => {
+    paymentStore.resetPayment();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Load Razorpay script on mount
+  useEffect(() => {
+    loadRazorpayScript().catch((err) => {
+      console.error("Failed to load Razorpay script:", err);
+      paymentStore.setErrorMessage("Failed to load payment system");
+    });
+  }, []);
 
   // Auth + intent guards
   useEffect(() => {
@@ -221,6 +277,90 @@ export default function CheckoutPage() {
     if (!hasHydrated || !isAuthenticated) return;
     if (!hasPlanIntent) router.replace("/plans");
   }, [hasHydrated, hasPlanIntent, isAuthenticated, router]);
+
+  // Handle payment success
+  const handlePaymentSuccess = (response: {
+    razorpay_payment_id: string;
+    razorpay_order_id: string;
+    razorpay_signature: string;
+  }) => {
+    paymentStore.setPaymentSuccess(response);
+    // Redirect to success page
+    router.push(
+      `/checkout/success?planName=${encodeURIComponent(plan?.name || "Subscription")}`,
+    );
+  };
+
+  // Handle payment failure
+  const handlePaymentFailure = (error: {
+    code: string;
+    description: string;
+    source: string;
+    metadata: unknown;
+  }) => {
+    paymentStore.setPaymentFailed(error.description);
+    router.push("/checkout/error");
+  };
+
+  // Handle payment dismissed
+  const handlePaymentDismissed = () => {
+    paymentStore.setPaymentCancelled();
+  };
+
+  // Handle Pay & Subscribe click
+  const handlePay = async () => {
+    if (!planId || !selectedAddressId || !startDate) {
+      paymentStore.setErrorMessage("Please complete all checkout fields");
+      return;
+    }
+
+    paymentStore.setPaymentProcessing({
+      razorpayOrderId: "",
+      keyId: "",
+      amount: 0,
+      currency: "INR",
+      name: "MullaiKitchen",
+      description: `${plan?.name || "Subscription"} Payment`,
+      order_id: "",
+      walletReservationAmount: 0,
+    });
+
+    try {
+      // Create payment order using React Query mutation
+      const result = await createOrderMutation.mutateAsync({
+        plan_id: planId,
+        address_id: selectedAddressId,
+        start_date: startDate.toISOString().split("T")[0],
+        apply_wallet: applyWallet,
+      });
+
+      // Store order details
+      paymentStore.setPaymentProcessing(result);
+
+      // Open Razorpay checkout
+      openRazorpayCheckout({
+        keyId: result.keyId,
+        amount: result.amount,
+        currency: result.currency,
+        name: "MullaiKitchen",
+        description: `${plan?.name || "Subscription"} - ${plan?.duration || ""}`,
+        orderId: result.razorpayOrderId,
+        onSuccess: handlePaymentSuccess,
+        onFailure: handlePaymentFailure,
+        onDismiss: handlePaymentDismissed,
+        prefill: {
+          // TODO: Get user data from auth store
+          // name: user.name,
+          // email: user.email,
+          // contact: user.phone,
+        },
+      });
+    } catch (err) {
+      // Error is handled by mutation's onError callback
+      // Set error message for display
+      paymentStore.setPaymentFailed(err instanceof Error ? err.message : "Payment failed");
+    }
+  };
 
   // Loading / redirect states
   if (!hasHydrated) {
@@ -252,6 +392,14 @@ export default function CheckoutPage() {
   const taxes = parseFloat((subtotal * ESTIMATED_TAXES_RATE).toFixed(2));
   const total = subtotal + DELIVERY_FEE + taxes;
 
+  // Calculate amount after wallet
+  const amountAfterWallet =
+    applyWallet && walletBalance !== null
+      ? Math.max(0, total - walletBalance)
+      : total;
+  const walletReservation =
+    applyWallet && walletBalance !== null ? Math.min(walletBalance, total) : 0;
+
   return (
     <div className="min-h-screen bg-[#f5f5f0]">
       {/* ── Progress Steps ──────────────────────────────────── */}
@@ -262,7 +410,11 @@ export default function CheckoutPage() {
           {/* connector line */}
           <div className="mx-3 h-0.5 w-24 bg-gradient-to-r from-orange-400 to-gray-200 sm:w-40" />
 
-          <StepIndicator step={2} label="Payment & Review" active={false} />
+          <StepIndicator
+            step={2}
+            label="Payment & Review"
+            active={paymentStatus === "processing" || createOrderMutation.isPending}
+          />
         </div>
       </div>
 
@@ -279,15 +431,47 @@ export default function CheckoutPage() {
               </h2>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {MOCK_ADDRESSES.map((addr) => (
-                  <AddressCard
-                    key={addr.id}
-                    address={addr}
-                    selected={selectedAddressId === addr.id}
-                    onClick={() => setSelectedAddressId(addr.id)}
-                  />
-                ))}
+                {addressesLoading ? (
+                  <div className="col-span-2 flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 p-4">
+                    <Loader2 className="h-4 w-4 animate-spin text-orange-500" />
+                    <span className="text-sm text-gray-500">
+                      Loading addresses...
+                    </span>
+                  </div>
+                ) : addresses && addresses.length === 0 ? (
+                  <div className="col-span-2 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 text-center">
+                    <p className="text-sm text-gray-500">
+                      No saved addresses. Please add one to continue.
+                    </p>
+                  </div>
+                ) : (
+                  addresses?.map((addr) => (
+                    <AddressCard
+                      key={addr._id}
+                      address={addr}
+                      selected={selectedAddressId === addr._id}
+                      onClick={() => setSelectedAddressId(addr._id)}
+                    />
+                  ))
+                )}
                 <AddNewAddressCard onClick={() => {}} />
+              </div>
+
+              {/* Start Date Selector */}
+              <div className="mt-4 border-t border-gray-100 pt-4">
+                <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-900">
+                  <Calendar className="h-4 w-4 text-orange-500" />
+                  Subscription Start Date
+                </label>
+                <DatePicker
+                  date={startDate}
+                  onDateChange={handleStartDateChange}
+                  placeholder="Select start date"
+                  minDate={addDays(new Date(), 1)}
+                />
+                <p className="mt-2 text-xs text-gray-500">
+                  Subscriptions start at least 1 day from today
+                </p>
               </div>
             </section>
 
@@ -321,21 +505,96 @@ export default function CheckoutPage() {
                 2. Payment Selection
               </h2>
 
+              {/* Wallet Balance Display */}
+              {walletLoading ? (
+                <div className="mb-4 flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 p-3">
+                  <Loader2 className="h-4 w-4 animate-spin text-orange-500" />
+                  <span className="text-sm text-gray-600">
+                    Loading wallet balance...
+                  </span>
+                </div>
+              ) : walletError ? (
+                <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3">
+                  <XCircle className="h-4 w-4 text-red-600" />
+                  <span className="text-sm text-red-900">Failed to load wallet balance</span>
+                  <button
+                    type="button"
+                    onClick={() => refetchWallet()}
+                    className="ml-auto text-sm font-semibold text-red-700 hover:underline"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : (
+                <div className="mb-4 flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
+                      <Wallet className="h-5 w-5 text-emerald-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">
+                        Wallet Balance
+                      </p>
+                      <p className="text-xs text-gray-600">Available funds</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-extrabold text-gray-900">
+                      ₹{walletBalance?.toFixed(2) || "0.00"}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Apply Wallet Toggle */}
+              {walletBalance !== null && walletBalance > 0 && (
+                <div className="mb-4 flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      id="apply-wallet"
+                      checked={applyWallet}
+                      onChange={(e) => setApplyWallet(e.target.checked)}
+                      className="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                    />
+                    <div>
+                      <label
+                        htmlFor="apply-wallet"
+                        className="text-sm font-semibold text-gray-900"
+                      >
+                        Apply Wallet Balance
+                      </label>
+                      <p className="text-xs text-gray-500">
+                        Reserve ₹{walletReservation.toFixed(2)} from wallet
+                      </p>
+                    </div>
+                  </div>
+                  {applyWallet && (
+                    <button
+                      type="button"
+                      onClick={() => setApplyWallet(false)}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              )}
+
               <div className="space-y-3">
                 {/* Mullai Wallet */}
                 <PaymentOption
                   id="wallet"
-                  label="Mullai Wallet"
-                  subtitle={`Balance: $${WALLET_BALANCE.toFixed(2)}`}
+                  label="Mullai Wallet + Card/UPI"
+                  subtitle={
+                    applyWallet && walletBalance !== null
+                      ? `₹${walletReservation.toFixed(2)} reserved, ₹${amountAfterWallet.toFixed(2)} remaining`
+                      : undefined
+                  }
                   icon={
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-100">
-                      <Wallet className="h-4 w-4 text-orange-600" />
+                      <WalletCards className="h-4 w-4 text-orange-600" />
                     </div>
-                  }
-                  badge={
-                    <span className="shrink-0 rounded-full bg-green-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-green-700">
-                      Recommended
-                    </span>
                   }
                   selected={selectedPayment === "wallet"}
                   onClick={() => setSelectedPayment("wallet")}
@@ -345,6 +604,11 @@ export default function CheckoutPage() {
                 <PaymentOption
                   id="card"
                   label="Credit / Debit Card"
+                  disabled={
+                    applyWallet &&
+                    walletBalance !== null &&
+                    walletBalance >= total
+                  }
                   icon={
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100">
                       <CreditCard className="h-4 w-4 text-gray-500" />
@@ -358,6 +622,11 @@ export default function CheckoutPage() {
                 <PaymentOption
                   id="upi"
                   label="UPI (PhonePe, GPay, etc.)"
+                  disabled={
+                    applyWallet &&
+                    walletBalance !== null &&
+                    walletBalance >= total
+                  }
                   icon={
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100">
                       <QrCode className="h-4 w-4 text-gray-500" />
@@ -368,6 +637,32 @@ export default function CheckoutPage() {
                 />
               </div>
             </section>
+
+            {/* Error Message */}
+            {paymentError && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-2xl border border-red-200 bg-red-50 p-4"
+              >
+                <div className="flex items-start gap-3">
+                  <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-red-900">
+                      Payment Error
+                    </p>
+                    <p className="text-sm text-red-800">{paymentError}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => paymentStore.resetPayment()}
+                    className="shrink-0 text-red-600 hover:text-red-800"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
           </div>
 
           {/* ─── Right sidebar ─────────────────────────────── */}
@@ -390,7 +685,7 @@ export default function CheckoutPage() {
                     </p>
                   </div>
                   <span className="shrink-0 font-semibold text-gray-900">
-                    ${subtotal.toFixed(2)}
+                    ₹{subtotal.toFixed(2)}
                   </span>
                 </div>
 
@@ -401,7 +696,7 @@ export default function CheckoutPage() {
                     <Info className="h-3 w-3 text-gray-400" />
                   </span>
                   <span className="font-medium text-gray-800">
-                    ${DELIVERY_FEE.toFixed(2)}
+                    ₹{DELIVERY_FEE.toFixed(2)}
                   </span>
                 </div>
 
@@ -409,25 +704,35 @@ export default function CheckoutPage() {
                 <div className="flex items-center justify-between text-gray-600">
                   <span>Estimated Taxes</span>
                   <span className="font-medium text-gray-800">
-                    ${taxes.toFixed(2)}
+                    ₹{taxes.toFixed(2)}
                   </span>
                 </div>
+
+                {/* Wallet Applied */}
+                {applyWallet && walletReservation > 0 && (
+                  <div className="flex items-center justify-between text-emerald-700">
+                    <span className="flex items-center gap-1">
+                      <Wallet className="h-3 w-3" />
+                      Wallet Applied
+                    </span>
+                    <span className="font-medium">
+                      -₹{walletReservation.toFixed(2)}
+                    </span>
+                  </div>
+                )}
 
                 <div className="h-px bg-gray-100" />
 
                 {/* Total */}
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
-                    Total to Reserve
+                    {applyWallet && walletReservation > 0
+                      ? "You're Paying"
+                      : "Total to Reserve"}
                   </p>
                   <div className="flex items-end justify-between">
                     <p className="mt-0.5 text-3xl font-extrabold text-gray-900">
-                      ${total.toFixed(2)}
-                    </p>
-                    <p className="pb-1 text-right text-[10px] leading-tight text-gray-400">
-                      Monthly auto-renewal
-                      <br />
-                      on 15th of each month
+                      ₹{amountAfterWallet.toFixed(2)}
                     </p>
                   </div>
                 </div>
@@ -435,10 +740,21 @@ export default function CheckoutPage() {
                 {/* CTA */}
                 <button
                   type="button"
-                  className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3.5 text-sm font-bold text-white shadow-md shadow-orange-200 transition-all hover:bg-orange-600 active:scale-[0.98]"
+                  onClick={handlePay}
+                  disabled={paymentStatus === "processing" || createOrderMutation.isPending}
+                  className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3.5 text-sm font-bold text-white shadow-md shadow-orange-200 transition-all hover:bg-orange-600 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  Pay &amp; Subscribe
-                  <ArrowRight className="h-4 w-4" />
+                  {paymentStatus === "processing" || createOrderMutation.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      Pay & Subscribe
+                      <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
                 </button>
 
                 {/* Trust badges */}

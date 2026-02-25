@@ -29,3 +29,12 @@ export const CUSTOMER_ROUTES = {
   ) =>
     `/customer/build-plan/menu-preview?preference=${preference}&meal_types=${meals.join(",")}&days=${days}`,
 } as const;
+
+export const PAYMENT_ROUTES = {
+  CREATE_ORDER: "/payment/create-order",
+  WEBHOOK: "/payment/webhook",
+  ORDER_STATUS: (orderId: string) => `/payment/orders/${orderId}/status`,
+  RESERVATION_STATUS: (reservationId: string) => `/payment/reservations/${reservationId}/status`,
+  WALLET_BALANCE: "/payment/wallet/balance",
+  WALLET_TRANSACTIONS: "/payment/wallet/transactions",
+} as const;

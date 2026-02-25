@@ -23,3 +23,13 @@ export const addressKeys = {
 export const profileKeys = {
   profile: () => ["customer", "profile"] as const,
 };
+
+export const paymentKeys = {
+  all: () => ["payment"] as const,
+  wallet: () => ["payment", "wallet"] as const,
+  walletBalance: () => ["payment", "wallet", "balance"] as const,
+  walletTransactions: (params?: { limit?: number; offset?: number }) =>
+    ["payment", "wallet", "transactions", params] as const,
+  orderStatus: (orderId: string) => ["payment", "orders", "status", orderId] as const,
+  reservationStatus: (reservationId: string) => ["payment", "reservations", "status", reservationId] as const,
+};
