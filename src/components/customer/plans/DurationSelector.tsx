@@ -7,12 +7,26 @@ import { cn } from "@/lib/utils";
 interface DurationOption {
   value: 15 | 30;
   label: string;
-  discount?: string;
+  description: string;
+  badge?: string;
+  badgeType?: "standard" | "discount";
 }
 
 const DURATION_OPTIONS: DurationOption[] = [
-  { value: 15, label: "15 Days" },
-  { value: 30, label: "30 Days", discount: "SAVE 15%" },
+  {
+    value: 15,
+    label: "15 Days",
+    description: "Perfect for a short commitment and trial.",
+    badge: "Standard",
+    badgeType: "standard",
+  },
+  {
+    value: 30,
+    label: "30 Days",
+    description: "Our most popular plan for long-term health.",
+    badge: "SAVE 15%",
+    badgeType: "discount",
+  },
 ];
 
 interface DurationSelectorProps {
@@ -27,7 +41,7 @@ export function DurationSelector({
   disabled = false,
 }: DurationSelectorProps) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {DURATION_OPTIONS.map((option) => (
         <button
           key={option.value}
@@ -35,32 +49,38 @@ export function DurationSelector({
           onClick={() => onChange(option.value)}
           disabled={disabled}
           className={cn(
-            "relative flex flex-col items-center justify-center p-5 rounded-2xl bg-white transition-all duration-500 border-2",
+            "relative flex flex-col items-start p-6 rounded-2xl bg-white transition-all duration-300 border-2 text-left",
             value === option.value
-              ? "border-[#FF6B35] shadow-[0_4px_20px_rgba(255,107,53,0.2)]"
-              : "border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] hover:border-[#FF6B35]/30 hover:shadow-[0_4px_20px_rgba(255,107,53,0.1)] hover:-translate-y-0.5",
-            disabled && "opacity-50 cursor-not-allowed hover:translate-y-0 hover:shadow-none",
+              ? "border-[#FF6B35] bg-white ring-1 ring-[#FF6B35]"
+              : "border-gray-100 hover:border-gray-300",
+            disabled && "opacity-50 cursor-not-allowed hover:border-gray-100",
           )}
         >
-          {option.discount && (
-            <span className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FF6B35]/10 text-[#FF6B35]">
-              {option.discount}
+          <div className="flex w-full items-center justify-between mb-2">
+            <span className="text-xl font-bold text-gray-900">
+              {option.label}
             </span>
-          )}
-          <span
-            className={cn(
-              "text-2xl font-bold mb-1 transition-colors duration-300",
-              value === option.value ? "text-[#FF6B35]" : "text-gray-900",
+            {option.badge && (
+              <span
+                className={cn(
+                  "px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                  option.badgeType === "discount"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-gray-100 text-gray-600",
+                )}
+              >
+                {option.badge}
+              </span>
             )}
-          >
-            {option.value}
-          </span>
-          <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-            Days
-          </span>
+          </div>
+
+          <p className="text-sm text-gray-500 leading-relaxed max-w-[200px]">
+            {option.description}
+          </p>
+
           {value === option.value && (
-            <div className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-md">
-              <Check className="h-3 w-3 text-white" strokeWidth={3} />
+            <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-lg border-2 border-white">
+              <Check className="h-3.5 w-3.5 text-white" strokeWidth={4} />
             </div>
           )}
         </button>

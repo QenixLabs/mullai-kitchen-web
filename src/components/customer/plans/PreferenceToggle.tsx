@@ -1,7 +1,5 @@
 "use client";
 
-import { Leaf, Drumstick } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 
 interface PreferenceToggleProps {
@@ -20,43 +18,37 @@ export function PreferenceToggle({
   disabled = false,
 }: PreferenceToggleProps) {
   return (
-    <div
-      className={cn(
-        "inline-flex rounded-xl bg-gray-100 p-1.5 gap-1.5 transition-all duration-300",
-        disabled && "opacity-50 cursor-not-allowed",
-      )}
-    >
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <button
         type="button"
         onClick={() => onChange("VEG")}
         disabled={disabled}
         className={cn(
-          "flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300",
+          "flex items-center justify-center gap-3 p-4 rounded-xl transition-all duration-300 border-2 font-bold",
           value === "VEG"
-            ? "bg-white text-[#FF6B35] shadow-md"
-            : "text-gray-600 hover:text-gray-900",
-          disabled && "pointer-events-none",
+            ? "border-[#FF6B35] bg-white ring-1 ring-[#FF6B35]"
+            : "border-gray-50 bg-[#F8FAFC] hover:border-gray-200",
+          disabled && "opacity-50 cursor-not-allowed hover:border-gray-50",
         )}
       >
-        <Leaf className="w-4 h-4" strokeWidth={2.5} />
-        <span>Veg</span>
-        <span className="text-xs text-gray-400">₹{vegPrice}</span>
+        <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
+        <span className="text-gray-900">Veg (₹{vegPrice}/meal)</span>
       </button>
+
       <button
         type="button"
         onClick={() => onChange("NON_VEG")}
         disabled={disabled}
         className={cn(
-          "flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300",
+          "flex items-center justify-center gap-3 p-4 rounded-xl transition-all duration-300 border-2 font-bold",
           value === "NON_VEG"
-            ? "bg-white text-[#FF6B35] shadow-md"
-            : "text-gray-600 hover:text-gray-900",
-          disabled && "pointer-events-none",
+            ? "border-[#FF6B35] bg-white ring-1 ring-[#FF6B35]"
+            : "border-gray-50 bg-[#F8FAFC] hover:border-gray-200",
+          disabled && "opacity-50 cursor-not-allowed hover:border-gray-50",
         )}
       >
-        <Drumstick className="w-4 h-4" strokeWidth={2.5} />
-        <span>Non-Veg</span>
-        <span className="text-xs text-gray-400">₹{nonvegPrice}</span>
+        <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+        <span className="text-gray-900">Non-Veg (₹{nonvegPrice}/meal)</span>
       </button>
     </div>
   );

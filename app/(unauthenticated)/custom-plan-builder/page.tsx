@@ -167,55 +167,60 @@ function CustomPlanBuilderContent() {
   ]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#F8FAFC]">
       <Navbar />
 
       <main
         className={cn(
-          "mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10",
-          isAuthenticated && "pb-28 sm:pb-8",
+          "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16",
+          isAuthenticated && "pb-32 sm:pb-16",
         )}
       >
         {/* Header */}
-        <div className="mb-8 sm:mb-10">
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-gray-900">
-            Build Your Custom Plan
+        <div className="mb-12">
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-gray-900 mb-4">
+            Build Your Perfect Plan
           </h1>
-          <p className="mt-2 text-base text-gray-600">
-            Choose your meals, duration, and preferences to create a plan
-            tailored just for you.
+          <p className="text-lg text-gray-500 font-medium">
+            Customize your meals, duration, and preferences in three simple
+            steps.
           </p>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <Alert variant="destructive" className="mb-6">
+          <Alert variant="destructive" className="mb-8 rounded-2xl border-2">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription className="font-bold">{error}</AlertDescription>
           </Alert>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Left Column - Configuration */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Duration Section */}
+          <div className="lg:col-span-8 space-y-16">
+            {/* Step 1: Duration */}
             <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Plan Duration
-              </h2>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 text-[#FF6B35] text-sm font-black">
+                  1
+                </div>
+                <h2 className="text-2xl font-black text-gray-900 tracking-tight">
+                  Choose Duration
+                </h2>
+              </div>
               <DurationSelector value={duration} onChange={setDuration} />
             </section>
 
-            <Separator className="my-8" />
-
-            {/* Meal Types Section */}
+            {/* Step 2: Meal Types */}
             <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Meals Per Day
-              </h2>
-              <p className="text-sm text-gray-500 mb-4">
-                Select all the meals you want included in your daily delivery.
-              </p>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 text-[#FF6B35] text-sm font-black">
+                  2
+                </div>
+                <h2 className="text-2xl font-black text-gray-900 tracking-tight">
+                  Select Your Meals
+                </h2>
+              </div>
               <MealTypeSelector
                 selectedTypes={mealTypes}
                 onChange={setMealTypes}
@@ -223,13 +228,16 @@ function CustomPlanBuilderContent() {
               />
             </section>
 
-            <Separator className="my-8" />
-
-            {/* Preference Section */}
+            {/* Step 3: Food Preference */}
             <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Food Preference
-              </h2>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 text-[#FF6B35] text-sm font-black">
+                  3
+                </div>
+                <h2 className="text-2xl font-black text-gray-900 tracking-tight">
+                  Food Preference
+                </h2>
+              </div>
               <PreferenceToggle
                 value={preference}
                 onChange={setPreference}
@@ -239,23 +247,14 @@ function CustomPlanBuilderContent() {
               />
             </section>
 
-            <Separator className="my-8" />
-
             {/* Menu Preview Section */}
-            <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Weekly Menu Preview
-              </h2>
-              <p className="text-sm text-gray-500 mb-4">
-                Here's a preview of what your meals could look like based on
-                your selections.
-              </p>
+            <section className="pt-8 border-t border-gray-100">
               <WeeklyMenuPreview params={params} />
             </section>
           </div>
 
           {/* Right Column - Order Summary */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-4 h-full">
             <OrderSummaryPanel
               params={params}
               onContinue={handleContinue}

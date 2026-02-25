@@ -1,6 +1,6 @@
 "use client";
 
-import { Coffee, UtensilsCrossed, Moon, Check } from "lucide-react";
+import { Coffee, Utensils, Moon, Check } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -8,11 +8,11 @@ export type MealType = "Breakfast" | "Lunch" | "Dinner";
 
 const MEAL_TYPES_CONFIG: Record<
   MealType,
-  { label: string; icon: typeof Coffee }
+  { label: string; icon: typeof Coffee; time: string }
 > = {
-  Breakfast: { label: "Breakfast", icon: Coffee },
-  Lunch: { label: "Lunch", icon: UtensilsCrossed },
-  Dinner: { label: "Dinner", icon: Moon },
+  Breakfast: { label: "Breakfast", icon: Coffee, time: "8:00 AM - 9:30 AM" },
+  Lunch: { label: "Lunch", icon: Utensils, time: "12:30 PM - 2:00 PM" },
+  Dinner: { label: "Dinner", icon: Moon, time: "7:30 PM - 9:00 PM" },
 };
 
 interface MealTypeSelectorProps {
@@ -37,7 +37,7 @@ export function MealTypeSelector({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {Object.entries(MEAL_TYPES_CONFIG).map(([key, config]) => {
         const meal = key as MealType;
         const isSelected = selectedTypes.has(meal);
@@ -50,34 +50,43 @@ export function MealTypeSelector({
             onClick={() => toggleMeal(meal)}
             disabled={disabled}
             className={cn(
-              "w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-500 border-2",
+              "flex items-center p-4 rounded-xl transition-all duration-300 border-2 text-left",
               isSelected
-                ? "border-[#FF6B35] bg-orange-50/50 shadow-[0_4px_20px_rgba(255,107,53,0.15)]"
-                : "border-gray-100 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] hover:border-[#FF6B35]/30 hover:shadow-[0_4px_20px_rgba(255,107,53,0.1)] hover:-translate-y-0.5",
-              disabled && "opacity-50 cursor-not-allowed hover:translate-y-0 hover:shadow-none",
+                ? "border-[#FF6B35] bg-white"
+                : "border-gray-100 bg-white hover:border-gray-200",
+              disabled && "opacity-50 cursor-not-allowed hover:border-gray-100",
             )}
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 w-full">
+              {/* Checkbox */}
               <div
                 className={cn(
-                  "w-11 h-11 rounded-xl flex items-center justify-center transition-colors duration-300",
+                  "w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all",
                   isSelected
-                    ? "bg-gradient-to-r from-[#FF6B35] to-[#FF8555] text-white shadow-md"
-                    : "bg-gray-100 text-gray-500",
+                    ? "bg-[#FF6B35] border-[#FF6B35]"
+                    : "border-gray-300",
                 )}
               >
-                <Icon className="w-5 h-5" strokeWidth={2} />
+                {isSelected && (
+                  <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />
+                )}
               </div>
-              <span className="font-semibold text-gray-900">{config.label}</span>
-            </div>
 
-            {isSelected ? (
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-md">
-                <Check className="h-3 w-3 text-white" strokeWidth={3} />
+              {/* Label & Time */}
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-gray-900 text-sm leading-tight">
+                  {config.label}
+                </p>
+                <p className="text-[11px] text-gray-400 font-medium">
+                  {config.time}
+                </p>
               </div>
-            ) : (
-              <div className="h-6 w-6 rounded-full border-2 border-gray-200" />
-            )}
+
+              {/* Icon */}
+              <div className="text-gray-300">
+                <Icon className="w-5 h-5" strokeWidth={1.5} />
+              </div>
+            </div>
           </button>
         );
       })}
