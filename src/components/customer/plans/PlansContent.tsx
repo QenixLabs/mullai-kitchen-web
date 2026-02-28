@@ -217,16 +217,16 @@ export function PlansContent({
         {/* Section Header */}
         <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
           <div>
-            <p className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#FF6B35] sm:text-xs">
+            <p className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary sm:text-xs">
               <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
               {showHero ? "Curated Plans" : "Our Subscription Plans"}
             </p>
-            <h2 className="mt-1 text-2xl font-black tracking-tight text-gray-900 sm:text-3xl lg:text-4xl">
+            <h2 className="mt-1 text-2xl font-black tracking-tight text-foreground sm:text-3xl lg:text-4xl">
               {showHero
                 ? "Select Your Subscription"
                 : "Choose Your Perfect Plan"}
             </h2>
-            <p className="mt-1 text-sm text-gray-600 sm:mt-2 sm:text-base max-w-2xl">
+            <p className="mt-1 text-sm text-muted-foreground sm:mt-2 sm:text-base max-w-2xl">
               {showHero
                 ? "Flexible plans for every appetite and lifestyle."
                 : "Select a plan that fits your routine. You can pause or cancel anytime."}
@@ -236,13 +236,13 @@ export function PlansContent({
 
         {/* Plans count badge - Show for all users */}
         <div className="mb-5 flex items-center gap-3 sm:mb-6 sm:justify-end">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-100 bg-orange-50 px-3 py-1.5 text-xs font-medium text-gray-700 sm:px-4 sm:py-2 sm:text-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#FF6B35]" />
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-accent px-3 py-1.5 text-xs font-medium text-foreground sm:px-4 sm:py-2 sm:text-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
             {filteredPlans.length} plan
             {filteredPlans.length !== 1 ? "s" : ""} available
           </span>
           {/* Swipe hint for mobile */}
-          <span className="flex items-center gap-1 text-xs text-gray-400 sm:hidden">
+          <span className="flex items-center gap-1 text-xs text-muted-foreground/70 sm:hidden">
             Swipe to browse
             <ChevronRight className="h-3 w-3" />
           </span>
@@ -345,22 +345,22 @@ export function PlansContent({
 
         {/* ── Build Your Own Plan Banner ── */}
         {showBuildYourOwnBanner && (
-          <div className="mb-8 overflow-hidden rounded-2xl border border-orange-100 bg-orange-50 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(255,107,53,0.08)]">
+          <div className="mb-8 overflow-hidden rounded-2xl border border-border bg-accent shadow-md shadow-primary/10">
             <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:gap-6 sm:p-6">
               {/* Icon */}
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#FF6B35] shadow-md shadow-orange-200">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/20">
                 <PenLine className="h-5 w-5 text-white" />
               </div>
 
               {/* Text */}
               <div className="flex-1">
-                <p className="text-xs font-semibold uppercase tracking-widest text-[#FF6B35]">
+                <p className="text-xs font-semibold uppercase tracking-widest text-primary">
                   Fully Customisable
                 </p>
-                <h3 className="mt-0.5 text-base font-black text-gray-900 sm:text-lg">
+                <h3 className="mt-0.5 text-base font-black text-foreground sm:text-lg">
                   Build Your Own Plan
                 </h3>
-                <p className="mt-0.5 text-sm text-gray-500">
+                <p className="mt-0.5 text-sm text-muted-foreground">
                   Choose your meals, duration, and diet — we&apos;ll price it
                   just for you.
                 </p>
@@ -370,7 +370,7 @@ export function PlansContent({
               <button
                 id="custom-plan-cta"
                 onClick={handleCustomPlanClick}
-                className="group inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#FF6B35] px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-orange-200/60 transition-all duration-300 hover:bg-[#E85A25] hover:shadow-lg hover:shadow-orange-200/80 active:scale-[0.97]"
+                className="group inline-flex shrink-0 items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-md shadow-primary/20 transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 active:scale-[0.97]"
               >
                 <Sparkles className="h-3.5 w-3.5" />
                 Get Started
