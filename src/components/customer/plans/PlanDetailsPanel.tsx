@@ -91,7 +91,7 @@ export function PlanDetailsPanel({
         <div className="grid grid-cols-1 gap-2">
           <Button
             type="button"
-            className="h-10 w-full bg-orange-600 text-white hover:bg-orange-700"
+            className="h-10 w-full bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={onProceedToCheckout}
             disabled={isCheckingOut}
           >

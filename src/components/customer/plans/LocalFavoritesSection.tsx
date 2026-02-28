@@ -37,10 +37,10 @@ export function LocalFavoritesSection({ className }: LocalFavoritesSectionProps)
       <div className="mx-auto max-w-[1200px] px-4">
         {/* Section Header */}
         <div className="mb-12 text-center">
-          <h2 className="text-[2rem] font-bold leading-tight text-[#333333] sm:text-[2.25rem]">
+          <h2 className="text-[2rem] font-bold leading-tight text-foreground sm:text-[2.25rem]">
             Your Local Favorite
           </h2>
-          <p className="mx-auto mt-4 max-w-3xl text-[1rem] leading-relaxed text-[#6B7280] sm:text-[1.125rem]">
+          <p className="mx-auto mt-4 max-w-3xl text-[1rem] leading-relaxed text-muted-foreground sm:text-[1.125rem]">
             We understand the authentic taste of Chennai because we are from Chennai. From the spice levels of
             your Sambar to the crispiness of the Medu Vada, we ensure every meal feels like it was cooked in
             your own kitchen.
@@ -63,10 +63,10 @@ export function LocalFavoritesSection({ className }: LocalFavoritesSectionProps)
                 }}
               />
               {/* Fallback placeholder if image fails to load */}
-              <div className="hidden h-full w-full flex-col items-center justify-center rounded-3xl border-2 border-dashed border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100/50 p-8">
-                <div className="mb-4 rounded-full bg-orange-100 p-6">
+              <div className="hidden h-full w-full flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border bg-gradient-to-br from-accent to-accent/50 p-8">
+                <div className="mb-4 rounded-full bg-primary/10 p-6">
                   <svg
-                    className="h-12 w-12 text-[#FF6B35]"
+                    className="h-12 w-12 text-primary"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -86,10 +86,10 @@ export function LocalFavoritesSection({ className }: LocalFavoritesSectionProps)
                     />
                   </svg>
                 </div>
-                <p className="text-center text-3xl font-black tracking-widest text-[#FF6B35] sm:text-4xl">
+                <p className="text-center text-3xl font-black tracking-widest text-primary sm:text-4xl">
                   CHENNAI
                 </p>
-                <p className="mt-3 text-sm font-medium text-[#6B7280]">Proudly Local • Authentically Yours</p>
+                <p className="mt-3 text-sm font-medium text-muted-foreground">Proudly Local • Authentically Yours</p>
               </div>
             </div>
           </div>
@@ -99,20 +99,20 @@ export function LocalFavoritesSection({ className }: LocalFavoritesSectionProps)
             {trustBadges.map((badge) => (
               <div
                 key={badge.title}
-                className="flex flex-col items-center rounded-2xl border border-gray-100 bg-gray-50/50 p-5 text-center transition-all hover:shadow-md hover:border-orange-100"
+                className="flex flex-col items-center rounded-2xl border border-border bg-muted/50 p-5 text-center transition-all hover:shadow-md hover:border-border"
               >
                 {/* Circular Orange Icon */}
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#FF6B35]">
-                  <badge.icon className="h-6 w-6 text-white" />
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
+                  <badge.icon className="h-6 w-6 text-primary-foreground" />
                 </div>
 
                 {/* Badge Title */}
-                <h3 className="mb-1 text-base font-bold text-[#333333] sm:text-lg">
+                <h3 className="mb-1 text-base font-bold text-foreground sm:text-lg">
                   {badge.title}
                 </h3>
 
                 {/* Badge Description */}
-                <p className="text-sm leading-relaxed text-[#6B7280]">
+                <p className="text-sm leading-relaxed text-muted-foreground">
                   {badge.description}
                 </p>
               </div>

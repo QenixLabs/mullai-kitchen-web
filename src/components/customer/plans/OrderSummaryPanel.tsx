@@ -83,7 +83,7 @@ export function OrderSummaryPanel({
                 </span>
               )}
             </div>
-            <span className="font-black text-[#FF6B35]">
+            <span className="font-black text-primary">
               ₹{pricing?.price_per_meal || 0}
             </span>
           </div>
@@ -94,7 +94,7 @@ export function OrderSummaryPanel({
           <PricingSkeleton />
         ) : error ? (
           <div className="py-4">
-            <p className="text-xs text-[#EF4444] text-center">
+            <p className="text-xs text-destructive text-center">
               Failed to load pricing
             </p>
           </div>
@@ -119,11 +119,11 @@ export function OrderSummaryPanel({
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-4 border-t border-slate-50 mt-2">
-              <span className="text-lg font-black text-[#0F172A]">
+            <div className="flex items-center justify-between pt-4 border-t border-border mt-2">
+              <span className="text-lg font-black text-foreground">
                 Total Pay
               </span>
-              <span className="text-3xl font-black text-[#FF6B35]">
+              <span className="text-3xl font-black text-primary">
                 ₹{pricing.total.toLocaleString()}
               </span>
             </div>
@@ -133,8 +133,8 @@ export function OrderSummaryPanel({
               onClick={onContinue}
               disabled={isContinueDisabled || isLoading}
               className={cn(
-                "w-full h-14 rounded-2xl font-black text-white shadow-lg mt-6 text-base group transition-all",
-                "bg-[#FF6B35] hover:bg-[#FF8555] active:scale-[0.98]",
+                "w-full h-14 rounded-2xl font-black text-primary-foreground shadow-lg mt-6 text-base group transition-all",
+                "bg-primary hover:bg-primary/90 active:scale-[0.98]",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
               )}
             >
@@ -164,15 +164,15 @@ export function OrderSummaryPanel({
       </div>
 
       {/* Trust Promise */}
-      <div className="rounded-2xl bg-[#FEF2F2] p-4 flex items-start gap-4">
-        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-[#FF6B35] flex-shrink-0 mt-0.5">
+      <div className="rounded-2xl bg-destructive/10 p-4 flex items-start gap-4">
+        <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm text-primary flex-shrink-0 mt-0.5">
           <Check className="w-4 h-4" strokeWidth={4} />
         </div>
         <div>
-          <p className="text-sm font-black text-[#0F172A] tracking-tight mb-0.5">
+          <p className="text-sm font-black text-foreground tracking-tight mb-0.5">
             Mullai Trust Promise
           </p>
-          <p className="text-[11px] text-slate-500 font-medium leading-tight">
+          <p className="text-[11px] text-muted-foreground font-medium leading-tight">
             Farm-fresh ingredients & zero MSG.
           </p>
         </div>

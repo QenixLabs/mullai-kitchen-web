@@ -110,7 +110,7 @@ export function MenuPreviewSheet({
       >
         <div className="flex items-center justify-between border-b border-gray-200 px-4 py-4 sm:px-6">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-orange-700">Menu preview</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-primary">Menu preview</p>
             <h2 className="text-lg font-semibold text-gray-900">{planName ?? "Selected plan"}</h2>
           </div>
           <Button

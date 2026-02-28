@@ -36,10 +36,10 @@ export function HowItWorksSection({ className = "" }: HowItWorksSectionProps) {
       <div className="mx-auto max-w-[1200px]">
         {/* Section Header */}
         <div className="mb-12 text-center">
-          <h2 className="mb-4 text-[2rem] font-bold leading-tight text-[#333333]">
+          <h2 className="mb-4 text-[2rem] font-bold leading-tight text-foreground">
             Simple, Healthy, & Consistent
           </h2>
-          <p className="text-[1rem] text-[#6B7280]">
+          <p className="text-[1rem] text-muted-foreground">
             Skip the grocery shopping and cooking. We bring the taste of home
             to your doorstep every single day.
           </p>
@@ -56,18 +56,18 @@ export function HowItWorksSection({ className = "" }: HowItWorksSectionProps) {
               >
                 {/* Step Number and Icon */}
                 <div className="mb-6 flex items-center justify-center">
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[#FF6B35]">
-                    <Icon className="h-6 w-6 text-white" strokeWidth={2} />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary">
+                    <Icon className="h-6 w-6 text-primary-foreground" strokeWidth={2} />
                   </div>
                 </div>
 
                 {/* Step Title */}
-                <h3 className="mb-3 text-[1.2rem] font-bold text-[#333333]">
+                <h3 className="mb-3 text-[1.2rem] font-bold text-foreground">
                   {step.title}
                 </h3>
 
                 {/* Step Description */}
-                <p className="text-[1rem] leading-relaxed text-[#6B7280]">
+                <p className="text-[1rem] leading-relaxed text-muted-foreground">
                   {step.description}
                 </p>
               </div>

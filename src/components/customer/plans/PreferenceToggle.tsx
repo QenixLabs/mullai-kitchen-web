@@ -24,15 +24,15 @@ export function PreferenceToggle({
         onClick={() => onChange("VEG")}
         disabled={disabled}
         className={cn(
-          "flex items-center justify-center gap-3 p-4 rounded-xl transition-all duration-300 border-2 font-bold bg-white",
+          "flex items-center justify-center gap-3 p-4 rounded-xl transition-all duration-300 border-2 font-bold bg-background",
           value === "VEG"
-            ? "border-[#FF6B35] shadow-sm"
-            : "border-slate-100 hover:border-slate-200",
-          disabled && "opacity-50 cursor-not-allowed hover:border-slate-100",
+            ? "border-primary shadow-sm"
+            : "border-border hover:border-border",
+          disabled && "opacity-50 cursor-not-allowed hover:border-border",
         )}
       >
-        <div className="w-3 h-3 rounded-full bg-[#22C55E]" />
-        <span className="text-[#0F172A] text-sm">Veg (₹{vegPrice}/meal)</span>
+        <div className="w-3 h-3 rounded-full bg-success" />
+        <span className="text-foreground text-sm">Veg (₹{vegPrice}/meal)</span>
       </button>
 
       <button
@@ -40,15 +40,15 @@ export function PreferenceToggle({
         onClick={() => onChange("NON_VEG")}
         disabled={disabled}
         className={cn(
-          "flex items-center justify-center gap-3 p-4 rounded-xl transition-all duration-300 border-2 font-bold bg-white",
+          "flex items-center justify-center gap-3 p-4 rounded-xl transition-all duration-300 border-2 font-bold bg-background",
           value === "NON_VEG"
-            ? "border-[#FF6B35] shadow-sm"
-            : "border-slate-100 hover:border-slate-200",
-          disabled && "opacity-50 cursor-not-allowed hover:border-slate-100",
+            ? "border-primary shadow-sm"
+            : "border-border hover:border-border",
+          disabled && "opacity-50 cursor-not-allowed hover:border-border",
         )}
       >
-        <div className="w-3 h-3 rounded-full bg-[#EF4444]" />
-        <span className="text-[#0F172A] text-sm">
+        <div className="w-3 h-3 rounded-full bg-destructive" />
+        <span className="text-foreground text-sm">
           Non-Veg (₹{nonvegPrice}/meal)
         </span>
       </button>

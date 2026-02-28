@@ -14,11 +14,11 @@ export function TrustBadge({ icon: Icon, text, className }: TrustBadgeProps) {
   return (
     <div
       className={cn(
-        "flex items-center gap-2.5 text-sm text-gray-600",
+        "flex items-center gap-2.5 text-sm text-muted-foreground",
         className,
       )}
     >
-      <Icon className="w-4 h-4 text-[#FF6B35]" strokeWidth={2} />
+      <Icon className="w-4 h-4 text-primary" strokeWidth={2} />
       <span className="font-medium">{text}</span>
     </div>
   );

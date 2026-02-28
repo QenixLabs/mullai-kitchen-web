@@ -69,7 +69,7 @@ const NoPlansFound = ({ className }: { className?: string }) => (
 // Loading spinner for inline loading states
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center py-12">
-    <Loader2 className="h-8 w-8 animate-spin text-[#FF6B35]" />
+    <Loader2 className="h-8 w-8 animate-spin text-primary" />
   </div>
 );
 
@@ -120,7 +120,7 @@ export function PlanGrid({
               key={index}
               className={cn(
                 "h-1.5 rounded-full transition-all duration-300",
-                index === 0 ? "w-4 bg-[#FF6B35]" : "w-1.5 bg-gray-300"
+                index === 0 ? "w-4 bg-primary" : "w-1.5 bg-muted"
               )}
             />
           ))}

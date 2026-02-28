@@ -50,12 +50,12 @@ export function MealTypeSelector({
             onClick={() => toggleMeal(meal)}
             disabled={disabled}
             className={cn(
-              "flex items-center p-4 rounded-xl transition-all duration-300 border-2 text-left bg-white",
+              "flex items-center p-4 rounded-xl transition-all duration-300 border-2 text-left bg-background",
               isSelected
-                ? "border-[#FF6B35] shadow-sm"
-                : "border-slate-100 hover:border-slate-200",
+                ? "border-primary shadow-sm"
+                : "border-border hover:border-border",
               disabled &&
-                "opacity-50 cursor-not-allowed hover:border-slate-100",
+                "opacity-50 cursor-not-allowed hover:border-border",
             )}
           >
             <div className="flex items-center gap-3 w-full">
@@ -64,21 +64,21 @@ export function MealTypeSelector({
                 className={cn(
                   "w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all",
                   isSelected
-                    ? "bg-[#FF6B35] border-[#FF6B35]"
-                    : "border-slate-300",
+                    ? "bg-primary border-primary"
+                    : "border-border",
                 )}
               >
                 {isSelected && (
-                  <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />
+                  <Check className="w-3.5 h-3.5 text-primary-foreground" strokeWidth={4} />
                 )}
               </div>
 
               {/* Label & Time */}
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-[#0F172A] text-sm leading-tight">
+                <p className="font-bold text-foreground text-sm leading-tight">
                   {config.label}
                 </p>
-                <p className="text-[11px] text-slate-400 font-medium">
+                <p className="text-[11px] text-muted-foreground font-medium">
                   {config.time}
                 </p>
               </div>
@@ -86,8 +86,8 @@ export function MealTypeSelector({
               {/* Icon */}
               <div
                 className={cn(
-                  "text-slate-300 transition-colors",
-                  isSelected && "text-[#FF6B35]",
+                  "text-muted-foreground transition-colors",
+                  isSelected && "text-primary",
                 )}
               >
                 <Icon className="w-5 h-5" strokeWidth={2} />

@@ -49,15 +49,15 @@ export function DurationSelector({
           onClick={() => onChange(option.value)}
           disabled={disabled}
           className={cn(
-            "relative flex flex-col items-start p-6 rounded-2xl bg-white transition-all duration-300 border-2 text-left",
+            "relative flex flex-col items-start p-6 rounded-2xl bg-background transition-all duration-300 border-2 text-left",
             value === option.value
-              ? "border-[#FF6B35] shadow-sm"
-              : "border-slate-50 hover:border-slate-200",
-            disabled && "opacity-50 cursor-not-allowed hover:border-slate-50",
+              ? "border-primary shadow-sm"
+              : "border-border hover:border-border",
+            disabled && "opacity-50 cursor-not-allowed hover:border-border",
           )}
         >
           <div className="flex w-full items-center justify-between mb-2.5">
-            <span className="text-xl font-bold text-[#0F172A]">
+            <span className="text-xl font-bold text-foreground">
               {option.label}
             </span>
             {option.badge && (
@@ -65,8 +65,8 @@ export function DurationSelector({
                 className={cn(
                   "px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider",
                   option.badgeType === "discount"
-                    ? "bg-green-100 text-[#22C55E]"
-                    : "bg-slate-100 text-slate-500",
+                    ? "bg-success/20 text-success"
+                    : "bg-muted text-muted-foreground",
                 )}
               >
                 {option.badge}
@@ -74,13 +74,13 @@ export function DurationSelector({
             )}
           </div>
 
-          <p className="text-sm text-slate-500 font-medium leading-relaxed max-w-[220px]">
+          <p className="text-sm text-muted-foreground font-medium leading-relaxed max-w-[220px]">
             {option.description}
           </p>
 
           {value === option.value && (
-            <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-lg border-2 border-white">
-              <Check className="h-3.5 w-3.5 text-white" strokeWidth={4} />
+            <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-lg border-2 border-background">
+              <Check className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={4} />
             </div>
           )}
         </button>

@@ -120,7 +120,7 @@ export function PincodeChecker({
 
           <Button
             type="submit"
-            className="h-11 bg-orange-600 px-5 text-white hover:bg-orange-700"
+            className="h-11 bg-primary px-5 text-primary-foreground hover:bg-primary/90"
             disabled={isChecking || !isValid}
             aria-label="Check pincode serviceability"
           >

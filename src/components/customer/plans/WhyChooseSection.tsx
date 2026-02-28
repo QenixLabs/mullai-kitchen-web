@@ -36,19 +36,19 @@ export function WhyChooseSection({ className }: WhyChooseSectionProps) {
   return (
     <section className={cn("relative py-14 sm:py-16", className)}>
       <div className="absolute inset-0 -z-10" aria-hidden="true">
-        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-orange-100/50 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-primary/10 to-transparent" />
       </div>
 
       <div className="mx-auto max-w-6xl px-4">
-        <div className="overflow-hidden rounded-3xl border border-orange-100 bg-white shadow-[0_28px_80px_-60px_rgba(15,23,42,0.55)]">
+        <div className="overflow-hidden rounded-3xl border border-border bg-background shadow-xl">
           <div className="grid gap-0 lg:grid-cols-[1.15fr_0.85fr]">
-            <div className="border-b border-orange-100 p-6 sm:p-8 lg:border-b-0 lg:border-r">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-600">The Mullai Difference</p>
-              <h2 className="mt-3 text-3xl font-black leading-tight tracking-tight text-slate-900 sm:text-4xl">
+            <div className="border-b border-border p-6 sm:p-8 lg:border-b-0 lg:border-r">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">The Mullai Difference</p>
+              <h2 className="mt-3 text-3xl font-black leading-tight tracking-tight text-foreground sm:text-4xl">
                 Good food,
-                <span className="block text-orange-600">done right.</span>
+                <span className="block text-primary">done right.</span>
               </h2>
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
                 No shortcuts and no compromises. Home-style meals with dependable quality, practical subscriptions,
                 and thoughtful delivery experience.
               </p>
@@ -57,15 +57,15 @@ export function WhyChooseSection({ className }: WhyChooseSectionProps) {
                 {highlights.map((item) => (
                   <article
                     key={item.title}
-                    className="rounded-2xl border border-orange-100 bg-gradient-to-r from-orange-50/60 to-white p-4"
+                    className="rounded-2xl border border-border bg-accent/60 p-4"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
+                      <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                         <item.icon className="h-4 w-4" />
                       </div>
                       <div>
-                        <h3 className="text-base font-semibold text-slate-900">{item.title}</h3>
-                        <p className="mt-1 text-sm leading-relaxed text-slate-600">{item.detail}</p>
+                        <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
+                        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{item.detail}</p>
                       </div>
                     </div>
                   </article>
@@ -73,31 +73,31 @@ export function WhyChooseSection({ className }: WhyChooseSectionProps) {
               </div>
             </div>
 
-            <div className="relative bg-[radial-gradient(circle_at_20%_0%,#fff7ed_0,#ffffff_55%)] p-6 sm:p-8">
-              <div className="rounded-2xl border border-orange-200 bg-white p-5 shadow-sm">
+            <div className="relative bg-gradient-to-br from-background via-background to-background p-6 sm:p-8">
+              <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-600 text-white">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
                     <Sparkles className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-900">Built for consistency</p>
-                    <p className="text-xs text-slate-600">Daily operations, quality, and delivery discipline.</p>
+                    <p className="text-sm font-semibold text-foreground">Built for consistency</p>
+                    <p className="text-xs text-muted-foreground">Daily operations, quality, and delivery discipline.</p>
                   </div>
                 </div>
               </div>
 
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-1">
                 {stats.map((stat) => (
-                  <div key={stat.label} className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-                    <p className="text-2xl font-black tracking-tight text-slate-900">{stat.value}</p>
-                    <p className="mt-1 text-xs font-medium uppercase tracking-wide text-slate-600">{stat.label}</p>
+                  <div key={stat.label} className="rounded-2xl border border-border bg-muted/80 p-4">
+                    <p className="text-2xl font-black tracking-tight text-foreground">{stat.value}</p>
+                    <p className="mt-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">{stat.label}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-4 rounded-2xl border border-orange-100 bg-orange-50 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-orange-700">Service Areas</p>
-                <p className="mt-1 text-sm text-slate-700">Adyar, Besant Nagar, Velachery, T. Nagar, R.A. Puram and 30+ localities.</p>
+              <div className="mt-4 rounded-2xl border border-border bg-accent p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-primary">Service Areas</p>
+                <p className="mt-1 text-sm text-foreground">Adyar, Besant Nagar, Velachery, T. Nagar, R.A. Puram and 30+ localities.</p>
               </div>
             </div>
           </div>

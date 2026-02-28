@@ -73,12 +73,12 @@ export function WeeklyMenuPreview({ params }: WeeklyMenuPreviewProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-black text-[#0F172A] tracking-tight">
+        <h2 className="text-xl font-black text-foreground tracking-tight">
           Weekly Preview Menu
         </h2>
         <button
           type="button"
-          className="text-[#FF6B35] font-black text-sm flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+          className="text-primary font-black text-sm flex items-center gap-1.5 hover:opacity-80 transition-opacity"
         >
           View Full Calendar
           <Calendar className="w-4 h-4" />
@@ -108,10 +108,10 @@ export function WeeklyMenuPreview({ params }: WeeklyMenuPreviewProps) {
               )}
             </div>
             <div className="p-4">
-              <p className="text-[10px] font-black text-[#FF6B35] uppercase tracking-wider mb-1.5">
+              <p className="text-[10px] font-black text-primary uppercase tracking-wider mb-1.5">
                 {item.day}
               </p>
-              <p className="text-sm font-bold text-[#0F172A] line-clamp-2 leading-tight">
+              <p className="text-sm font-bold text-foreground line-clamp-2 leading-tight">
                 {item.meal.recipe.recipe_name}
               </p>
             </div>
