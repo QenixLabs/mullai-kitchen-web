@@ -113,7 +113,7 @@ export function Sidebar() {
 
         <div className="mt-auto px-4 pb-10">
           <div className="rounded-xl bg-primary p-6 shadow-sm">
-            <p className="text-[13px] font-medium text-primary-foreground/90">
+            <p className="text-sm font-medium text-primary-foreground/90">
               Wallet Balance
             </p>
             <h3 className="mt-1 text-2xl font-bold text-primary-foreground tracking-tight">
