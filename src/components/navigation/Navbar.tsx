@@ -49,7 +49,7 @@ export function Navbar() {
       >
         {/* Background with backdrop blur */}
         <div className="border-b border-gray-200 bg-white/95 backdrop-blur">
-          <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between">
               {/* Logo */}
               <div className="flex-shrink-0">

@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
         <span className="text-sm text-gray-500">
           Remembered your password?{" "}
           <Link
-            className="font-semibold text-[#FF6B35] hover:text-[#E85A25] transition-colors"
+            className="font-semibold text-primary hover:text-primary/90 transition-colors"
             href="/auth/signin"
           >
             Go back to sign in
@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
               className={cn(
                 "h-11 rounded-xl border-gray-200 bg-gray-50 text-gray-900",
                 "placeholder:text-gray-400",
-                "focus:border-[#FF6B35] focus:bg-white focus:ring-[#FF6B35]/20"
+                "focus:border-primary focus:bg-white focus:ring-primary/20"
               )}
             />
           </div>
@@ -84,8 +84,8 @@ export default function ForgotPasswordPage() {
           <Button
             className={cn(
               "h-11 w-full rounded-xl font-semibold text-white shadow-md transition-all duration-300",
-              "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
-              "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
+              "bg-primary",
+              "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
               "active:scale-[0.98]",
               "disabled:opacity-70 disabled:cursor-not-allowed"
             )}

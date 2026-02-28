@@ -54,7 +54,7 @@ export function Sidebar() {
   if (!hasHydrated || !isAuthenticated) return null;
 
   return (
-    <ShadcnSidebar className="w-[240px] border-r border-border bg-muted/30 shadow-none">
+    <ShadcnSidebar className="w-60 border-r border-border bg-muted/30 shadow-none">
       <SidebarHeader className="bg-muted/30 border-none px-6 pt-8 pb-4">
         <Link
           href="/subscription"
@@ -63,7 +63,7 @@ export function Sidebar() {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/20">
             <UtensilsCrossed className="h-6 w-6 text-white" />
           </div>
-          <span className="text-[20px] font-black tracking-tight text-foreground">
+          <span className="text-xl font-black tracking-tight text-foreground">
             Mullai Kitchen
           </span>
         </Link>
@@ -99,7 +99,7 @@ export function Sidebar() {
                               : "text-muted-foreground group-hover:text-primary",
                           )}
                         />
-                        <span className="font-semibold text-[15px] whitespace-nowrap">
+                        <span className="font-semibold text-base whitespace-nowrap">
                           {item.label}
                         </span>
                       </Link>

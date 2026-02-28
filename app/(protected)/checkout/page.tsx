@@ -383,7 +383,7 @@ export default function CheckoutPage() {
   // Loading / redirect states
   if (!hasHydrated) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f5f5f0]">
+      <div className="flex min-h-screen items-center justify-center bg-muted/30">
         <p className="text-sm text-gray-500">
           Preparing your checkout session…
         </p>
@@ -392,14 +392,14 @@ export default function CheckoutPage() {
   }
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f5f5f0]">
+      <div className="flex min-h-screen items-center justify-center bg-muted/30">
         <p className="text-sm text-gray-500">Redirecting to sign in…</p>
       </div>
     );
   }
   if (!hasPlanIntent || !plan) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f5f5f0]">
+      <div className="flex min-h-screen items-center justify-center bg-muted/30">
         <p className="text-sm text-gray-500">Redirecting to plans…</p>
       </div>
     );
@@ -419,7 +419,7 @@ export default function CheckoutPage() {
     applyWallet && walletBalance !== null ? Math.min(walletBalance, total) : 0;
 
   return (
-    <div className="min-h-screen bg-[#f5f5f0]">
+    <div className="min-h-screen bg-muted/30">
       {/* ── Progress Steps ──────────────────────────────────── */}
       <div className="mx-auto max-w-5xl px-4 pb-2 pt-8 sm:px-6 lg:px-8">
         <div className="flex items-center justify-center gap-0">

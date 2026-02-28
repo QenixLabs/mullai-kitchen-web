@@ -50,13 +50,13 @@ const SIGNUP_STEPS = [
 const inputBaseClass = cn(
   "h-11 rounded-xl border-gray-200 bg-gray-50 text-gray-900",
   "placeholder:text-gray-400",
-  "focus:border-[#FF6B35] focus:bg-white focus:ring-[#FF6B35]/20"
+  "focus:border-primary focus:bg-white focus:ring-primary/20"
 );
 
 const primaryButtonClass = cn(
   "h-11 rounded-xl font-semibold text-white shadow-md transition-all duration-300",
-  "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
-  "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
+  "bg-primary",
+  "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
   "active:scale-[0.98]",
   "disabled:opacity-70 disabled:cursor-not-allowed"
 );
@@ -64,7 +64,7 @@ const primaryButtonClass = cn(
 const outlineButtonClass = cn(
   "h-11 rounded-xl font-medium transition-all duration-300",
   "border-2 border-gray-200 bg-white text-gray-600",
-  "hover:border-[#FF6B35]/30 hover:bg-orange-50 hover:text-[#FF6B35]",
+  "hover:border-primary/30 hover:bg-accent hover:text-primary",
   "active:scale-[0.98]",
   "disabled:opacity-50 disabled:cursor-not-allowed"
 );
@@ -153,7 +153,7 @@ function SignUpForm() {
         <span className="text-sm text-gray-500">
           Already have an account?{" "}
           <Link
-            className="font-semibold text-[#FF6B35] hover:text-[#E85A25] transition-colors"
+            className="font-semibold text-primary hover:text-primary/90 transition-colors"
             href="/auth/signin"
           >
             Log in
@@ -238,7 +238,7 @@ function SignUpForm() {
                               field.onChange(digitsOnly);
                             }}
                             placeholder="9876543210"
-                            className="h-11 rounded-l-none rounded-r-xl border-l-0 border-gray-200 bg-gray-50 focus:border-[#FF6B35] focus:bg-white focus:ring-[#FF6B35]/20"
+                            className="h-11 rounded-l-none rounded-r-xl border-l-0 border-gray-200 bg-gray-50 focus:border-primary focus:bg-white focus:ring-primary/20"
                           />
                         </div>
                       </FormControl>
@@ -284,11 +284,11 @@ function SignUpForm() {
                             id="terms"
                             checked={field.value}
                             onCheckedChange={(checked) => field.onChange(checked === true)}
-                            className="mt-0.5 border-gray-300 data-[state=checked]:bg-[#FF6B35] data-[state=checked]:border-[#FF6B35]"
+                            className="mt-0.5 border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                           />
                           <label htmlFor="terms" className="text-sm text-gray-600 cursor-pointer leading-relaxed">
                             I accept the{" "}
-                            <Link href="/terms" className="font-semibold text-[#FF6B35] hover:text-[#E85A25] transition-colors">
+                            <Link href="/terms" className="font-semibold text-primary hover:text-primary/90 transition-colors">
                               Terms and Conditions
                             </Link>
                           </label>
