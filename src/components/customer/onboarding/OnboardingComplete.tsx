@@ -61,26 +61,26 @@ export function OnboardingComplete({
         <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
           <CircleCheckBig className="h-8 w-8" aria-hidden="true" />
         </div>
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Onboarding complete</h2>
-        <p className="mx-auto mt-2 max-w-xl text-sm text-gray-600 sm:text-base">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Onboarding complete</h2>
+        <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground sm:text-base">
           Your account is now ready. We are preparing the next step in your customer journey.
         </p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
         {summary.map((item) => (
-          <article key={item.id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-            <div className="flex items-center gap-2 text-gray-700">
-              <item.icon className="h-4 w-4 text-orange-600" aria-hidden="true" />
+          <article key={item.id} className="rounded-xl border border-muted bg-background p-4 shadow-sm">
+            <div className="flex items-center gap-2 text-foreground">
+              <item.icon className="h-4 w-4 text-primary" aria-hidden="true" />
               <p className="text-xs font-semibold uppercase tracking-wide">{item.label}</p>
             </div>
-            <p className="mt-2 text-xl font-bold text-gray-900">{item.value}</p>
+            <p className="mt-2 text-xl font-bold text-foreground">{item.value}</p>
           </article>
         ))}
       </div>
 
-      <p className="text-center text-sm text-gray-600">
-        Redirecting in <span className="font-semibold text-orange-700">{secondsRemaining}</span>
+      <p className="text-center text-sm text-muted-foreground">
+        Redirecting in <span className="font-semibold text-primary">{secondsRemaining}</span>
         {" "}
         second{secondsRemaining === 1 ? "" : "s"}...
       </p>

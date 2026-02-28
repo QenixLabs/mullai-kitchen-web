@@ -169,25 +169,25 @@ export function ProfileDetailsStep({
   return (
     <div className={cn("space-y-6", className)}>
       <div className="space-y-1">
-        <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">Profile details (optional)</h2>
-        <p className="text-sm text-gray-600">You can skip this now and update these preferences later from your profile.</p>
+        <h2 className="text-xl font-bold text-foreground sm:text-2xl">Profile details (optional)</h2>
+        <p className="text-sm text-muted-foreground">You can skip this now and update these preferences later from your profile.</p>
       </div>
 
       {hasErrors ? (
-        <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800">
+        <Alert variant="destructive" className="border-destructive/20 bg-destructive/10 text-destructive">
           <AlertTitle>Please review your details</AlertTitle>
           <AlertDescription>One or more fields contain invalid input.</AlertDescription>
         </Alert>
       ) : null}
 
       <Form {...form}>
-        <div className="grid gap-4 rounded-2xl border border-gray-200 bg-gray-50/70 p-4 sm:p-5">
+        <div className="grid gap-4 rounded-2xl border border-muted bg-muted/70 p-4 sm:p-5">
           <FormField
             control={form.control}
             name="dietary_preferences"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-700">Dietary preferences</FormLabel>
+                <FormLabel className="text-foreground">Dietary preferences</FormLabel>
                 <FormControl>
                   <div className="grid grid-cols-2 gap-2">
                     {DIETARY_PREFERENCE_OPTIONS.map((option) => {
@@ -200,8 +200,8 @@ export function ProfileDetailsStep({
                           type="button"
                           variant="outline"
                           className={cn(
-                            "h-11 rounded-lg border-gray-300 bg-white font-medium text-gray-700 hover:border-orange-400 hover:bg-orange-50/60 hover:text-orange-700",
-                            isSelected && "border-orange-600 bg-orange-100 text-orange-800 shadow-sm",
+                            "h-11 rounded-lg border-border bg-background font-medium text-foreground hover:border-primary hover:bg-primary/10 hover:text-primary",
+                            isSelected && "border-primary bg-primary/10 text-primary shadow-sm",
                           )}
                           onClick={() => {
                             field.onChange(isSelected ? "" : option);
@@ -224,12 +224,12 @@ export function ProfileDetailsStep({
             name="special_instructions"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-700">Special instructions</FormLabel>
+                <FormLabel className="text-foreground">Special instructions</FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
                     placeholder="Anything you want us to know before delivering your meals"
-                    className="min-h-24 rounded-lg border-gray-300 bg-white"
+                    className="min-h-24 rounded-lg border-border bg-background"
                   />
                 </FormControl>
                 <FormMessage />
@@ -243,12 +243,12 @@ export function ProfileDetailsStep({
               name="preferred_contact_time"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700">Preferred contact time</FormLabel>
+                  <FormLabel className="text-foreground">Preferred contact time</FormLabel>
                   <FormControl>
                     <Timepicker
                       value={field.value || ""}
                       placeholder="Select preferred contact time"
-                      className="h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-700 outline-none"
+                      className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground outline-none"
                       options={{
                         clock: {
                           type: "12h",
@@ -281,12 +281,12 @@ export function ProfileDetailsStep({
               name="emergency_contact_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700">Emergency contact name</FormLabel>
+                  <FormLabel className="text-foreground">Emergency contact name</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       placeholder="A trusted contact person"
-                      className="h-11 rounded-lg border-gray-300 bg-white"
+                      className="h-11 rounded-lg border-border bg-background"
                     />
                   </FormControl>
                   <FormMessage />
@@ -300,10 +300,10 @@ export function ProfileDetailsStep({
             name="emergency_contact_phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-700">Emergency contact phone</FormLabel>
+                <FormLabel className="text-foreground">Emergency contact phone</FormLabel>
                 <FormControl>
                   <div className="flex w-full items-center">
-                    <span className="inline-flex h-11 items-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 px-3 text-sm font-semibold text-gray-700">
+                    <span className="inline-flex h-11 items-center rounded-l-lg border border-r-0 border-border bg-muted px-3 text-sm font-semibold text-foreground">
                       +91
                     </span>
                     <Input
@@ -316,7 +316,7 @@ export function ProfileDetailsStep({
                       inputMode="numeric"
                       autoComplete="tel-national"
                       placeholder="9876543210"
-                      className="h-11 rounded-l-none border-l-0 border-gray-300 bg-white"
+                      className="h-11 rounded-l-none border-l-0 border-border bg-background"
                     />
                   </div>
                 </FormControl>
@@ -329,12 +329,12 @@ export function ProfileDetailsStep({
 
       {showInlineActions ? (
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <Button type="button" variant="outline" className="h-11 border-gray-300" onClick={onSkip}>
+          <Button type="button" variant="outline" className="h-11 border-border" onClick={onSkip}>
             Skip for now
           </Button>
           <Button
             type="button"
-            className="h-11 bg-orange-600 font-semibold text-white hover:bg-orange-700"
+            className="h-11 bg-primary font-semibold text-white hover:bg-orange-700"
             onClick={onContinue}
             disabled={hasErrors}
           >

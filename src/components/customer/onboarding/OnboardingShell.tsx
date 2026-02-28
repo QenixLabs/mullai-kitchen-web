@@ -58,34 +58,34 @@ export function OnboardingShell({
   const stepText = `Step ${normalizedStep + 1} of ${totalSteps}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-stone-100 px-4 py-6 sm:px-8 sm:py-10">
+    <div className="min-h-screen bg-gradient-to-b from-accent to-muted px-4 py-6 sm:px-8 sm:py-10">
       <div
         className={cn(
-          "mx-auto w-full max-w-4xl overflow-hidden rounded-3xl border border-amber-100/60 bg-white shadow-xl",
+          "mx-auto w-full max-w-4xl overflow-hidden rounded-3xl border border-border bg-card shadow-xl",
           className,
         )}
       >
-        <header className="space-y-4 border-b border-gray-100 px-5 py-5 sm:px-8 sm:py-7">
+        <header className="space-y-4 border-b border-border px-5 py-5 sm:px-8 sm:py-7">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="space-y-1">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-600">Onboarding</p>
-              <h1 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">{title}</h1>
-              <p className="max-w-2xl text-sm text-gray-600">{subtitle}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Onboarding</p>
+              <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">{title}</h1>
+              <p className="max-w-2xl text-sm text-muted-foreground">{subtitle}</p>
             </div>
-            <p className="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700">{stepText}</p>
+            <p className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{stepText}</p>
           </div>
           <Stepper items={steps.slice(0, totalSteps)} currentStep={normalizedStep} showDescriptions={false} />
         </header>
 
         <section className="p-5 sm:p-8">{children}</section>
 
-        <footer className="flex flex-col gap-3 border-t border-gray-100 bg-gray-50/70 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <footer className="flex flex-col gap-3 border-t border-border bg-muted/70 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <div className="flex w-full items-center gap-2 sm:w-auto">
             {showBackButton ? (
               <Button
                 type="button"
                 variant="outline"
-                className="h-11 flex-1 border-gray-300 sm:flex-none"
+                className="h-11 flex-1 border-border sm:flex-none"
                 onClick={onBack}
                 disabled={normalizedStep === 0 || isNavigating}
               >
@@ -97,7 +97,7 @@ export function OnboardingShell({
               <Button
                 type="button"
                 variant="ghost"
-                className="h-11 flex-1 text-gray-600 hover:text-gray-800 sm:flex-none"
+                className="h-11 flex-1 text-muted-foreground hover:text-foreground sm:flex-none"
                 onClick={onSkip}
                 disabled={isNavigating}
               >
@@ -109,7 +109,7 @@ export function OnboardingShell({
           {showNextButton ? (
             <Button
               type="button"
-              className="h-11 w-full bg-orange-600 font-semibold text-white hover:bg-orange-700 sm:w-auto sm:min-w-32"
+              className="h-11 w-full bg-primary font-semibold text-primary-foreground hover:bg-primary/90 sm:w-auto sm:min-w-32"
               onClick={onNext}
               disabled={!canProceed || isNavigating}
             >
