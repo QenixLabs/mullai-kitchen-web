@@ -71,20 +71,20 @@ export function WalletBadge({
         className,
       )}
     >
-      <Wallet className={cn(ICON_SIZE[size], "text-orange-500")} />
-      <span className="font-semibold text-gray-900">
+      <Wallet className={cn(ICON_SIZE[size], "text-primary")} />
+      <span className="font-semibold text-foreground">
         {loading ? (
           <span className="animate-pulse">...</span>
         ) : (
           `${currencySymbol}${balance.toFixed(2)}`
         )}
       </span>
-      {showAddFunds && <Plus className={cn(ICON_SIZE[size], "text-gray-400")} />}
+      {showAddFunds && <Plus className={cn(ICON_SIZE[size], "text-muted-foreground")} />}
       {showCreditIndicator && balance > 0 && (
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="flex items-center gap-0.5 rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700"
+          className="flex items-center gap-0.5 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600"
         >
           <TrendingUp className="h-2.5 w-2.5" />
           <span>Active</span>
@@ -98,7 +98,7 @@ export function WalletBadge({
       <button
         type="button"
         onClick={onClick}
-        className="focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+        className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
       >
         {content}
       </button>
@@ -115,7 +115,7 @@ export function CompactWalletBadge({ className }: { className?: string }) {
   return (
     <WalletBadge
       size="sm"
-      className={cn("border-gray-200", className)}
+      className={cn("border-border", className)}
     />
   );
 }
@@ -128,7 +128,7 @@ export function FeaturedWalletBadge({ className }: { className?: string }) {
     <WalletBadge
       size="lg"
       showAddFunds
-      className={cn("border-orange-200 bg-orange-50", className)}
+      className={cn("border-primary/20 bg-primary/10", className)}
     />
   );
 }
