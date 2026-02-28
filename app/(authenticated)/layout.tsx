@@ -3,7 +3,9 @@
 import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-import { Navbar } from "@/components/navigation/Navbar";
+import { Sidebar } from "@/components/navigation/Sidebar";
+import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
 import { cn } from "@/lib/utils";
 
@@ -39,11 +41,12 @@ export default function AuthenticatedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <Navbar />
-      <div className={cn("flex-1", isAuthenticated && "pb-28 sm:pb-0")}>
+    <SidebarProvider>
+      <Sidebar />
+      <SidebarInset className="flex flex-col min-h-svh bg-slate-50 pb-28 md:pb-0">
         {children}
-      </div>
-    </div>
+      </SidebarInset>
+      <MobileBottomNav />
+    </SidebarProvider>
   );
 }

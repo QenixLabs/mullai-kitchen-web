@@ -71,45 +71,47 @@ export function WeeklyMenuPreview({ params }: WeeklyMenuPreviewProps) {
     .slice(0, 4); // Limit to 4 days for the preview like in the image
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-900">Weekly Preview Menu</h2>
-        <Button
-          variant="link"
-          className="text-[#FF6B35] font-bold text-sm h-auto p-0 hover:no-underline"
+        <h2 className="text-xl font-black text-[#0F172A] tracking-tight">
+          Weekly Preview Menu
+        </h2>
+        <button
+          type="button"
+          className="text-[#FF6B35] font-black text-sm flex items-center gap-1.5 hover:opacity-80 transition-opacity"
         >
           View Full Calendar
-          <Calendar className="w-3.5 h-3.5 ml-1.5" />
-        </Button>
+          <Calendar className="w-4 h-4" />
+        </button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {menuPreview.map((item, idx) => (
           <div
             key={item.day}
-            className="rounded-xl border border-gray-100 overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow duration-300"
+            className="rounded-2xl border border-slate-100 overflow-hidden bg-white shadow-sm hover:shadow-md transition-all duration-300 group"
           >
-            <div className="aspect-video relative bg-gray-100">
+            <div className="aspect-[4/3] relative bg-slate-50 overflow-hidden">
               {item.meal.recipe.recipe_image ? (
                 <Image
                   src={item.meal.recipe.recipe_image}
                   alt={item.meal.recipe.recipe_name}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center px-2">
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="text-[10px] text-slate-300 font-bold uppercase tracking-widest text-center px-2">
                     {item.day}
                   </span>
                 </div>
               )}
             </div>
-            <div className="p-3">
-              <p className="text-[10px] font-black text-[#FF6B35] uppercase tracking-wider mb-1">
+            <div className="p-4">
+              <p className="text-[10px] font-black text-[#FF6B35] uppercase tracking-wider mb-1.5">
                 {item.day}
               </p>
-              <p className="text-xs font-bold text-gray-900 line-clamp-2 leading-tight">
+              <p className="text-sm font-bold text-[#0F172A] line-clamp-2 leading-tight">
                 {item.meal.recipe.recipe_name}
               </p>
             </div>

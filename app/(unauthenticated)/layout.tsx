@@ -20,7 +20,7 @@ export default function UnauthenticatedLayout({ children }: UnauthenticatedLayou
 
   useEffect(() => {
     if (hasHydrated && isAuthenticated && !canAccessWhenAuthenticated) {
-      router.replace("/dashboard");
+      router.replace("/");
     }
   }, [canAccessWhenAuthenticated, hasHydrated, isAuthenticated, router]);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Coffee, Utensils, Moon, Check } from "lucide-react";
+import { Coffee, Beef, Soup, Check } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -11,8 +11,8 @@ const MEAL_TYPES_CONFIG: Record<
   { label: string; icon: typeof Coffee; time: string }
 > = {
   Breakfast: { label: "Breakfast", icon: Coffee, time: "8:00 AM - 9:30 AM" },
-  Lunch: { label: "Lunch", icon: Utensils, time: "12:30 PM - 2:00 PM" },
-  Dinner: { label: "Dinner", icon: Moon, time: "7:30 PM - 9:00 PM" },
+  Lunch: { label: "Lunch", icon: Beef, time: "12:30 PM - 2:00 PM" },
+  Dinner: { label: "Dinner", icon: Soup, time: "7:30 PM - 9:00 PM" },
 };
 
 interface MealTypeSelectorProps {
@@ -50,11 +50,12 @@ export function MealTypeSelector({
             onClick={() => toggleMeal(meal)}
             disabled={disabled}
             className={cn(
-              "flex items-center p-4 rounded-xl transition-all duration-300 border-2 text-left",
+              "flex items-center p-4 rounded-xl transition-all duration-300 border-2 text-left bg-white",
               isSelected
-                ? "border-[#FF6B35] bg-white"
-                : "border-gray-100 bg-white hover:border-gray-200",
-              disabled && "opacity-50 cursor-not-allowed hover:border-gray-100",
+                ? "border-[#FF6B35] shadow-sm"
+                : "border-slate-100 hover:border-slate-200",
+              disabled &&
+                "opacity-50 cursor-not-allowed hover:border-slate-100",
             )}
           >
             <div className="flex items-center gap-3 w-full">
@@ -64,7 +65,7 @@ export function MealTypeSelector({
                   "w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all",
                   isSelected
                     ? "bg-[#FF6B35] border-[#FF6B35]"
-                    : "border-gray-300",
+                    : "border-slate-300",
                 )}
               >
                 {isSelected && (
@@ -74,17 +75,22 @@ export function MealTypeSelector({
 
               {/* Label & Time */}
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-gray-900 text-sm leading-tight">
+                <p className="font-bold text-[#0F172A] text-sm leading-tight">
                   {config.label}
                 </p>
-                <p className="text-[11px] text-gray-400 font-medium">
+                <p className="text-[11px] text-slate-400 font-medium">
                   {config.time}
                 </p>
               </div>
 
               {/* Icon */}
-              <div className="text-gray-300">
-                <Icon className="w-5 h-5" strokeWidth={1.5} />
+              <div
+                className={cn(
+                  "text-slate-300 transition-colors",
+                  isSelected && "text-[#FF6B35]",
+                )}
+              >
+                <Icon className="w-5 h-5" strokeWidth={2} />
               </div>
             </div>
           </button>

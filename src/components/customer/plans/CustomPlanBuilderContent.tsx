@@ -1,13 +1,10 @@
 "use client";
 
-import { Suspense, useCallback, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useStore } from "zustand";
+import { useCallback, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { useCreateCustomPlan } from "@/api/hooks/useCustomPlans";
 import type { CustomPlanMenuPreviewParams } from "@/api/types/customer.types";
-import { Navbar } from "@/components/navigation/Navbar";
-import Footer from "@/components/customer/layout/Footer";
 import { DurationSelector } from "@/components/customer/plans/DurationSelector";
 import {
   MealTypeSelector,
@@ -26,9 +23,16 @@ import { cn } from "@/lib/utils";
 const DEFAULT_VEG_PRICE = 80;
 const DEFAULT_NONVEG_PRICE = 120;
 
-function CustomPlanBuilderContent() {
+export interface CustomPlanBuilderContentProps {
+  showFooter?: boolean;
+  className?: string;
+}
+
+export function CustomPlanBuilderContent({
+  showFooter = true,
+  className,
+}: CustomPlanBuilderContentProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const hasHydrated = useAuthHydrated();
   const isAuthenticated = useIsAuthenticated();
 
@@ -167,114 +171,99 @@ function CustomPlanBuilderContent() {
   ]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      <Navbar />
+    <div
+      className={cn(
+        "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16",
+        isAuthenticated && "pb-32 sm:pb-16",
+        className,
+      )}
+    >
+      {/* Header */}
+      <div className="mb-10">
+        <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-black tracking-tight text-[#0F172A] mb-3">
+          Build Your Perfect Plan
+        </h1>
+        <p className="text-base sm:text-lg text-slate-500 font-medium max-w-2xl">
+          Customize your meals, duration, and preferences in three simple steps.
+        </p>
+      </div>
 
-      <main
-        className={cn(
-          "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16",
-          isAuthenticated && "pb-32 sm:pb-16",
-        )}
-      >
-        {/* Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-gray-900 mb-4">
-            Build Your Perfect Plan
-          </h1>
-          <p className="text-lg text-gray-500 font-medium">
-            Customize your meals, duration, and preferences in three simple
-            steps.
-          </p>
-        </div>
+      {/* Error Alert */}
+      {error && (
+        <Alert variant="destructive" className="mb-8 rounded-2xl border-2">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="font-bold">{error}</AlertDescription>
+        </Alert>
+      )}
 
-        {/* Error Alert */}
-        {error && (
-          <Alert variant="destructive" className="mb-8 rounded-2xl border-2">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="font-bold">{error}</AlertDescription>
-          </Alert>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* Left Column - Configuration */}
-          <div className="lg:col-span-8 space-y-16">
-            {/* Step 1: Duration */}
-            <section>
-              <div className="flex items-center gap-4 mb-8">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 text-[#FF6B35] text-sm font-black">
-                  1
-                </div>
-                <h2 className="text-2xl font-black text-gray-900 tracking-tight">
-                  Choose Duration
-                </h2>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
+        {/* Left Column - Configuration */}
+        <div className="lg:col-span-8 space-y-12">
+          {/* Step 1: Duration */}
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-50 text-[#FF6B35] text-xs font-black">
+                1
               </div>
-              <DurationSelector value={duration} onChange={setDuration} />
-            </section>
+              <h2 className="text-xl font-black text-[#0F172A] tracking-tight">
+                Choose Duration
+              </h2>
+            </div>
+            <DurationSelector value={duration} onChange={setDuration} />
+          </section>
 
-            {/* Step 2: Meal Types */}
-            <section>
-              <div className="flex items-center gap-4 mb-8">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 text-[#FF6B35] text-sm font-black">
-                  2
-                </div>
-                <h2 className="text-2xl font-black text-gray-900 tracking-tight">
-                  Select Your Meals
-                </h2>
+          {/* Step 2: Meal Types */}
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-50 text-[#FF6B35] text-xs font-black">
+                2
               </div>
-              <MealTypeSelector
-                selectedTypes={mealTypes}
-                onChange={setMealTypes}
-                disabled={!duration}
-              />
-            </section>
-
-            {/* Step 3: Food Preference */}
-            <section>
-              <div className="flex items-center gap-4 mb-8">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 text-[#FF6B35] text-sm font-black">
-                  3
-                </div>
-                <h2 className="text-2xl font-black text-gray-900 tracking-tight">
-                  Food Preference
-                </h2>
-              </div>
-              <PreferenceToggle
-                value={preference}
-                onChange={setPreference}
-                vegPrice={DEFAULT_VEG_PRICE}
-                nonvegPrice={DEFAULT_NONVEG_PRICE}
-                disabled={mealTypes.size === 0}
-              />
-            </section>
-
-            {/* Menu Preview Section */}
-            <section className="pt-8 border-t border-gray-100">
-              <WeeklyMenuPreview params={params} />
-            </section>
-          </div>
-
-          {/* Right Column - Order Summary */}
-          <div className="lg:col-span-4 h-full">
-            <OrderSummaryPanel
-              params={params}
-              onContinue={handleContinue}
-              isContinueDisabled={isContinueDisabled}
-              isAuthenticated={isAuthenticated}
+              <h2 className="text-xl font-black text-[#0F172A] tracking-tight">
+                Select Your Meals
+              </h2>
+            </div>
+            <MealTypeSelector
+              selectedTypes={mealTypes}
+              onChange={setMealTypes}
+              disabled={!duration}
             />
-          </div>
+          </section>
+
+          {/* Step 3: Food Preference */}
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-50 text-[#FF6B35] text-xs font-black">
+                3
+              </div>
+              <h2 className="text-xl font-black text-[#0F172A] tracking-tight">
+                Food Preference
+              </h2>
+            </div>
+            <PreferenceToggle
+              value={preference}
+              onChange={setPreference}
+              vegPrice={DEFAULT_VEG_PRICE}
+              nonvegPrice={DEFAULT_NONVEG_PRICE}
+              disabled={mealTypes.size === 0}
+            />
+          </section>
+
+          {/* Menu Preview Section */}
+          <section className="pt-10 border-t border-slate-100">
+            <WeeklyMenuPreview params={params} />
+          </section>
         </div>
-      </main>
 
-      {/* Footer - Only for unauthenticated */}
-      {!isAuthenticated && <Footer />}
+        {/* Right Column - Order Summary */}
+        <div className="lg:col-span-4 h-full">
+          <OrderSummaryPanel
+            params={params}
+            onContinue={handleContinue}
+            isContinueDisabled={isContinueDisabled}
+            isAuthenticated={isAuthenticated}
+          />
+        </div>
+      </div>
     </div>
-  );
-}
-
-export default function CustomPlanBuilderPage() {
-  return (
-    <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
-      <CustomPlanBuilderContent />
-    </Suspense>
   );
 }

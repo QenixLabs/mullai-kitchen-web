@@ -51,22 +51,22 @@ export function DurationSelector({
           className={cn(
             "relative flex flex-col items-start p-6 rounded-2xl bg-white transition-all duration-300 border-2 text-left",
             value === option.value
-              ? "border-[#FF6B35] bg-white ring-1 ring-[#FF6B35]"
-              : "border-gray-100 hover:border-gray-300",
-            disabled && "opacity-50 cursor-not-allowed hover:border-gray-100",
+              ? "border-[#FF6B35] shadow-sm"
+              : "border-slate-50 hover:border-slate-200",
+            disabled && "opacity-50 cursor-not-allowed hover:border-slate-50",
           )}
         >
-          <div className="flex w-full items-center justify-between mb-2">
-            <span className="text-xl font-bold text-gray-900">
+          <div className="flex w-full items-center justify-between mb-2.5">
+            <span className="text-xl font-bold text-[#0F172A]">
               {option.label}
             </span>
             {option.badge && (
               <span
                 className={cn(
-                  "px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                  "px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider",
                   option.badgeType === "discount"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-gray-100 text-gray-600",
+                    ? "bg-green-100 text-[#22C55E]"
+                    : "bg-slate-100 text-slate-500",
                 )}
               >
                 {option.badge}
@@ -74,7 +74,7 @@ export function DurationSelector({
             )}
           </div>
 
-          <p className="text-sm text-gray-500 leading-relaxed max-w-[200px]">
+          <p className="text-sm text-slate-500 font-medium leading-relaxed max-w-[220px]">
             {option.description}
           </p>
 

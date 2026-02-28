@@ -44,27 +44,27 @@ export function OrderSummaryPanel({
         <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
 
         {/* Selection Summary */}
-        <div className="space-y-4 pb-6 mb-6 border-b border-gray-50">
+        <div className="space-y-4 pb-6 mb-6 border-b border-slate-50">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-400 font-medium">Duration</span>
-            <span className="font-bold text-gray-900">
+            <span className="text-slate-400 font-medium">Duration</span>
+            <span className="font-bold text-[#0F172A]">
               {params?.days || "-"} Days
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-400 font-medium">Meals per day</span>
-            <span className="font-bold text-gray-900">
+            <span className="text-slate-400 font-medium">Meals per day</span>
+            <span className="font-bold text-[#0F172A]">
               {params?.meal_types.length || 0} ({mealTypeLetters})
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-400 font-medium">Preference</span>
+            <span className="text-slate-400 font-medium">Preference</span>
             <span
               className={cn(
                 "font-bold",
                 params?.preference === "VEG"
-                  ? "text-green-600"
-                  : "text-red-600",
+                  ? "text-[#22C55E]"
+                  : "text-[#EF4444]",
               )}
             >
               {params?.preference === "VEG"
@@ -76,14 +76,14 @@ export function OrderSummaryPanel({
           </div>
           <div className="flex items-center justify-between text-sm">
             <div className="flex flex-col">
-              <span className="text-gray-400 font-medium">Price per meal</span>
+              <span className="text-slate-400 font-medium">Price per meal</span>
               {pricing && pricing.subtotal > 0 && (
-                <span className="text-[10px] text-gray-300">
+                <span className="text-[10px] text-slate-300 font-bold">
                   Standard rate ₹100
                 </span>
               )}
             </div>
-            <span className="font-bold text-[#FF6B35]">
+            <span className="font-black text-[#FF6B35]">
               ₹{pricing?.price_per_meal || 0}
             </span>
           </div>
@@ -94,36 +94,36 @@ export function OrderSummaryPanel({
           <PricingSkeleton />
         ) : error ? (
           <div className="py-4">
-            <p className="text-xs text-red-500 text-center">
+            <p className="text-xs text-[#EF4444] text-center">
               Failed to load pricing
             </p>
           </div>
         ) : pricing ? (
           <div className="space-y-4">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-400 font-medium">
+              <span className="text-slate-400 font-medium">
                 Subtotal ({pricing.total_meals} meals)
               </span>
-              <span className="font-bold text-gray-900">
+              <span className="font-bold text-[#0F172A]">
                 ₹{pricing.subtotal.toLocaleString()}
               </span>
             </div>
             {pricing.bulk_discount.amount > 0 && (
               <div className="flex items-center justify-between text-sm">
-                <span className="text-green-600 font-medium">
+                <span className="text-[#22C55E] font-medium">
                   Bulk Discount ({pricing.bulk_discount.percentage}%)
                 </span>
-                <span className="font-bold text-green-600">
+                <span className="font-bold text-[#22C55E]">
                   - ₹{pricing.bulk_discount.amount.toLocaleString()}
                 </span>
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-4">
-              <span className="text-lg font-black text-gray-900">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-50 mt-2">
+              <span className="text-lg font-black text-[#0F172A]">
                 Total Pay
               </span>
-              <span className="text-2xl font-black text-[#FF6B35]">
+              <span className="text-3xl font-black text-[#FF6B35]">
                 ₹{pricing.total.toLocaleString()}
               </span>
             </div>
@@ -133,7 +133,7 @@ export function OrderSummaryPanel({
               onClick={onContinue}
               disabled={isContinueDisabled || isLoading}
               className={cn(
-                "w-full h-14 rounded-2xl font-bold text-white shadow-lg mt-6 text-base group transition-all",
+                "w-full h-14 rounded-2xl font-black text-white shadow-lg mt-6 text-base group transition-all",
                 "bg-[#FF6B35] hover:bg-[#FF8555] active:scale-[0.98]",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
               )}
@@ -150,13 +150,13 @@ export function OrderSummaryPanel({
               )}
             </Button>
 
-            <p className="text-[10px] text-gray-400 text-center mt-4 font-medium italic">
+            <p className="text-[10px] text-slate-400 text-center mt-4 font-medium italic">
               * Free delivery included. Pause or skip anytime.
             </p>
           </div>
         ) : (
           <div className="py-6 text-center">
-            <p className="text-sm text-gray-400 font-medium">
+            <p className="text-sm text-slate-400 font-medium">
               Complete your selections to see pricing
             </p>
           </div>
@@ -164,15 +164,15 @@ export function OrderSummaryPanel({
       </div>
 
       {/* Trust Promise */}
-      <div className="rounded-2xl bg-orange-50/50 border border-orange-100/50 p-4 flex items-start gap-3">
-        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-[#FF6B35]">
-          <ShieldCheck className="w-4 h-4" />
+      <div className="rounded-2xl bg-[#FEF2F2] p-4 flex items-start gap-4">
+        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-[#FF6B35] flex-shrink-0 mt-0.5">
+          <Check className="w-4 h-4" strokeWidth={4} />
         </div>
         <div>
-          <p className="text-xs font-black text-gray-900 uppercase tracking-wider">
+          <p className="text-sm font-black text-[#0F172A] tracking-tight mb-0.5">
             Mullai Trust Promise
           </p>
-          <p className="text-[10px] text-gray-500 font-medium leading-tight">
+          <p className="text-[11px] text-slate-500 font-medium leading-tight">
             Farm-fresh ingredients & zero MSG.
           </p>
         </div>
