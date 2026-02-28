@@ -137,7 +137,7 @@ export function CustomPlanBuilderDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-[480px] p-0 overflow-hidden bg-white rounded-3xl shadow-md gap-0 border-0">
+      <DialogContent className="max-w-2xl p-0 overflow-hidden bg-white rounded-3xl shadow-md gap-0 border-0">
         {/* Progress Bar Container */}
         <div className="w-full bg-gray-100 h-1.5 flex gap-1 px-4 mt-4">
           {Array.from({ length: STEP_COUNT }).map((_, i) => (
@@ -168,7 +168,7 @@ export function CustomPlanBuilderDialog({
         </div>
 
         {/* Dynamic Body Content */}
-        <div className="px-6 py-4 min-h-[340px]">
+        <div className="px-6 py-4 min-h-80">
           {/* STEP 1: Preference */}
           {step === 0 && (
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -389,7 +389,7 @@ export function CustomPlanBuilderDialog({
                   </p>
                 </div>
               ) : (
-                <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1">
+                <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
                   {addresses.map((addr) => {
                     const isSelected = addressId === addr._id;
                     return (

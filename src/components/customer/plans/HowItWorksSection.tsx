@@ -33,13 +33,13 @@ export function HowItWorksSection({ className = "" }: HowItWorksSectionProps) {
     <section
       className={`w-full bg-white py-16 px-4 sm:px-6 lg:px-8 ${className}`}
     >
-      <div className="mx-auto max-w-[1200px]">
+      <div className="mx-auto max-w-7xl">
         {/* Section Header */}
         <div className="mb-12 text-center">
-          <h2 className="mb-4 text-[2rem] font-bold leading-tight text-foreground">
+          <h2 className="mb-4 text-3xl font-bold leading-tight text-foreground">
             Simple, Healthy, & Consistent
           </h2>
-          <p className="text-[1rem] text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             Skip the grocery shopping and cooking. We bring the taste of home
             to your doorstep every single day.
           </p>
@@ -62,12 +62,12 @@ export function HowItWorksSection({ className = "" }: HowItWorksSectionProps) {
                 </div>
 
                 {/* Step Title */}
-                <h3 className="mb-3 text-[1.2rem] font-bold text-foreground">
+                <h3 className="mb-3 text-lg font-bold text-foreground">
                   {step.title}
                 </h3>
 
                 {/* Step Description */}
-                <p className="text-[1rem] leading-relaxed text-muted-foreground">
+                <p className="text-base leading-relaxed text-muted-foreground">
                   {step.description}
                 </p>
               </div>

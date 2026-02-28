@@ -103,8 +103,8 @@ export function MenuPreviewSheet({
         aria-modal="true"
         aria-label={planName ? `${planName} menu preview` : "Plan menu preview"}
         className={cn(
-          "absolute inset-x-0 bottom-0 max-h-[90vh] overflow-hidden rounded-t-2xl border border-gray-200 bg-white shadow-2xl",
-          "sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:w-[32rem] sm:max-w-full sm:rounded-none sm:rounded-l-2xl",
+          "absolute inset-x-0 bottom-0 max-h-screen overflow-hidden rounded-t-2xl border border-gray-200 bg-white shadow-2xl",
+          "sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:w-96 sm:max-w-full sm:rounded-none sm:rounded-l-2xl",
           className,
         )}
       >

@@ -125,7 +125,7 @@ export function TransactionHistory({
     return (
       <div
         className={cn(
-          "flex min-h-[300px] items-center justify-center",
+          "flex min-h-80 items-center justify-center",
           className,
         )}
       >
@@ -138,7 +138,7 @@ export function TransactionHistory({
     return (
       <div
         className={cn(
-          "flex min-h-[300px] items-center justify-center rounded-2xl border border-red-200 bg-red-50 p-8",
+          "flex min-h-80 items-center justify-center rounded-2xl border border-red-200 bg-red-50 p-8",
           className,
         )}
       >

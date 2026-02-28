@@ -27,7 +27,7 @@ const PlanLoadingSkeleton = ({ count, className }: { count: number; className?: 
       {Array.from({ length: count }).map((_, index) => (
         <div
           key={index}
-          className="h-[340px] w-[280px] shrink-0 animate-pulse rounded-2xl border border-orange-100 bg-white"
+          className="h-80 w-72 shrink-0 animate-pulse rounded-2xl border border-orange-100 bg-white"
           aria-hidden="true"
         />
       ))}

@@ -83,7 +83,7 @@ export function HeroSection({
   return (
     <section
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-orange-100/50 bg-background p-5 shadow-lg sm:rounded-[2rem] sm:p-6 lg:p-8",
+        "relative overflow-hidden rounded-2xl border border-orange-100/50 bg-background p-5 shadow-lg sm:rounded-2xl sm:p-6 lg:p-8",
         className,
       )}
     >
@@ -217,7 +217,7 @@ export function HeroSection({
 
         {/* Right Column - Meal Image */}
         <div className="relative hidden lg:block">
-          <div className="relative h-[300px] w-full overflow-hidden rounded-2xl shadow-xl xl:h-[350px]">
+          <div className="relative h-80 w-full overflow-hidden rounded-2xl shadow-xl xl:h-96">
             <img
               src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80"
               alt="South Indian meal platter with traditional dishes"

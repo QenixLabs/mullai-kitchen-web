@@ -74,7 +74,7 @@ export function DurationSelector({
             )}
           </div>
 
-          <p className="text-sm text-muted-foreground font-medium leading-relaxed max-w-[220px]">
+          <p className="text-sm text-muted-foreground font-medium leading-relaxed max-w-56">
             {option.description}
           </p>
 

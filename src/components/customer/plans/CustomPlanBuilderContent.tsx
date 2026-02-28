@@ -180,7 +180,7 @@ export function CustomPlanBuilderContent({
     >
       {/* Header */}
       <div className="mb-10">
-        <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-black tracking-tight text-[#0F172A] mb-3">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-[#0F172A] mb-3">
           Build Your Perfect Plan
         </h1>
         <p className="text-base sm:text-lg text-slate-500 font-medium max-w-2xl">

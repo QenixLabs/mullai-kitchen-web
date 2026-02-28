@@ -34,13 +34,13 @@ const trustBadges = [
 export function LocalFavoritesSection({ className }: LocalFavoritesSectionProps) {
   return (
     <section className={cn("bg-white py-14 sm:py-16", className)}>
-      <div className="mx-auto max-w-[1200px] px-4">
+      <div className="mx-auto max-w-7xl px-4">
         {/* Section Header */}
         <div className="mb-12 text-center">
-          <h2 className="text-[2rem] font-bold leading-tight text-foreground sm:text-[2.25rem]">
+          <h2 className="text-3xl font-bold leading-tight text-foreground sm:text-4xl">
             Your Local Favorite
           </h2>
-          <p className="mx-auto mt-4 max-w-3xl text-[1rem] leading-relaxed text-muted-foreground sm:text-[1.125rem]">
+          <p className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             We understand the authentic taste of Chennai because we are from Chennai. From the spice levels of
             your Sambar to the crispiness of the Medu Vada, we ensure every meal feels like it was cooked in
             your own kitchen.
@@ -51,7 +51,7 @@ export function LocalFavoritesSection({ className }: LocalFavoritesSectionProps)
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
           {/* Left Column - Chennai Map Image */}
           <div className="flex items-center justify-center">
-            <div className="relative h-[320px] w-full overflow-hidden rounded-3xl sm:h-[400px]">
+            <div className="relative h-80 w-full overflow-hidden rounded-3xl sm:h-96">
               <img
                 src="https://images.unsplash.com/photo-1630383249896-424e482df921?auto=format&fit=crop&w=800&q=80"
                 alt="Authentic South Indian cuisine - Chennai local favorites"
