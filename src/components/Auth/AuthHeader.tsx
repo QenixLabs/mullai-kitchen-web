@@ -12,16 +12,16 @@ export function AuthHeader({ title, subtitle, helper }: AuthHeaderProps) {
   return (
     <header className="mb-8 space-y-3">
       <div className="space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
           {title}
         </h1>
         {subtitle ? (
-          <p className="max-w-md text-sm leading-relaxed text-gray-500 sm:text-base">
+          <p className="max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
             {subtitle}
           </p>
         ) : null}
       </div>
-      {helper ? <div className="text-sm text-gray-500">{helper}</div> : null}
+      {helper ? <div className="text-sm text-muted-foreground">{helper}</div> : null}
     </header>
   );
 }
