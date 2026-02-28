@@ -54,21 +54,21 @@ export function Sidebar() {
   if (!hasHydrated || !isAuthenticated) return null;
 
   return (
-    <ShadcnSidebar className="w-[240px] border-r border-gray-100 bg-[#f9fafb] shadow-none">
-      <SidebarHeader className="bg-[#f9fafb] border-none px-6 pt-8 pb-4">
+    <ShadcnSidebar className="w-[240px] border-r border-border bg-muted/30 shadow-none">
+      <SidebarHeader className="bg-muted/30 border-none px-6 pt-8 pb-4">
         <Link
           href="/subscription"
           className="flex items-center gap-3 active:opacity-90 transition-opacity"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF5C00] shadow-md shadow-[#FF5C00]/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/20">
             <UtensilsCrossed className="h-6 w-6 text-white" />
           </div>
-          <span className="text-[20px] font-black tracking-tight text-gray-900">
+          <span className="text-[20px] font-black tracking-tight text-foreground">
             Mullai Kitchen
           </span>
         </Link>
       </SidebarHeader>
-      <SidebarContent className="flex flex-col h-full bg-[#f9fafb]">
+      <SidebarContent className="flex flex-col h-full bg-muted/30">
         <SidebarGroup className="mt-2 px-3">
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">
@@ -83,8 +83,8 @@ export function Sidebar() {
                       className={cn(
                         "h-12 w-full transition-all duration-200 rounded-lg px-4 flex items-center gap-4",
                         isActive
-                          ? "bg-[#FF5C00]! text-white! shadow-sm font-bold"
-                          : "text-gray-600 hover:bg-gray-100 hover:text-[#FF5C00]",
+                          ? "bg-primary! text-primary-foreground! shadow-sm font-bold"
+                          : "text-muted-foreground hover:bg-accent hover:text-primary",
                       )}
                     >
                       <Link
@@ -95,8 +95,8 @@ export function Sidebar() {
                           className={cn(
                             "h-5 w-5 shrink-0 transition-colors",
                             isActive
-                              ? "text-white!"
-                              : "text-gray-500 group-hover:text-[#FF5C00]",
+                              ? "text-primary-foreground!"
+                              : "text-muted-foreground group-hover:text-primary",
                           )}
                         />
                         <span className="font-semibold text-[15px] whitespace-nowrap">
@@ -112,15 +112,15 @@ export function Sidebar() {
         </SidebarGroup>
 
         <div className="mt-auto px-4 pb-10">
-          <div className="rounded-xl bg-[#FF5C00] p-6 shadow-sm">
-            <p className="text-[13px] font-medium text-white/90">
+          <div className="rounded-xl bg-primary p-6 shadow-sm">
+            <p className="text-[13px] font-medium text-primary-foreground/90">
               Wallet Balance
             </p>
-            <h3 className="mt-1 text-2xl font-bold text-white tracking-tight">
+            <h3 className="mt-1 text-2xl font-bold text-primary-foreground tracking-tight">
               ₹1,240.50
             </h3>
             <Button
-              className="mt-4 w-full h-10 bg-white text-[#FF5C00] hover:bg-white/95 rounded-lg font-bold text-sm shadow-sm transition-all border-none"
+              className="mt-4 w-full h-10 bg-background text-primary hover:bg-background/95 rounded-lg font-bold text-sm shadow-sm transition-all border-none"
               variant="secondary"
             >
               <Plus className="mr-2 h-4 w-4 stroke-[3px]" />
