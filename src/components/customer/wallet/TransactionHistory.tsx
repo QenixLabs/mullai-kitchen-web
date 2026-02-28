@@ -129,7 +129,7 @@ export function TransactionHistory({
           className,
         )}
       >
-        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -162,7 +162,7 @@ export function TransactionHistory({
     <div className={cn("space-y-4", className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-gray-900">
+        <h2 className="text-lg font-bold text-foreground">
           Transaction History
         </h2>
         <div className="flex items-center gap-2">
@@ -201,8 +201,8 @@ export function TransactionHistory({
                       className={cn(
                         "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
                         filter === type
-                          ? "bg-orange-50 text-orange-700"
-                          : "text-gray-700 hover:bg-gray-50",
+                          ? "bg-primary/10 text-primary"
+                          : "text-foreground hover:bg-accent",
                       )}
                     >
                       {type === "all" && <span>All Transactions</span>}
@@ -214,7 +214,7 @@ export function TransactionHistory({
                       )}
                       {type === "debit" && (
                         <>
-                          <ArrowDown className="h-4 w-4 text-orange-500" />
+                          <ArrowDown className="h-4 w-4 text-primary" />
                           <span>Debits Only</span>
                         </>
                       )}
@@ -255,14 +255,14 @@ export function TransactionHistory({
 
       {/* Transactions List */}
       {sortedTransactions.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-12 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-            <Calendar className="h-8 w-8 text-gray-400" />
+        <div className="rounded-2xl border border-dashed border-border bg-muted p-12 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+            <Calendar className="h-8 w-8 text-muted-foreground/70" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-foreground">
             No Transactions Yet
           </h3>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-muted-foreground">
             {filter === "all"
               ? "Your wallet transaction history will appear here once you start using it for payments."
               : `No ${filter} transactions found.`}
@@ -280,7 +280,7 @@ export function TransactionHistory({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex items-start gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm hover:shadow-md transition-shadow"
+                className="flex items-start gap-4 rounded-xl border border-border bg-background p-4 shadow-sm hover:shadow-md transition-shadow"
               >
                 {/* Icon */}
                 <div
@@ -288,13 +288,13 @@ export function TransactionHistory({
                     "flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
                     isCredit
                       ? "bg-emerald-50 ring-1 ring-emerald-100"
-                      : "bg-orange-50 ring-1 ring-orange-100",
+                      : "bg-primary/10 ring-1 ring-primary/20",
                   )}
                 >
                   {isCredit ? (
                     <ArrowUp className="h-5 w-5 text-emerald-600" />
                   ) : (
-                    <ArrowDown className="h-5 w-5 text-orange-600" />
+                    <ArrowDown className="h-5 w-5 text-primary" />
                   )}
                 </div>
 
@@ -302,14 +302,14 @@ export function TransactionHistory({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">
+                      <p className="text-sm font-semibold text-foreground">
                         {categoryInfo?.label || tx.category}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         {categoryInfo?.description || tx.description}
                       </p>
                       <p
-                        className="mt-1 text-[11px] text-gray-400"
+                        className="mt-1 text-[11px] text-muted-foreground/70"
                         title={formatFullDate(tx.created_at)}
                       >
                         {formatDate(tx.created_at)}
@@ -321,26 +321,26 @@ export function TransactionHistory({
                       <p
                         className={cn(
                           "text-sm font-bold",
-                          isCredit ? "text-emerald-600" : "text-orange-600",
+                          isCredit ? "text-emerald-600" : "text-primary",
                         )}
                       >
                         {isCredit ? "+" : "-"}₹{tx.amount.toFixed(2)}
                       </p>
-                      <p className="text-[11px] text-gray-400">
+                      <p className="text-[11px] text-muted-foreground/70">
                         {isCredit ? "Credited" : "Debited"}
                       </p>
                     </div>
                   </div>
 
                   {/* Balance change */}
-                  <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
+                  <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
                     <span>Balance:</span>
-                    <span className="font-medium text-gray-700">
+                    <span className="font-medium text-foreground">
                       ₹{tx.balance_before.toFixed(2)}
                     </span>
-                    <ArrowDown className="h-3 w-3 text-gray-400" />
-                    <ArrowUp className="h-3 w-3 text-gray-400" />
-                    <span className="font-medium text-gray-700">
+                    <ArrowDown className="h-3 w-3 text-muted-foreground/70" />
+                    <ArrowUp className="h-3 w-3 text-muted-foreground/70" />
+                    <span className="font-medium text-foreground">
                       ₹{tx.balance_after.toFixed(2)}
                     </span>
                   </div>
