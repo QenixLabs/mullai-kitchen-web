@@ -30,7 +30,7 @@ export function WelcomeStep({
 }: WelcomeStepProps) {
   return (
     <div className={cn("space-y-6", className)}>
-      <div className="rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/10 via-primary/10 to-background p-5 sm:p-7">
+      <div className="rounded-sm border border-primary/10 bg-gradient-to-br from-primary/10 via-primary/10 to-background p-5 sm:p-7">
         <div className="space-y-3">
           <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
             <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />

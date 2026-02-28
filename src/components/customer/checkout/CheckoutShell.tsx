@@ -43,7 +43,7 @@ export function CheckoutShell({
     <div className="min-h-screen bg-gradient-to-b from-accent to-muted px-4 py-6 sm:px-8 sm:py-10">
       <div
         className={cn(
-          "mx-auto w-full max-w-6xl overflow-hidden rounded-2xl border border-border bg-card shadow-xl",
+          "mx-auto w-full max-w-6xl overflow-hidden rounded-sm border border-border bg-card shadow-xl",
           className,
         )}
       >

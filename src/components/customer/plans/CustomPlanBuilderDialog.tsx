@@ -137,7 +137,7 @@ export function CustomPlanBuilderDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl p-0 overflow-hidden bg-white rounded-2xl shadow-md gap-0 border-0">
+      <DialogContent className="max-w-2xl p-0 overflow-hidden bg-white rounded-sm shadow-md gap-0 border-0">
         {/* Progress Bar Container */}
         <div className="w-full bg-gray-100 h-1.5 flex gap-1 px-4 mt-4">
           {Array.from({ length: STEP_COUNT }).map((_, i) => (
@@ -179,7 +179,7 @@ export function CustomPlanBuilderDialog({
                 <button
                   onClick={() => setPreference("VEG")}
                   className={cn(
-                    "relative flex flex-col items-center gap-3 p-5 rounded-2xl bg-white transition-all duration-500",
+                    "relative flex flex-col items-center gap-3 p-5 rounded-sm bg-white transition-all duration-500",
                     "border-2",
                     preference === "VEG"
                       ? "border-primary ring-2 ring-primary ring-offset-2 ring-offset-background shadow-primary shadow-lg"
@@ -188,7 +188,7 @@ export function CustomPlanBuilderDialog({
                 >
                   <div
                     className={cn(
-                      "p-3 rounded-2xl transition-colors duration-300",
+                      "p-3 rounded-sm transition-colors duration-300",
                       preference === "VEG"
                         ? "bg-primary text-primary-foreground"
                         : "bg-green-50 text-green-600 group-hover:bg-green-100",
@@ -214,7 +214,7 @@ export function CustomPlanBuilderDialog({
                 <button
                   onClick={() => setPreference("NON_VEG")}
                   className={cn(
-                    "relative flex flex-col items-center gap-3 p-5 rounded-2xl bg-white transition-all duration-500",
+                    "relative flex flex-col items-center gap-3 p-5 rounded-sm bg-white transition-all duration-500",
                     "border-2",
                     preference === "NON_VEG"
                       ? "border-primary ring-2 ring-primary ring-offset-2 ring-offset-background shadow-primary shadow-lg"
@@ -223,7 +223,7 @@ export function CustomPlanBuilderDialog({
                 >
                   <div
                     className={cn(
-                      "p-3 rounded-2xl transition-colors duration-300",
+                      "p-3 rounded-sm transition-colors duration-300",
                       preference === "NON_VEG"
                         ? "bg-primary text-primary-foreground"
                         : "bg-red-50 text-red-600 group-hover:bg-red-100",
@@ -268,7 +268,7 @@ export function CustomPlanBuilderDialog({
                       key={meal}
                       onClick={() => toggleMeal(meal)}
                       className={cn(
-                        "w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-500 border-2",
+                        "w-full flex items-center justify-between p-4 rounded-sm transition-all duration-500 border-2",
                         isSelected
                           ? "border-primary bg-orange-50/50 shadow-primary shadow-lg"
                           : "border-border bg-white shadow-md hover:border-primary/30 hover:shadow-primary hover:-translate-y-0.5",
@@ -277,7 +277,7 @@ export function CustomPlanBuilderDialog({
                       <div className="flex items-center gap-4">
                         <div
                           className={cn(
-                            "w-10 h-10 rounded-2xl flex items-center justify-center transition-colors duration-300",
+                            "w-10 h-10 rounded-sm flex items-center justify-center transition-colors duration-300",
                             isSelected
                               ? "bg-primary text-primary-foreground shadow-md"
                               : "bg-muted text-muted-foreground",
@@ -320,7 +320,7 @@ export function CustomPlanBuilderDialog({
                       key={d}
                       onClick={() => setDays(d)}
                       className={cn(
-                        "flex flex-col items-center justify-center py-4 rounded-2xl border-2 transition-all duration-300",
+                        "flex flex-col items-center justify-center py-4 rounded-sm border-2 transition-all duration-300",
                         days === d
                           ? "border-primary bg-primary text-primary-foreground shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background"
                           : "border-border bg-background text-foreground hover:border-primary/30 hover:bg-accent hover:text-primary shadow-md",
@@ -352,7 +352,7 @@ export function CustomPlanBuilderDialog({
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
                     className={cn(
-                      "w-full h-12 pl-12 pr-4 rounded-2xl border-2 bg-muted text-foreground font-medium outline-none transition-all duration-300",
+                      "w-full h-12 pl-12 pr-4 rounded-sm border-2 bg-muted text-foreground font-medium outline-none transition-all duration-300",
                       "placeholder:text-muted-foreground focus:bg-background focus:border-primary focus:ring focus:ring-primary/20",
                       startDate && "border-primary/50 bg-background",
                     )}
@@ -379,7 +379,7 @@ export function CustomPlanBuilderDialog({
                   <Loader2 className="w-6 h-6 animate-spin text-primary" />
                 </div>
               ) : addresses.length === 0 ? (
-                <div className="text-center py-10 rounded-2xl border-2 border-dashed border-border bg-muted">
+                <div className="text-center py-10 rounded-sm border-2 border-dashed border-border bg-muted">
                   <MapPin className="w-8 h-8 text-muted-foreground/50 mx-auto mb-3" />
                   <p className="text-base text-foreground font-semibold">
                     No saved addresses
@@ -397,7 +397,7 @@ export function CustomPlanBuilderDialog({
                         key={addr._id}
                         onClick={() => setAddressId(addr._id)}
                         className={cn(
-                          "w-full flex items-start gap-4 p-4 rounded-2xl transition-all duration-500 border-2 text-left group",
+                          "w-full flex items-start gap-4 p-4 rounded-sm transition-all duration-500 border-2 text-left group",
                           isSelected
                             ? "border-primary bg-orange-50/50 shadow-primary shadow-lg ring-1 ring-primary"
                             : "border-border bg-background shadow-md hover:border-primary/30 hover:shadow-primary hover:-translate-y-0.5",
@@ -405,7 +405,7 @@ export function CustomPlanBuilderDialog({
                       >
                         <div
                           className={cn(
-                            "w-10 h-10 shrink-0 rounded-2xl flex justify-center items-center transition-colors",
+                            "w-10 h-10 shrink-0 rounded-sm flex justify-center items-center transition-colors",
                             isSelected
                               ? "bg-primary text-primary-foreground shadow-md"
                               : "bg-muted text-muted-foreground group-hover:bg-accent group-hover:text-primary",
@@ -446,7 +446,7 @@ export function CustomPlanBuilderDialog({
               )}
 
               {createCustomPlan.isError && (
-                <div className="p-4 rounded-2xl bg-red-50 text-red-800 text-sm font-medium border border-red-200">
+                <div className="p-4 rounded-sm bg-red-50 text-red-800 text-sm font-medium border border-red-200">
                   {createCustomPlan.error instanceof Error
                     ? createCustomPlan.error.message
                     : "An error occurred. Please try again."}
@@ -464,7 +464,7 @@ export function CustomPlanBuilderDialog({
               onClick={() => setStep((s) => s - 1)}
               disabled={createCustomPlan.isPending}
               className={cn(
-                "h-11 px-6 rounded-2xl font-medium transition-all duration-300",
+                "h-11 px-6 rounded-sm font-medium transition-all duration-300",
                 "border-2 border-border bg-background text-muted-foreground",
                 "hover:border-primary/30 hover:bg-accent hover:text-primary",
                 "active:scale-[0.98]",
@@ -481,7 +481,7 @@ export function CustomPlanBuilderDialog({
               disabled={!canAdvance}
               onClick={() => setStep((s) => s + 1)}
               className={cn(
-                "flex-1 h-11 rounded-2xl font-semibold text-primary-foreground shadow-md transition-all duration-300",
+                "flex-1 h-11 rounded-sm font-semibold text-primary-foreground shadow-md transition-all duration-300",
                 "bg-primary",
                 "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
                 "active:scale-[0.98]",
@@ -500,7 +500,7 @@ export function CustomPlanBuilderDialog({
               }
               onClick={handleSubmit}
               className={cn(
-                "flex-1 h-11 rounded-2xl font-semibold text-primary-foreground shadow-md transition-all duration-300 flex items-center justify-center gap-2",
+                "flex-1 h-11 rounded-sm font-semibold text-primary-foreground shadow-md transition-all duration-300 flex items-center justify-center gap-2",
                 "bg-primary",
                 "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
                 "active:scale-[0.98]",

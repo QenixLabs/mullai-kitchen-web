@@ -49,7 +49,7 @@ export function DurationSelector({
           onClick={() => onChange(option.value)}
           disabled={disabled}
           className={cn(
-            "relative flex flex-col items-start p-6 rounded-2xl bg-background transition-all duration-300 border-2 text-left",
+            "relative flex flex-col items-start p-6 rounded-sm bg-background transition-all duration-300 border-2 text-left",
             value === option.value
               ? "border-primary shadow-sm"
               : "border-border hover:border-border",

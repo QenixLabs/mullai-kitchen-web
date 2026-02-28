@@ -14,7 +14,7 @@ interface WeeklyMenuPreviewProps {
 
 function MealCardSkeleton() {
   return (
-    <div className="rounded-2xl border border-gray-100 overflow-hidden bg-white">
+    <div className="rounded-sm border border-gray-100 overflow-hidden bg-white">
       <div className="aspect-video bg-gray-100 animate-pulse" />
       <div className="p-3 space-y-2">
         <div className="h-3 w-12 bg-gray-100 rounded animate-pulse" />
@@ -43,7 +43,7 @@ export function WeeklyMenuPreview({ params }: WeeklyMenuPreviewProps) {
 
   if (error) {
     return (
-      <div className="p-6 rounded-2xl border-2 border-red-50 text-center">
+      <div className="p-6 rounded-sm border-2 border-red-50 text-center">
         <p className="text-sm text-red-500 font-medium">
           Failed to load menu preview.
         </p>
@@ -53,7 +53,7 @@ export function WeeklyMenuPreview({ params }: WeeklyMenuPreviewProps) {
 
   if (!data || data.menu.length === 0) {
     return (
-      <div className="p-12 rounded-2xl border border-dashed border-gray-200 bg-gray-50/50 text-center">
+      <div className="p-12 rounded-sm border border-dashed border-gray-200 bg-gray-50/50 text-center">
         <Calendar className="w-10 h-10 text-gray-300 mx-auto mb-3" />
         <p className="text-sm text-gray-500 font-medium tracking-tight">
           Select your preferences to see the weekly menu preview.
@@ -89,7 +89,7 @@ export function WeeklyMenuPreview({ params }: WeeklyMenuPreviewProps) {
         {menuPreview.map((item, idx) => (
           <div
             key={item.day}
-            className="rounded-2xl border border-slate-100 overflow-hidden bg-white shadow-sm hover:shadow-md transition-all duration-300 group"
+            className="rounded-sm border border-slate-100 overflow-hidden bg-white shadow-sm hover:shadow-md transition-all duration-300 group"
           >
             <div className="aspect-[4/3] relative bg-slate-50 overflow-hidden">
               {item.meal.recipe.recipe_image ? (

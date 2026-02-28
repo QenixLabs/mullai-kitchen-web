@@ -50,7 +50,7 @@ export function PlanCard({
     return (
       <article
         className={cn(
-          "group relative flex w-72 flex-col overflow-hidden rounded-2xl bg-white shrink-0",
+          "group relative flex w-72 flex-col overflow-hidden rounded-sm bg-white shrink-0",
           "shadow-md",
           "transition-all duration-300",
           isSelected && "ring-2 ring-primary ring-offset-2",
@@ -59,7 +59,7 @@ export function PlanCard({
       >
         {/* Selection indicator */}
         {isSelected && (
-          <div className="absolute right-2 top-2 z-20 flex h-6 w-6 items-center justify-center rounded-2xl bg-primary shadow-lg">
+          <div className="absolute right-2 top-2 z-20 flex h-6 w-6 items-center justify-center rounded-sm bg-primary shadow-lg">
             <Check className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={3} />
           </div>
         )}
@@ -102,7 +102,7 @@ export function PlanCard({
           <div className="mb-3">
             <div className="mb-1 flex items-center gap-2">
               <span className={cn(
-                "inline-flex items-center gap-1 rounded-2xl px-2 py-0.5 text-[10px] font-medium",
+                "inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-[10px] font-medium",
                 isWeekly ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
               )}>
                 <Calendar className="h-2.5 w-2.5" />
@@ -118,7 +118,7 @@ export function PlanCard({
             {plan.meals_included.map((meal) => (
               <span
                 key={`${plan._id}-${meal}`}
-                className="inline-flex shrink-0 items-center gap-1 rounded-2xl bg-gray-100 px-2.5 py-1 text-xs text-gray-600"
+                className="inline-flex shrink-0 items-center gap-1 rounded-sm bg-gray-100 px-2.5 py-1 text-xs text-gray-600"
               >
                 <Check className="h-2.5 w-2.5 text-primary" />
                 {meal}
@@ -130,7 +130,7 @@ export function PlanCard({
           <Button
             type="button"
             className={cn(
-              "mt-auto h-10 rounded-2xl bg-primary font-semibold text-primary-foreground shadow-md transition-all duration-300",
+              "mt-auto h-10 rounded-sm bg-primary font-semibold text-primary-foreground shadow-md transition-all duration-300",
               "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
               "active:scale-[0.98]"
             )}
@@ -148,7 +148,7 @@ export function PlanCard({
   return (
     <article
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl bg-white transition-all duration-500 ease-out",
+        "group relative flex flex-col overflow-hidden rounded-sm bg-white transition-all duration-500 ease-out",
         "shadow-md",
         "hover:shadow-primary",
         isSelected && [
@@ -162,7 +162,7 @@ export function PlanCard({
     >
       {/* Selection indicator */}
       {isSelected && (
-        <div className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-2xl bg-primary shadow-lg">
+        <div className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-sm bg-primary shadow-lg">
           <Check className="h-4 w-4 text-primary-foreground" strokeWidth={3} />
         </div>
       )}
@@ -195,7 +195,7 @@ export function PlanCard({
         {/* Plan type indicator */}
         <div className="absolute bottom-3 left-3 z-10 flex items-center gap-2">
           <div className={cn(
-            "flex items-center gap-1.5 rounded-2xl px-3 py-1.5 text-xs font-medium backdrop-blur-md",
+            "flex items-center gap-1.5 rounded-sm px-3 py-1.5 text-xs font-medium backdrop-blur-md",
             isWeekly
               ? "bg-emerald-500/20 text-emerald-100"
               : "bg-amber-500/20 text-amber-100"
@@ -207,7 +207,7 @@ export function PlanCard({
 
         {/* Price tag on image */}
         <div className="absolute bottom-3 right-3 z-10">
-          <div className="flex flex-col items-end rounded-2xl bg-black/30 px-3 py-2 backdrop-blur-sm">
+          <div className="flex flex-col items-end rounded-sm bg-black/30 px-3 py-2 backdrop-blur-sm">
             <span className="text-[10px] font-medium uppercase tracking-wide text-white/70">From</span>
             <div className="flex items-baseline gap-0.5">
               <span className="text-2xl font-bold text-white sm:text-3xl">
@@ -256,9 +256,9 @@ export function PlanCard({
               {plan.meals_included.map((meal) => (
                 <li
                   key={`${plan._id}-${meal}`}
-                  className="flex items-center gap-1.5 rounded-2xl bg-gray-50 px-2.5 py-1.5 text-xs text-gray-700 transition-colors group-hover:bg-accent sm:px-3 sm:py-2 sm:text-sm"
+                  className="flex items-center gap-1.5 rounded-sm bg-gray-50 px-2.5 py-1.5 text-xs text-gray-700 transition-colors group-hover:bg-accent sm:px-3 sm:py-2 sm:text-sm"
                 >
-                  <span className="flex h-4 w-4 items-center justify-center rounded-2xl bg-primary/10 sm:h-5 sm:w-5">
+                  <span className="flex h-4 w-4 items-center justify-center rounded-sm bg-primary/10 sm:h-5 sm:w-5">
                     <Check className="h-2.5 w-2.5 text-primary sm:h-3 sm:w-3" strokeWidth={3} />
                   </span>
                   <span className="font-medium">{meal}</span>
@@ -275,7 +275,7 @@ export function PlanCard({
           <Button
             type="button"
             className={cn(
-              "relative h-10 overflow-hidden rounded-2xl bg-primary font-semibold text-primary-foreground shadow-md transition-all duration-300 sm:h-11",
+              "relative h-10 overflow-hidden rounded-sm bg-primary font-semibold text-primary-foreground shadow-md transition-all duration-300 sm:h-11",
               "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
               "active:scale-[0.98]",
               "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
@@ -298,7 +298,7 @@ export function PlanCard({
             type="button"
             variant="outline"
             className={cn(
-              "h-9 rounded-2xl font-medium transition-all duration-300 sm:h-10",
+              "h-9 rounded-sm font-medium transition-all duration-300 sm:h-10",
               "border-2 border-gray-200 bg-white text-gray-600",
               "hover:border-primary/30 hover:bg-accent hover:text-primary",
               "active:scale-[0.98]"
@@ -314,7 +314,7 @@ export function PlanCard({
       {/* Decorative corner accent */}
       <div
         className={cn(
-          "absolute -right-12 -top-12 h-24 w-24 rounded-2xl bg-primary/10 blur-2xl transition-opacity duration-500",
+          "absolute -right-12 -top-12 h-24 w-24 rounded-sm bg-primary/10 blur-2xl transition-opacity duration-500",
           isHovered ? "opacity-100" : "opacity-0"
         )}
       />

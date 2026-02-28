@@ -60,7 +60,7 @@ export function Sidebar() {
           href="/subscription"
           className="flex items-center gap-3 active:opacity-90 transition-opacity"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary shadow-md shadow-primary/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-primary shadow-md shadow-primary/20">
             <UtensilsCrossed className="h-6 w-6 text-white" />
           </div>
           <span className="text-xl font-black tracking-tight text-foreground">
@@ -81,7 +81,7 @@ export function Sidebar() {
                       asChild
                       isActive={isActive}
                       className={cn(
-                        "h-12 w-full transition-all duration-200 rounded-2xl px-4 flex items-center gap-4",
+                        "h-12 w-full transition-all duration-200 rounded-sm px-4 flex items-center gap-4",
                         isActive
                           ? "bg-primary! text-primary-foreground! shadow-sm font-bold"
                           : "text-muted-foreground hover:bg-accent hover:text-primary",
@@ -112,7 +112,7 @@ export function Sidebar() {
         </SidebarGroup>
 
         <div className="mt-auto px-4 pb-10">
-          <div className="rounded-2xl bg-primary p-6 shadow-sm">
+          <div className="rounded-sm bg-primary p-6 shadow-sm">
             <p className="text-sm font-medium text-primary-foreground/90">
               Wallet Balance
             </p>
@@ -120,7 +120,7 @@ export function Sidebar() {
               ₹1,240.50
             </h3>
             <Button
-              className="mt-4 w-full h-10 bg-background text-primary hover:bg-background/95 rounded-2xl font-bold text-sm shadow-sm transition-all border-none"
+              className="mt-4 w-full h-10 bg-background text-primary hover:bg-background/95 rounded-sm font-bold text-sm shadow-sm transition-all border-none"
               variant="secondary"
             >
               <Plus className="mr-2 h-4 w-4 stroke-[3px]" />

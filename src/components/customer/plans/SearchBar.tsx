@@ -51,7 +51,7 @@ export function SearchBar({
         onChange={(event) => onValueChange(event.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className="h-12 w-full rounded-2xl border-border bg-background/90 pl-10 pr-10 text-base text-foreground shadow-sm transition focus-visible:border-primary focus-visible:ring-primary/20 placeholder:text-sm placeholder:text-muted-foreground sm:pl-11 sm:pr-11 sm:text-base sm:placeholder:text-base"
+        className="h-12 w-full rounded-sm border-border bg-background/90 pl-10 pr-10 text-base text-foreground shadow-sm transition focus-visible:border-primary focus-visible:ring-primary/20 placeholder:text-sm placeholder:text-muted-foreground sm:pl-11 sm:pr-11 sm:text-base sm:placeholder:text-base"
         aria-label="Search plans"
       />
 

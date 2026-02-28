@@ -36,7 +36,7 @@ const groupMealsByType = (meals: MenuPreviewMeal[]): Record<string, MenuPreviewM
 const MenuLoadingSkeleton = () => (
   <div className="space-y-4" aria-label="Loading menu preview">
     {Array.from({ length: 4 }).map((_, index) => (
-      <div key={index} className="space-y-2 rounded-2xl border border-gray-200 p-4">
+      <div key={index} className="space-y-2 rounded-sm border border-gray-200 p-4">
         <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
         <div className="h-3 w-full animate-pulse rounded bg-gray-100" />
         <div className="h-3 w-4/5 animate-pulse rounded bg-gray-100" />
@@ -47,7 +47,7 @@ const MenuLoadingSkeleton = () => (
 
 // Hoisted empty state - prevents recreation on every render
 const EmptyMenuState = () => (
-  <div className="rounded-2xl border border-dashed border-gray-300 p-6 text-center">
+  <div className="rounded-sm border border-dashed border-gray-300 p-6 text-center">
     <h3 className="text-base font-semibold text-gray-900">No menu available</h3>
     <p className="mt-2 text-sm text-gray-600">We are preparing this menu. Please check back soon.</p>
   </div>
@@ -159,7 +159,7 @@ export function MenuPreviewSheet({
                 const groupedMeals = groupMealsByType(day.meals);
 
                 return (
-                  <article key={day.day} className="rounded-2xl border border-gray-200 bg-white p-4">
+                  <article key={day.day} className="rounded-sm border border-gray-200 bg-white p-4">
                     <h3 className="text-base font-semibold text-gray-900">{day.day}</h3>
                     <Separator className="my-3" />
 

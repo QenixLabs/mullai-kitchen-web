@@ -177,7 +177,7 @@ export function AddressFormStep({
               <article
                 key={`${address.type}-${address.pincode}-${index}`}
                 className={cn(
-                  "rounded-2xl border bg-white p-4 shadow-sm",
+                  "rounded-sm border bg-white p-4 shadow-sm",
                   isDefault ? "border-orange-300 ring-2 ring-orange-100" : "border-gray-200",
                 )}
               >
@@ -220,7 +220,7 @@ export function AddressFormStep({
         </div>
       ) : null}
 
-      <section className="space-y-4 rounded-2xl border border-gray-200 bg-gray-50/70 p-4 sm:p-5">
+      <section className="space-y-4 rounded-sm border border-gray-200 bg-gray-50/70 p-4 sm:p-5">
         <div className="space-y-1">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">Add a new address</h3>
           <p className="text-xs text-gray-500">Fill all required fields and click Save address. Pincode must be exactly 6 digits.</p>
@@ -243,7 +243,7 @@ export function AddressFormStep({
                             key={type}
                             type="button"
                             className={cn(
-                              "inline-flex h-10 items-center justify-center gap-2 rounded-2xl border text-sm font-medium transition",
+                              "inline-flex h-10 items-center justify-center gap-2 rounded-sm border text-sm font-medium transition",
                               isActive
                                 ? "border-orange-300 bg-orange-50 text-orange-700"
                                 : "border-gray-300 bg-white text-gray-700 hover:border-gray-400",
@@ -273,7 +273,7 @@ export function AddressFormStep({
                     <Textarea
                       {...field}
                       placeholder="House no, street, apartment details"
-                      className="min-h-24 rounded-2xl border-gray-300 bg-white"
+                      className="min-h-24 rounded-sm border-gray-300 bg-white"
                     />
                   </FormControl>
                   <FormMessage />
@@ -292,7 +292,7 @@ export function AddressFormStep({
                       <Input
                         {...field}
                         placeholder="Area or locality"
-                        className="h-11 rounded-2xl border-gray-300 bg-white"
+                        className="h-11 rounded-sm border-gray-300 bg-white"
                       />
                     </FormControl>
                     <FormMessage />
@@ -317,7 +317,7 @@ export function AddressFormStep({
                             const onlyDigits = event.target.value.replace(/\D/g, "").slice(0, 6);
                             field.onChange(onlyDigits);
                           }}
-                          className="h-11 rounded-2xl border-gray-300 bg-white pl-9"
+                          className="h-11 rounded-sm border-gray-300 bg-white pl-9"
                         />
                       </div>
                     </FormControl>
@@ -350,7 +350,7 @@ export function AddressFormStep({
                       <Input
                         {...field}
                         placeholder="City name"
-                        className="h-11 rounded-2xl border-gray-300 bg-white"
+                        className="h-11 rounded-sm border-gray-300 bg-white"
                       />
                     </FormControl>
                     <FormMessage />
@@ -368,7 +368,7 @@ export function AddressFormStep({
                       <Input
                         {...field}
                         placeholder="State name"
-                        className="h-11 rounded-2xl border-gray-300 bg-white"
+                        className="h-11 rounded-sm border-gray-300 bg-white"
                       />
                     </FormControl>
                     <FormMessage />
@@ -387,7 +387,7 @@ export function AddressFormStep({
                     <Input
                       {...field}
                       placeholder="Near temple, school, metro station..."
-                      className="h-11 rounded-2xl border-gray-300 bg-white"
+                      className="h-11 rounded-sm border-gray-300 bg-white"
                     />
                   </FormControl>
                   <FormMessage />

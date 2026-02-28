@@ -19,7 +19,7 @@ export function AuthShell({ children, side, className }: AuthShellProps) {
 
       <div
         className={cn(
-          "relative w-full max-w-5xl overflow-hidden rounded-2xl bg-card",
+          "relative w-full max-w-5xl overflow-hidden rounded-sm bg-card",
           "shadow-xl",
           "grid lg:grid-cols-2",
           className

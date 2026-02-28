@@ -23,7 +23,7 @@ export function StartDatePlaceholder({ className }: StartDatePlaceholderProps) {
           Coming soon in Phase 2: pick your preferred start date with day-wise availability and cut-off validation.
         </p>
 
-        <div className="rounded-2xl border border-dashed border-muted bg-muted p-4">
+        <div className="rounded-sm border border-dashed border-muted bg-muted p-4">
           <p className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
             <CalendarClock className="h-4 w-4 text-primary" aria-hidden="true" />
             Planned enhancements

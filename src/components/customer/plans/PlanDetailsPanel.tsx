@@ -53,7 +53,7 @@ export function PlanDetailsPanel({
       </CardHeader>
 
       <CardContent className="space-y-5">
-        <div className="rounded-2xl border border-orange-100 bg-orange-50/60 p-4">
+        <div className="rounded-sm border border-orange-100 bg-orange-50/60 p-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Plan price</p>
           <p className="mt-1 text-2xl font-bold text-gray-900">{currencyFormatter.format(plan.price)}</p>
         </div>

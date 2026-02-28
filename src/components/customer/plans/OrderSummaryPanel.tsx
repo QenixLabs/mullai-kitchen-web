@@ -38,7 +38,7 @@ export function OrderSummaryPanel({
     <div className="space-y-4">
       <div
         className={cn(
-          "sticky top-6 rounded-2xl bg-white border border-gray-100 shadow-xl p-8 transition-all duration-300",
+          "sticky top-6 rounded-sm bg-white border border-gray-100 shadow-xl p-8 transition-all duration-300",
         )}
       >
         <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
@@ -133,7 +133,7 @@ export function OrderSummaryPanel({
               onClick={onContinue}
               disabled={isContinueDisabled || isLoading}
               className={cn(
-                "w-full h-14 rounded-2xl font-black text-primary-foreground shadow-lg mt-6 text-base group transition-all",
+                "w-full h-14 rounded-sm font-black text-primary-foreground shadow-lg mt-6 text-base group transition-all",
                 "bg-primary hover:bg-primary/90 active:scale-[0.98]",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
               )}
@@ -164,7 +164,7 @@ export function OrderSummaryPanel({
       </div>
 
       {/* Trust Promise */}
-      <div className="rounded-2xl bg-destructive/10 p-4 flex items-start gap-4">
+      <div className="rounded-sm bg-destructive/10 p-4 flex items-start gap-4">
         <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm text-primary flex-shrink-0 mt-0.5">
           <Check className="w-4 h-4" strokeWidth={4} />
         </div>

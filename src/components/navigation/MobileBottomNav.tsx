@@ -29,7 +29,7 @@ export function MobileBottomNav() {
   if (!hasHydrated || !isAuthenticated) return null;
 
   return (
-    <nav className="fixed bottom-4 left-4 right-4 z-50 flex items-center justify-around rounded-2xl border border-border bg-background/95 px-4 py-3 shadow-lg backdrop-blur-sm md:hidden">
+    <nav className="fixed bottom-4 left-4 right-4 z-50 flex items-center justify-around rounded-sm border border-border bg-background/95 px-4 py-3 shadow-lg backdrop-blur-sm md:hidden">
       {MOBILE_NAV_ITEMS.map((item) => {
         const isActive = pathname === item.href || (item.href !== "/plans" && pathname.startsWith(item.href));
         const Icon = item.icon;
