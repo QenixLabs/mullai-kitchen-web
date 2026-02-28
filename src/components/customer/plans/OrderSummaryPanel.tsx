@@ -38,7 +38,7 @@ export function OrderSummaryPanel({
     <div className="space-y-4">
       <div
         className={cn(
-          "sticky top-6 rounded-3xl bg-white border border-gray-100 shadow-xl p-8 transition-all duration-300",
+          "sticky top-6 rounded-xl bg-white border border-gray-100 shadow-xl p-8 transition-all duration-300",
         )}
       >
         <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>

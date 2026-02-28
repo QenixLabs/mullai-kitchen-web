@@ -137,7 +137,7 @@ export function CustomPlanBuilderDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl p-0 overflow-hidden bg-white rounded-3xl shadow-md gap-0 border-0">
+      <DialogContent className="max-w-2xl p-0 overflow-hidden bg-white rounded-xl shadow-md gap-0 border-0">
         {/* Progress Bar Container */}
         <div className="w-full bg-gray-100 h-1.5 flex gap-1 px-4 mt-4">
           {Array.from({ length: STEP_COUNT }).map((_, i) => (

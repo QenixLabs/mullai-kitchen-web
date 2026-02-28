@@ -51,7 +51,7 @@ export function LocalFavoritesSection({ className }: LocalFavoritesSectionProps)
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
           {/* Left Column - Chennai Map Image */}
           <div className="flex items-center justify-center">
-            <div className="relative h-80 w-full overflow-hidden rounded-3xl sm:h-96">
+            <div className="relative h-80 w-full overflow-hidden rounded-xl sm:h-96">
               <img
                 src="https://images.unsplash.com/photo-1630383249896-424e482df921?auto=format&fit=crop&w=800&q=80"
                 alt="Authentic South Indian cuisine - Chennai local favorites"
@@ -63,7 +63,7 @@ export function LocalFavoritesSection({ className }: LocalFavoritesSectionProps)
                 }}
               />
               {/* Fallback placeholder if image fails to load */}
-              <div className="hidden h-full w-full flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border bg-gradient-to-br from-accent to-accent/50 p-8">
+              <div className="hidden h-full w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-gradient-to-br from-accent to-accent/50 p-8">
                 <div className="mb-4 rounded-full bg-primary/10 p-6">
                   <svg
                     className="h-12 w-12 text-primary"

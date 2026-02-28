@@ -40,7 +40,7 @@ export function WhyChooseSection({ className }: WhyChooseSectionProps) {
       </div>
 
       <div className="mx-auto max-w-6xl px-4">
-        <div className="overflow-hidden rounded-3xl border border-border bg-background shadow-xl">
+        <div className="overflow-hidden rounded-xl border border-border bg-background shadow-xl">
           <div className="grid gap-0 lg:grid-cols-[1.15fr_0.85fr]">
             <div className="border-b border-border p-6 sm:p-8 lg:border-b-0 lg:border-r">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">The Mullai Difference</p>
