@@ -50,7 +50,7 @@ export function PlanCard({
     return (
       <article
         className={cn(
-          "group relative flex w-72 flex-col overflow-hidden rounded-2xl bg-white shrink-0",
+          "group relative flex w-72 flex-col overflow-hidden rounded-3xl bg-white shrink-0",
           "shadow-md",
           "transition-all duration-300",
           isSelected && "ring-2 ring-primary ring-offset-2",
