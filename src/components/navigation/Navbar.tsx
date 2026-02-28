@@ -53,7 +53,7 @@ export function Navbar() {
             <div className="flex h-16 items-center justify-between">
               {/* Logo */}
               <div className="flex-shrink-0">
-                <Link href="/" className="text-xl font-bold text-[#FF6B35]">
+                <Link href="/" className="text-xl font-bold text-primary">
                   Mullai Kitchen
                 </Link>
               </div>
@@ -64,7 +64,7 @@ export function Navbar() {
                   <a
                     key={link.name}
                     href={link.href}
-                    className="text-[#666666] transition-colors hover:text-[#FF6B35]"
+                    className="text-muted-foreground transition-colors hover:text-primary"
                   >
                     {link.name}
                   </a>
@@ -75,13 +75,13 @@ export function Navbar() {
               <div className="hidden md:flex md:items-center md:space-x-4">
                 <Link
                   href="/auth/signin"
-                  className="inline-flex items-center rounded border border-[#666666] px-4 py-2 text-sm font-medium text-[#666666] transition-colors hover:border-[#FF6B35] hover:text-[#FF6B35]"
+                  className="inline-flex items-center rounded border border-muted px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:border-primary hover:text-primary"
                 >
                   Login
                 </Link>
                 <Link
                   href="/auth/signin"
-                  className="inline-flex items-center rounded bg-[#FF6B35] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#e55a2b]"
+                  className="inline-flex items-center rounded bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                 >
                   Get Started
                 </Link>
@@ -91,7 +91,7 @@ export function Navbar() {
               <div className="flex md:hidden">
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center rounded-md p-2 text-[#333333] hover:bg-gray-100 hover:text-[#FF6B35] focus:outline-none"
+                  className="inline-flex items-center justify-center rounded-md p-2 text-foreground hover:bg-gray-100 hover:text-primary focus:outline-none"
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                   {isMobileMenuOpen ? (
@@ -112,7 +112,7 @@ export function Navbar() {
                   <a
                     key={link.name}
                     href={link.href}
-                    className="block rounded-md px-3 py-2 text-base font-medium text-[#666666] hover:bg-gray-50 hover:text-[#FF6B35]"
+                    className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-accent hover:text-primary"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {link.name}
@@ -122,14 +122,14 @@ export function Navbar() {
               <div className="space-y-2 border-t border-gray-200 px-4 pb-4 pt-4">
                 <Link
                   href="/auth/signin"
-                  className="block w-full rounded border border-[#666666] px-4 py-2 text-center text-sm font-medium text-[#666666] transition-colors hover:border-[#FF6B35] hover:text-[#FF6B35]"
+                  className="block w-full rounded border border-muted px-4 py-2 text-center text-sm font-medium text-muted-foreground transition-colors hover:border-primary hover:text-primary"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Login
                 </Link>
                 <Link
                   href="/auth/signin"
-                  className="block w-full rounded bg-[#FF6B35] px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-[#e55a2b]"
+                  className="block w-full rounded bg-primary px-4 py-2 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Get Started

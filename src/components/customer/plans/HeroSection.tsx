@@ -83,10 +83,9 @@ export function HeroSection({
   return (
     <section
       className={cn(
-        "relative overflow-hidden rounded-[1.5rem] border border-orange-100/50 p-5 shadow-lg sm:rounded-[2rem] sm:p-6 lg:p-8",
+        "relative overflow-hidden rounded-2xl border border-orange-100/50 bg-background p-5 shadow-lg sm:rounded-[2rem] sm:p-6 lg:p-8",
         className,
       )}
-      style={{ backgroundColor: "#F8F3E9" }}
     >
       {/* Decorative blurs */}
       <div className="pointer-events-none absolute -left-12 top-8 h-32 w-32 rounded-full bg-orange-200/20 blur-3xl sm:h-44 sm:w-44" />
@@ -96,14 +95,14 @@ export function HeroSection({
         {/* Left Column - Text Content */}
         <div className="space-y-4 sm:space-y-5">
           <div className="space-y-2">
-            <h1 className="text-xl font-black leading-tight tracking-tight sm:text-2xl lg:text-3xl xl:text-4xl" style={{ color: "#333333" }}>
+            <h1 className="text-xl font-black leading-tight tracking-tight text-foreground sm:text-2xl lg:text-3xl xl:text-4xl">
               Authentic Chennai Meals,
-              <span className="block" style={{ color: "#FF6B35" }}>
+              <span className="block text-primary">
                 Delivered Daily.
               </span>
             </h1>
 
-            <p className="max-w-xl text-sm sm:text-base lg:text-lg" style={{ color: "#6B7280" }}>
+            <p className="max-w-xl text-sm text-muted-foreground sm:text-base lg:text-lg">
               Healthy, homestyle South Indian delicacies prepared with love. Your daily nutrition, simplified.
             </p>
           </div>
@@ -121,8 +120,7 @@ export function HeroSection({
                         <div className="flex flex-col gap-2 sm:flex-row">
                           <div className="relative flex-1">
                             <MapPin
-                              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 sm:left-4 sm:h-5 sm:w-5"
-                              style={{ color: "#FF6B35" }}
+                              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary sm:left-4 sm:h-5 sm:w-5"
                               aria-hidden="true"
                             />
                             <Input
@@ -139,7 +137,7 @@ export function HeroSection({
                               placeholder="Enter pincode to check delivery"
                               className={cn(
                                 "h-11 w-full rounded-xl border-gray-200 bg-white pl-10 text-sm sm:h-12 sm:pl-12 sm:text-base",
-                                "focus:border-[#FF6B35] focus:ring-[#FF6B35]/20"
+                                "focus:border-primary focus:ring-primary/20"
                               )}
                               aria-label="Pincode"
                             />
@@ -147,9 +145,8 @@ export function HeroSection({
                           <Button
                             type="submit"
                             className={cn(
-                              "h-11 min-w-0 rounded-xl px-4 text-sm font-semibold text-white transition-all duration-300 sm:h-12 sm:px-6 sm:text-base",
-                              "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
-                              "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
+                              "h-11 min-w-0 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition-all duration-300 sm:h-12 sm:px-6 sm:text-base",
+                              "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
                               "active:scale-[0.98]",
                               "disabled:opacity-70"
                             )}
@@ -204,14 +201,14 @@ export function HeroSection({
 
             {/* Social Proof */}
             {!result && !errorMessage && (
-              <div className="mt-3 flex items-center gap-2" style={{ color: "#6B7280" }}>
+              <div className="mt-3 flex items-center gap-2 text-muted-foreground">
                 <div className="flex -space-x-2">
                   <div className="h-6 w-6 rounded-full bg-orange-200 ring-2 ring-white" />
                   <div className="h-6 w-6 rounded-full bg-orange-300 ring-2 ring-white" />
                   <div className="h-6 w-6 rounded-full bg-orange-400 ring-2 ring-white" />
                 </div>
                 <span className="text-xs font-medium sm:text-sm">
-                  <span className="font-bold text-gray-900">500+</span> happy households in Chennai
+                  <span className="font-bold text-foreground">500+</span> happy households in Chennai
                 </span>
               </div>
             )}
@@ -228,15 +225,15 @@ export function HeroSection({
             />
             {/* Today's Special Badge */}
             <div className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1.5 shadow-lg backdrop-blur-sm sm:px-4 sm:py-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs" style={{ color: "#FF6B35" }}>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-primary sm:text-xs">
                 Today's Special
               </span>
             </div>
             {/* Price Badge */}
             <div className="absolute bottom-4 right-4 rounded-xl bg-white/95 px-3 py-2 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
-              <div className="text-base font-bold sm:text-lg" style={{ color: "#333333" }}>
+              <div className="text-base font-bold text-foreground sm:text-lg">
                 ₹149
-                <span className="text-xs font-normal sm:text-sm" style={{ color: "#6B7280" }}>
+                <span className="text-xs font-normal text-muted-foreground sm:text-sm">
                   /meal
                 </span>
               </div>

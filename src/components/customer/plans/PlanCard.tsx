@@ -51,16 +51,16 @@ export function PlanCard({
       <article
         className={cn(
           "group relative flex w-[280px] flex-col overflow-hidden rounded-2xl bg-white shrink-0",
-          "shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)]",
+          "shadow-md",
           "transition-all duration-300",
-          isSelected && "ring-2 ring-[#FF6B35] ring-offset-2",
+          isSelected && "ring-2 ring-primary ring-offset-2",
           className
         )}
       >
         {/* Selection indicator */}
         {isSelected && (
-          <div className="absolute right-2 top-2 z-20 flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-lg">
-            <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} />
+          <div className="absolute right-2 top-2 z-20 flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-lg">
+            <Check className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={3} />
           </div>
         )}
 
@@ -80,7 +80,7 @@ export function PlanCard({
 
           {/* Badge */}
           {plan.badge && (
-            <Badge className="absolute left-3 top-3 z-10 gap-1 border-0 bg-[#FF6B35] px-2 py-1 text-[10px] text-white">
+            <Badge className="absolute left-3 top-3 z-10 gap-1 border-0 bg-primary px-2 py-1 text-[10px] text-primary-foreground">
               <Sparkles className="h-2.5 w-2.5" />
               {plan.badge}
             </Badge>
@@ -120,7 +120,7 @@ export function PlanCard({
                 key={`${plan._id}-${meal}`}
                 className="inline-flex shrink-0 items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-600"
               >
-                <Check className="h-2.5 w-2.5 text-[#FF6B35]" />
+                <Check className="h-2.5 w-2.5 text-primary" />
                 {meal}
               </span>
             ))}
@@ -130,9 +130,8 @@ export function PlanCard({
           <Button
             type="button"
             className={cn(
-              "mt-auto h-10 rounded-xl font-semibold text-white shadow-md transition-all duration-300",
-              "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
-              "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
+              "mt-auto h-10 rounded-xl bg-primary font-semibold text-primary-foreground shadow-md transition-all duration-300",
+              "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
               "active:scale-[0.98]"
             )}
             onClick={() => onSelectPlan(plan)}
@@ -150,11 +149,11 @@ export function PlanCard({
     <article
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-2xl bg-white transition-all duration-500 ease-out",
-        "shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)]",
-        "hover:shadow-[0_4px_20px_rgba(255,107,53,0.15),0_8px_40px_rgba(0,0,0,0.1)]",
+        "shadow-md",
+        "hover:shadow-primary",
         isSelected && [
-          "ring-2 ring-[#FF6B35] ring-offset-2 ring-offset-white",
-          "shadow-[0_4px_20px_rgba(255,107,53,0.2),0_8px_40px_rgba(0,0,0,0.1)]",
+          "ring-2 ring-primary ring-offset-2 ring-offset-white",
+          "shadow-primary",
         ],
         className
       )}
@@ -163,8 +162,8 @@ export function PlanCard({
     >
       {/* Selection indicator */}
       {isSelected && (
-        <div className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-[#FF6B35] shadow-lg">
-          <Check className="h-4 w-4 text-white" strokeWidth={3} />
+        <div className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-primary shadow-lg">
+          <Check className="h-4 w-4 text-primary-foreground" strokeWidth={3} />
         </div>
       )}
 
@@ -186,7 +185,7 @@ export function PlanCard({
         {/* Badge positioned on image */}
         {plan.badge && (
           <Badge
-            className="absolute left-4 top-4 z-10 gap-1.5 border-0 bg-gradient-to-r from-[#FF6B35] to-[#FF8F65] px-3 py-1.5 text-white shadow-md"
+            className="absolute left-4 top-4 z-10 gap-1.5 border-0 bg-primary px-3 py-1.5 text-primary-foreground shadow-md"
           >
             <Sparkles className="h-3 w-3" />
             {plan.badge}
@@ -237,11 +236,11 @@ export function PlanCard({
         {/* Quick stats */}
         <div className="mb-4 flex items-center gap-4 text-xs text-gray-500">
           <div className="flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5 text-[#FF6B35]" />
+            <Clock className="h-3.5 w-3.5 text-primary" />
             <span>{isWeekly ? "7 days" : "30 days"}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Flame className="h-3.5 w-3.5 text-[#FF6B35]" />
+            <Flame className="h-3.5 w-3.5 text-primary" />
             <span>{mealsPerDay} meals/day</span>
           </div>
         </div>
@@ -249,7 +248,7 @@ export function PlanCard({
         {/* Meals included */}
         <div className="mb-4 flex-1 sm:mb-5">
           <div className="mb-2 flex items-center gap-2">
-            <UtensilsCrossed className="h-4 w-4 text-[#FF6B35]" />
+            <UtensilsCrossed className="h-4 w-4 text-primary" />
             <span className="text-xs font-semibold uppercase tracking-wide text-gray-600 sm:text-sm">Meals Included</span>
           </div>
           {plan.meals_included.length > 0 ? (
@@ -257,10 +256,10 @@ export function PlanCard({
               {plan.meals_included.map((meal) => (
                 <li
                   key={`${plan._id}-${meal}`}
-                  className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-2.5 py-1.5 text-xs text-gray-700 transition-colors group-hover:bg-orange-50 sm:px-3 sm:py-2 sm:text-sm"
+                  className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-2.5 py-1.5 text-xs text-gray-700 transition-colors group-hover:bg-accent sm:px-3 sm:py-2 sm:text-sm"
                 >
-                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#FF6B35]/10 sm:h-5 sm:w-5">
-                    <Check className="h-2.5 w-2.5 text-[#FF6B35] sm:h-3 sm:w-3" strokeWidth={3} />
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 sm:h-5 sm:w-5">
+                    <Check className="h-2.5 w-2.5 text-primary sm:h-3 sm:w-3" strokeWidth={3} />
                   </span>
                   <span className="font-medium">{meal}</span>
                 </li>
@@ -276,11 +275,10 @@ export function PlanCard({
           <Button
             type="button"
             className={cn(
-              "relative h-10 overflow-hidden rounded-xl font-semibold text-white shadow-md transition-all duration-300 sm:h-11",
-              "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
-              "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
+              "relative h-10 overflow-hidden rounded-xl bg-primary font-semibold text-primary-foreground shadow-md transition-all duration-300 sm:h-11",
+              "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
               "active:scale-[0.98]",
-              "focus-visible:ring-2 focus-visible:ring-[#FF6B35] focus-visible:ring-offset-2"
+              "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             )}
             onClick={() => onSelectPlan(plan)}
             aria-label={`Get started with ${plan.name} plan`}
@@ -302,7 +300,7 @@ export function PlanCard({
             className={cn(
               "h-9 rounded-xl font-medium transition-all duration-300 sm:h-10",
               "border-2 border-gray-200 bg-white text-gray-600",
-              "hover:border-[#FF6B35]/30 hover:bg-orange-50 hover:text-[#FF6B35]",
+              "hover:border-primary/30 hover:bg-accent hover:text-primary",
               "active:scale-[0.98]"
             )}
             onClick={() => onViewMenu(plan)}
@@ -316,7 +314,7 @@ export function PlanCard({
       {/* Decorative corner accent */}
       <div
         className={cn(
-          "absolute -right-12 -top-12 h-24 w-24 rounded-full bg-gradient-to-br from-[#FF6B35]/10 to-transparent blur-2xl transition-opacity duration-500",
+          "absolute -right-12 -top-12 h-24 w-24 rounded-full bg-primary/10 blur-2xl transition-opacity duration-500",
           isHovered ? "opacity-100" : "opacity-0"
         )}
       />
