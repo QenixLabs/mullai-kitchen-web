@@ -52,7 +52,7 @@ export function Stepper({
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
                 className={cn(
-                  "group relative flex items-start gap-4 rounded-lg border p-4 transition-all",
+                  "group relative flex items-start gap-4 rounded-2xl border p-4 transition-all",
                   isCurrent &&
                     "border-orange-300 bg-gradient-to-r from-orange-50 to-white shadow-sm",
                   isComplete && "border-orange-200 bg-orange-50/50",

@@ -23,7 +23,7 @@ export function AuthHighlights() {
     <div className="space-y-10">
       {/* Brand Identity */}
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
           <UtensilsCrossed className="h-6 w-6 text-white" />
         </div>
         <div>
@@ -46,7 +46,7 @@ export function AuthHighlights() {
           const Icon = feature.icon;
           return (
             <div key={feature.title} className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/15 backdrop-blur-sm">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm">
                 <Icon className="h-5 w-5 text-white" />
               </div>
               <div>

@@ -50,7 +50,7 @@ export function PlanSummary({
           {plan.description ? <p className="text-sm text-muted-foreground">{plan.description}</p> : null}
         </div>
 
-        <div className="rounded-lg border border-primary/10 bg-primary/10 p-3">
+        <div className="rounded-2xl border border-primary/10 bg-primary/10 p-3">
           <div className="flex items-center justify-between gap-3 text-sm text-foreground">
             <span className="inline-flex items-center gap-2">
               <CalendarDays className="h-4 w-4 text-primary" aria-hidden="true" />
@@ -80,7 +80,7 @@ export function PlanSummary({
           )}
         </section>
 
-        <section className="space-y-3 rounded-lg border border-muted bg-muted/70 p-3" aria-label="Price breakdown">
+        <section className="space-y-3 rounded-2xl border border-muted bg-muted/70 p-3" aria-label="Price breakdown">
           <p className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
             <IndianRupee className="h-4 w-4 text-primary" aria-hidden="true" />
             Price breakdown
@@ -103,7 +103,7 @@ export function PlanSummary({
         </section>
 
         {checkedPincode || sourceRoute ? (
-          <section className="space-y-1 rounded-lg border border-dashed border-border p-3 text-xs text-muted-foreground" aria-label="Selection context">
+          <section className="space-y-1 rounded-2xl border border-dashed border-border p-3 text-xs text-muted-foreground" aria-label="Selection context">
             <p className="font-semibold uppercase tracking-wide text-foreground">Plan intent context</p>
             {checkedPincode ? (
               <p className="inline-flex items-center gap-1.5">

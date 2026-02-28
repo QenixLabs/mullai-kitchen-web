@@ -24,7 +24,7 @@ export function PreferenceToggle({
         onClick={() => onChange("VEG")}
         disabled={disabled}
         className={cn(
-          "flex items-center justify-center gap-3 p-4 rounded-lg transition-all duration-300 border-2 font-bold bg-background",
+          "flex items-center justify-center gap-3 p-4 rounded-2xl transition-all duration-300 border-2 font-bold bg-background",
           value === "VEG"
             ? "border-primary shadow-sm"
             : "border-border hover:border-border",
@@ -40,7 +40,7 @@ export function PreferenceToggle({
         onClick={() => onChange("NON_VEG")}
         disabled={disabled}
         className={cn(
-          "flex items-center justify-center gap-3 p-4 rounded-lg transition-all duration-300 border-2 font-bold bg-background",
+          "flex items-center justify-center gap-3 p-4 rounded-2xl transition-all duration-300 border-2 font-bold bg-background",
           value === "NON_VEG"
             ? "border-primary shadow-sm"
             : "border-border hover:border-border",

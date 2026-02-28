@@ -181,7 +181,7 @@ export function ProfileDetailsStep({
       ) : null}
 
       <Form {...form}>
-        <div className="grid gap-4 rounded-lg border border-muted bg-muted/70 p-4 sm:p-5">
+        <div className="grid gap-4 rounded-2xl border border-muted bg-muted/70 p-4 sm:p-5">
           <FormField
             control={form.control}
             name="dietary_preferences"
@@ -200,7 +200,7 @@ export function ProfileDetailsStep({
                           type="button"
                           variant="outline"
                           className={cn(
-                            "h-11 rounded-lg border-border bg-background font-medium text-foreground hover:border-primary hover:bg-primary/10 hover:text-primary",
+                            "h-11 rounded-2xl border-border bg-background font-medium text-foreground hover:border-primary hover:bg-primary/10 hover:text-primary",
                             isSelected && "border-primary bg-primary/10 text-primary shadow-sm",
                           )}
                           onClick={() => {
@@ -229,7 +229,7 @@ export function ProfileDetailsStep({
                   <Textarea
                     {...field}
                     placeholder="Anything you want us to know before delivering your meals"
-                    className="min-h-24 rounded-lg border-border bg-background"
+                    className="min-h-24 rounded-2xl border-border bg-background"
                   />
                 </FormControl>
                 <FormMessage />
@@ -248,7 +248,7 @@ export function ProfileDetailsStep({
                     <Timepicker
                       value={field.value || ""}
                       placeholder="Select preferred contact time"
-                      className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground outline-none"
+                      className="h-11 w-full rounded-2xl border border-border bg-background px-3 text-sm text-foreground outline-none"
                       options={{
                         clock: {
                           type: "12h",
@@ -286,7 +286,7 @@ export function ProfileDetailsStep({
                     <Input
                       {...field}
                       placeholder="A trusted contact person"
-                      className="h-11 rounded-lg border-border bg-background"
+                      className="h-11 rounded-2xl border-border bg-background"
                     />
                   </FormControl>
                   <FormMessage />

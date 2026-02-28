@@ -77,7 +77,7 @@ export function PincodeChecker({
   };
 
   return (
-    <section className={cn("space-y-3 rounded-lg border border-gray-200 bg-white p-4 sm:p-5", className)}>
+    <section className={cn("space-y-3 rounded-2xl border border-gray-200 bg-white p-4 sm:p-5", className)}>
       <div className="space-y-1">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-700">Delivery availability</h2>
         <p className="text-sm text-gray-600">Enter your pincode to check if your area is serviceable.</p>
@@ -108,7 +108,7 @@ export function PincodeChecker({
                         setResult(null);
                       }}
                       placeholder="Enter 6-digit pincode"
-                      className="h-11 rounded-lg border-gray-300 bg-white pl-9"
+                      className="h-11 rounded-2xl border-gray-300 bg-white pl-9"
                       aria-label="Pincode"
                     />
                   </div>

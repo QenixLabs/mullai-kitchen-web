@@ -18,7 +18,7 @@ export default function Footer() {
         <div className="flex flex-col items-center gap-8 text-center">
           {/* Brand */}
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary">
               <UtensilsCrossed className="h-5 w-5 text-primary-foreground" />
             </div>
             <div className="text-left">

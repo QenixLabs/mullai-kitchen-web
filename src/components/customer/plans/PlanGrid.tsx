@@ -27,7 +27,7 @@ const PlanLoadingSkeleton = ({ count, className }: { count: number; className?: 
       {Array.from({ length: count }).map((_, index) => (
         <div
           key={index}
-          className="h-80 w-72 shrink-0 animate-pulse rounded-lg border border-orange-100 bg-white"
+          className="h-80 w-72 shrink-0 animate-pulse rounded-2xl border border-orange-100 bg-white"
           aria-hidden="true"
         />
       ))}
@@ -37,7 +37,7 @@ const PlanLoadingSkeleton = ({ count, className }: { count: number; className?: 
       {Array.from({ length: count }).map((_, index) => (
         <div
           key={index}
-          className="h-[26rem] animate-pulse rounded-lg border border-orange-100 bg-white"
+          className="h-[26rem] animate-pulse rounded-2xl border border-orange-100 bg-white"
           aria-hidden="true"
         />
       ))}
@@ -55,7 +55,7 @@ const PlanErrorAlert = ({ message, className }: { message?: string; className?: 
 
 // Hoisted empty state - prevents recreation on every render
 const NoPlansFound = ({ className }: { className?: string }) => (
-  <div className={cn("flex flex-col items-center justify-center rounded-lg border border-dashed border-orange-200 bg-orange-50/40 p-10 text-center", className)}>
+  <div className={cn("flex flex-col items-center justify-center rounded-2xl border border-dashed border-orange-200 bg-orange-50/40 p-10 text-center", className)}>
     <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
       <SearchX className="h-8 w-8 text-orange-500" />
     </div>
