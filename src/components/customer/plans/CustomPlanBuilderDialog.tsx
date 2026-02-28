@@ -137,7 +137,7 @@ export function CustomPlanBuilderDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-[480px] p-0 overflow-hidden bg-white rounded-3xl shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] gap-0 border-0">
+      <DialogContent className="max-w-[480px] p-0 overflow-hidden bg-white rounded-3xl shadow-md gap-0 border-0">
         {/* Progress Bar Container */}
         <div className="w-full bg-gray-100 h-1.5 flex gap-1 px-4 mt-4">
           {Array.from({ length: STEP_COUNT }).map((_, i) => (
@@ -146,10 +146,10 @@ export function CustomPlanBuilderDialog({
               className={cn(
                 "flex-1 h-1.5 rounded-full transition-all duration-300",
                 i < step
-                  ? "bg-[#FF6B35]"
+                  ? "bg-primary"
                   : i === step
-                    ? "bg-[#FF6B35]/50"
-                    : "bg-gray-200",
+                    ? "bg-primary/50"
+                    : "bg-muted",
               )}
             />
           ))}
@@ -158,10 +158,10 @@ export function CustomPlanBuilderDialog({
         {/* Unified Header */}
         <div className="px-6 pt-5 pb-2">
           <DialogHeader>
-            <DialogTitle className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+            <DialogTitle className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
               Build Your Own Plan
             </DialogTitle>
-            <DialogDescription className="text-sm text-gray-500 font-medium">
+            <DialogDescription className="text-sm text-muted-foreground font-medium">
               Customize your meals, duration, and delivery details.
             </DialogDescription>
           </DialogHeader>
@@ -172,7 +172,7 @@ export function CustomPlanBuilderDialog({
           {/* STEP 1: Preference */}
           {step === 0 && (
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-foreground">
                 How would you like your meals?
               </h3>
               <div className="grid grid-cols-2 gap-3">
@@ -182,31 +182,31 @@ export function CustomPlanBuilderDialog({
                     "relative flex flex-col items-center gap-3 p-5 rounded-2xl bg-white transition-all duration-500",
                     "border-2",
                     preference === "VEG"
-                      ? "border-[#FF6B35] ring-2 ring-[#FF6B35] ring-offset-2 ring-offset-white shadow-[0_4px_20px_rgba(255,107,53,0.2),0_8px_40px_rgba(0,0,0,0.1)]"
-                      : "border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(255,107,53,0.15),0_8px_40px_rgba(0,0,0,0.1)] hover:-translate-y-0.5",
+                      ? "border-primary ring-2 ring-primary ring-offset-2 ring-offset-background shadow-primary shadow-lg"
+                      : "border-border shadow-md hover:shadow-primary hover:-translate-y-0.5",
                   )}
                 >
                   <div
                     className={cn(
                       "p-3 rounded-xl transition-colors duration-300",
                       preference === "VEG"
-                        ? "bg-[#FF6B35] text-white"
+                        ? "bg-primary text-primary-foreground"
                         : "bg-green-50 text-green-600 group-hover:bg-green-100",
                     )}
                   >
                     <Leaf className="w-6 h-6" />
                   </div>
                   <div className="text-center">
-                    <span className="block font-semibold text-gray-900">
+                    <span className="block font-semibold text-foreground">
                       Vegetarian
                     </span>
-                    <span className="text-xs text-gray-500 mt-1">
+                    <span className="text-xs text-muted-foreground mt-1">
                       Plant-based & dairy
                     </span>
                   </div>
                   {preference === "VEG" && (
-                    <div className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-lg">
-                      <Check className="h-3 w-3 text-white" strokeWidth={3} />
+                    <div className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-lg">
+                      <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />
                     </div>
                   )}
                 </button>
@@ -217,31 +217,31 @@ export function CustomPlanBuilderDialog({
                     "relative flex flex-col items-center gap-3 p-5 rounded-2xl bg-white transition-all duration-500",
                     "border-2",
                     preference === "NON_VEG"
-                      ? "border-[#FF6B35] ring-2 ring-[#FF6B35] ring-offset-2 ring-offset-white shadow-[0_4px_20px_rgba(255,107,53,0.2),0_8px_40px_rgba(0,0,0,0.1)]"
-                      : "border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(255,107,53,0.15),0_8px_40px_rgba(0,0,0,0.1)] hover:-translate-y-0.5",
+                      ? "border-primary ring-2 ring-primary ring-offset-2 ring-offset-background shadow-primary shadow-lg"
+                      : "border-border shadow-md hover:shadow-primary hover:-translate-y-0.5",
                   )}
                 >
                   <div
                     className={cn(
                       "p-3 rounded-xl transition-colors duration-300",
                       preference === "NON_VEG"
-                        ? "bg-[#FF6B35] text-white"
+                        ? "bg-primary text-primary-foreground"
                         : "bg-red-50 text-red-600 group-hover:bg-red-100",
                     )}
                   >
                     <Drumstick className="w-6 h-6" />
                   </div>
                   <div className="text-center">
-                    <span className="block font-semibold text-gray-900">
+                    <span className="block font-semibold text-foreground">
                       Non-Vegetarian
                     </span>
-                    <span className="text-xs text-gray-500 mt-1">
+                    <span className="text-xs text-muted-foreground mt-1">
                       Includes meat
                     </span>
                   </div>
                   {preference === "NON_VEG" && (
-                    <div className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-lg">
-                      <Check className="h-3 w-3 text-white" strokeWidth={3} />
+                    <div className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-lg">
+                      <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />
                     </div>
                   )}
                 </button>
@@ -253,10 +253,10 @@ export function CustomPlanBuilderDialog({
           {step === 1 && (
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="space-y-1">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-foreground">
                   Which meals should we include?
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   Select all that apply for your deliveries.
                 </p>
               </div>
@@ -270,8 +270,8 @@ export function CustomPlanBuilderDialog({
                       className={cn(
                         "w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-500 border-2",
                         isSelected
-                          ? "border-[#FF6B35] bg-orange-50/50 shadow-[0_4px_20px_rgba(255,107,53,0.15),0_8px_40px_rgba(0,0,0,0.1)]"
-                          : "border-gray-100 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] hover:border-[#FF6B35]/30 hover:shadow-[0_4px_20px_rgba(255,107,53,0.1rem),0_8px_40px_rgba(0,0,0,0.05)] hover:-translate-y-0.5",
+                          ? "border-primary bg-orange-50/50 shadow-primary shadow-lg"
+                          : "border-border bg-white shadow-md hover:border-primary/30 hover:shadow-primary hover:-translate-y-0.5",
                       )}
                     >
                       <div className="flex items-center gap-4">
@@ -279,26 +279,26 @@ export function CustomPlanBuilderDialog({
                           className={cn(
                             "w-10 h-10 rounded-xl flex items-center justify-center transition-colors duration-300",
                             isSelected
-                              ? "bg-gradient-to-r from-[#FF6B35] to-[#FF8555] text-white shadow-md"
-                              : "bg-gray-100 text-gray-500",
+                              ? "bg-primary text-primary-foreground shadow-md"
+                              : "bg-muted text-muted-foreground",
                           )}
                         >
                           <UtensilsCrossed className="w-5 h-5" />
                         </div>
-                        <span className="font-semibold text-gray-900">
+                        <span className="font-semibold text-foreground">
                           {meal}
                         </span>
                       </div>
 
                       {isSelected ? (
-                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-md">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-md">
                           <Check
-                            className="h-3 w-3 text-white"
+                            className="h-3 w-3 text-primary-foreground"
                             strokeWidth={3}
                           />
                         </div>
                       ) : (
-                        <div className="h-6 w-6 rounded-full border-2 border-gray-200" />
+                        <div className="h-6 w-6 rounded-full border-2 border-border" />
                       )}
                     </button>
                   );
@@ -311,7 +311,7 @@ export function CustomPlanBuilderDialog({
           {step === 2 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-gray-700">
+                <h3 className="text-sm font-medium text-muted-foreground">
                   Plan Duration
                 </h3>
                 <div className="grid grid-cols-4 gap-2.5">
@@ -322,15 +322,15 @@ export function CustomPlanBuilderDialog({
                       className={cn(
                         "flex flex-col items-center justify-center py-4 rounded-2xl border-2 transition-all duration-300",
                         days === d
-                          ? "border-[#FF6B35] bg-[#FF6B35] text-white shadow-md ring-2 ring-[#FF6B35] ring-offset-2 ring-offset-white"
-                          : "border-gray-100 bg-white text-gray-700 hover:border-[#FF6B35]/30 hover:bg-orange-50 hover:text-[#FF6B35] shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)]",
+                          ? "border-primary bg-primary text-primary-foreground shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background"
+                          : "border-border bg-background text-foreground hover:border-primary/30 hover:bg-accent hover:text-primary shadow-md",
                       )}
                     >
                       <span className="text-xl font-bold">{d}</span>
                       <span
                         className={cn(
                           "text-[10px] font-semibold uppercase tracking-wider mt-0.5",
-                          days === d ? "text-white/90" : "text-gray-500",
+                          days === d ? "text-primary-foreground/90" : "text-muted-foreground",
                         )}
                       >
                         Days
@@ -341,20 +341,20 @@ export function CustomPlanBuilderDialog({
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-gray-700">
+                <h3 className="text-sm font-medium text-muted-foreground">
                   Start Date
                 </h3>
                 <div className="relative">
-                  <CalendarDays className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                  <CalendarDays className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
                   <input
                     type="date"
                     min={minDate}
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
                     className={cn(
-                      "w-full h-12 pl-12 pr-4 rounded-xl border-2 bg-gray-50 text-gray-900 font-medium outline-none transition-all duration-300",
-                      "placeholder:text-gray-400 focus:bg-white focus:border-[#FF6B35] focus:ring focus:ring-[#FF6B35]/20",
-                      startDate && "border-[#FF6B35]/50 bg-white",
+                      "w-full h-12 pl-12 pr-4 rounded-xl border-2 bg-muted text-foreground font-medium outline-none transition-all duration-300",
+                      "placeholder:text-muted-foreground focus:bg-background focus:border-primary focus:ring focus:ring-primary/20",
+                      startDate && "border-primary/50 bg-background",
                     )}
                   />
                 </div>
@@ -366,25 +366,25 @@ export function CustomPlanBuilderDialog({
           {step === 3 && (
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="space-y-1">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-foreground">
                   Delivery Address
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   Select where we should deliver your meals.
                 </p>
               </div>
 
               {addressesQuery.isLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-6 h-6 animate-spin text-[#FF6B35]" />
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
                 </div>
               ) : addresses.length === 0 ? (
-                <div className="text-center py-10 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50">
-                  <MapPin className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-                  <p className="text-base text-gray-700 font-semibold">
+                <div className="text-center py-10 rounded-2xl border-2 border-dashed border-border bg-muted">
+                  <MapPin className="w-8 h-8 text-muted-foreground/50 mx-auto mb-3" />
+                  <p className="text-base text-foreground font-semibold">
                     No saved addresses
                   </p>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Please add an address in your profile first.
                   </p>
                 </div>
@@ -399,42 +399,42 @@ export function CustomPlanBuilderDialog({
                         className={cn(
                           "w-full flex items-start gap-4 p-4 rounded-2xl transition-all duration-500 border-2 text-left group",
                           isSelected
-                            ? "border-[#FF6B35] bg-orange-50/50 shadow-[0_4px_20px_rgba(255,107,53,0.15),0_8px_40px_rgba(0,0,0,0.1)] ring-1 ring-[#FF6B35]"
-                            : "border-gray-100 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] hover:border-[#FF6B35]/30 hover:shadow-[0_4px_20px_rgba(255,107,53,0.1rem),0_8px_40px_rgba(0,0,0,0.05)] hover:-translate-y-0.5",
+                            ? "border-primary bg-orange-50/50 shadow-primary shadow-lg ring-1 ring-primary"
+                            : "border-border bg-background shadow-md hover:border-primary/30 hover:shadow-primary hover:-translate-y-0.5",
                         )}
                       >
                         <div
                           className={cn(
                             "w-10 h-10 shrink-0 rounded-xl flex justify-center items-center transition-colors",
                             isSelected
-                              ? "bg-gradient-to-r from-[#FF6B35] to-[#FF8555] text-white shadow-md"
-                              : "bg-gray-100 text-gray-500 group-hover:bg-orange-50 group-hover:text-[#FF6B35]",
+                              ? "bg-primary text-primary-foreground shadow-md"
+                              : "bg-muted text-muted-foreground group-hover:bg-accent group-hover:text-primary",
                           )}
                         >
                           <MapPin className="w-5 h-5" />
                         </div>
                         <div className="flex-1 min-w-0 pt-0.5">
                           <div className="flex items-center gap-2 mb-1.5">
-                            <span className="text-sm font-bold text-gray-900 capitalize">
+                            <span className="text-sm font-bold text-foreground capitalize">
                               {addr.type}
                             </span>
                             {addr.is_default && (
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FF6B35]/10 text-[#FF6B35] shrink-0">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary shrink-0">
                                 Default
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-600 font-medium break-words leading-relaxed">
+                          <p className="text-sm text-muted-foreground font-medium break-words leading-relaxed">
                             {addr.full_address}
                           </p>
-                          <p className="text-xs text-gray-400 mt-1.5 font-medium break-words">
+                          <p className="text-xs text-muted-foreground/70 mt-1.5 font-medium break-words">
                             {addr.area}, {addr.city} {addr.pincode}
                           </p>
                         </div>
                         {isSelected && (
-                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FF6B35] shadow-md shrink-0 mt-2">
+                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-md shrink-0 mt-2">
                             <Check
-                              className="h-3 w-3 text-white"
+                              className="h-3 w-3 text-primary-foreground"
                               strokeWidth={3}
                             />
                           </div>
@@ -457,7 +457,7 @@ export function CustomPlanBuilderDialog({
         </div>
 
         {/* Footer Navigation */}
-        <div className="p-4 sm:px-6 sm:py-5 bg-gray-50 flex items-center gap-3 w-full border-t border-gray-100 rounded-b-3xl">
+        <div className="p-4 sm:px-6 sm:py-5 bg-muted flex items-center gap-3 w-full border-t border-border rounded-b-3xl">
           {step > 0 && (
             <button
               type="button"
@@ -465,10 +465,10 @@ export function CustomPlanBuilderDialog({
               disabled={createCustomPlan.isPending}
               className={cn(
                 "h-11 px-6 rounded-xl font-medium transition-all duration-300",
-                "border-2 border-gray-200 bg-white text-gray-600",
-                "hover:border-[#FF6B35]/30 hover:bg-orange-50 hover:text-[#FF6B35]",
+                "border-2 border-border bg-background text-muted-foreground",
+                "hover:border-primary/30 hover:bg-accent hover:text-primary",
                 "active:scale-[0.98]",
-                "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white disabled:hover:text-gray-600",
+                "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:bg-background disabled:hover:text-muted-foreground",
               )}
             >
               Back
@@ -481,9 +481,9 @@ export function CustomPlanBuilderDialog({
               disabled={!canAdvance}
               onClick={() => setStep((s) => s + 1)}
               className={cn(
-                "flex-1 h-11 rounded-xl font-semibold text-white shadow-md transition-all duration-300",
-                "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
-                "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
+                "flex-1 h-11 rounded-xl font-semibold text-primary-foreground shadow-md transition-all duration-300",
+                "bg-primary",
+                "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
                 "active:scale-[0.98]",
                 "disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:active:scale-100",
               )}
@@ -500,9 +500,9 @@ export function CustomPlanBuilderDialog({
               }
               onClick={handleSubmit}
               className={cn(
-                "flex-1 h-11 rounded-xl font-semibold text-white shadow-md transition-all duration-300 flex items-center justify-center gap-2",
-                "bg-gradient-to-r from-[#FF6B35] to-[#FF8555]",
-                "hover:from-[#E85A25] hover:to-[#FF7545] hover:shadow-lg hover:shadow-orange-200/50",
+                "flex-1 h-11 rounded-xl font-semibold text-primary-foreground shadow-md transition-all duration-300 flex items-center justify-center gap-2",
+                "bg-primary",
+                "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
                 "active:scale-[0.98]",
                 "disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:active:scale-100",
               )}
