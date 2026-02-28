@@ -19,13 +19,13 @@ export function AuthenticatedNavbar() {
   const logoutMutation = useLogout();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-orange-100 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link href="/dashboard" className="text-sm font-bold tracking-wide text-gray-900 sm:text-base">
           Mullai Kitchen
         </Link>
 
-        <nav className="flex items-center gap-1 rounded-full border border-orange-100 bg-orange-50/80 p-1" aria-label="Main">
+        <nav className="flex items-center gap-1 rounded-full border border-border bg-muted/50 p-1" aria-label="Main">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
 
@@ -35,7 +35,7 @@ export function AuthenticatedNavbar() {
                 href={item.href}
                 className={cn(
                   "rounded-full px-3 py-1.5 text-xs font-semibold transition sm:px-4 sm:text-sm",
-                  isActive ? "bg-orange-600 text-white" : "text-gray-700 hover:bg-orange-100",
+                  isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-accent",
                 )}
               >
                 {item.label}
@@ -45,12 +45,12 @@ export function AuthenticatedNavbar() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <span className="hidden text-xs text-gray-600 sm:inline">{user?.name ?? user?.email ?? "Customer"}</span>
+          <span className="hidden text-xs text-muted-foreground sm:inline">{user?.name ?? user?.email ?? "Customer"}</span>
           <Button
             type="button"
             size="sm"
             variant="outline"
-            className="border-orange-200 text-orange-700 hover:bg-orange-50"
+            className="border-border text-primary hover:bg-accent"
             onClick={() => logoutMutation.mutate()}
             disabled={logoutMutation.isPending}
           >
