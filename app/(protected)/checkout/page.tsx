@@ -21,12 +21,15 @@ import {
   XCircle,
   Calendar,
 } from "lucide-react";
-import { useStore } from "zustand";
 import { motion } from "motion/react";
 
-import { useAuthHydrated, useIsAuthenticated, useCurrentUser } from "@/hooks/use-user-store";
+import {
+  useAuthHydrated,
+  useIsAuthenticated,
+  useCurrentUser,
+} from "@/hooks/use-user-store";
 import { usePaymentStore } from "@/hooks/use-payment-store";
-import { createPlanIntentStore } from "@/stores/plan-intent-store";
+import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import { useAddressList } from "@/api/hooks/useAddress";
 import { useCreateOrder, useWalletBalance } from "@/api/hooks/usePayment";
 import { useCreateAddress } from "@/api/hooks/useCreateAddress";
@@ -201,10 +204,8 @@ export default function CheckoutPage() {
   const isAuthenticated = useIsAuthenticated();
   const user = useCurrentUser();
 
-  const [planIntentStore] = useState(() => createPlanIntentStore());
-
-  const planId = useStore(planIntentStore, (s) => s.planId);
-  const plan = useStore(planIntentStore, (s) => s.plan);
+  const planId = usePlanIntentStore((s) => s.planId);
+  const plan = usePlanIntentStore((s) => s.plan);
 
   const hasPlanIntent = Boolean(planId && plan);
 
@@ -238,11 +239,14 @@ export default function CheckoutPage() {
   const createOrderMutation = useCreateOrder();
   const createAddressMutation = useCreateAddress();
 
-  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
+    null,
+  );
   const [showAddressDialog, setShowAddressDialog] = useState(false);
   const [showWalletInfo, setShowWalletInfo] = useState(false);
   const [tempAddresses, setTempAddresses] = useState<any[]>([]);
-  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>("wallet");
+  const [selectedPayment, setSelectedPayment] =
+    useState<PaymentMethod>("wallet");
   const [applyWallet, setApplyWallet] = useState(true);
 
   // Start date (default to tomorrow)
@@ -370,7 +374,9 @@ export default function CheckoutPage() {
     } catch (err) {
       // Error is handled by mutation's onError callback
       // Set error message for display
-      paymentStore.setPaymentFailed(err instanceof Error ? err.message : "Payment failed");
+      paymentStore.setPaymentFailed(
+        err instanceof Error ? err.message : "Payment failed",
+      );
     }
   };
 
@@ -425,7 +431,9 @@ export default function CheckoutPage() {
           <StepIndicator
             step={2}
             label="Payment & Review"
-            active={paymentStatus === "processing" || createOrderMutation.isPending}
+            active={
+              paymentStatus === "processing" || createOrderMutation.isPending
+            }
           />
         </div>
       </div>
@@ -529,7 +537,9 @@ export default function CheckoutPage() {
               ) : walletError ? (
                 <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3">
                   <XCircle className="h-4 w-4 text-red-600" />
-                  <span className="text-sm text-red-900">Failed to load wallet balance</span>
+                  <span className="text-sm text-red-900">
+                    Failed to load wallet balance
+                  </span>
                   <button
                     type="button"
                     onClick={() => refetchWallet()}
@@ -754,10 +764,14 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={handlePay}
-                  disabled={paymentStatus === "processing" || createOrderMutation.isPending}
+                  disabled={
+                    paymentStatus === "processing" ||
+                    createOrderMutation.isPending
+                  }
                   className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3.5 text-sm font-bold text-white shadow-md shadow-orange-200 transition-all hover:bg-orange-600 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  {paymentStatus === "processing" || createOrderMutation.isPending ? (
+                  {paymentStatus === "processing" ||
+                  createOrderMutation.isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
                       Processing...
@@ -816,7 +830,8 @@ export default function CheckoutPage() {
         <div className="flex items-center gap-3">
           <MapPin className="h-6 w-6 text-orange-600" />
           <p className="text-sm font-semibold text-gray-900">
-            We deliver to selected serviceable pincodes. Enter your address during checkout to check availability.
+            We deliver to selected serviceable pincodes. Enter your address
+            during checkout to check availability.
           </p>
         </div>
       </div>
@@ -860,16 +875,28 @@ export default function CheckoutPage() {
             </DialogHeader>
             <div className="space-y-4 text-sm text-gray-700">
               <div>
-                <p className="font-semibold text-gray-900">Phase 1: Reservation</p>
-                <p>When you subscribe, funds are first reserved from your wallet to guarantee your subscription slot.</p>
+                <p className="font-semibold text-gray-900">
+                  Phase 1: Reservation
+                </p>
+                <p>
+                  When you subscribe, funds are first reserved from your wallet
+                  to guarantee your subscription slot.
+                </p>
               </div>
               <div>
-                <p className="font-semibold text-gray-900">Phase 2: Deduction</p>
-                <p>Actual deductions happen only when meals are delivered and confirmed. Any reserved but unused funds remain in your wallet.</p>
+                <p className="font-semibold text-gray-900">
+                  Phase 2: Deduction
+                </p>
+                <p>
+                  Actual deductions happen only when meals are delivered and
+                  confirmed. Any reserved but unused funds remain in your
+                  wallet.
+                </p>
               </div>
               <div className="rounded-lg bg-orange-50 p-3">
                 <p className="text-xs text-orange-800">
-                  <strong>Benefit:</strong> Your balance stays secure even before delivery starts.
+                  <strong>Benefit:</strong> Your balance stays secure even
+                  before delivery starts.
                 </p>
               </div>
             </div>

@@ -10,13 +10,16 @@ interface UnauthenticatedLayoutProps {
   children: ReactNode;
 }
 
-export default function UnauthenticatedLayout({ children }: UnauthenticatedLayoutProps) {
+export default function UnauthenticatedLayout({
+  children,
+}: UnauthenticatedLayoutProps) {
   const hasHydrated = useAuthHydrated();
   const isAuthenticated = useIsAuthenticated();
   const pathname = usePathname();
   const router = useRouter();
   const canAccessWhenAuthenticated =
-    pathname?.startsWith("/plans") || pathname?.startsWith("/custom-plan-builder");
+    pathname?.startsWith("/plans") ||
+    pathname?.startsWith("/custom-plan-builder");
 
   useEffect(() => {
     if (hasHydrated && isAuthenticated && !canAccessWhenAuthenticated) {
@@ -32,9 +35,5 @@ export default function UnauthenticatedLayout({ children }: UnauthenticatedLayou
     return <div className="p-6 text-sm text-slate-600">Redirecting...</div>;
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      {children}
-    </div>
-  );
+  return <div className="min-h-screen bg-background">{children}</div>;
 }

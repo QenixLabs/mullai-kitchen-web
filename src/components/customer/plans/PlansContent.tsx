@@ -2,7 +2,6 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useStore } from "zustand";
 
 import {
   useCustomerPlans,
@@ -20,15 +19,8 @@ import { LocalFavoritesSection } from "@/components/customer/plans/LocalFavorite
 import { MenuPreviewSheet } from "@/components/customer/plans/MenuPreviewSheet";
 import { PlanGrid } from "@/components/customer/plans/PlanGrid";
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
-import {
-  Sparkles,
-  ChevronRight,
-  Leaf,
-  Drumstick,
-  PenLine,
-  ArrowRight,
-} from "lucide-react";
-import { createPlanIntentStore } from "@/stores/plan-intent-store";
+import { Sparkles, ChevronRight, PenLine, ArrowRight } from "lucide-react";
+import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import { cn } from "@/lib/utils";
 
 const normalizePincode = (value: string | null): string | null => {
@@ -59,24 +51,10 @@ export function PlansContent({
   const hasHydrated = useAuthHydrated();
   const isAuthenticated = useIsAuthenticated();
 
-  const [planIntentStore] = useState(() => createPlanIntentStore());
-
-  const persistedPincode = useStore(
-    planIntentStore,
-    (store) => store.checkedPincode,
-  );
-  const setPlanIntent = useStore(
-    planIntentStore,
-    (store) => store.setPlanIntent,
-  );
-  const setSourceRoute = useStore(
-    planIntentStore,
-    (store) => store.setSourceRoute,
-  );
-  const setCheckedPincode = useStore(
-    planIntentStore,
-    (store) => store.setCheckedPincode,
-  );
+  const persistedPincode = usePlanIntentStore((store) => store.checkedPincode);
+  const setPlanIntent = usePlanIntentStore((store) => store.setPlanIntent);
+  const setSourceRoute = usePlanIntentStore((store) => store.setSourceRoute);
+  const setCheckedPincode = usePlanIntentStore((store) => store.setCheckedPincode);
 
   const [checkedPincodeState, setCheckedPincodeState] = useState<string | null>(
     () => {
@@ -158,7 +136,7 @@ export function PlansContent({
 
     return result;
   }, [plans, mealTypeFilters]);
-  const selectedPlanId = useStore(planIntentStore, (store) => store.planId);
+  const selectedPlanId = usePlanIntentStore((store) => store.planId);
 
   const handlePincodeCheck = async (
     pincode: string,
@@ -275,73 +253,59 @@ export function PlansContent({
           {/* Diet & Meal Filters */}
           <div className="flex flex-wrap items-center gap-3">
             {/* Veg / Non-Veg cards */}
-            <div className="flex items-stretch gap-2 rounded-2xl border border-gray-100 bg-white p-1.5 shadow-sm">
+            <div className="flex items-center gap-2">
               <button
                 id="filter-diet-all"
                 onClick={() => setDietFilter("all")}
-                className={`relative overflow-hidden rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-300 ${
+                className={cn(
+                  "rounded-full px-5 py-2 text-sm font-medium transition-all duration-200",
                   dietFilter === "all"
-                    ? "bg-gray-900 text-white shadow-md"
-                    : "bg-gray-50 text-gray-500 hover:bg-gray-100"
-                }`}
-              >
-                {dietFilter === "all" && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-gray-500 to-gray-400" />
+                    ? "bg-gray-900 text-white shadow-sm"
+                    : "bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200",
                 )}
+              >
                 All Meals
               </button>
               <button
                 id="filter-diet-veg"
                 onClick={() => setDietFilter("veg")}
-                className={`relative overflow-hidden rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-300 ${
+                className={cn(
+                  "rounded-full px-5 py-2 text-sm font-medium transition-all duration-200",
                   dietFilter === "veg"
-                    ? "bg-green-600 text-white shadow-md"
-                    : "bg-green-50 text-green-600 hover:bg-green-100"
-                }`}
-              >
-                {dietFilter === "veg" && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-green-400 to-green-500" />
+                    ? "bg-emerald-600 text-white shadow-sm"
+                    : "bg-emerald-50/50 text-emerald-700 hover:bg-emerald-50 border border-emerald-100",
                 )}
-                <Leaf className="inline-block h-4 w-4 mr-1.5" />
+              >
                 Veg
               </button>
               <button
                 id="filter-diet-nonveg"
                 onClick={() => setDietFilter("non-veg")}
-                className={`relative overflow-hidden rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-300 ${
+                className={cn(
+                  "rounded-full px-5 py-2 text-sm font-medium transition-all duration-200",
                   dietFilter === "non-veg"
-                    ? "bg-red-500 text-white shadow-md"
-                    : "bg-red-50 text-red-600 hover:bg-red-100"
-                }`}
-              >
-                {dietFilter === "non-veg" && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-red-400 to-red-500" />
+                    ? "bg-rose-600 text-white shadow-sm"
+                    : "bg-rose-50/50 text-rose-700 hover:bg-rose-50 border border-rose-100",
                 )}
-                <Drumstick className="inline-block h-4 w-4 mr-1.5" />
+              >
                 Non-Veg
               </button>
             </div>
 
             {/* Meal Type cards */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ml-2 pl-4 border-l border-gray-100">
               {MEAL_TYPES.map((type) => {
                 const isActive = mealTypeFilters.has(type);
-                const iconMap = {
-                  Breakfast: "🍳",
-                  Lunch: "🍱",
-                  Dinner: "🌙",
-                };
-                const baseClass = `relative group flex items-center gap-2 rounded-xl border-2 px-4 py-2.5 text-sm font-semibold transition-all duration-300 cursor-pointer ${isActive ? "shadow-md transform scale-105" : "shadow-sm hover:scale-[1.02]"}`;
                 const colorClasses = {
                   Breakfast: isActive
-                    ? "border-amber-500 bg-amber-50 text-amber-800"
-                    : "border-amber-200 bg-amber-50/50 text-amber-700 hover:border-amber-400 hover:bg-amber-50",
+                    ? "bg-amber-100 text-amber-900 border-amber-200"
+                    : "bg-white text-gray-600 border-gray-200 hover:bg-amber-50 hover:border-amber-100",
                   Lunch: isActive
-                    ? "border-[#FF6B35] bg-orange-50 text-orange-800"
-                    : "border-orange-200 bg-orange-50/50 text-orange-700 hover:border-orange-400 hover:bg-orange-50",
+                    ? "bg-orange-100 text-orange-900 border-orange-200"
+                    : "bg-white text-gray-600 border-gray-200 hover:bg-orange-50 hover:border-orange-100",
                   Dinner: isActive
-                    ? "border-indigo-600 bg-indigo-50 text-indigo-800"
-                    : "border-indigo-200 bg-indigo-50/50 text-indigo-700 hover:border-indigo-400 hover:bg-indigo-50",
+                    ? "bg-indigo-100 text-indigo-900 border-indigo-200"
+                    : "bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-indigo-100",
                 };
 
                 return (
@@ -349,14 +313,14 @@ export function PlansContent({
                     key={type}
                     id={`filter-meal-${type.toLowerCase()}`}
                     onClick={() => toggleMealType(type)}
-                    className={`${baseClass} ${colorClasses[type]}`}
+                    className={cn(
+                      "rounded-full px-5 py-2 text-sm font-medium border transition-all duration-200 flex items-center gap-2",
+                      colorClasses[type],
+                    )}
                   >
-                    <span className="text-base">{iconMap[type]}</span>
                     <span>{type}</span>
                     {isActive && (
-                      <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[10px] font-bold shadow-md ring-2 ring-inset">
-                        ✓
-                      </span>
+                      <span className="h-1.5 w-1.5 rounded-full bg-current" />
                     )}
                   </button>
                 );
@@ -372,22 +336,9 @@ export function PlansContent({
                 setDietFilter("all");
                 setMealTypeFilters(new Set());
               }}
-              className="inline-flex items-center gap-2 rounded-full border-2 border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-500 transition-all duration-300 hover:border-[#FF6B35] hover:text-[#FF6B35] hover:bg-orange-50 active:scale-95"
+              className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-400 transition-all duration-300 hover:border-gray-900 hover:text-gray-900 hover:bg-white active:scale-95"
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-              Reset
+              Reset Filters
             </button>
           )}
         </div>

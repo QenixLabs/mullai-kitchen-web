@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
-import { useStore } from "zustand";
+import { Suspense } from "react";
 import { useForm } from "react-hook-form";
 
 import { useLogin } from "@/api/hooks/useAuth";
@@ -22,7 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useUserStore } from "@/providers/user-store-provider";
-import { createPlanIntentStore } from "@/stores/plan-intent-store";
+import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import { cn } from "@/lib/utils";
 
 const AUTH_ROUTES = new Set(["/auth/signin", "/auth/signup"]);
@@ -44,8 +43,7 @@ function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const user = useUserStore((store) => store.user);
-  const [planIntentStore] = useState(() => createPlanIntentStore());
-  const planIntentId = useStore(planIntentStore, (store) => store.planId);
+  const planIntentId = usePlanIntentStore((store) => store.planId);
   const loginMutation = useLogin();
 
   const form = useForm<SignInFormData>({

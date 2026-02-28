@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
-import { useStore } from "zustand";
 import { useForm } from "react-hook-form";
 
 import { useRegister } from "@/api/hooks/useAuth";
@@ -24,7 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Stepper } from "@/components/ui/stepper";
 import { useUserStore } from "@/providers/user-store-provider";
-import { createPlanIntentStore } from "@/stores/plan-intent-store";
+import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import { cn } from "@/lib/utils";
 
 const AUTH_ROUTES = new Set(["/auth/signin", "/auth/signup"]);
@@ -74,8 +73,7 @@ function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const user = useUserStore((store) => store.user);
-  const [planIntentStore] = useState(() => createPlanIntentStore());
-  const planIntentId = useStore(planIntentStore, (store) => store.planId);
+  const planIntentId = usePlanIntentStore((store) => store.planId);
   const registerMutation = useRegister();
   const [currentStep, setCurrentStep] = useState(0);
 
