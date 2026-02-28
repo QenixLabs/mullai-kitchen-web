@@ -345,10 +345,10 @@ export function PlansContent({
 
         {/* ── Build Your Own Plan Banner ── */}
         {showBuildYourOwnBanner && (
-          <div className="mb-8 overflow-hidden rounded-2xl border border-border bg-accent shadow-md shadow-primary/10">
+          <div className="mb-8 overflow-hidden rounded-lg border border-border bg-accent shadow-md shadow-primary/10">
             <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:gap-6 sm:p-6">
               {/* Icon */}
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/20">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary shadow-md shadow-primary/20">
                 <PenLine className="h-5 w-5 text-white" />
               </div>
 
@@ -370,7 +370,7 @@ export function PlansContent({
               <button
                 id="custom-plan-cta"
                 onClick={handleCustomPlanClick}
-                className="group inline-flex shrink-0 items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-md shadow-primary/20 transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 active:scale-[0.97]"
+                className="group inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-md shadow-primary/20 transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 active:scale-[0.97]"
               >
                 <Sparkles className="h-3.5 w-3.5" />
                 Get Started

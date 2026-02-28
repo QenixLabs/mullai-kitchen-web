@@ -36,7 +36,7 @@ export function WalletBalanceCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className={cn(
-        "overflow-hidden rounded-2xl border bg-white shadow-sm",
+        "overflow-hidden rounded-lg border bg-white shadow-sm",
         hasBalance ? "border-emerald-200" : "border-gray-200",
         className,
       )}
@@ -85,7 +85,7 @@ export function WalletBalanceCard({
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-primary" />
           </div>
         ) : hasError ? (
-          <div className="flex items-center gap-3 rounded-xl border border-red-100 bg-red-50 p-4">
+          <div className="flex items-center gap-3 rounded-lg border border-red-100 bg-red-50 p-4">
             <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
             <p className="text-sm text-red-900">Failed to load wallet balance</p>
           </div>
@@ -115,7 +115,7 @@ export function WalletBalanceCard({
 
             {/* Quick Info */}
             {balance !== null && balance > 0 && (
-              <div className="flex items-start gap-2 rounded-xl border border-blue-50 bg-blue-50 p-3">
+              <div className="flex items-start gap-2 rounded-lg border border-blue-50 bg-blue-50 p-3">
                 <CreditCard className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
                 <p className="text-xs text-foreground">
                   Your wallet balance can be used for subscriptions, add-on orders,
@@ -127,7 +127,7 @@ export function WalletBalanceCard({
 
             {/* Zero Balance Info */}
             {balance === 0 && (
-              <div className="flex items-start gap-2 rounded-xl border border-primary/20 bg-primary/10 p-3">
+              <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/10 p-3">
                 <TrendingDown className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                 <p className="text-xs text-foreground">
                   Your wallet is empty. Add funds to take advantage of wallet-based
@@ -138,7 +138,7 @@ export function WalletBalanceCard({
 
             {/* High Balance Info */}
             {balance !== null && balance >= 1000 && (
-              <div className="flex items-start gap-2 rounded-xl border border-emerald-100 bg-emerald-50 p-3">
+              <div className="flex items-start gap-2 rounded-lg border border-emerald-100 bg-emerald-50 p-3">
                 <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
                 <p className="text-xs text-foreground">
                   Great! You have a healthy wallet balance. Your funds are secure

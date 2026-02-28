@@ -177,7 +177,7 @@ export function AddressFormStep({
               <article
                 key={`${address.type}-${address.pincode}-${index}`}
                 className={cn(
-                  "rounded-xl border bg-white p-4 shadow-sm",
+                  "rounded-lg border bg-white p-4 shadow-sm",
                   isDefault ? "border-orange-300 ring-2 ring-orange-100" : "border-gray-200",
                 )}
               >
@@ -220,7 +220,7 @@ export function AddressFormStep({
         </div>
       ) : null}
 
-      <section className="space-y-4 rounded-2xl border border-gray-200 bg-gray-50/70 p-4 sm:p-5">
+      <section className="space-y-4 rounded-lg border border-gray-200 bg-gray-50/70 p-4 sm:p-5">
         <div className="space-y-1">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">Add a new address</h3>
           <p className="text-xs text-gray-500">Fill all required fields and click Save address. Pincode must be exactly 6 digits.</p>

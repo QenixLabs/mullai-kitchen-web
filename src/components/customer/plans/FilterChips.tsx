@@ -47,7 +47,7 @@ export function FilterChips({
     return (
       <section
         className={cn(
-          "rounded-2xl border border-border bg-accent/50 p-3 sm:p-4",
+          "rounded-lg border border-border bg-accent/50 p-3 sm:p-4",
           className,
         )}
       >
@@ -128,7 +128,7 @@ export function FilterChips({
   return (
     <section
       className={cn(
-        "space-y-5 rounded-2xl border border-border bg-accent/50 p-4 shadow-sm sm:p-5",
+        "space-y-5 rounded-lg border border-border bg-accent/50 p-4 shadow-sm sm:p-5",
         className,
       )}
     >
@@ -160,7 +160,7 @@ export function FilterChips({
       </div>
 
       <div className="space-y-4">
-        <div className="space-y-2.5 rounded-xl border border-border bg-background/80 p-3">
+        <div className="space-y-2.5 rounded-lg border border-border bg-background/80 p-3">
           <div className="flex items-center justify-between gap-2">
             <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               <CalendarDays className="h-3.5 w-3.5 text-primary" />
@@ -193,7 +193,7 @@ export function FilterChips({
           </div>
         </div>
 
-        <div className="space-y-2.5 rounded-xl border border-border bg-background/80 p-3">
+        <div className="space-y-2.5 rounded-lg border border-border bg-background/80 p-3">
           <div className="flex items-center justify-between gap-2">
             <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               <UtensilsCrossed className="h-3.5 w-3.5 text-primary" />

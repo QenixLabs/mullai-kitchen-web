@@ -40,7 +40,7 @@ export function WhyChooseSection({ className }: WhyChooseSectionProps) {
       </div>
 
       <div className="mx-auto max-w-6xl px-4">
-        <div className="overflow-hidden rounded-xl border border-border bg-background shadow-xl">
+        <div className="overflow-hidden rounded-lg border border-border bg-background shadow-xl">
           <div className="grid gap-0 lg:grid-cols-[1.15fr_0.85fr]">
             <div className="border-b border-border p-6 sm:p-8 lg:border-b-0 lg:border-r">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">The Mullai Difference</p>
@@ -57,10 +57,10 @@ export function WhyChooseSection({ className }: WhyChooseSectionProps) {
                 {highlights.map((item) => (
                   <article
                     key={item.title}
-                    className="rounded-2xl border border-border bg-accent/60 p-4"
+                    className="rounded-lg border border-border bg-accent/60 p-4"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                         <item.icon className="h-4 w-4" />
                       </div>
                       <div>
@@ -74,9 +74,9 @@ export function WhyChooseSection({ className }: WhyChooseSectionProps) {
             </div>
 
             <div className="relative bg-gradient-to-br from-background via-background to-background p-6 sm:p-8">
-              <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+              <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                     <Sparkles className="h-5 w-5" />
                   </div>
                   <div>
@@ -88,14 +88,14 @@ export function WhyChooseSection({ className }: WhyChooseSectionProps) {
 
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-1">
                 {stats.map((stat) => (
-                  <div key={stat.label} className="rounded-2xl border border-border bg-muted/80 p-4">
+                  <div key={stat.label} className="rounded-lg border border-border bg-muted/80 p-4">
                     <p className="text-2xl font-black tracking-tight text-foreground">{stat.value}</p>
                     <p className="mt-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">{stat.label}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-4 rounded-2xl border border-border bg-accent p-4">
+              <div className="mt-4 rounded-lg border border-border bg-accent p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-primary">Service Areas</p>
                 <p className="mt-1 text-sm text-foreground">Adyar, Besant Nagar, Velachery, T. Nagar, R.A. Puram and 30+ localities.</p>
               </div>

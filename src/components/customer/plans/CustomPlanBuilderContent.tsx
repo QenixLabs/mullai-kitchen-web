@@ -190,7 +190,7 @@ export function CustomPlanBuilderContent({
 
       {/* Error Alert */}
       {error && (
-        <Alert variant="destructive" className="mb-8 rounded-2xl border-2">
+        <Alert variant="destructive" className="mb-8 rounded-lg border-2">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="font-bold">{error}</AlertDescription>
         </Alert>

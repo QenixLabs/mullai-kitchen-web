@@ -57,7 +57,7 @@ export function OnboardingComplete({
 
   return (
     <div className={cn("space-y-6", className)}>
-      <div className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-emerald-100/50 p-5 text-center sm:p-8">
+      <div className="rounded-lg border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-emerald-100/50 p-5 text-center sm:p-8">
         <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
           <CircleCheckBig className="h-8 w-8" aria-hidden="true" />
         </div>
@@ -69,7 +69,7 @@ export function OnboardingComplete({
 
       <div className="grid gap-3 sm:grid-cols-2">
         {summary.map((item) => (
-          <article key={item.id} className="rounded-xl border border-muted bg-background p-4 shadow-sm">
+          <article key={item.id} className="rounded-lg border border-muted bg-background p-4 shadow-sm">
             <div className="flex items-center gap-2 text-foreground">
               <item.icon className="h-4 w-4 text-primary" aria-hidden="true" />
               <p className="text-xs font-semibold uppercase tracking-wide">{item.label}</p>

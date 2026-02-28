@@ -181,7 +181,7 @@ export function ProfileDetailsStep({
       ) : null}
 
       <Form {...form}>
-        <div className="grid gap-4 rounded-2xl border border-muted bg-muted/70 p-4 sm:p-5">
+        <div className="grid gap-4 rounded-lg border border-muted bg-muted/70 p-4 sm:p-5">
           <FormField
             control={form.control}
             name="dietary_preferences"

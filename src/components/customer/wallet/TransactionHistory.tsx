@@ -138,7 +138,7 @@ export function TransactionHistory({
     return (
       <div
         className={cn(
-          "flex min-h-80 items-center justify-center rounded-2xl border border-red-200 bg-red-50 p-8",
+          "flex min-h-80 items-center justify-center rounded-lg border border-red-200 bg-red-50 p-8",
           className,
         )}
       >
@@ -187,7 +187,7 @@ export function TransactionHistory({
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute right-0 top-full z-10 mt-2 w-48 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
+                className="absolute right-0 top-full z-10 mt-2 w-48 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg"
               >
                 <div className="p-1">
                   {(["all", "credit", "debit"] as FilterType[]).map((type) => (
@@ -255,7 +255,7 @@ export function TransactionHistory({
 
       {/* Transactions List */}
       {sortedTransactions.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border bg-muted p-12 text-center">
+        <div className="rounded-lg border border-dashed border-border bg-muted p-12 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
             <Calendar className="h-8 w-8 text-muted-foreground/70" />
           </div>
@@ -280,7 +280,7 @@ export function TransactionHistory({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex items-start gap-4 rounded-xl border border-border bg-background p-4 shadow-sm hover:shadow-md transition-shadow"
+                className="flex items-start gap-4 rounded-lg border border-border bg-background p-4 shadow-sm hover:shadow-md transition-shadow"
               >
                 {/* Icon */}
                 <div

@@ -83,7 +83,7 @@ export function HeroSection({
   return (
     <section
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-orange-100/50 bg-background p-5 shadow-lg sm:rounded-2xl sm:p-6 lg:p-8",
+        "relative overflow-hidden rounded-lg border border-orange-100/50 bg-background p-5 shadow-lg sm:rounded-lg sm:p-6 lg:p-8",
         className,
       )}
     >
@@ -108,7 +108,7 @@ export function HeroSection({
           </div>
 
           {/* Pincode Check Form */}
-          <div className="rounded-xl border border-orange-100 bg-white/90 p-4 shadow-sm backdrop-blur sm:rounded-2xl sm:p-5">
+          <div className="rounded-lg border border-orange-100 bg-white/90 p-4 shadow-sm backdrop-blur sm:rounded-lg sm:p-5">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleCheck)} className="space-y-3">
                 <FormField
@@ -136,7 +136,7 @@ export function HeroSection({
                               }}
                               placeholder="Enter pincode to check delivery"
                               className={cn(
-                                "h-11 w-full rounded-xl border-gray-200 bg-white pl-10 text-sm sm:h-12 sm:pl-12 sm:text-base",
+                                "h-11 w-full rounded-lg border-gray-200 bg-white pl-10 text-sm sm:h-12 sm:pl-12 sm:text-base",
                                 "focus:border-primary focus:ring-primary/20"
                               )}
                               aria-label="Pincode"
@@ -145,7 +145,7 @@ export function HeroSection({
                           <Button
                             type="submit"
                             className={cn(
-                              "h-11 min-w-0 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition-all duration-300 sm:h-12 sm:px-6 sm:text-base",
+                              "h-11 min-w-0 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-all duration-300 sm:h-12 sm:px-6 sm:text-base",
                               "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
                               "active:scale-[0.98]",
                               "disabled:opacity-70"
@@ -217,7 +217,7 @@ export function HeroSection({
 
         {/* Right Column - Meal Image */}
         <div className="relative hidden lg:block">
-          <div className="relative h-80 w-full overflow-hidden rounded-2xl shadow-xl xl:h-96">
+          <div className="relative h-80 w-full overflow-hidden rounded-lg shadow-xl xl:h-96">
             <img
               src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80"
               alt="South Indian meal platter with traditional dishes"
@@ -230,7 +230,7 @@ export function HeroSection({
               </span>
             </div>
             {/* Price Badge */}
-            <div className="absolute bottom-4 right-4 rounded-xl bg-white/95 px-3 py-2 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
+            <div className="absolute bottom-4 right-4 rounded-lg bg-white/95 px-3 py-2 shadow-lg backdrop-blur-sm sm:px-4 sm:py-3">
               <div className="text-base font-bold text-foreground sm:text-lg">
                 ₹149
                 <span className="text-xs font-normal text-muted-foreground sm:text-sm">
@@ -239,7 +239,7 @@ export function HeroSection({
               </div>
             </div>
             {/* Quick info overlay */}
-            <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-xl bg-black/50 px-3 py-2 backdrop-blur-sm">
+            <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-lg bg-black/50 px-3 py-2 backdrop-blur-sm">
               <div className="flex items-center gap-1 text-xs text-white">
                 <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
                 Fresh Daily

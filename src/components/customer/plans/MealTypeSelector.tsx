@@ -50,7 +50,7 @@ export function MealTypeSelector({
             onClick={() => toggleMeal(meal)}
             disabled={disabled}
             className={cn(
-              "flex items-center p-4 rounded-xl transition-all duration-300 border-2 text-left bg-background",
+              "flex items-center p-4 rounded-lg transition-all duration-300 border-2 text-left bg-background",
               isSelected
                 ? "border-primary shadow-sm"
                 : "border-border hover:border-border",
