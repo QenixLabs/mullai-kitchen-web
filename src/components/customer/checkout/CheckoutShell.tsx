@@ -40,24 +40,24 @@ export function CheckoutShell({
   const normalizedStep = Math.min(Math.max(currentStep, 0), Math.max(stepCount - 1, 0));
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-stone-100 px-4 py-6 sm:px-8 sm:py-10">
+    <div className="min-h-screen bg-gradient-to-b from-accent to-muted px-4 py-6 sm:px-8 sm:py-10">
       <div
         className={cn(
-          "mx-auto w-full max-w-6xl overflow-hidden rounded-3xl border border-amber-100/60 bg-white shadow-xl",
+          "mx-auto w-full max-w-6xl overflow-hidden rounded-3xl border border-border bg-card shadow-xl",
           className,
         )}
       >
-        <header className="space-y-4 border-b border-gray-100 px-5 py-5 sm:px-8 sm:py-7">
+        <header className="space-y-4 border-b border-border px-5 py-5 sm:px-8 sm:py-7">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="space-y-1">
-              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+              <div className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">
                 <LockKeyhole className="h-3.5 w-3.5" aria-hidden="true" />
                 Protected Route
               </div>
-              <h1 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">{title}</h1>
-              <p className="max-w-2xl text-sm text-gray-600">{subtitle}</p>
+              <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">{title}</h1>
+              <p className="max-w-2xl text-sm text-muted-foreground">{subtitle}</p>
             </div>
-            <div className="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700">
+            <div className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
               Step {normalizedStep + 1} of {stepCount}
             </div>
           </div>
