@@ -29,14 +29,12 @@ const UNAUTH_NAV_ITEMS = [
   { name: "About", href: "/#about" },
 ] as const;
 
-const AUTH_NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/plans", label: "Plans" },
-] as const;
+const AUTH_NAV_ITEMS = [{ href: "/plans", label: "Plans" }] as const;
 
 const MOBILE_BOTTOM_NAV_ITEMS = [
   { href: "/dashboard", icon: Home, label: "Dashboard" },
   { href: "/plans", icon: Calendar, label: "Plans" },
+  { href: "/dashboard/subscriptions", icon: Calendar, label: "Subscriptions" },
   { href: "/dashboard/settings", icon: UserCircle, label: "Profile" },
 ] as const;
 
