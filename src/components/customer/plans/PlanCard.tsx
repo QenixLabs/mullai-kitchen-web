@@ -59,7 +59,7 @@ export function PlanCard({
       >
         {/* Selection indicator */}
         {isSelected && (
-          <div className="absolute right-2 top-2 z-20 flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-lg">
+          <div className="absolute right-2 top-2 z-20 flex h-6 w-6 items-center justify-center rounded-3xl bg-primary shadow-lg">
             <Check className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={3} />
           </div>
         )}
@@ -102,7 +102,7 @@ export function PlanCard({
           <div className="mb-3">
             <div className="mb-1 flex items-center gap-2">
               <span className={cn(
-                "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium",
+                "inline-flex items-center gap-1 rounded-3xl px-2 py-0.5 text-[10px] font-medium",
                 isWeekly ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
               )}>
                 <Calendar className="h-2.5 w-2.5" />
@@ -118,7 +118,7 @@ export function PlanCard({
             {plan.meals_included.map((meal) => (
               <span
                 key={`${plan._id}-${meal}`}
-                className="inline-flex shrink-0 items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-600"
+                className="inline-flex shrink-0 items-center gap-1 rounded-3xl bg-gray-100 px-2.5 py-1 text-xs text-gray-600"
               >
                 <Check className="h-2.5 w-2.5 text-primary" />
                 {meal}
@@ -162,7 +162,7 @@ export function PlanCard({
     >
       {/* Selection indicator */}
       {isSelected && (
-        <div className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-primary shadow-lg">
+        <div className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-3xl bg-primary shadow-lg">
           <Check className="h-4 w-4 text-primary-foreground" strokeWidth={3} />
         </div>
       )}
@@ -195,7 +195,7 @@ export function PlanCard({
         {/* Plan type indicator */}
         <div className="absolute bottom-3 left-3 z-10 flex items-center gap-2">
           <div className={cn(
-            "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium backdrop-blur-md",
+            "flex items-center gap-1.5 rounded-3xl px-3 py-1.5 text-xs font-medium backdrop-blur-md",
             isWeekly
               ? "bg-emerald-500/20 text-emerald-100"
               : "bg-amber-500/20 text-amber-100"
@@ -258,7 +258,7 @@ export function PlanCard({
                   key={`${plan._id}-${meal}`}
                   className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-2.5 py-1.5 text-xs text-gray-700 transition-colors group-hover:bg-accent sm:px-3 sm:py-2 sm:text-sm"
                 >
-                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 sm:h-5 sm:w-5">
+                  <span className="flex h-4 w-4 items-center justify-center rounded-3xl bg-primary/10 sm:h-5 sm:w-5">
                     <Check className="h-2.5 w-2.5 text-primary sm:h-3 sm:w-3" strokeWidth={3} />
                   </span>
                   <span className="font-medium">{meal}</span>
@@ -314,7 +314,7 @@ export function PlanCard({
       {/* Decorative corner accent */}
       <div
         className={cn(
-          "absolute -right-12 -top-12 h-24 w-24 rounded-full bg-primary/10 blur-2xl transition-opacity duration-500",
+          "absolute -right-12 -top-12 h-24 w-24 rounded-3xl bg-primary/10 blur-2xl transition-opacity duration-500",
           isHovered ? "opacity-100" : "opacity-0"
         )}
       />
