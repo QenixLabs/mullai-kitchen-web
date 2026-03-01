@@ -2,17 +2,31 @@
 
 This document defines the design system and patterns used across Mullai Kitchen frontend application. All UI components should follow these guidelines for consistency.
 
+> **Quick Reference**: For design system token values and architecture, see [`docs/design-system.md`](./docs/design-system.md).
+> **AI Guidelines**: For AI assistant context, see [`CLAUDE.md`](./CLAUDE.md).
+
+## Documentation Structure
+
+- **`docs/design-system.md`** - Design system overview and token reference
+- **`src/lib/design-system/`** - Design system implementation and helpers
+- **`CLAUDE.md`** - AI assistant instructions for working with the codebase
+- **`app/globals.css`** - CSS custom properties and theme definitions
+
 ---
 
 ## Design System Location
 
-The design system is located in `src/lib/design-system/` and contains:
+The design system implementation is located in `src/lib/design-system/` and contains:
 
 ### Files
-- **`src/lib/design-system/index.ts`** - Public API entry point
-- **`src/lib/design-system/types.ts`** - TypeScript type definitions
-- **`src/lib/design-system/tokens.ts`** - Helper functions for accessing tokens
-- **`src/lib/design-system/constants.ts`** - Design constants
+- **`src/lib/design-system/index.ts`** - Public API entry point (exports all tokens and helpers)
+- **`src/lib/design-system/types.ts`** - TypeScript type definitions (`ColorToken`, `SpacingToken`, `RadiusToken`, `ShadowToken`)
+- **`src/lib/design-system/tokens.ts`** - Helper functions for accessing tokens (`getColorToken`, `getSpacingToken`, `getRadiusToken`, `getShadowToken`)
+- **`src/lib/design-system/constants.ts`** - Design constants (`SPACING`, `RADIUS`, `SHADOWS`, `FONT_SIZES`, `BRAND_COLORS`)
+
+### Documentation
+- **`docs/design-system.md`** - Complete design system documentation with token tables and usage examples
+- **`CLAUDE.md`** - AI assistant guidelines for working with the design system
 
 ---
 
@@ -79,8 +93,10 @@ Use semantic color tokens from the design system instead of hardcoded colors.
 
 ### Importing Tokens
 
+All design system exports are available from `@/lib/design-system`.
+
 ```tsx
-// Import from design system
+// Import helper functions for dynamic values
 import {
   getColorToken,
   getColorTokenValue,
@@ -90,9 +106,29 @@ import {
   BRAND_COLORS,
 } from '@/lib/design-system';
 
-// Or import specific types
-import type { ColorToken, SpacingToken, RadiusToken, ShadowToken } from '@/lib/design-system';
+// Import constants for direct values
+import {
+  SPACING,
+  RADIUS,
+  SHADOWS,
+  FONT_SIZES,
+} from '@/lib/design-system';
+
+// Import types for type safety
+import type {
+  ColorToken,
+  SpacingToken,
+  RadiusToken,
+  ShadowToken,
+} from '@/lib/design-system';
 ```
+
+**Note**: For static Tailwind classes, you don't need to import anything. Use the semantic color tokens directly in your className:
+```tsx
+className="bg-primary text-foreground"
+```
+
+**See also**: `docs/design-system.md` for complete token reference
 
 ### Using Color Tokens
 
@@ -638,5 +674,38 @@ When you add a token:
 When you change a token:
 1. Edit the value in `app/globals.css`
 2. Restart dev server or rebuild
+
+---
+
+## Documentation Summary
+
+| File | Purpose | When to Use |
+|------|---------|-------------|
+| `docs/design-system.md` | Complete design system documentation with token tables | Looking up available tokens, understanding the system architecture |
+| `src/lib/design-system/` | Design system implementation | Importing helper functions, types, and constants for use in code |
+| `CLAUDE.md` | AI assistant guidelines | When working with AI assistants on this codebase |
+| `AGENTS.md` | This file - Detailed component patterns and design rules | Building UI components, implementing design patterns |
+| `app/globals.css` | CSS custom properties and theme definitions | Adding or modifying design tokens directly |
+
+---
+
+## Quick Start
+
+### For AI Assistants
+- Read `CLAUDE.md` first for project context and guidelines
+- Reference `docs/design-system.md` for token values
+- Use helpers from `src/lib/design-system/` for dynamic values
+
+### For Building Components
+- Use semantic design tokens (`bg-primary`, `text-foreground`)
+- Use `rounded-sm` (8px) for standard border radius
+- Apply `shadow-md` for cards, `shadow-primary` for hover states
+- Use `transition-all duration-300` for smooth animations
+
+### For Token Reference
+- Color tokens: See "Color Tokens" section above
+- Spacing scale: See "Spacing Tokens" section above
+- Border radius: See "Border Radius Tokens" section above
+- Shadows: See "Shadow Tokens" section above
 
 ---

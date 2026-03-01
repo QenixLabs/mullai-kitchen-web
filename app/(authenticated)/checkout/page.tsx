@@ -37,6 +37,7 @@ import { loadRazorpayScript, openRazorpayCheckout } from "@/lib/razorpay";
 import type { Address } from "@/api/types/customer.types";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "@/components/ui/date-picker";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -262,6 +263,18 @@ export default function CheckoutPage() {
   // Handle date change with type safety
   const handleStartDateChange = (date: Date | undefined) => {
     if (date) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const minDate = addDays(today, CHECKOUT_CONFIG.minDaysFromToday);
+      const selectedDate = new Date(date);
+      selectedDate.setHours(0, 0, 0, 0);
+
+      if (selectedDate < minDate) {
+        toast.error("Invalid Date", {
+          description: `Subscription date should be at least ${CHECKOUT_CONFIG.minDaysFromToday} day(s) from today.`,
+        });
+        return;
+      }
       setStartDate(date);
     }
   };
@@ -285,7 +298,9 @@ export default function CheckoutPage() {
   useEffect(() => {
     loadRazorpayScript().catch((err) => {
       console.error("Failed to load Razorpay script:", err);
-      paymentStore.setErrorMessage("Failed to load payment system");
+      toast.error("System Error", {
+        description: "Failed to load payment system. Please refresh and try again.",
+      });
     });
   }, []);
 
@@ -320,7 +335,9 @@ export default function CheckoutPage() {
     source: string;
     metadata: unknown;
   }) => {
-    paymentStore.setPaymentFailed(error.description);
+    toast.error("Payment Failed", {
+      description: error.description,
+    });
     router.push("/checkout/error");
   };
 
@@ -332,7 +349,9 @@ export default function CheckoutPage() {
   // Handle Pay & Subscribe click
   const handlePay = async () => {
     if (!planId || !selectedAddressId || !startDate) {
-      paymentStore.setErrorMessage("Please complete all checkout fields");
+      toast.error("Incomplete Checkout", {
+        description: "Please complete all checkout fields.",
+      });
       return;
     }
 
@@ -393,7 +412,9 @@ export default function CheckoutPage() {
         err instanceof Error
           ? err.message
           : "Payment failed. Please try again.";
-      paymentStore.setPaymentFailed(errorMessage);
+      toast.error("Payment Failed", {
+        description: errorMessage,
+      });
     }
   };
 
@@ -681,32 +702,6 @@ export default function CheckoutPage() {
                 />
               </div>
             </section>
-
-            {/* Error Message */}
-            {paymentError && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="rounded-2xl border border-red-200 bg-red-50 p-4"
-              >
-                <div className="flex items-start gap-3">
-                  <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-red-900">
-                      Payment Error
-                    </p>
-                    <p className="text-sm text-red-800">{paymentError}</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => paymentStore.resetPayment()}
-                    className="shrink-0 text-red-600 hover:text-red-800"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-              </motion.div>
-            )}
           </div>
 
           {/* ─── Right sidebar ─────────────────────────────── */}

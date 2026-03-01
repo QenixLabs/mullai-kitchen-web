@@ -10,12 +10,18 @@ import {
   Receipt,
   RefreshCw,
   XCircle,
+  ExternalLink,
+  CreditCard,
+  Target,
+  Sparkles,
 } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
 import { usePaymentStore } from "@/hooks/use-payment-store";
 import { useOrderStatus } from "@/api/hooks/usePayment";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type ConfirmationStatus = "loading" | "confirmed" | "failed";
 
@@ -25,6 +31,7 @@ function CheckoutSuccessContent() {
   const [status, setStatus] = useState<ConfirmationStatus>("loading");
   const [retryCount, setRetryCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState(5);
 
   const paymentStore = usePaymentStore();
   const { orderId, razorpayPaymentId, amount, currency, errorMessage } =
@@ -39,10 +46,6 @@ function CheckoutSuccessContent() {
       if (orderStatus) {
         if (orderStatus.status === "paid") {
           setStatus("confirmed");
-          const redirectTimer = setTimeout(() => {
-            router.push("/subscription");
-          }, 5000);
-          return () => clearTimeout(redirectTimer);
         } else if (orderStatus.status === "failed") {
           setStatus("failed");
           setError(`Payment failed: ${orderStatus.status}`);
@@ -57,12 +60,7 @@ function CheckoutSuccessContent() {
 
       if (razorpayOrderId && razorpayPaymentIdParam) {
         setStatus("confirmed");
-        const redirectTimer = setTimeout(() => {
-          router.push("/subscription");
-        }, 5000);
-        return () => clearTimeout(redirectTimer);
       } else if (orderId && !orderStatus) {
-        // Still loading order status
         setStatus("loading");
       } else {
         setStatus("failed");
@@ -80,6 +78,16 @@ function CheckoutSuccessContent() {
     router,
   ]);
 
+  // Countdown timer for confirmed status
+  useEffect(() => {
+    if (status === "confirmed" && countdown > 0) {
+      const timer = setTimeout(() => setCountdown((prev) => prev - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (status === "confirmed" && countdown === 0) {
+      router.push("/subscription");
+    }
+  }, [status, countdown, router]);
+
   const handleRetry = () => {
     setRetryCount((prev) => prev + 1);
     setStatus("loading");
@@ -88,171 +96,315 @@ function CheckoutSuccessContent() {
   };
 
   return (
-    <div className="container mx-auto p-4 md:p-8 max-w-4xl py-12 md:py-20">
-      <div className="w-full bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden">
-        {/* Status Header */}
-        <div
-          className={cn(
-            "flex flex-col items-center justify-center gap-4 border-b p-8 md:p-12",
-            status === "loading"
-              ? "bg-blue-50/50"
-              : status === "confirmed"
-                ? "bg-emerald-50/50"
-                : "bg-red-50/50",
-          )}
-        >
-          {status === "loading" ? (
-            <RefreshCw className="h-12 w-12 text-blue-600 animate-spin" />
-          ) : status === "confirmed" ? (
-            <div className="rounded-full bg-emerald-100 p-3">
-              <CheckCircle2 className="h-12 w-12 text-emerald-600" />
-            </div>
-          ) : (
-            <div className="rounded-full bg-red-100 p-3">
-              <XCircle className="h-12 w-12 text-red-600" />
-            </div>
-          )}
-
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight text-center">
-            {status === "loading"
-              ? "Verifying Payment"
-              : status === "confirmed"
-                ? "Payment Success!"
-                : "Payment Status"}
-          </h1>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 md:p-10 space-y-8">
-          {status === "loading" && (
-            <div className="text-center space-y-4">
-              <p className="text-gray-600 text-lg mx-auto max-w-md">
-                We're confirming your transaction with Razorpay. This shouldn't
-                take long...
-              </p>
-              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500 animate-pulse w-3/4" />
-              </div>
-            </div>
-          )}
-
-          {status === "confirmed" && (
-            <div className="space-y-8">
-              <div className="text-center space-y-2">
-                <p className="text-gray-600 text-lg">
-                  Awesome! Your {planName} is now active.
-                </p>
-                <p className="text-slate-500">
-                  A confirmation email has been sent to your inbox.
-                </p>
-              </div>
-
-              <div className="bg-slate-50 rounded-2xl p-6 md:p-8 border border-slate-100 space-y-4">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 border-b border-slate-200 pb-2">
-                  Subscription Summary
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm sm:text-base">
-                    <span className="text-gray-500">Transaction ID</span>
-                    <span className="font-mono font-medium text-gray-900 break-all ml-4">
-                      {razorpayPaymentId ||
-                        searchParams.get("razorpay_payment_id")}
-                    </span>
-                  </div>
-                  {orderId && (
-                    <div className="flex justify-between text-sm sm:text-base">
-                      <span className="text-gray-500">Order ID</span>
-                      <span className="font-mono font-medium text-gray-900 ml-4">
-                        {orderId}
-                      </span>
-                    </div>
-                  )}
-                  {amount && (
-                    <div className="flex justify-between text-sm sm:text-base pt-3 border-t border-slate-200 mt-3">
-                      <span className="text-gray-900 font-bold">
-                        Total Charged
-                      </span>
-                      <span className="font-bold text-gray-900 text-lg">
-                        ₹{(amount / 100).toFixed(2)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="bg-blue-50/80 rounded-2xl p-4 flex items-center justify-center gap-3 border border-blue-100">
-                <RefreshCw className="h-4 w-4 text-blue-600 animate-spin" />
-                <p className="text-sm font-semibold text-blue-800">
-                  Redirecting to your subscription in 5s...
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                <Button
-                  asChild
-                  size="lg"
-                  className="h-14 bg-orange-600 hover:bg-orange-700 text-white font-bold text-lg rounded-xl shadow-lg shadow-orange-200 transition-all active:scale-95"
-                >
-                  <Link href="/subscription">Manage Subscription</Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="h-14 font-bold border-slate-200 hover:bg-slate-50 rounded-xl transition-all"
-                >
-                  <Link href="/dashboard">View Dashboard</Link>
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {status === "failed" && (
-            <div className="space-y-6">
-              <div className="bg-red-50 border border-red-100 rounded-2xl p-6 text-center">
-                <p className="text-red-800 font-bold text-lg mb-1">
-                  Checking Payment Status
-                </p>
-                <p className="text-red-700/80 italic">
-                  {error ||
-                    "We're having trouble locating your recent payment record."}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2 text-sm text-slate-500 bg-slate-50 p-4 rounded-xl">
-                <Receipt className="h-4 w-4 shrink-0" />
-                <p>
-                  If you received a confirmation from your bank, please wait a
-                  moment for our server to sync.
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-3 pt-4">
-                <Button
-                  onClick={handleRetry}
-                  size="lg"
-                  className="h-14 bg-orange-600 hover:bg-orange-700 font-bold text-lg rounded-xl transition-all active:scale-95"
-                  disabled={retryCount >= 3}
-                >
-                  <RefreshCw className="mr-2 h-5 w-5" />
-                  {retryCount > 0 ? "Retry Verification" : "Update Status"}
-                </Button>
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="lg"
-                  className="h-14 font-bold text-slate-400 hover:text-slate-600"
-                >
-                  <Link href="/dashboard" className="flex items-center gap-2">
-                    <Home className="h-5 w-5" />
-                    Back to Dashboard
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
+    <div className="relative min-h-[90vh] flex items-center justify-center p-4">
+      {/* Dynamic Background Elements - Leveraging System Design Tokens */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-5%] left-[-5%] w-[45%] h-[45%] bg-primary/10 blur-[130px] rounded-full" />
+        <div className="absolute bottom-[-5%] right-[-5%] w-[45%] h-[45%] bg-success/10 blur-[130px] rounded-full" />
       </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={status}
+          initial={{ opacity: 0, scale: 0.98, y: 15 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.98, y: -15 }}
+          className="w-full relative"
+        >
+          {/* Main Card - Using --radius-2xl (Hero Scale) */}
+          <div className="bg-card/95 backdrop-blur-2xl border border-border shadow-2xl rounded-2xl overflow-hidden ring-1 ring-border/50">
+            {/* Celebration Sparkles (Visible on Confirmed) */}
+            {status === "confirmed" && (
+              <div className="absolute inset-x-0 -top-4 flex justify-center pointer-events-none z-20">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <Badge className="h-9 px-4 gap-2 text-sm font-bold bg-success text-success-foreground border-4 border-card shadow-lg">
+                    <Sparkles className="h-4 w-4" />
+                    Order Success!
+                  </Badge>
+                </motion.div>
+              </div>
+            )}
+
+            {/* Header / Status Icon */}
+            <div
+              className={cn(
+                "relative px-8 pt-16 pb-8 text-center flex flex-col items-center gap-6",
+                status === "confirmed"
+                  ? "bg-linear-to-b from-success/10 to-transparent"
+                  : status === "failed"
+                    ? "bg-linear-to-b from-destructive/10 to-transparent"
+                    : "bg-linear-to-b from-info/10 to-transparent",
+              )}
+            >
+              {status === "loading" && (
+                <div className="relative">
+                  <RefreshCw
+                    className="h-20 w-20 text-info animate-spin"
+                    strokeWidth={1.5}
+                  />
+                  <div className="absolute inset-0 bg-info/20 blur-2xl rounded-full" />
+                </div>
+              )}
+
+              {status === "confirmed" && (
+                <motion.div
+                  initial={{ rotate: -15, scale: 0.8 }}
+                  animate={{ rotate: 0, scale: 1 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                  className="relative group"
+                >
+                  <div className="absolute inset-0 bg-success/30 blur-3xl rounded-full animate-pulse transition-all duration-1000" />
+                  <div className="relative bg-success p-6 rounded-2xl shadow-xl ring-8 ring-success/5 text-success-foreground">
+                    <CheckCircle2 className="h-16 w-16" strokeWidth={2.5} />
+                  </div>
+                </motion.div>
+              )}
+
+              {status === "failed" && (
+                <div className="relative">
+                  <div className="absolute inset-0 bg-destructive/15 blur-3xl rounded-full" />
+                  <div className="relative bg-destructive p-6 rounded-2xl shadow-xl text-destructive-foreground">
+                    <XCircle className="h-16 w-16" strokeWidth={2} />
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-4">
+                <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
+                  {status === "loading"
+                    ? "Almost There..."
+                    : status === "confirmed"
+                      ? "Order Confirmed!"
+                      : "Verification Failed"}
+                </h1>
+                <p className="text-muted-foreground text-lg font-medium max-w-[85%] mx-auto leading-relaxed">
+                  {status === "loading"
+                    ? "We're just wrapping up some final details with your secure payment."
+                    : status === "confirmed"
+                      ? `Your ${planName} is now active and ready for your next healthy meal.`
+                      : error ||
+                        "Something went wrong with your transaction verification. Please contact support."}
+                </p>
+              </div>
+            </div>
+
+            {/* Main Body */}
+            <div className="px-8 pb-12 space-y-8 text-foreground">
+              {status === "confirmed" && (
+                <>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="bg-muted/40 rounded-xl p-8 border border-border/50 relative overflow-hidden group"
+                  >
+                    <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
+                      <Target className="w-24 h-24 rotate-12" />
+                    </div>
+
+                    <div className="space-y-6 relative">
+                      <div className="flex items-center gap-3 text-muted-foreground text-[10px] sm:text-xs font-black uppercase tracking-[0.25em]">
+                        <Receipt className="w-4 h-4" />
+                        <span>Receipt Overview</span>
+                      </div>
+
+                      <div className="grid gap-5 divide-y divide-border/60">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pt-0">
+                          <span className="text-muted-foreground text-sm font-medium">
+                            Transaction Reference
+                          </span>
+                          <span className="font-mono text-[0.85rem] font-bold text-foreground bg-background border border-border px-3 py-1.5 rounded-md shadow-xs">
+                            {razorpayPaymentId ||
+                              searchParams.get("razorpay_payment_id") ||
+                              "ID Unavailable"}
+                          </span>
+                        </div>
+
+                        {orderId && (
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pt-5">
+                            <span className="text-muted-foreground text-sm font-medium">
+                              Internal Order Reference
+                            </span>
+                            <span className="font-mono text-[0.85rem] font-bold text-foreground bg-background border border-border px-3 py-1.5 rounded-md shadow-xs">
+                              {orderId}
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between pt-6">
+                          <span className="text-foreground font-extrabold text-lg">
+                            Total Charged
+                          </span>
+                          <div className="text-right">
+                            <span className="text-3xl font-black text-foreground">
+                              ₹
+                              {(amount ? amount / 100 : 0).toLocaleString(
+                                undefined,
+                                { minimumFractionDigits: 2 },
+                              )}
+                            </span>
+                            <p className="text-[10px] text-success font-black uppercase tracking-widest mt-1">
+                              Payment Completed
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Redirection indicator - Using Primary Token */}
+                  <div className="bg-primary/5 border border-primary/20 rounded-xl p-6 flex flex-col gap-4">
+                    <div className="flex items-center justify-between font-bold">
+                      <div className="flex items-center gap-3">
+                        <RefreshCw className="h-4 w-4 text-primary animate-spin" />
+                        <span className="text-sm text-primary uppercase tracking-tight">
+                          Dashboard redirect pending...
+                        </span>
+                      </div>
+                      <span className="text-sm text-primary/60">
+                        {countdown}s
+                      </span>
+                    </div>
+                    <div className="h-2 w-full bg-primary/10 rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: "0%" }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 5, ease: "linear" }}
+                        className="h-full bg-primary rounded-full shadow-[0_0_12px_hsl(var(--primary)/0.4)]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Actions - Using shadcn Component Patterns */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Button
+                      asChild
+                      size="lg"
+                      className="h-16 text-base font-bold rounded-xl shadow-lg shadow-primary/20 group"
+                    >
+                      <Link
+                        href="/subscription"
+                        className="flex items-center justify-center gap-3"
+                      >
+                        Manage Subscription
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="lg"
+                      className="h-16 text-base font-bold rounded-xl shadow-xs"
+                    >
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center justify-center gap-3"
+                      >
+                        <Home className="w-5 h-5" />
+                        Go to Dashboard
+                      </Link>
+                    </Button>
+                  </div>
+                </>
+              )}
+
+              {(status === "loading" || (status as string) === "loading") && (
+                <div className="space-y-8 py-12">
+                  <div className="h-3 w-full bg-muted/60 rounded-full overflow-hidden">
+                    <motion.div
+                      animate={{ x: ["-100%", "100%"] }}
+                      transition={{
+                        duration: 1.8,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                      className="h-full w-1/4 bg-linear-to-r from-transparent via-info to-transparent"
+                    />
+                  </div>
+                  <p className="text-center text-muted-foreground font-black text-sm uppercase tracking-widest animate-pulse">
+                    Verifying Transaction Pipeline...
+                  </p>
+                </div>
+              )}
+
+              {status === "failed" && (status as string) !== "loading" && (
+                <div className="space-y-8">
+                  <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-8 flex items-start gap-5">
+                    <div className="bg-destructive/15 p-3 rounded-xl text-destructive">
+                      <Receipt className="w-6 h-6" />
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="text-destructive font-black text-sm uppercase tracking-widest">
+                        Status Inconclusive
+                      </h4>
+                      <p className="text-destructive/80 text-sm leading-relaxed font-medium">
+                        If funds were debited from your account, please do not
+                        worry. Verification can sometimes take up to 2 minutes.
+                        Refresh this page or exit to your dashboard.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-4">
+                    <Button
+                      onClick={handleRetry}
+                      className="h-16 bg-destructive hover:bg-destructive/90 text-white font-bold text-lg rounded-xl transition-all shadow-xl shadow-destructive/10 active:scale-[0.98]"
+                      disabled={
+                        retryCount >= 3 || (status as string) === "loading"
+                      }
+                    >
+                      <RefreshCw
+                        className={cn(
+                          "mr-3 h-6 w-6",
+                          (status as string) === "loading" && "animate-spin",
+                        )}
+                      />
+                      {(status as string) === "loading"
+                        ? "Verifying Status..."
+                        : "Verify Again"}
+                    </Button>
+                    <Button
+                      asChild
+                      variant="ghost"
+                      className="h-14 font-bold text-muted-foreground hover:text-foreground"
+                    >
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center gap-3 justify-center"
+                      >
+                        <Home className="h-5 w-5" />
+                        Return to Dashboard
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Footer Assistance - Token Aligned */}
+          <div className="mt-8 text-center space-y-5">
+            <p className="text-muted-foreground text-sm font-semibold">
+              Payment secured by Razorpay. Need assistance?{" "}
+              <Link
+                href="/support"
+                className="text-primary font-extrabold hover:underline underline-offset-8 decoration-2 ring-primary/20"
+              >
+                Contact Support
+              </Link>
+            </p>
+            <div className="flex items-center justify-center gap-6 text-muted-foreground/30">
+              <CreditCard className="w-6 h-6" />
+              <Receipt className="w-6 h-6" />
+              <ExternalLink className="w-6 h-6" />
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
@@ -261,16 +413,12 @@ export default function CheckoutSuccessPage() {
   return (
     <Suspense
       fallback={
-        <div className="container mx-auto p-8 max-w-4xl py-24">
-          <div className="w-full bg-white rounded-3xl border border-slate-100 shadow-xl p-12 text-center space-y-6">
-            <div className="relative w-24 h-24 mx-auto">
-              <div className="absolute inset-0 border-4 border-orange-100 rounded-full"></div>
-              <div className="absolute inset-0 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-slate-800">Hang tight!</h2>
-              <p className="text-slate-500 font-medium">
-                Preparing your success receipt...
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="relative">
+            <div className="h-24 w-24 border-8 border-muted border-t-primary rounded-full animate-spin shadow-2xl shadow-primary/20" />
+            <div className="mt-8 text-center">
+              <p className="text-foreground font-black text-xl animate-pulse tracking-tight">
+                Preparing Experience...
               </p>
             </div>
           </div>
