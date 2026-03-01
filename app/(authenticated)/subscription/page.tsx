@@ -16,7 +16,7 @@ import {
   useToggleAutoRenew,
 } from "@/api/hooks/use-subscription";
 import type { Subscription } from "@/api/types/subscription.types";
-import { Plus, AlertCircle } from "lucide-react";
+import { Plus, AlertCircle, Sparkles, LayoutGrid } from "lucide-react";
 
 export default function SubscriptionPage() {
   const router = useRouter();
@@ -24,7 +24,8 @@ export default function SubscriptionPage() {
   // State for dialogs
   const [pauseDialogOpen, setPauseDialogOpen] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
-  const [selectedSubscription, setSelectedSubscription] = useState<Subscription | null>(null);
+  const [selectedSubscription, setSelectedSubscription] =
+    useState<Subscription | null>(null);
 
   // Query subscriptions
   const { data, isLoading, error } = useSubscriptions();
@@ -100,36 +101,35 @@ export default function SubscriptionPage() {
     }
   };
 
-  const handlePauseSubmit = (data: { start_date: string; end_date: string; reason?: string }) => {
+  const handlePauseSubmit = (data: {
+    start_date: string;
+    end_date: string;
+    reason?: string;
+  }) => {
     if (selectedSubscription) {
       pauseMutation.mutate(
         { id: selectedSubscription._id, ...data },
         {
           onSuccess: (responseData) => {
-            // TODO: Show success toast
             setPauseDialogOpen(false);
             setSelectedSubscription(null);
-          },
-          onError: (error) => {
-            // TODO: Show error toast
           },
         },
       );
     }
   };
 
-  const handleCancelSubmit = (data: { cancellation_option: "CANCEL_ALL" | "CANCEL_RENEWAL"; reason?: string }) => {
+  const handleCancelSubmit = (data: {
+    cancellation_option: "CANCEL_ALL" | "CANCEL_RENEWAL";
+    reason?: string;
+  }) => {
     if (selectedSubscription) {
       cancelMutation.mutate(
         { id: selectedSubscription._id, ...data },
         {
           onSuccess: (responseData) => {
-            // TODO: Show success toast
             setCancelDialogOpen(false);
             setSelectedSubscription(null);
-          },
-          onError: (error) => {
-            // TODO: Show error toast
           },
         },
       );
@@ -141,13 +141,17 @@ export default function SubscriptionPage() {
     return (
       <div className="container mx-auto p-6 max-w-7xl">
         <div className="mb-8">
-          <Skeleton className="h-8 w-48 mb-2" />
-          <Skeleton className="h-4 w-64" />
+          <Skeleton className="h-10 w-64 mb-4" />
+          <Skeleton className="h-4 w-96" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[1, 2, 3].map((i) => (
             <div key={i} className="space-y-4">
-              <Skeleton className="h-48 w-full" />
+              <Skeleton className="h-48 w-full rounded-sm" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
             </div>
           ))}
         </div>
@@ -158,15 +162,19 @@ export default function SubscriptionPage() {
   // Error state
   if (error) {
     return (
-      <div className="container mx-auto p-6 max-w-7xl">
-        <div className="flex items-center gap-2 text-destructive mb-4">
-          <AlertCircle className="h-5 w-5" />
-          <h2 className="text-lg font-semibold">Error Loading Subscriptions</h2>
+      <div className="container mx-auto p-6 max-w-7xl flex flex-col items-center justify-center min-h-[400px]">
+        <div className="p-4 rounded-full bg-destructive/10 text-destructive mb-6">
+          <AlertCircle className="h-10 w-10" />
         </div>
-        <p className="text-muted-foreground mb-4">
-          {error instanceof Error ? error.message : "Failed to load subscriptions. Please try again."}
+        <h2 className="text-2xl font-bold mb-2">Error Loading Subscriptions</h2>
+        <p className="text-muted-foreground mb-8 text-center max-w-md">
+          {error instanceof Error
+            ? error.message
+            : "Failed to load subscriptions. Please check your connection and try again."}
         </p>
-        <Button onClick={() => window.location.reload()}>Try Again</Button>
+        <Button size="lg" onClick={() => window.location.reload()}>
+          Try Again
+        </Button>
       </div>
     );
   }
@@ -174,49 +182,77 @@ export default function SubscriptionPage() {
   return (
     <div className="container mx-auto p-6 max-w-7xl">
       {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Subscriptions</h1>
-        <p className="text-muted-foreground">
-          Manage your active meal subscriptions
-        </p>
-      </div>
+      <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="p-2 rounded-sm bg-primary/10 text-primary">
+              <LayoutGrid className="h-5 w-5" />
+            </div>
+            <span className="text-sm font-bold uppercase tracking-widest text-primary/80">
+              Manage
+            </span>
+          </div>
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-3">
+            Subscriptions
+          </h1>
+          <p className="text-lg text-muted-foreground ">
+            Control your active meal plans, track deliveries, and manage
+            renewals in one place.
+          </p>
+        </div>
 
-      {/* New Subscription Button */}
-      <div className="mb-6">
         <Button
           onClick={() => router.push("/plans")}
-          className="gap-2"
+          size="lg"
+          className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all active:scale-95"
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-5 w-5" />
           New Subscription
         </Button>
       </div>
 
-      {/* Subscription List */}
-      {subscriptions.length === 0 ? (
-        <div className="text-center py-16 border-2 border-dashed border-muted rounded-lg">
-          <h3 className="text-xl font-semibold mb-2">No Subscriptions Yet</h3>
-          <p className="text-muted-foreground mb-6">
-            You haven't subscribed to any meal plans yet. Browse our plans to get started!
-          </p>
-          <Button onClick={() => router.push("/plans")} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Browse Plans
-          </Button>
-        </div>
-      ) : (
-        <SubscriptionList
-          subscriptions={subscriptions}
-          onPause={handlePause}
-          onResume={handleResume}
-          onCancel={handleCancel}
-          onRenew={handleRenew}
-          onToggleAutoRenew={handleToggleAutoRenew}
-          onViewDetails={(id) => router.push(`/subscription/${id}`)}
-        />
-      )}
+      <div className="relative">
+        <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent -z-10 h-64 pointer-events-none" />
 
-      {/* Pause Subscription Dialog */}
+        {/* Subscription List */}
+        {subscriptions.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 px-6 border-2 border-dashed border-gray-200 rounded-sm bg-gray-50/50">
+            <div className="p-5 rounded-full bg-white shadow-sm mb-6 text-gray-400">
+              <Sparkles className="h-10 w-10" />
+            </div>
+            <h3 className="text-2xl font-bold mb-2">No Active Subscriptions</h3>
+            <p className="text-muted-foreground mb-8 text-center max-w-sm">
+              Discover delicious, chef-curated meals delivered right to your
+              doorstep. Start your journey today!
+            </p>
+            <Button
+              onClick={() => router.push("/plans")}
+              size="lg"
+              className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
+            >
+              <Plus className="h-5 w-5" />
+              Explore All Plans
+            </Button>
+          </div>
+        ) : (
+          <div className="pb-12">
+            <SubscriptionList
+              subscriptions={subscriptions}
+              onPause={handlePause}
+              onResume={handleResume}
+              onCancel={handleCancel}
+              onRenew={handleRenew}
+              onToggleAutoRenew={handleToggleAutoRenew}
+              onViewDetails={(id) => {
+                // TODO: Implement subscription details page
+                console.log("Subscription details coming soon for:", id);
+              }}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Dialogs remain the same in functionality but will pick up global styles */}
       <PauseSubscriptionDialog
         open={pauseDialogOpen}
         onOpenChange={setPauseDialogOpen}
@@ -226,13 +262,18 @@ export default function SubscriptionPage() {
           setSelectedSubscription(null);
         }}
         minDate={new Date()}
-        maxDate={selectedSubscription ? new Date(selectedSubscription.end_date) : undefined}
-        warningMessage={selectedSubscription?.is_cancellable
-          ? "Pausing your subscription will stop deliveries for the selected period."
-          : "This subscription is past the cancellation window and cannot be paused."}
+        maxDate={
+          selectedSubscription
+            ? new Date(selectedSubscription.end_date)
+            : undefined
+        }
+        warningMessage={
+          selectedSubscription?.is_cancellable
+            ? "Pausing your subscription will stop deliveries for the selected period."
+            : "This subscription is past the cancellation window and cannot be paused."
+        }
       />
 
-      {/* Cancel Subscription Dialog */}
       <CancelSubscriptionDialog
         open={cancelDialogOpen}
         onOpenChange={setCancelDialogOpen}
