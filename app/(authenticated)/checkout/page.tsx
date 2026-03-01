@@ -359,6 +359,16 @@ export default function CheckoutPage() {
       // Store order details
       paymentStore.setPaymentProcessing(result);
 
+      // If amount is 0, skip Razorpay and handle success immediately
+      if (result.amount === 0) {
+        handlePaymentSuccess({
+          razorpay_payment_id: "WALLET_PAYMENT",
+          razorpay_order_id: result.order_id,
+          razorpay_signature: "WALLET_SUCCESS",
+        });
+        return;
+      }
+
       // Open Razorpay checkout
       openRazorpayCheckout({
         keyId: result.keyId,

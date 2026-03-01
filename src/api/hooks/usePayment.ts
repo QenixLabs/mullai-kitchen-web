@@ -36,7 +36,13 @@ export function useOrderStatus(orderId: string) {
     queryKey: paymentKeys.orderStatus(orderId),
     queryFn: () => paymentApi.getOrderStatus(orderId),
     enabled: !!orderId,
-    staleTime: 30_000, // 30 seconds - status may change
+    staleTime: 5_000, // 5 seconds
+    refetchInterval: (query) => {
+      // Poll every 2 seconds until it's paid or failed
+      const status = query.state.data?.status;
+      if (status === "paid" || status === "failed") return false;
+      return 2_000;
+    },
   });
 }
 
@@ -73,7 +79,9 @@ export function useTopupWallet() {
       // Invalidate wallet balance to reflect new amount
       queryClient.invalidateQueries({ queryKey: paymentKeys.walletBalance() });
       // Invalidate transactions to show new top-up entry
-      queryClient.invalidateQueries({ queryKey: paymentKeys.walletTransactions() });
+      queryClient.invalidateQueries({
+        queryKey: paymentKeys.walletTransactions(),
+      });
     },
     onError: (error) => {
       console.error("Top-up failed:", error);
