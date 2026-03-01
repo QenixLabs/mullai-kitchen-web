@@ -19,6 +19,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAddresses } from "@/api/hooks/useOnboarding";
 import { AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 
 const DEFAULT_VEG_PRICE = 80;
 const DEFAULT_NONVEG_PRICE = 120;
@@ -39,6 +40,9 @@ export function CustomPlanBuilderContent({
   const createCustomPlan = useCreateCustomPlan();
   const addressesQuery = useAddresses();
   const addresses = addressesQuery.data ?? [];
+
+  const setPlanIntent = usePlanIntentStore((store) => store.setPlanIntent);
+  const setSourceRoute = usePlanIntentStore((store) => store.setSourceRoute);
 
   // Form state
   const [duration, setDuration] = useState<15 | 30 | null>(null);
@@ -140,14 +144,12 @@ export function CustomPlanBuilderContent({
         address_id: defaultAddress._id,
       });
 
-      // Store plan intent for checkout
-      const planIntentStore = localStorage.getItem("mk-plan-intent");
-      if (planIntentStore) {
-        const intent = JSON.parse(planIntentStore);
-        intent.planId = result._id;
-        intent.planName = result.name;
-        localStorage.setItem("mk-plan-intent", JSON.stringify(intent));
-      }
+      // Store plan intent for checkout using the store provider
+      setPlanIntent(result._id, {
+        ...result,
+        duration: `${result.custom_days} Days`,
+      } as any);
+      setSourceRoute("/custom-plan-builder");
 
       // Clear selections
       sessionStorage.removeItem("custom-plan-selections");
