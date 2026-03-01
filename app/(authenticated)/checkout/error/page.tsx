@@ -105,9 +105,10 @@ export default function CheckoutErrorPage() {
   const orderId = paymentStore.orderId;
   const errorMessage = paymentStore.errorMessage || searchParams.get("message");
 
-  const errorType: ErrorType = errorTypeParam && ERROR_CONFIGS[errorTypeParam]
-    ? errorTypeParam
-    : "unknown";
+  const errorType: ErrorType =
+    errorTypeParam && ERROR_CONFIGS[errorTypeParam]
+      ? errorTypeParam
+      : "unknown";
 
   const config = ERROR_CONFIGS[errorType];
 
@@ -136,7 +137,7 @@ export default function CheckoutErrorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-red-50 to-stone-100">
+    <div className="min-h-screen bg-linear-to-b from-red-50 to-stone-100">
       <div className="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-4 py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -242,8 +243,9 @@ export default function CheckoutErrorPage() {
                     </h3>
                     <p className="text-sm text-gray-700">
                       You can pay partially with your wallet balance and the
-                      remaining amount via card or UPI. This flexible payment option
-                      allows you to use whatever balance you have available.
+                      remaining amount via card or UPI. This flexible payment
+                      option allows you to use whatever balance you have
+                      available.
                     </p>
                   </div>
                 )}
@@ -268,9 +270,7 @@ export default function CheckoutErrorPage() {
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-yellow-600">•</span>
-                        <span>
-                          Refresh the page and attempt checkout again
-                        </span>
+                        <span>Refresh the page and attempt checkout again</span>
                       </li>
                     </ul>
                   </div>

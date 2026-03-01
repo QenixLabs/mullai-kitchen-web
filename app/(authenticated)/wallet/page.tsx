@@ -11,6 +11,11 @@ import {
   Wallet,
 } from "lucide-react";
 import { motion } from "motion/react";
+import type {
+  TopupWalletResponse,
+  RazorpayOptions,
+  RazorpayPaymentResponse,
+} from "@/api/types/payment.types";
 
 import { WalletBalanceCard } from "@/components/customer/wallet";
 import { TransactionHistory } from "@/components/customer/wallet";
@@ -27,6 +32,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTopupWallet, useWalletBalance } from "@/api/hooks/usePayment";
+import { loadRazorpayScript, openRazorpayCheckout } from "@/lib/razorpay";
+import { useCurrentUser } from "@/hooks/use-user-store";
 
 const TOPUP_AMOUNTS = [100, 200, 500, 1000, 2000];
 
@@ -35,6 +43,10 @@ export default function WalletPage() {
   const [customAmount, setCustomAmount] = useState("");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [topupProcessing, setTopupProcessing] = useState(false);
+
+  const topupMutation = useTopupWallet();
+  const { refetch } = useWalletBalance();
+  const user = useCurrentUser();
 
   const handleAddFunds = () => {
     setShowAddFundsModal(true);
@@ -47,15 +59,53 @@ export default function WalletPage() {
 
     setTopupProcessing(true);
     try {
-      // TODO: Integrate with payment API for wallet top-up
-      // This would call paymentApi.createOrder() with a special top-up type
-      console.log("Top-up amount:", amount);
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
+      // Step 1: Load Razorpay script first
+      await loadRazorpayScript();
+
+      // Step 2: Create Razorpay order
+      const order: TopupWalletResponse = await topupMutation.mutateAsync({
+        amount,
+      });
+
+      console.log("=== Top-up Debug ====");
+      console.log("Razorpay Order created:", order.razorpayOrderId);
+
+      // Step 3: Open Razorpay checkout using the shared utility
+      // Close the modal FIRST so the overlay doesn't block the Razorpay popup
       setShowAddFundsModal(false);
-      setSelectedAmount(null);
-      setCustomAmount("");
-    } catch (err) {
+
+      openRazorpayCheckout({
+        keyId: order.keyId,
+        amount: order.amount,
+        currency: order.currency,
+        name: order.name,
+        description: order.description,
+        orderId: order.razorpayOrderId,
+        prefill: {
+          name: user?.name,
+          email: user?.email,
+          contact: user?.phone,
+        },
+        onSuccess: (response: RazorpayPaymentResponse) => {
+          console.log("Payment successful:", response);
+          setTopupProcessing(false);
+          setSelectedAmount(null);
+          setCustomAmount("");
+          refetch(); // Refresh wallet balance
+        },
+        onDismiss: () => {
+          console.log("Payment modal dismissed");
+          setTopupProcessing(false);
+        },
+        onFailure: (error) => {
+          console.error("Payment failed:", error);
+          alert(`Payment failed: ${error.description}`);
+          setTopupProcessing(false);
+        },
+      });
+    } catch (err: any) {
       console.error("Top-up failed:", err);
+      alert(`Failed to initiate payment: ${err.message || "Unknown error"}`);
     } finally {
       setTopupProcessing(false);
     }

@@ -5,6 +5,8 @@ import type {
   OrderStatusResponse,
   PaymentOrderResponse,
   ReservationStatusResponse,
+  TopupWalletRequest,
+  TopupWalletResponse,
   WalletBalanceResponse,
   WalletTransaction,
 } from "@/api/types/payment.types";
@@ -61,6 +63,17 @@ export const paymentApi = {
     const response = await apiClient.get<{ transactions: WalletTransaction[]; total: number }>(
       PAYMENT_ROUTES.WALLET_TRANSACTIONS,
       { params },
+    );
+    return response.data;
+  },
+
+  /**
+   * Creates a Razorpay order for wallet top-up
+   */
+  topupWallet: async (payload: TopupWalletRequest): Promise<TopupWalletResponse> => {
+    const response = await apiClient.post<TopupWalletResponse>(
+      PAYMENT_ROUTES.WALLET_TOPUP,
+      payload,
     );
     return response.data;
   },

@@ -19,6 +19,7 @@ import {
   useCurrentUser,
 } from "@/hooks/use-user-store";
 import { useLogout } from "@/api/hooks/useAuth";
+import { useWalletBalance } from "@/api/hooks/usePayment";
 import { cn } from "@/lib/utils";
 import {
   Sidebar as ShadcnSidebar,
@@ -48,10 +49,17 @@ export function Sidebar() {
   const isAuthenticated = useIsAuthenticated();
   const user = useCurrentUser();
   const logoutMutation = useLogout();
+  const { data: balanceData } = useWalletBalance();
 
   const handleLogout = () => logoutMutation.mutate();
 
   if (!hasHydrated || !isAuthenticated) return null;
+
+  const currentBalance = balanceData?.balance ?? 0;
+  const formattedBalance = new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  }).format(currentBalance);
 
   return (
     <ShadcnSidebar className="w-60 border-r border-border bg-muted/30 shadow-none">
@@ -117,14 +125,17 @@ export function Sidebar() {
               Wallet Balance
             </p>
             <h3 className="mt-1 text-2xl font-bold text-primary-foreground tracking-tight">
-              ₹1,240.50
+              {formattedBalance}
             </h3>
             <Button
               className="mt-4 w-full h-10 bg-background text-primary hover:bg-background/95 rounded-sm font-bold text-sm shadow-sm transition-all border-none"
               variant="secondary"
+              asChild
             >
-              <Plus className="mr-2 h-4 w-4 stroke-[3px]" />
-              Top Up Now
+              <Link href="/wallet">
+                <Plus className="mr-2 h-4 w-4 stroke-[3px]" />
+                Top Up Now
+              </Link>
             </Button>
           </div>
         </div>

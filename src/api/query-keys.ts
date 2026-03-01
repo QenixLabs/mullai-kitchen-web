@@ -32,6 +32,7 @@ export const paymentKeys = {
     ["payment", "wallet", "transactions", params] as const,
   orderStatus: (orderId: string) => ["payment", "orders", "status", orderId] as const,
   reservationStatus: (reservationId: string) => ["payment", "reservations", "status", reservationId] as const,
+  topup: () => ["payment", "topup"] as const,
 };
 
 export const subscriptionKeys = {

@@ -19,6 +19,26 @@ export type TransactionCategory =
   | "SUBSCRIPTION_CANCELLATION";
 export type ReferenceType = "SUBSCRIPTION" | "ADDON_ORDER";
 
+// ===========================================
+// Wallet Top-Up Types
+// ===========================================
+
+export interface TopupWalletRequest {
+  amount: number;
+}
+
+export interface TopupWalletResponse {
+  success: boolean;
+  razorpayOrderId: string;
+  keyId: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  expiresAt: string;
+}
+
 export type WalletReservationStatus =
   | "PENDING"
   | "CONFIRMED"

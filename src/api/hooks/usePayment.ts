@@ -8,6 +8,8 @@ import type {
   OrderStatusResponse,
   PaymentOrderResponse,
   ReservationStatusResponse,
+  TopupWalletRequest,
+  TopupWalletResponse,
 } from "@/api/types/payment.types";
 
 export function useWalletBalance() {
@@ -58,6 +60,23 @@ export function useCreateOrder() {
     },
     onError: (error) => {
       console.error("Order creation failed:", error);
+    },
+  });
+}
+
+export function useTopupWallet() {
+  const queryClient = useQueryClient();
+
+  return useMutation<TopupWalletResponse, Error, TopupWalletRequest>({
+    mutationFn: paymentApi.topupWallet,
+    onSuccess: (data) => {
+      // Invalidate wallet balance to reflect new amount
+      queryClient.invalidateQueries({ queryKey: paymentKeys.walletBalance() });
+      // Invalidate transactions to show new top-up entry
+      queryClient.invalidateQueries({ queryKey: paymentKeys.walletTransactions() });
+    },
+    onError: (error) => {
+      console.error("Top-up failed:", error);
     },
   });
 }
