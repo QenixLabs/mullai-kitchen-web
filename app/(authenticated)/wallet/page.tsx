@@ -312,7 +312,7 @@ export default function WalletPage() {
                       Add Funds
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:min-w-[480px]">
+                  <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Add Funds to Wallet</DialogTitle>
                       <DialogDescription>

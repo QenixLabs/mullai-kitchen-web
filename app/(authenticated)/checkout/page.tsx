@@ -299,7 +299,8 @@ export default function CheckoutPage() {
     loadRazorpayScript().catch((err) => {
       console.error("Failed to load Razorpay script:", err);
       toast.error("System Error", {
-        description: "Failed to load payment system. Please refresh and try again.",
+        description:
+          "Failed to load payment system. Please refresh and try again.",
       });
     });
   }, []);
@@ -855,7 +856,7 @@ export default function CheckoutPage() {
       {/* ── Address Dialog ────────────────────────────────── */}
       {showAddressDialog && (
         <Dialog open={showAddressDialog} onOpenChange={setShowAddressDialog}>
-          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-lg sm:min-w-[480px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add New Address</DialogTitle>
             </DialogHeader>
