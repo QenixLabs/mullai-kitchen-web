@@ -9,12 +9,14 @@ export interface WalletBalanceCardProps {
   className?: string;
   showRefresh?: boolean;
   onAddFunds?: () => void;
+  isTopupProcessing?: boolean;
 }
 
 export function WalletBalanceCard({
   className,
   showRefresh = true,
   onAddFunds,
+  isTopupProcessing = false,
 }: WalletBalanceCardProps) {
   const { data, isLoading, error, refetch, isFetching } = useWalletBalance();
 
@@ -63,12 +65,12 @@ export function WalletBalanceCard({
           </div>
         </div>
 
-        {showRefresh && !isLoading && (
+        {showRefresh && !isLoading && !isTopupProcessing && (
           <Button
             variant="ghost"
             size="icon"
             onClick={handleRefresh}
-            disabled={refreshing}
+            disabled={refreshing || isTopupProcessing}
             className="h-8 w-8 text-muted-foreground hover:text-foreground"
           >
             <RefreshCw
@@ -107,10 +109,20 @@ export function WalletBalanceCard({
             {/* Action Button */}
             <Button
               onClick={onAddFunds}
+              disabled={isTopupProcessing}
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              <Plus className="mr-2 h-4 w-4" />
-              Add Funds
+              {isTopupProcessing ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Funds
+                </>
+              )}
             </Button>
 
             {/* Quick Info */}
