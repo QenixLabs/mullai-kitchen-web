@@ -70,7 +70,7 @@ export function OnboardingShell({
             <div className="space-y-1">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Onboarding</p>
               <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">{title}</h1>
-              <p className="max-w-2xl text-sm text-muted-foreground">{subtitle}</p>
+              <p className=" text-sm text-muted-foreground">{subtitle}</p>
             </div>
             <p className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{stepText}</p>
           </div>

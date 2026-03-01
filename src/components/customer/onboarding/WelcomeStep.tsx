@@ -37,7 +37,7 @@ export function WelcomeStep({
             Personalized setup
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">{title}</h2>
-          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">{description}</p>
+          <p className=" ext-sm leading-relaxed text-muted-foreground sm:text-base">{description}</p>
         </div>
 
         <ul className="mt-5 space-y-2 text-sm text-foreground">

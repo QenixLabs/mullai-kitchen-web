@@ -41,7 +41,7 @@ const normalizeAddressPayload = (
   const landmark = payload.landmark?.trim();
 
   return {
-    type: payload.type.toUpperCase() as any, // Cast to any or AddressType if it matches uppercase
+    type: payload.type,
     full_address: payload.full_address.trim(),
     area: payload.area.trim(),
     pincode: payload.pincode.trim(),
