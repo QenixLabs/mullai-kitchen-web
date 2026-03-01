@@ -35,11 +35,13 @@ const EMPTY_ADDRESS: AddressFormData = {
 
 const PINCODE_LENGTH = 6;
 
-const normalizeAddressPayload = (payload: AddressFormData): CreateAddressDto => {
+const normalizeAddressPayload = (
+  payload: AddressFormData,
+): CreateAddressDto => {
   const landmark = payload.landmark?.trim();
 
   return {
-    type: payload.type,
+    type: payload.type.toUpperCase() as any, // Cast to any or AddressType if it matches uppercase
     full_address: payload.full_address.trim(),
     area: payload.area.trim(),
     pincode: payload.pincode.trim(),
@@ -50,7 +52,13 @@ const normalizeAddressPayload = (payload: AddressFormData): CreateAddressDto => 
 };
 
 const getAddressPreview = (address: CreateAddressDto): string => {
-  const parts = [address.full_address, address.area, address.city, address.state, address.pincode]
+  const parts = [
+    address.full_address,
+    address.area,
+    address.city,
+    address.state,
+    address.pincode,
+  ]
     .map((value) => value.trim())
     .filter(Boolean);
 
@@ -58,25 +66,29 @@ const getAddressPreview = (address: CreateAddressDto): string => {
 };
 
 export interface AddressFormStepProps {
-  addresses: CreateAddressDto[];
-  defaultAddressIndex: number;
+  addresses?: CreateAddressDto[];
+  defaultAddressIndex?: number;
   onAddAddress: (address: CreateAddressDto) => void;
-  onRemoveAddress: (index: number) => void;
-  onSetDefault: (index: number) => void;
+  onRemoveAddress?: (index: number) => void;
+  onSetDefault?: (index: number) => void;
   className?: string;
   showInlineContinue?: boolean;
   onContinue?: () => void;
+  hideList?: boolean;
+  hideHeader?: boolean;
 }
 
 export function AddressFormStep({
-  addresses,
-  defaultAddressIndex,
+  addresses = [],
+  defaultAddressIndex = -1,
   onAddAddress,
   onRemoveAddress,
   onSetDefault,
   className,
   showInlineContinue = false,
   onContinue,
+  hideList = false,
+  hideHeader = false,
 }: AddressFormStepProps) {
   const { mutateAsync: checkServiceability } = useServiceability();
   const [pincodeNotice, setPincodeNotice] = useState<{
@@ -120,7 +132,8 @@ export function AddressFormStep({
           if (!result.isServiceable) {
             setPincodeNotice({
               status: "not-serviceable",
-              message: "We do not serve this pincode yet. You can still save this address.",
+              message:
+                "We do not serve this pincode yet. You can still save this address.",
             });
             return;
           }
@@ -156,19 +169,31 @@ export function AddressFormStep({
 
   return (
     <div className={cn("space-y-6", className)}>
-      <div className="space-y-1">
-        <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">Delivery addresses</h2>
-        <p className="text-sm text-gray-600">Address is required. You can add multiple addresses and pick a default.</p>
-      </div>
+      {!hideHeader && (
+        <div className="space-y-1">
+          <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">
+            Delivery addresses
+          </h2>
+          <p className="text-sm text-gray-600">
+            Address is required. You can add multiple addresses and pick a
+            default.
+          </p>
+        </div>
+      )}
 
-      {!canContinue ? (
-        <Alert variant="destructive" className="border-amber-200 bg-amber-50 text-amber-800">
+      {!hideList && !canContinue ? (
+        <Alert
+          variant="destructive"
+          className="border-amber-200 bg-amber-50 text-amber-800"
+        >
           <AlertTitle>Add your first address</AlertTitle>
-          <AlertDescription>You need at least one valid address before moving to the next step.</AlertDescription>
+          <AlertDescription>
+            You need at least one valid address before moving to the next step.
+          </AlertDescription>
         </Alert>
       ) : null}
 
-      {addresses.length > 0 ? (
+      {!hideList && addresses.length > 0 ? (
         <div className="space-y-3">
           {addresses.map((address, index) => {
             const isDefault = index === defaultAddressIndex;
@@ -178,26 +203,38 @@ export function AddressFormStep({
                 key={`${address.type}-${address.pincode}-${index}`}
                 className={cn(
                   "rounded-sm border bg-white p-4 shadow-sm",
-                  isDefault ? "border-orange-300 ring-2 ring-orange-100" : "border-gray-200",
+                  isDefault
+                    ? "border-orange-300 ring-2 ring-orange-100"
+                    : "border-gray-200",
                 )}
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="space-y-1">
                     <div className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
-                      {address.type === "Home" ? (
+                      {(address.type as any) === "Home" ||
+                      (address.type as any) === "HOME" ? (
                         <Home className="h-3.5 w-3.5" aria-hidden="true" />
                       ) : (
                         <Building2 className="h-3.5 w-3.5" aria-hidden="true" />
                       )}
                       {address.type}
                     </div>
-                    <p className="text-sm leading-relaxed text-gray-700">{getAddressPreview(address)}</p>
-                    {address.landmark ? <p className="text-xs text-gray-500">Landmark: {address.landmark}</p> : null}
+                    <p className="text-sm leading-relaxed text-gray-700">
+                      {getAddressPreview(address)}
+                    </p>
+                    {address.landmark ? (
+                      <p className="text-xs text-gray-500">
+                        Landmark: {address.landmark}
+                      </p>
+                    ) : null}
                   </div>
 
                   <div className="flex items-center gap-3">
                     <label className="inline-flex cursor-pointer items-center gap-2 text-xs font-medium text-gray-600">
-                      <Checkbox checked={isDefault} onCheckedChange={() => onSetDefault(index)} />
+                      <Checkbox
+                        checked={isDefault}
+                        onCheckedChange={() => onSetDefault?.(index)}
+                      />
                       Set as default
                     </label>
 
@@ -206,7 +243,7 @@ export function AddressFormStep({
                       variant="ghost"
                       size="icon-sm"
                       className="text-gray-500 hover:bg-red-50 hover:text-red-600"
-                      onClick={() => onRemoveAddress(index)}
+                      onClick={() => onRemoveAddress?.(index)}
                       disabled={addresses.length <= 1}
                       aria-label={`Remove address ${index + 1}`}
                     >
@@ -222,8 +259,13 @@ export function AddressFormStep({
 
       <section className="space-y-4 rounded-sm border border-gray-200 bg-gray-50/70 p-4 sm:p-5">
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">Add a new address</h3>
-          <p className="text-xs text-gray-500">Fill all required fields and click Save address. Pincode must be exactly 6 digits.</p>
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+            Add a new address
+          </h3>
+          <p className="text-xs text-gray-500">
+            Fill all required fields and click Save address. Pincode must be
+            exactly 6 digits.
+          </p>
         </div>
 
         <Form {...form}>
@@ -251,7 +293,14 @@ export function AddressFormStep({
                             onClick={() => field.onChange(type)}
                             aria-pressed={isActive}
                           >
-                            {type === "Home" ? <Home className="h-4 w-4" aria-hidden="true" /> : <Building2 className="h-4 w-4" aria-hidden="true" />}
+                            {type === "Home" ? (
+                              <Home className="h-4 w-4" aria-hidden="true" />
+                            ) : (
+                              <Building2
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
+                            )}
                             {type}
                           </button>
                         );
@@ -308,13 +357,18 @@ export function AddressFormStep({
                     <FormLabel className="text-gray-700">Pincode</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" aria-hidden="true" />
+                        <MapPin
+                          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                          aria-hidden="true"
+                        />
                         <Input
                           {...field}
                           inputMode="numeric"
                           maxLength={6}
                           onChange={(event) => {
-                            const onlyDigits = event.target.value.replace(/\D/g, "").slice(0, 6);
+                            const onlyDigits = event.target.value
+                              .replace(/\D/g, "")
+                              .slice(0, 6);
                             field.onChange(onlyDigits);
                           }}
                           className="h-11 rounded-sm border-gray-300 bg-white pl-9"
@@ -382,7 +436,9 @@ export function AddressFormStep({
               name="landmark"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700">Landmark (optional)</FormLabel>
+                  <FormLabel className="text-gray-700">
+                    Landmark (optional)
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -409,7 +465,14 @@ export function AddressFormStep({
       </section>
 
       <div className="space-y-3">
-        <p className={cn("text-sm", canContinue ? "text-emerald-700" : "text-amber-700")}>{helperMessage}</p>
+        <p
+          className={cn(
+            "text-sm",
+            canContinue ? "text-emerald-700" : "text-amber-700",
+          )}
+        >
+          {helperMessage}
+        </p>
 
         {showInlineContinue ? (
           <Button

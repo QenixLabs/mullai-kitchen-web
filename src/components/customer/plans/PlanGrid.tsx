@@ -60,7 +60,7 @@ const NoPlansFound = ({ className }: { className?: string }) => (
       <SearchX className="h-8 w-8 text-orange-500" />
     </div>
     <h3 className="text-lg font-semibold text-gray-900">No plans found</h3>
-    <p className="mt-2 max-w-sm text-sm text-gray-600">
+    <p className="mt-2 text-sm text-gray-600">
       Try adjusting your search or check back later for new meal plans.
     </p>
   </div>

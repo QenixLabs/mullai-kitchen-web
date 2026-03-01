@@ -44,26 +44,37 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { AddressFormStep } from "@/components/customer/onboarding/AddressFormStep";
-import { format, addDays } from "date-fns";
+import { addDays } from "date-fns";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 type PaymentMethod = "wallet" | "card" | "upi";
 
+const PAYMENT_METHODS = {
+  WALLET: "wallet",
+  CARD: "card",
+  UPI: "upi",
+} as const satisfies Record<string, PaymentMethod>;
+
 const DELIVERY_FEE = 12.5;
 const ESTIMATED_TAXES_RATE = 0.05;
 
+const CHECKOUT_CONFIG = {
+  companyName: "MullaiKitchen",
+  email: "support@mullaikitchen.com",
+  supportEmailSubject: "Checkout Support",
+  minDaysFromToday: 1,
+} as const;
+
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
-function StepIndicator({
-  step,
-  label,
-  active,
-}: {
+interface StepIndicatorProps {
   step: number;
   label: string;
   active: boolean;
-}) {
+}
+
+function StepIndicator({ step, label, active }: StepIndicatorProps) {
   return (
     <div className="flex flex-col items-center gap-1.5">
       <div
@@ -88,15 +99,13 @@ function StepIndicator({
   );
 }
 
-function AddressCard({
-  address,
-  selected,
-  onClick,
-}: {
+interface AddressCardProps {
   address: Address;
   selected: boolean;
   onClick: () => void;
-}) {
+}
+
+function AddressCard({ address, selected, onClick }: AddressCardProps) {
   return (
     <button
       type="button"
@@ -128,7 +137,11 @@ function AddressCard({
   );
 }
 
-function AddNewAddressCard({ onClick }: { onClick: () => void }) {
+interface AddNewAddressCardProps {
+  onClick: () => void;
+}
+
+function AddNewAddressCard({ onClick }: AddNewAddressCardProps) {
   return (
     <button
       type="button"
@@ -141,6 +154,17 @@ function AddNewAddressCard({ onClick }: { onClick: () => void }) {
   );
 }
 
+interface PaymentOptionProps {
+  id: PaymentMethod;
+  label: string;
+  subtitle?: string;
+  icon: React.ReactNode;
+  badge?: React.ReactNode;
+  selected: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+}
+
 function PaymentOption({
   id,
   label,
@@ -150,16 +174,7 @@ function PaymentOption({
   selected,
   disabled = false,
   onClick,
-}: {
-  id: PaymentMethod;
-  label: string;
-  subtitle?: string;
-  icon: React.ReactNode;
-  badge?: React.ReactNode;
-  selected: boolean;
-  disabled?: boolean;
-  onClick: () => void;
-}) {
+}: PaymentOptionProps) {
   return (
     <button
       type="button"
@@ -211,20 +226,10 @@ export default function CheckoutPage() {
 
   // Payment state from store
   const paymentStore = usePaymentStore();
-  const {
-    status: paymentStatus,
-    orderId,
-    keyId,
-    amount,
-    errorMessage: paymentError,
-  } = paymentStore;
+  const { status: paymentStatus, errorMessage: paymentError } = paymentStore;
 
   // React Query hooks for addresses and wallet balance
-  const {
-    data: addresses,
-    isLoading: addressesLoading,
-    error: addressesError,
-  } = useAddressList();
+  const { data: addresses, isLoading: addressesLoading } = useAddressList();
 
   const {
     data: walletData,
@@ -244,14 +249,14 @@ export default function CheckoutPage() {
   );
   const [showAddressDialog, setShowAddressDialog] = useState(false);
   const [showWalletInfo, setShowWalletInfo] = useState(false);
-  const [tempAddresses, setTempAddresses] = useState<any[]>([]);
-  const [selectedPayment, setSelectedPayment] =
-    useState<PaymentMethod>("wallet");
+  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(
+    PAYMENT_METHODS.WALLET,
+  );
   const [applyWallet, setApplyWallet] = useState(true);
 
-  // Start date (default to tomorrow)
+  // Start date (default to minimum days from today)
   const [startDate, setStartDate] = useState<Date>(() => {
-    return addDays(new Date(), 1);
+    return addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday);
   });
 
   // Handle date change with type safety
@@ -336,7 +341,7 @@ export default function CheckoutPage() {
       keyId: "",
       amount: 0,
       currency: "INR",
-      name: "MullaiKitchen",
+      name: CHECKOUT_CONFIG.companyName,
       description: `${plan?.name || "Subscription"} Payment`,
       order_id: "",
       walletReservationAmount: 0,
@@ -359,24 +364,26 @@ export default function CheckoutPage() {
         keyId: result.keyId,
         amount: result.amount,
         currency: result.currency,
-        name: "MullaiKitchen",
+        name: CHECKOUT_CONFIG.companyName,
         description: `${plan?.name || "Subscription"} - ${plan?.duration || ""}`,
         orderId: result.razorpayOrderId,
         onSuccess: handlePaymentSuccess,
         onFailure: handlePaymentFailure,
         onDismiss: handlePaymentDismissed,
         prefill: {
-          name: user?.name || "",
-          email: user?.email || "",
-          contact: user?.phone || "",
+          name: user?.name ?? "",
+          email: user?.email ?? "",
+          contact: user?.phone ?? "",
         },
       });
     } catch (err) {
       // Error is handled by mutation's onError callback
       // Set error message for display
-      paymentStore.setPaymentFailed(
-        err instanceof Error ? err.message : "Payment failed",
-      );
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Payment failed. Please try again.";
+      paymentStore.setPaymentFailed(errorMessage);
     }
   };
 
@@ -487,10 +494,14 @@ export default function CheckoutPage() {
                   date={startDate}
                   onDateChange={handleStartDateChange}
                   placeholder="Select start date"
-                  minDate={addDays(new Date(), 1)}
+                  minDate={addDays(
+                    new Date(),
+                    CHECKOUT_CONFIG.minDaysFromToday,
+                  )}
                 />
                 <p className="mt-2 text-xs text-gray-500">
-                  Subscriptions start at least 1 day from today
+                  Subscriptions start at least{" "}
+                  {CHECKOUT_CONFIG.minDaysFromToday} day(s) from today
                 </p>
               </div>
             </section>
@@ -607,7 +618,7 @@ export default function CheckoutPage() {
               <div className="space-y-3">
                 {/* Mullai Wallet */}
                 <PaymentOption
-                  id="wallet"
+                  id={PAYMENT_METHODS.WALLET}
                   label="Mullai Wallet + Card/UPI"
                   subtitle={
                     applyWallet && walletBalance !== null
@@ -619,13 +630,13 @@ export default function CheckoutPage() {
                       <WalletCards className="h-4 w-4 text-orange-600" />
                     </div>
                   }
-                  selected={selectedPayment === "wallet"}
-                  onClick={() => setSelectedPayment("wallet")}
+                  selected={selectedPayment === PAYMENT_METHODS.WALLET}
+                  onClick={() => setSelectedPayment(PAYMENT_METHODS.WALLET)}
                 />
 
                 {/* Credit / Debit Card */}
                 <PaymentOption
-                  id="card"
+                  id={PAYMENT_METHODS.CARD}
                   label="Credit / Debit Card"
                   disabled={
                     applyWallet &&
@@ -637,13 +648,13 @@ export default function CheckoutPage() {
                       <CreditCard className="h-4 w-4 text-gray-500" />
                     </div>
                   }
-                  selected={selectedPayment === "card"}
-                  onClick={() => setSelectedPayment("card")}
+                  selected={selectedPayment === PAYMENT_METHODS.CARD}
+                  onClick={() => setSelectedPayment(PAYMENT_METHODS.CARD)}
                 />
 
                 {/* UPI */}
                 <PaymentOption
-                  id="upi"
+                  id={PAYMENT_METHODS.UPI}
                   label="UPI (PhonePe, GPay, etc.)"
                   disabled={
                     applyWallet &&
@@ -655,8 +666,8 @@ export default function CheckoutPage() {
                       <QrCode className="h-4 w-4 text-gray-500" />
                     </div>
                   }
-                  selected={selectedPayment === "upi"}
-                  onClick={() => setSelectedPayment("upi")}
+                  selected={selectedPayment === PAYMENT_METHODS.UPI}
+                  onClick={() => setSelectedPayment(PAYMENT_METHODS.UPI)}
                 />
               </div>
             </section>
@@ -815,7 +826,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
               <a
-                href="mailto:support@mullaikitchen.com?subject=Checkout Support"
+                href={`mailto:${CHECKOUT_CONFIG.email}?subject=${encodeURIComponent(CHECKOUT_CONFIG.supportEmailSubject)}`}
                 className="text-xs font-semibold text-orange-500 underline underline-offset-2 hover:text-orange-600"
               >
                 Chat
@@ -844,22 +855,11 @@ export default function CheckoutPage() {
               <DialogTitle>Add New Address</DialogTitle>
             </DialogHeader>
             <AddressFormStep
-              addresses={tempAddresses}
-              defaultAddressIndex={tempAddresses.length > 0 ? 0 : -1}
+              hideList
+              hideHeader
               onAddAddress={async (address) => {
                 await createAddressMutation.mutateAsync(address);
                 setShowAddressDialog(false);
-                setTempAddresses([]);
-              }}
-              onRemoveAddress={(index) => {
-                setTempAddresses((prev) => prev.filter((_, i) => i !== index));
-              }}
-              onSetDefault={(index) => {
-                setTempAddresses((prev) => {
-                  const newAddresses = [...prev];
-                  const selected = newAddresses.splice(index, 1)[0];
-                  return [selected, ...newAddresses];
-                });
               }}
             />
           </DialogContent>
