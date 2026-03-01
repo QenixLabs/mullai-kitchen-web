@@ -41,7 +41,8 @@ export default function WalletPage() {
   };
 
   const handleTopup = async () => {
-    const amount = selectedAmount || (customAmount ? parseFloat(customAmount) : 0);
+    const amount =
+      selectedAmount || (customAmount ? parseFloat(customAmount) : 0);
     if (amount <= 0) return;
 
     setTopupProcessing(true);
@@ -107,14 +108,17 @@ export default function WalletPage() {
               </h2>
 
               <div className="space-y-3">
-                <Dialog open={showAddFundsModal} onOpenChange={setShowAddFundsModal}>
+                <Dialog
+                  open={showAddFundsModal}
+                  onOpenChange={setShowAddFundsModal}
+                >
                   <DialogTrigger asChild>
                     <Button className="w-full bg-orange-600 text-white hover:bg-orange-700">
                       <Plus className="mr-2 h-4 w-4" />
                       Add Funds
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
+                  <DialogContent className="!max-w-fit">
                     <DialogHeader>
                       <DialogTitle>Add Funds to Wallet</DialogTitle>
                       <DialogDescription>
@@ -148,7 +152,9 @@ export default function WalletPage() {
 
                       {/* Custom Amount */}
                       <div className="space-y-2">
-                        <Label htmlFor="custom-amount">Or enter custom amount</Label>
+                        <Label htmlFor="custom-amount">
+                          Or enter custom amount
+                        </Label>
                         <Input
                           id="custom-amount"
                           type="number"
@@ -182,7 +188,9 @@ export default function WalletPage() {
                       </Button>
                       <Button
                         onClick={handleTopup}
-                        disabled={topupProcessing || (!selectedAmount && !customAmount)}
+                        disabled={
+                          topupProcessing || (!selectedAmount && !customAmount)
+                        }
                         className="bg-orange-600 text-white hover:bg-orange-700"
                       >
                         {topupProcessing ? (
@@ -236,8 +244,8 @@ export default function WalletPage() {
                       Auto-Refunds on Pause
                     </p>
                     <p className="text-gray-600">
-                      When you pause your subscription, credits for paused days are
-                      automatically added back to your wallet.
+                      When you pause your subscription, credits for paused days
+                      are automatically added back to your wallet.
                     </p>
                   </div>
                 </div>
@@ -251,8 +259,8 @@ export default function WalletPage() {
                       Flexible Top-up
                     </p>
                     <p className="text-gray-600">
-                      Add funds anytime using card, UPI, or other payment methods.
-                      No minimum balance required to maintain wallet.
+                      Add funds anytime using card, UPI, or other payment
+                      methods. No minimum balance required to maintain wallet.
                     </p>
                   </div>
                 </div>
