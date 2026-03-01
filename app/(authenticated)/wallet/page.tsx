@@ -140,7 +140,7 @@ export default function WalletPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-stone-100">
+    <div className="min-h-screen bg-linear-to-b from-orange-50 to-stone-100">
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -312,7 +312,7 @@ export default function WalletPage() {
                       Add Funds
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="!max-w-fit">
+                  <DialogContent className="sm:min-w-[480px]">
                     <DialogHeader>
                       <DialogTitle>Add Funds to Wallet</DialogTitle>
                       <DialogDescription>
@@ -323,7 +323,7 @@ export default function WalletPage() {
 
                     <div className="space-y-4 py-4">
                       {/* Preset Amounts */}
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                         {TOPUP_AMOUNTS.map((amount) => (
                           <button
                             key={amount}
