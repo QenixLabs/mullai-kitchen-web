@@ -16,7 +16,7 @@ export function AuthHeader({ title, subtitle, helper }: AuthHeaderProps) {
           {title}
         </h1>
         {subtitle ? (
-          <p className="max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p className=" text-sm leading-relaxed text-muted-foreground sm:text-base">
             {subtitle}
           </p>
         ) : null}
