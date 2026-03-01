@@ -96,7 +96,7 @@ export function Sidebar() {
                             "h-5 w-5 shrink-0 transition-colors",
                             isActive
                               ? "text-primary-foreground!"
-                              : "text-muted-foreground group-hover:text-primary",
+                              : "text-muted-foreground group-hover/menu-item:text-primary",
                           )}
                         />
                         <span className="font-semibold text-base whitespace-nowrap">
