@@ -33,8 +33,7 @@ const TRANSACTION_CATEGORY_LABELS: Record<
 > = {
   PAUSE_CREDIT: {
     label: "Pause Refund",
-    description:
-      "Refund for paused days in your subscription",
+    description: "Refund for paused days in your subscription",
   },
   SUBSCRIPTION_PURCHASE: {
     label: "Subscription",
@@ -52,10 +51,41 @@ const TRANSACTION_CATEGORY_LABELS: Record<
     label: "Payment Confirmed",
     description: "Wallet reservation converted to actual payment",
   },
+  RESERVATION_RELEASED: {
+    label: "Reservation Released",
+    description: "Wallet reservation released back to balance",
+  },
   SUBSCRIPTION_CANCELLATION: {
     label: "Refund",
-    description:
-      "Refund for cancelled subscription",
+    description: "Refund for cancelled subscription",
+  },
+  SUBSCRIPTION_RENEWAL: {
+    label: "Subscription Renewal",
+    description: "Payment for subscription renewal",
+  },
+  REFERRAL_BONUS: {
+    label: "Referral Bonus",
+    description: "Bonus earned from referring friends",
+  },
+  PROMOTIONAL_CREDIT: {
+    label: "Promotional Credit",
+    description: "Bonus credit from promotions",
+  },
+  LOYALTY_BONUS: {
+    label: "Loyalty Bonus",
+    description: "Bonus earned for loyalty rewards",
+  },
+  REFUND_CREDIT: {
+    label: "Refund Credit",
+    description: "Credit from refunds",
+  },
+  FIRST_PURCHASE_BONUS: {
+    label: "First Purchase Bonus",
+    description: "Bonus for first purchase",
+  },
+  MANUAL_ADJUSTMENT: {
+    label: "Manual Adjustment",
+    description: "Manual adjustment by support",
   },
 };
 
@@ -64,7 +94,9 @@ export function TransactionHistory({
   limit = 10,
   showLoadMore = true,
 }: TransactionHistoryProps) {
-  const { data, isLoading, error, refetch, isFetching } = useWalletTransactions({ limit });
+  const { data, isLoading, error, refetch, isFetching } = useWalletTransactions(
+    { limit },
+  );
 
   const transactions = data?.transactions ?? [];
   const refreshing = isFetching && !isLoading;
@@ -86,8 +118,8 @@ export function TransactionHistory({
   });
 
   const sortedTransactions = [...filteredTransactions].sort((a, b) => {
-    const dateA = new Date(a.created_at).getTime();
-    const dateB = new Date(b.created_at).getTime();
+    const dateA = new Date(a.createdAt).getTime();
+    const dateB = new Date(b.createdAt).getTime();
     return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
   });
 
@@ -124,10 +156,7 @@ export function TransactionHistory({
   if (isLoading && !refreshing) {
     return (
       <div
-        className={cn(
-          "flex min-h-80 items-center justify-center",
-          className,
-        )}
+        className={cn("flex min-h-80 items-center justify-center", className)}
       >
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
@@ -143,7 +172,9 @@ export function TransactionHistory({
         )}
       >
         <div className="text-center">
-          <p className="text-sm font-medium text-red-900">Failed to load transactions</p>
+          <p className="text-sm font-medium text-red-900">
+            Failed to load transactions
+          </p>
           <Button
             onClick={handleRefresh}
             variant="outline"
@@ -272,11 +303,13 @@ export function TransactionHistory({
         <div className="space-y-3">
           {sortedTransactions.map((tx, index) => {
             const isCredit = tx.type === "CREDIT";
-            const categoryInfo = TRANSACTION_CATEGORY_LABELS[tx.category];
+            // Normalize category for lookup (e.g. "Reservation Confirmed" -> "RESERVATION_CONFIRMED")
+            const categoryKey = tx.category.toUpperCase().replace(/\s+/g, "_");
+            const categoryInfo = TRANSACTION_CATEGORY_LABELS[categoryKey];
 
             return (
               <motion.div
-                key={tx._id}
+                key={tx.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
@@ -310,9 +343,9 @@ export function TransactionHistory({
                       </p>
                       <p
                         className="mt-1 text-[11px] text-muted-foreground/70"
-                        title={formatFullDate(tx.created_at)}
+                        title={formatFullDate(tx.createdAt)}
                       >
-                        {formatDate(tx.created_at)}
+                        {formatDate(tx.createdAt)}
                       </p>
                     </div>
 
@@ -336,12 +369,12 @@ export function TransactionHistory({
                   <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
                     <span>Balance:</span>
                     <span className="font-medium text-foreground">
-                      ₹{tx.balance_before.toFixed(2)}
+                      ₹{tx.balanceBefore.toFixed(2)}
                     </span>
                     <ArrowDown className="h-3 w-3 text-muted-foreground/70" />
                     <ArrowUp className="h-3 w-3 text-muted-foreground/70" />
                     <span className="font-medium text-foreground">
-                      ₹{tx.balance_after.toFixed(2)}
+                      ₹{tx.balanceAfter.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -352,13 +385,15 @@ export function TransactionHistory({
       )}
 
       {/* Load More */}
-      {showLoadMore && sortedTransactions.length > 0 && sortedTransactions.length >= limit && (
-        <div className="flex justify-center pt-4">
-          <Button variant="outline" className="w-full sm:w-auto">
-            Load More Transactions
-          </Button>
-        </div>
-      )}
+      {showLoadMore &&
+        sortedTransactions.length > 0 &&
+        sortedTransactions.length >= limit && (
+          <div className="flex justify-center pt-4">
+            <Button variant="outline" className="w-full sm:w-auto">
+              Load More Transactions
+            </Button>
+          </div>
+        )}
     </div>
   );
 }

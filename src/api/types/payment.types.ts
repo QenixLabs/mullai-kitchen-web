@@ -11,13 +11,25 @@ export type PaymentStatus =
 
 export type TransactionType = "CREDIT" | "DEBIT";
 export type TransactionCategory =
-  | "PAUSE_CREDIT"
-  | "SUBSCRIPTION_PURCHASE"
+  | "REFERRAL_BONUS"
+  | "PROMOTIONAL_CREDIT"
+  | "LOYALTY_BONUS"
+  | "REFUND_CREDIT"
+  | "FIRST_PURCHASE_BONUS"
   | "ADDON_PURCHASE"
+  | "SUBSCRIPTION_RENEWAL"
+  | "SUBSCRIPTION_CANCELLATION"
+  | "MANUAL_ADJUSTMENT"
+  | "PAUSE_CREDIT"
   | "WALLET_TOPUP"
+  | "SUBSCRIPTION_PURCHASE"
   | "RESERVATION_CONFIRMED"
-  | "SUBSCRIPTION_CANCELLATION";
-export type ReferenceType = "SUBSCRIPTION" | "ADDON_ORDER";
+  | "RESERVATION_RELEASED";
+
+export type ReferenceType =
+  | "SUBSCRIPTION"
+  | "ADDON_ORDER"
+  | "MANUAL_ADJUSTMENT";
 
 // ===========================================
 // Wallet Top-Up Types
@@ -142,18 +154,17 @@ export interface WalletBalanceResponse {
 }
 
 export interface WalletTransaction {
-  _id: string;
-  wallet_id: string;
+  id: string;
   type: TransactionType;
-  category: TransactionCategory;
+  category: string; // The backend seems to return formatted labels sometimes, or we'll handle both
   amount: number;
-  balance_before: number;
-  balance_after: number;
+  balanceBefore: number;
+  balanceAfter: number;
   description: string;
-  reference_id: string;
-  reference_type: ReferenceType;
-  metadata: Record<string, unknown>;
-  created_at: string;
+  referenceId?: string;
+  referenceType?: ReferenceType;
+  metadata?: Record<string, unknown>;
+  createdAt: string;
 }
 
 export interface WalletReservation {

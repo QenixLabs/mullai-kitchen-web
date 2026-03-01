@@ -15,7 +15,9 @@ export const paymentApi = {
   /**
    * Creates a payment order with wallet reservation
    */
-  createOrder: async (payload: CreatePaymentOrderRequest): Promise<PaymentOrderResponse> => {
+  createOrder: async (
+    payload: CreatePaymentOrderRequest,
+  ): Promise<PaymentOrderResponse> => {
     const response = await apiClient.post<PaymentOrderResponse>(
       PAYMENT_ROUTES.CREATE_ORDER,
       payload,
@@ -36,7 +38,9 @@ export const paymentApi = {
   /**
    * Checks the status of a wallet reservation
    */
-  getReservationStatus: async (reservationId: string): Promise<ReservationStatusResponse> => {
+  getReservationStatus: async (
+    reservationId: string,
+  ): Promise<ReservationStatusResponse> => {
     const response = await apiClient.get<ReservationStatusResponse>(
       PAYMENT_ROUTES.RESERVATION_STATUS(reservationId),
     );
@@ -60,17 +64,19 @@ export const paymentApi = {
     limit?: number;
     offset?: number;
   }): Promise<{ transactions: WalletTransaction[]; total: number }> => {
-    const response = await apiClient.get<{ transactions: WalletTransaction[]; total: number }>(
-      PAYMENT_ROUTES.WALLET_TRANSACTIONS,
-      { params },
-    );
+    const response = await apiClient.get<{
+      transactions: WalletTransaction[];
+      total: number;
+    }>(PAYMENT_ROUTES.WALLET_TRANSACTIONS, { params });
     return response.data;
   },
 
   /**
    * Creates a Razorpay order for wallet top-up
    */
-  topupWallet: async (payload: TopupWalletRequest): Promise<TopupWalletResponse> => {
+  topupWallet: async (
+    payload: TopupWalletRequest,
+  ): Promise<TopupWalletResponse> => {
     const response = await apiClient.post<TopupWalletResponse>(
       PAYMENT_ROUTES.WALLET_TOPUP,
       payload,
