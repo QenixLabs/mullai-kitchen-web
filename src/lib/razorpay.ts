@@ -82,7 +82,6 @@ export function openRazorpayCheckout(config: RazorpayConfig): void {
 }
 
 export interface PollOrderStatusParams {
-  orderId: string;
   pollInterval?: number; // in milliseconds
   maxAttempts?: number;
 }

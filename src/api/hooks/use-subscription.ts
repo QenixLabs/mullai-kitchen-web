@@ -22,7 +22,7 @@ export function useSubscriptions(params?: {
 }) {
   return useQuery<SubscriptionListResponse>({
     queryKey: subscriptionKeys.subscriptions(params),
-    queryFn: () => subscriptionApi.getSubscriptions(params as any),
+    queryFn: () => subscriptionApi.getSubscriptions(params as SubscriptionListResponse extends infer R ? R : never),
     staleTime: 60_000, // 1 minute
   });
 }
@@ -43,7 +43,7 @@ export function useDailyOrders(id: string, params?: {
 }) {
   return useQuery<DailyOrdersResponse>({
     queryKey: subscriptionKeys.dailyOrders(id, params),
-    queryFn: () => subscriptionApi.getDailyOrders(id, params as any),
+    queryFn: () => subscriptionApi.getDailyOrders(id, params as Parameters<typeof subscriptionApi.getDailyOrders>[1]),
     enabled: !!id,
     staleTime: 60_000,
   });

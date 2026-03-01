@@ -99,13 +99,17 @@ const refreshAccessToken = async (): Promise<string | null> => {
 };
 
 // Extract error message from various response structures
-function getErrorMessage(error: any): string | undefined {
+function getErrorMessage(error: unknown): string | undefined {
   if (!error) return undefined;
 
   // Try different structures:
   // 1. { message, data, success } - error response from backend
-  if (error.message) return error.message;
-  if (error.data?.message) return error.data.message;
+  if (error && typeof error === 'object' && 'message' in error) {
+    return (error as { message: unknown }).message as string;
+  }
+  if (error && typeof error === 'object' && 'data' in error && typeof (error as { data: unknown }).data === 'object' && (error as { data: { message?: string } }).data?.message) {
+    return (error as { data: { message: string } }).data.message;
+  }
 
   // 2. Direct message on error object
   return undefined;
@@ -125,13 +129,13 @@ apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     // If backend returns { data, success, message }, unwrap the inner data
     // Otherwise, return as-is (backend already returns direct data)
-    const responseData = response.data as any;
+    const responseData = response.data;
     if (
       responseData &&
       typeof responseData === "object" &&
       "data" in responseData
     ) {
-      return { ...response, data: responseData.data };
+      return { ...response, data: (responseData as { data: unknown }).data };
     }
     return response;
   },

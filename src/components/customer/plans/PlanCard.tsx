@@ -34,10 +34,6 @@ export function PlanCard({
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  useEffect(() => {
-    setImageLoadFailed(false);
-  }, [plan.image_url]);
-
   const fallbackImage = "/images/plans/why-choose.jpg";
   const imageSrc = !plan.image_url || imageLoadFailed ? fallbackImage : plan.image_url;
   const isFallback = !plan.image_url || imageLoadFailed;

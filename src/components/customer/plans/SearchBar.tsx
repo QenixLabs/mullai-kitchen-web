@@ -27,7 +27,10 @@ export function SearchBar({
   className,
 }: SearchBarProps) {
   const onSearchRef = useRef(onSearch);
-  onSearchRef.current = onSearch;
+
+  useEffect(() => {
+    onSearchRef.current = onSearch;
+  }, [onSearch]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {

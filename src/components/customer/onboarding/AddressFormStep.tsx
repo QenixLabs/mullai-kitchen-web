@@ -211,8 +211,7 @@ export function AddressFormStep({
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="space-y-1">
                     <div className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
-                      {(address.type as any) === "Home" ||
-                      (address.type as any) === "HOME" ? (
+                      {address.type === "Home" || address.type.toUpperCase() === "HOME" ? (
                         <Home className="h-3.5 w-3.5" aria-hidden="true" />
                       ) : (
                         <Building2 className="h-3.5 w-3.5" aria-hidden="true" />

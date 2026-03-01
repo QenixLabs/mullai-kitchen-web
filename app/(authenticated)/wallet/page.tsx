@@ -130,9 +130,10 @@ export default function WalletPage() {
           setTopupProcessing(false);
         },
       });
-    } catch (err: any) {
-      console.error("Top-up failed:", err);
-      alert(`Failed to initiate payment: ${err.message || "Unknown error"}`);
+    } catch (err: unknown) {
+      const error = err as Error;
+      console.error("Top-up failed:", error);
+      alert(`Failed to initiate payment: ${error.message || "Unknown error"}`);
     } finally {
       setTopupProcessing(false);
     }

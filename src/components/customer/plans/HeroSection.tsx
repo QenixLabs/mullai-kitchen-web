@@ -226,7 +226,7 @@ export function HeroSection({
             {/* Today's Special Badge */}
             <div className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1.5 shadow-lg backdrop-blur-sm sm:px-4 sm:py-2">
               <span className="text-[10px] font-bold uppercase tracking-wider text-primary sm:text-xs">
-                Today's Special
+                Today&apos;s Special
               </span>
             </div>
             {/* Price Badge */}

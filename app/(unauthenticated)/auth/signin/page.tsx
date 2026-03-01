@@ -83,7 +83,7 @@ function SignInForm() {
       {/* Existing user link at top */}
       <div className="mb-6 text-center">
         <span className="text-sm text-gray-500">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link
             className="font-semibold text-primary hover:text-primary/90 transition-colors"
             href="/auth/signup"

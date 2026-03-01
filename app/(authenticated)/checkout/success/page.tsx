@@ -30,53 +30,61 @@ function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<ConfirmationStatus>("loading");
   const [retryCount, setRetryCount] = useState(0);
-  const [error, setError] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(5);
 
   const paymentStore = usePaymentStore();
-  const { orderId, razorpayPaymentId, amount, currency, errorMessage } =
+  const { orderId, razorpayPaymentId, amount, errorMessage } =
     paymentStore;
 
   const { data: orderStatus } = useOrderStatus(orderId || "");
 
   const planName = searchParams.get("planName") || "Subscription Plan";
 
-  useEffect(() => {
+  // Derive status and error from orderStatus synchronously
+  const { derivedStatus, derivedError } = (() => {
+    let computedStatus: ConfirmationStatus = "loading";
+    let computedError: string | null = null;
+
     if (razorpayPaymentId && orderId) {
       if (orderStatus) {
         if (orderStatus.status === "paid") {
-          setStatus("confirmed");
+          computedStatus = "confirmed";
         } else if (orderStatus.status === "failed") {
-          setStatus("failed");
-          setError(`Payment failed: ${orderStatus.status}`);
+          computedStatus = "failed";
+          computedError = `Payment failed: ${orderStatus.status}`;
         }
       }
     } else if (errorMessage) {
-      setStatus("failed");
-      setError(errorMessage);
+      computedStatus = "failed";
+      computedError = errorMessage;
     } else {
       const razorpayOrderId = searchParams.get("razorpay_order_id");
       const razorpayPaymentIdParam = searchParams.get("razorpay_payment_id");
 
       if (razorpayOrderId && razorpayPaymentIdParam) {
-        setStatus("confirmed");
+        computedStatus = "confirmed";
       } else if (orderId && !orderStatus) {
-        setStatus("loading");
+        computedStatus = "loading";
       } else {
-        setStatus("failed");
-        setError(
-          "Payment session not found. If payment was successful, please check your subscription page.",
-        );
+        computedStatus = "failed";
+        computedError = "Payment session not found. If payment was successful, please check your subscription page.";
       }
     }
-  }, [
-    razorpayPaymentId,
-    orderId,
-    orderStatus,
-    errorMessage,
-    searchParams,
-    router,
-  ]);
+
+    return { derivedStatus: computedStatus, derivedError: computedError };
+  })();
+
+  // Update status when derived status changes
+  useEffect(() => {
+    setStatus(derivedStatus);
+  }, [derivedStatus]);
+
+  // Set error message based on derived values
+  useEffect(() => {
+    if (derivedError) {
+      setStatus("failed");
+    }
+  }, [derivedError]);
 
   // Countdown timer for confirmed status
   useEffect(() => {
@@ -91,7 +99,6 @@ function CheckoutSuccessContent() {
   const handleRetry = () => {
     setRetryCount((prev) => prev + 1);
     setStatus("loading");
-    setError(null);
     window.location.reload();
   };
 
@@ -186,7 +193,7 @@ function CheckoutSuccessContent() {
                     ? "We're just wrapping up some final details with your secure payment."
                     : status === "confirmed"
                       ? `Your ${planName} is now active and ready for your next healthy meal.`
-                      : error ||
+                      : derivedError ||
                         "Something went wrong with your transaction verification. Please contact support."}
                 </p>
               </div>

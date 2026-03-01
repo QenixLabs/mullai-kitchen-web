@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 
 import { QueryProvider } from "@/providers/query-provider";
 import { UserStoreProvider, useUserStore } from "@/providers/user-store-provider";
@@ -15,13 +15,12 @@ interface AppProviderProps {
 function AuthStateSync() {
   const setSession = useUserStore((store) => store.setSession);
   const clearSession = useUserStore((store) => store.clearSession);
+  const initialized = useRef(false);
 
-  // Set up callback to update store when auth state changes in the API client
-  // This needs to happen only once, so we use a flag on the function
-  const callback = setAuthStateCallback as any;
+  useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
 
-  if (!callback._isSet) {
-    callback._isSet = true;
     setAuthStateCallback((session: IAuthSession | null) => {
       if (session) {
         setSession(session);
@@ -29,7 +28,7 @@ function AuthStateSync() {
         clearSession();
       }
     });
-  }
+  }, [setSession, clearSession]);
 
   return null;
 }
