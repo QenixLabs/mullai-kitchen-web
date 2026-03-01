@@ -37,6 +37,7 @@ export const PAYMENT_ROUTES = {
   RESERVATION_STATUS: (reservationId: string) => `/payment/reservations/${reservationId}/status`,
   WALLET_BALANCE: "/payment/wallet/balance",
   WALLET_TRANSACTIONS: "/payment/wallet/transactions",
+  WALLET_TOPUP: "/payment/wallet/topup",
 } as const;
 
 export const SUBSCRIPTION_ROUTES = {
