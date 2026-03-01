@@ -90,7 +90,10 @@ export default function WalletPage() {
           {/* Main Content */}
           <div className="space-y-6">
             {/* Wallet Balance Card */}
-            <WalletBalanceCard onAddFunds={handleAddFunds} />
+            <WalletBalanceCard
+              onAddFunds={handleAddFunds}
+              isTopupProcessing={topupProcessing}
+            />
 
             {/* Transaction History */}
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
