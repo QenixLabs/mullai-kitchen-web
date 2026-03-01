@@ -33,3 +33,13 @@ export const paymentKeys = {
   orderStatus: (orderId: string) => ["payment", "orders", "status", orderId] as const,
   reservationStatus: (reservationId: string) => ["payment", "reservations", "status", reservationId] as const,
 };
+
+export const subscriptionKeys = {
+  all: () => ["subscription"] as const,
+  subscriptions: (params?: { status?: string; page?: number; limit?: number }) =>
+    ["subscription", "list", params] as const,
+  subscription: (id: string) => ["subscription", id] as const,
+  dailyOrders: (id: string, params?: { page?: number; limit?: number; status?: string }) =>
+    ["subscription", id, "daily-orders", params] as const,
+  pausePeriods: (id: string) => ["subscription", id, "pause-periods"] as const,
+};

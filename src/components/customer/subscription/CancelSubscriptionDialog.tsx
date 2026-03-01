@@ -4,7 +4,7 @@ import * as z from "zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CancelSubscriptionRequest, CancellationOption } from "@/api/types/subscription.types";
@@ -19,7 +19,7 @@ interface CancelSubscriptionDialogProps {
 
 const cancelSchema = z.object({
   cancellation_option: z.enum(['CANCEL_ALL', 'CANCEL_RENEWAL'] as const),
-  reason: z.string().min(10, "Please provide a reason").max(500, "Reason must be less than 500 characters"),
+  reason: z.string().max(500, "Reason must be less than 500 characters").optional(),
 });
 
 export function CancelSubscriptionDialog({
@@ -68,27 +68,19 @@ export function CancelSubscriptionDialog({
               control={form.control}
               name="cancellation_option"
               render={({ field }) => (
-                <FormItem className="space-y-3">
+                <FormItem>
                   <FormLabel>Cancellation Type</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="CANCEL_ALL" id="cancel-all" />
-                        <label htmlFor="cancel-all" className="cursor-pointer">
-                          Cancel Immediately
-                        </label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="CANCEL_RENEWAL" id="cancel-renewal" />
-                        <label htmlFor="cancel-renewal" className="cursor-pointer">
-                          Cancel at End Date
-                        </label>
-                      </div>
-                    </RadioGroup>
-                  </FormControl>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select cancellation type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="CANCEL_ALL">Cancel Immediately</SelectItem>
+                      <SelectItem value="CANCEL_RENEWAL">Cancel at End Date</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

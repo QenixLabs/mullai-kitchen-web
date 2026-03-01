@@ -38,3 +38,15 @@ export const PAYMENT_ROUTES = {
   WALLET_BALANCE: "/payment/wallet/balance",
   WALLET_TRANSACTIONS: "/payment/wallet/transactions",
 } as const;
+
+export const SUBSCRIPTION_ROUTES = {
+  SUBSCRIPTIONS: "/customer/subscriptions",
+  SUBSCRIPTION: (id: string) => `/customer/subscriptions/${id}`,
+  DAILY_ORDERS: (id: string) => `/customer/subscriptions/${id}/daily-orders`,
+  PAUSE_PERIODS: (id: string) => `/customer/subscriptions/${id}/pause-periods`,
+  PAUSE: (id: string) => `/customer/subscriptions/${id}/pause`,
+  RESUME: (id: string) => `/customer/subscriptions/${id}/resume`,
+  CANCEL: (id: string) => `/customer/subscriptions/${id}/cancel`,
+  RENEW: (id: string) => `/customer/subscriptions/${id}/renew`,
+  TOGGLE_AUTO_RENEW: (id: string) => `/customer/subscriptions/${id}/auto-renew`,
+} as const;

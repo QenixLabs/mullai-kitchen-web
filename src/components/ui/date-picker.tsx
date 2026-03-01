@@ -16,21 +16,38 @@ import { cn } from "@/lib/utils"
 interface DatePickerProps {
   date?: Date
   onDateChange?: (date: Date | undefined) => void | ((value: Date | undefined) => void)
+  value?: Date
+  onChange?: (date: Date | undefined) => void | ((value: Date | undefined) => void)
   placeholder?: string
   minDate?: Date
+  maxDate?: Date
   className?: string
-  disabled?: boolean
+  disabled?: boolean | ((date: Date) => boolean)
 }
 
 function DatePicker({
   date,
   onDateChange,
+  value,
+  onChange,
   placeholder = "Pick a date",
   minDate,
+  maxDate,
   className,
   disabled = false,
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false)
+
+  // Support both date/onDateChange and value/onChange conventions
+  const selectedDate = value !== undefined ? value : date
+  const handleChange = onChange || onDateChange
+
+  // Build disabled array combining minDate, maxDate, and custom disabled function
+  const disabledMatchers: Array<(date: Date) => boolean> = [
+    (day) => !!minDate && day < minDate,
+    (day) => !!maxDate && day > maxDate,
+    ...(typeof disabled === 'function' ? [disabled] : []),
+  ]
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -39,28 +56,27 @@ function DatePicker({
           variant="outline"
           className={cn(
             "w-full justify-start text-left font-normal",
-            !date && "text-muted-foreground",
+            !selectedDate && "text-muted-foreground",
             className
           )}
-          disabled={disabled}
+          disabled={typeof disabled === 'boolean' ? disabled : false}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>{placeholder}</span>}
+          {selectedDate ? format(selectedDate, "PPP") : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
-          selected={date}
+          selected={selectedDate}
           onSelect={(selectedDate) => {
-            onDateChange?.(selectedDate)
+            handleChange?.(selectedDate)
             setOpen(false)
           }}
           initialFocus
-          disabled={[
-            (day) => minDate && day < minDate,
-          ]}
+          disabled={disabledMatchers}
           fromMonth={minDate}
+          toMonth={maxDate}
         />
       </PopoverContent>
     </Popover>
