@@ -19,6 +19,15 @@ import type {
 
 import { WalletBalanceCard } from "@/components/customer/wallet";
 import { TransactionHistory } from "@/components/customer/wallet";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,9 +41,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useTopupWallet, useWalletBalance } from "@/api/hooks/usePayment";
+import {
+  useTopupWallet,
+  useWalletBalance,
+  useWalletTransactions,
+} from "@/api/hooks/usePayment";
 import { loadRazorpayScript, openRazorpayCheckout } from "@/lib/razorpay";
 import { useCurrentUser } from "@/hooks/use-user-store";
+import React from "react";
 
 const TOPUP_AMOUNTS = [100, 200, 500, 1000, 2000];
 
@@ -43,9 +57,21 @@ export default function WalletPage() {
   const [customAmount, setCustomAmount] = useState("");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [topupProcessing, setTopupProcessing] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 10;
 
   const topupMutation = useTopupWallet();
-  const { refetch } = useWalletBalance();
+  const { refetch: refetchBalance } = useWalletBalance();
+  const {
+    data: transactionsData,
+    isLoading: transactionsLoading,
+    error: transactionsError,
+    refetch: refetchTransactions,
+    isFetching: transactionsFetching,
+  } = useWalletTransactions({
+    limit,
+    offset: (currentPage - 1) * limit,
+  });
   const user = useCurrentUser();
 
   const handleAddFunds = () => {
@@ -91,7 +117,8 @@ export default function WalletPage() {
           setTopupProcessing(false);
           setSelectedAmount(null);
           setCustomAmount("");
-          refetch(); // Refresh wallet balance
+          refetchBalance(); // Refresh wallet balance
+          refetchTransactions(); // Refresh transactions
         },
         onDismiss: () => {
           console.log("Payment modal dismissed");
@@ -147,7 +174,120 @@ export default function WalletPage() {
 
             {/* Transaction History */}
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-              <TransactionHistory limit={20} />
+              <TransactionHistory
+                data={transactionsData}
+                isLoading={transactionsLoading}
+                isFetching={transactionsFetching}
+                error={transactionsError as Error}
+                refetch={refetchTransactions}
+                limit={limit}
+                onPageChange={setCurrentPage}
+              />
+
+              {/* Pagination */}
+              {transactionsData &&
+                Math.ceil(transactionsData.total / limit) > 1 && (
+                  <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-gray-100 pt-6 sm:flex-row">
+                    <p className="text-xs text-gray-500">
+                      Showing{" "}
+                      <span className="font-medium text-gray-900">
+                        {(currentPage - 1) * limit + 1}
+                      </span>{" "}
+                      to{" "}
+                      <span className="font-medium text-gray-900">
+                        {Math.min(currentPage * limit, transactionsData.total)}
+                      </span>{" "}
+                      of{" "}
+                      <span className="font-medium text-gray-900">
+                        {transactionsData.total}
+                      </span>{" "}
+                      transactions
+                    </p>
+
+                    <Pagination className="mx-0 w-auto">
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (currentPage > 1)
+                                setCurrentPage(currentPage - 1);
+                            }}
+                            className={
+                              currentPage === 1
+                                ? "pointer-events-none opacity-50"
+                                : "cursor-pointer"
+                            }
+                          />
+                        </PaginationItem>
+
+                        {/* Generate Page Numbers */}
+                        {Array.from(
+                          { length: Math.ceil(transactionsData.total / limit) },
+                          (_, i) => i + 1,
+                        )
+                          .filter((page) => {
+                            const totalPages = Math.ceil(
+                              transactionsData.total / limit,
+                            );
+                            return (
+                              page === 1 ||
+                              page === totalPages ||
+                              Math.abs(page - currentPage) <= 1
+                            );
+                          })
+                          .map((page, index, array) => {
+                            const showEllipsisBefore =
+                              index > 0 && page - array[index - 1] > 1;
+
+                            return (
+                              <React.Fragment key={page}>
+                                {showEllipsisBefore && (
+                                  <PaginationItem>
+                                    <PaginationEllipsis />
+                                  </PaginationItem>
+                                )}
+                                <PaginationItem>
+                                  <PaginationLink
+                                    href="#"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setCurrentPage(page);
+                                    }}
+                                    isActive={currentPage === page}
+                                    className="cursor-pointer"
+                                  >
+                                    {page}
+                                  </PaginationLink>
+                                </PaginationItem>
+                              </React.Fragment>
+                            );
+                          })}
+
+                        <PaginationItem>
+                          <PaginationNext
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              const totalPages = Math.ceil(
+                                transactionsData.total / limit,
+                              );
+                              if (currentPage < totalPages)
+                                setCurrentPage(currentPage + 1);
+                            }}
+                            className={
+                              currentPage ===
+                              Math.ceil(transactionsData.total / limit)
+                                ? "pointer-events-none opacity-50"
+                                : "cursor-pointer"
+                            }
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  </div>
+                )}
             </div>
           </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
@@ -20,8 +20,13 @@ import { Button } from "@/components/ui/button";
 
 export interface TransactionHistoryProps {
   className?: string;
-  limit?: number;
-  showLoadMore?: boolean;
+  data: { transactions: WalletTransaction[]; total: number } | undefined;
+  isLoading: boolean;
+  isFetching: boolean;
+  error: Error | null;
+  refetch: () => void;
+  limit: number;
+  onPageChange: (page: number) => void;
 }
 
 type SortOrder = "desc" | "asc";
@@ -91,13 +96,14 @@ const TRANSACTION_CATEGORY_LABELS: Record<
 
 export function TransactionHistory({
   className,
-  limit = 10,
-  showLoadMore = true,
+  data,
+  isLoading,
+  error,
+  refetch,
+  isFetching,
+  limit,
+  onPageChange,
 }: TransactionHistoryProps) {
-  const { data, isLoading, error, refetch, isFetching } = useWalletTransactions(
-    { limit },
-  );
-
   const transactions = data?.transactions ?? [];
   const refreshing = isFetching && !isLoading;
   const hasError = error !== null;
@@ -227,6 +233,7 @@ export function TransactionHistory({
                       type="button"
                       onClick={() => {
                         setFilter(type);
+                        onPageChange(1);
                         setShowFilterDropdown(false);
                       }}
                       className={cn(
@@ -383,17 +390,6 @@ export function TransactionHistory({
           })}
         </div>
       )}
-
-      {/* Load More */}
-      {showLoadMore &&
-        sortedTransactions.length > 0 &&
-        sortedTransactions.length >= limit && (
-          <div className="flex justify-center pt-4">
-            <Button variant="outline" className="w-full sm:w-auto">
-              Load More Transactions
-            </Button>
-          </div>
-        )}
     </div>
   );
 }
