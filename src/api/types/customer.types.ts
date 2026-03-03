@@ -2,7 +2,7 @@
 // Address Types
 // ===========================================
 
-export type AddressType = 'Home' | 'Office';
+export type AddressType = 'Home' | 'Office' | 'Other';
 
 export interface Address {
   _id: string;

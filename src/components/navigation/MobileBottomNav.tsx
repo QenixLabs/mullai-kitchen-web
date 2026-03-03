@@ -36,6 +36,7 @@ const MAIN_NAV_ITEMS = [
   { href: "/subscription", icon: Calendar, label: "Subscription" },
   { href: "/plans", icon: LayoutGrid, label: "Plans" },
   { href: "/wallet", icon: Wallet, label: "Wallet" },
+  { href: "/profile", icon: User, label: "Profile" },
 ] as const;
 
 export function MobileBottomNav() {

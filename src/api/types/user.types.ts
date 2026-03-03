@@ -5,6 +5,7 @@ export interface IUser {
   phone: string;
   role: string;
   status: string;
+  avatar_url?: string;
   assigned_outlet_id?: string;
   onboarding_completed?: boolean;
   dietary_preferences?: string;

@@ -12,6 +12,7 @@ import {
   LogOut,
   LayoutGrid,
   UtensilsCrossed,
+  User,
 } from "lucide-react";
 import {
   useAuthHydrated,
@@ -39,6 +40,7 @@ const SIDEBAR_ITEMS = [
   { href: "/subscription", icon: Calendar, label: "Subscriptions" },
   { href: "/plans", icon: LayoutGrid, label: "Plans" },
   { href: "/wallet", icon: Wallet, label: "Wallet" },
+  { href: "/profile", icon: User, label: "Profile" },
   { href: "/add-ons", icon: PlusCircle, label: "Add-ons" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ] as const;

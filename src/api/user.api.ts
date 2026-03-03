@@ -7,4 +7,7 @@ export const userApi = {
     const response = await apiClient.get<IUser>(USER_ROUTES.ME);
     return response.data;
   },
+  deleteMe: async (): Promise<void> => {
+    await apiClient.delete(USER_ROUTES.ME);
+  },
 };

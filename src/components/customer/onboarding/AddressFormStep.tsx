@@ -42,7 +42,7 @@ const normalizeAddressPayload = (
 
   return {
     type: payload.type,
-    full_address: payload.full_address.trim(),
+    full_address: payload.full_address?.trim() || "",
     area: payload.area.trim(),
     pincode: payload.pincode.trim(),
     city: payload.city.trim(),

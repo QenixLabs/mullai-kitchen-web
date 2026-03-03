@@ -17,6 +17,7 @@ import type {
 import type { IUser } from "@/api/types/user.types";
 import { useUserStore } from "@/providers/user-store-provider";
 import { clearTokenPair, getRefreshToken, setTokenPair } from "@/lib/storage";
+import { toast } from "sonner";
 
 export function useLogin() {
   const queryClient = useQueryClient();
@@ -91,6 +92,24 @@ export function useForgotPassword() {
 export function useResetPassword() {
   return useMutation({
     mutationFn: (payload: IResetPasswordRequest) => authApi.resetPassword(payload),
+  });
+}
+
+export function useDeleteAccount() {
+  const queryClient = useQueryClient();
+  const clearSession = useUserStore((store) => store.clearSession);
+
+  return useMutation({
+    mutationFn: () => userApi.deleteMe(),
+    onSuccess: () => {
+      clearTokenPair();
+      clearSession();
+      queryClient.clear();
+      toast.success("Account deleted successfully");
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to delete account");
+    },
   });
 }
 

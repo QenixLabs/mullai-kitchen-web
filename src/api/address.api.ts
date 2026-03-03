@@ -4,11 +4,17 @@ import type { Address, CreateAddressDto } from "@/api/types/customer.types";
 
 export const addressApi = {
   create: async (payload: CreateAddressDto): Promise<Address> => {
-    const response = await apiClient.post<Address>(CUSTOMER_ROUTES.ADDRESSES, payload);
+    const response = await apiClient.post<Address>(
+      CUSTOMER_ROUTES.ADDRESSES,
+      payload,
+    );
     return response.data;
   },
   list: async (): Promise<Address[]> => {
     const response = await apiClient.get<Address[]>(CUSTOMER_ROUTES.ADDRESSES);
     return response.data;
+  },
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(`${CUSTOMER_ROUTES.ADDRESSES}/${id}`);
   },
 };
