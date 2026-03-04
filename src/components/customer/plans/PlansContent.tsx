@@ -260,8 +260,8 @@ export function PlansContent({
                 className={cn(
                   "rounded-full px-5 py-2 text-sm font-medium transition-all duration-200",
                   dietFilter === "all"
-                    ? "bg-gray-900 text-white shadow-sm"
-                    : "bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200",
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border",
                 )}
               >
                 All Meals
@@ -272,8 +272,8 @@ export function PlansContent({
                 className={cn(
                   "rounded-full px-5 py-2 text-sm font-medium transition-all duration-200",
                   dietFilter === "veg"
-                    ? "bg-emerald-600 text-white shadow-sm"
-                    : "bg-emerald-50/50 text-emerald-700 hover:bg-emerald-50 border border-emerald-100",
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border",
                 )}
               >
                 Veg
@@ -284,8 +284,8 @@ export function PlansContent({
                 className={cn(
                   "rounded-full px-5 py-2 text-sm font-medium transition-all duration-200",
                   dietFilter === "non-veg"
-                    ? "bg-rose-600 text-white shadow-sm"
-                    : "bg-rose-50/50 text-rose-700 hover:bg-rose-50 border border-rose-100",
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border",
                 )}
               >
                 Non-Veg
@@ -293,21 +293,9 @@ export function PlansContent({
             </div>
 
             {/* Meal Type cards */}
-            <div className="flex items-center gap-2 ml-2 pl-4 border-l border-gray-100">
+            <div className="flex items-center gap-2 ml-2 pl-4 border-l border-border">
               {MEAL_TYPES.map((type) => {
                 const isActive = mealTypeFilters.has(type);
-                const colorClasses = {
-                  Breakfast: isActive
-                    ? "bg-amber-100 text-amber-900 border-amber-200"
-                    : "bg-white text-gray-600 border-gray-200 hover:bg-amber-50 hover:border-amber-100",
-Lunch: isActive
-                    ? "bg-primary/10 text-primary border-primary/20"
-                    : "bg-white text-gray-600 border-gray-200 hover:bg-primary/5 hover:border-primary/10",
-                  Dinner: isActive
-                    ? "bg-indigo-100 text-indigo-900 border-indigo-200"
-                    : "bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-indigo-100",
-                };
-
                 return (
                   <button
                     key={type}
@@ -315,7 +303,9 @@ Lunch: isActive
                     onClick={() => toggleMealType(type)}
                     className={cn(
                       "rounded-full px-5 py-2 text-sm font-medium border transition-all duration-200 flex items-center gap-2",
-                      colorClasses[type],
+                      isActive
+                        ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                        : "bg-background text-muted-foreground border-border hover:bg-accent hover:text-accent-foreground",
                     )}
                   >
                     <span>{type}</span>
