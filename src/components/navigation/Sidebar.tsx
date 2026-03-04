@@ -4,14 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Calendar,
-  Layers,
   Wallet,
   PlusCircle,
   Settings,
   Plus,
-  LogOut,
   LayoutGrid,
-  UtensilsCrossed,
   User,
 } from "lucide-react";
 import {
@@ -25,10 +22,8 @@ import { cn } from "@/lib/utils";
 import {
   Sidebar as ShadcnSidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -66,16 +61,8 @@ export function Sidebar() {
   return (
     <ShadcnSidebar className="w-60 border-r border-border bg-muted/30 shadow-none">
       <SidebarHeader className="bg-muted/30 border-none px-6 pt-8 pb-4">
-        <Link
-          href="/subscription"
-          className="flex items-center gap-3 active:opacity-90 transition-opacity"
-        >
-          <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-primary shadow-md shadow-primary/20">
-            <UtensilsCrossed className="h-6 w-6 text-white" />
-          </div>
-          <span className="text-xl font-black tracking-tight text-foreground">
-            Mullai Kitchen
-          </span>
+        <Link href="/subscription" className="flex items-center gap-3 active:opacity-90 transition-opacity">
+          <img src="/logo.png" alt="Mullai Kitchen" className="h-auto w-full rounded" />
         </Link>
       </SidebarHeader>
       <SidebarContent className="flex flex-col h-full bg-muted/30">

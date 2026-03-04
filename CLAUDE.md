@@ -269,14 +269,14 @@ client/
 
 ## Brand Colors
 
-The primary brand color is **Orange** (`#FF6B35`).
+The primary brand color is **Burgundy** (`#39070F`).
 
 Available as:
 - `primary` - Main brand color
-- `primaryDark` - Darker shade (`#FF5C00`)
-- `primaryLight` - Lighter shade (`#FF8555`)
-- `primaryHover` - Hover state (`#E85A25`)
-- `primaryHoverLight` - Light hover (`#FF7545`)
+- `primaryDark` - Darker shade (`#230509`)
+- `primaryLight` - Lighter shade (`#4F0D1A`)
+- `primaryHover` - Hover state (`#2D0610`)
+- `primaryHoverLight` - Light hover (`#3D0815`)
 
 Use via design token: `bg-primary` or via constant: `BRAND_COLORS.primary`
 

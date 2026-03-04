@@ -82,8 +82,8 @@ function StepIndicator({ step, label, active }: StepIndicatorProps) {
         className={cn(
           "flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold transition-colors",
           active
-            ? "bg-orange-500 text-white shadow-md shadow-orange-200"
-            : "border-2 border-gray-300 bg-white text-gray-400",
+            ? "bg-primary text-white shadow-primary"
+            : "border-2 border-gray-300 bg-white text-muted-foreground",
         )}
       >
         {step}
@@ -91,7 +91,7 @@ function StepIndicator({ step, label, active }: StepIndicatorProps) {
       <span
         className={cn(
           "text-xs font-semibold",
-          active ? "text-orange-500" : "text-gray-400",
+          active ? "text-primary" : "text-muted-foreground",
         )}
       >
         {label}
@@ -114,18 +114,18 @@ function AddressCard({ address, selected, onClick }: AddressCardProps) {
       className={cn(
         "relative flex w-full flex-col items-start gap-1 rounded-xl border p-4 text-left transition-all",
         selected
-          ? "border-orange-400 bg-orange-50 shadow-sm"
-          : "border-gray-200 bg-white hover:border-orange-200 hover:bg-orange-50/40",
+          ? "border-border bg-muted shadow-sm"
+          : "border-gray-200 bg-white hover:border-border hover:bg-muted/40",
       )}
     >
       <div className="flex w-full items-center justify-between">
         <span className="flex items-center gap-1.5 text-sm font-semibold text-gray-900">
           {address.type}
           {address.is_default && selected && (
-            <CheckCircle2 className="h-3.5 w-3.5 text-orange-500" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
           )}
         </span>
-        <Pencil className="h-3.5 w-3.5 text-gray-400" />
+        <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
       </div>
       <p className="text-xs text-gray-600">{address.full_address}</p>
       <p className="text-xs text-gray-600">
@@ -147,9 +147,9 @@ function AddNewAddressCard({ onClick }: AddNewAddressCardProps) {
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 bg-white p-6 text-center transition-all hover:border-orange-300 hover:bg-orange-50/40"
+      className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 bg-white p-6 text-center transition-all hover:border-border hover:bg-muted/40"
     >
-      <PlusCircle className="h-6 w-6 text-gray-400" />
+      <PlusCircle className="h-6 w-6 text-muted-foreground" />
       <span className="text-sm font-medium text-gray-500">Add New Address</span>
     </button>
   );
@@ -186,15 +186,15 @@ function PaymentOption({
         disabled
           ? "cursor-not-allowed opacity-50"
           : selected
-            ? "border-orange-400 bg-orange-50/60"
-            : "border-gray-200 bg-white hover:border-orange-200",
+            ? "border-border bg-muted/60"
+            : "border-gray-200 bg-white hover:border-border",
       )}
     >
       {/* Radio circle */}
       <div
         className={cn(
           "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-          selected ? "border-orange-500 bg-orange-500" : "border-gray-300",
+          selected ? "border-primary bg-primary" : "border-gray-300",
         )}
       >
         {selected && <div className="h-2 w-2 rounded-full bg-white" />}
@@ -465,7 +465,7 @@ export default function CheckoutPage() {
           <StepIndicator step={1} label="Delivery Details" active />
 
           {/* connector line */}
-          <div className="mx-3 h-0.5 w-24 bg-gradient-to-r from-orange-400 to-gray-200 sm:w-40" />
+          <div className="mx-3 h-0.5 w-24 bg-gradient-to-r from-border to-border sm:w-40" />
 
           <StepIndicator
             step={2}
@@ -485,14 +485,14 @@ export default function CheckoutPage() {
             {/* 1. Select Delivery Address */}
             <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-gray-900 sm:text-lg">
-                <MapPin className="h-5 w-5 text-orange-500" />
+                <MapPin className="h-5 w-5 text-primary" />
                 1. Select Delivery Address
               </h2>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {addressesLoading ? (
                   <div className="col-span-2 flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 p-4">
-                    <Loader2 className="h-4 w-4 animate-spin text-orange-500" />
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
                     <span className="text-sm text-gray-500">
                       Loading addresses...
                     </span>
@@ -519,7 +519,7 @@ export default function CheckoutPage() {
               {/* Start Date Selector */}
               <div className="mt-4 border-t border-gray-100 pt-4">
                 <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-900">
-                  <Calendar className="h-4 w-4 text-orange-500" />
+                  <Calendar className="h-4 w-4 text-primary" />
                   Subscription Start Date
                 </label>
                 <DatePicker
@@ -539,8 +539,8 @@ export default function CheckoutPage() {
             </section>
 
             {/* Two-Phase Wallet info banner */}
-            <div className="flex items-start gap-3 rounded-2xl border border-orange-200 bg-orange-50 p-4 sm:p-5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-500">
+            <div className="flex items-start gap-3 rounded-2xl border border-border bg-muted p-4 sm:p-5">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
                 <Info className="h-4 w-4 text-white" />
               </div>
               <div>
@@ -554,7 +554,7 @@ export default function CheckoutPage() {
                   <button
                     type="button"
                     onClick={() => setShowWalletInfo(true)}
-                    className="font-medium text-orange-500 hover:underline"
+                    className="font-medium text-primary hover:underline"
                   >
                     Learn more about how it works.
                   </button>
@@ -565,14 +565,14 @@ export default function CheckoutPage() {
             {/* 2. Payment Selection */}
             <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-gray-900 sm:text-lg">
-                <CreditCard className="h-5 w-5 text-orange-500" />
+                <CreditCard className="h-5 w-5 text-primary" />
                 2. Payment Selection
               </h2>
 
               {/* Wallet Balance Display */}
               {walletLoading ? (
                 <div className="mb-4 flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 p-3">
-                  <Loader2 className="h-4 w-4 animate-spin text-orange-500" />
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   <span className="text-sm text-gray-600">
                     Loading wallet balance...
                   </span>
@@ -592,20 +592,20 @@ export default function CheckoutPage() {
                   </button>
                 </div>
               ) : (
-                <div className="mb-4 flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                <div className="mb-4 flex items-center justify-between rounded-xl bg-primary p-4 shadow-sm shadow-primary/10">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
-                      <Wallet className="h-5 w-5 text-emerald-600" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
+                      <Wallet className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">
+                      <p className="text-sm font-semibold text-white">
                         Wallet Balance
                       </p>
-                      <p className="text-xs text-gray-600">Available funds</p>
+                      <p className="text-xs text-white/70">Available funds</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-extrabold text-gray-900">
+                    <p className="text-2xl font-extrabold text-white">
                       ₹{walletBalance?.toFixed(2) || "0.00"}
                     </p>
                   </div>
@@ -621,7 +621,7 @@ export default function CheckoutPage() {
                       id="apply-wallet"
                       checked={applyWallet}
                       onChange={(e) => setApplyWallet(e.target.checked)}
-                      className="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                      className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary"
                     />
                     <div>
                       <label
@@ -639,7 +639,7 @@ export default function CheckoutPage() {
                     <button
                       type="button"
                       onClick={() => setApplyWallet(false)}
-                      className="text-gray-400 hover:text-gray-600"
+                      className="text-muted-foreground hover:text-gray-600"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -658,8 +658,8 @@ export default function CheckoutPage() {
                       : undefined
                   }
                   icon={
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-100">
-                      <WalletCards className="h-4 w-4 text-orange-600" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
+                      <WalletCards className="h-4 w-4 text-foreground" />
                     </div>
                   }
                   selected={selectedPayment === PAYMENT_METHODS.WALLET}
@@ -733,7 +733,7 @@ export default function CheckoutPage() {
                 <div className="flex items-center justify-between text-gray-600">
                   <span className="flex items-center gap-1">
                     Delivery Fee
-                    <Info className="h-3 w-3 text-gray-400" />
+                    <Info className="h-3 w-3 text-muted-foreground" />
                   </span>
                   <span className="font-medium text-gray-800">
                     ₹{DELIVERY_FEE.toFixed(2)}
@@ -750,7 +750,7 @@ export default function CheckoutPage() {
 
                 {/* Wallet Applied */}
                 {applyWallet && walletReservation > 0 && (
-                  <div className="flex items-center justify-between text-emerald-700">
+                  <div className="flex items-center justify-between text-success">
                     <span className="flex items-center gap-1">
                       <Wallet className="h-3 w-3" />
                       Wallet Applied
@@ -765,7 +765,7 @@ export default function CheckoutPage() {
 
                 {/* Total */}
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     {applyWallet && walletReservation > 0
                       ? "You're Paying"
                       : "Total to Reserve"}
@@ -785,7 +785,7 @@ export default function CheckoutPage() {
                     paymentStatus === "processing" ||
                     createOrderMutation.isPending
                   }
-                  className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3.5 text-sm font-bold text-white shadow-md shadow-orange-200 transition-all hover:bg-orange-600 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+                  className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3.5 text-sm font-bold text-white shadow-primary transition-all hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   {paymentStatus === "processing" ||
                   createOrderMutation.isPending ? (
@@ -802,7 +802,7 @@ export default function CheckoutPage() {
                 </button>
 
                 {/* Trust badges */}
-                <div className="flex items-center justify-center gap-3 pt-1 text-[10px] text-gray-400">
+                <div className="flex items-center justify-center gap-3 pt-1 text-[10px] text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Lock className="h-3 w-3" /> Secure
                   </span>
@@ -819,8 +819,8 @@ export default function CheckoutPage() {
             {/* Help chat */}
             <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100">
-                  <MessageCircle className="h-4 w-4 text-orange-500" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                  <MessageCircle className="h-4 w-4 text-primary" />
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-gray-800">
@@ -833,7 +833,7 @@ export default function CheckoutPage() {
               </div>
               <a
                 href={`mailto:${CHECKOUT_CONFIG.email}?subject=${encodeURIComponent(CHECKOUT_CONFIG.supportEmailSubject)}`}
-                className="text-xs font-semibold text-orange-500 underline underline-offset-2 hover:text-orange-600"
+                className="text-xs font-semibold text-primary underline underline-offset-2 hover:text-foreground"
               >
                 Chat
               </a>
@@ -843,9 +843,9 @@ export default function CheckoutPage() {
       </div>
 
       {/* ── Delivery zones info footer ─────────────────────── */}
-      <div className="mt-4 flex items-center justify-center rounded-2xl border border-orange-200 bg-orange-50 px-6 py-6">
+      <div className="mt-4 flex items-center justify-center rounded-2xl border border-border bg-muted px-6 py-6">
         <div className="flex items-center gap-3">
-          <MapPin className="h-6 w-6 text-orange-600" />
+          <MapPin className="h-6 w-6 text-foreground" />
           <p className="text-sm font-semibold text-gray-900">
             We deliver to selected serviceable pincodes. Enter your address
             during checkout to check availability.
@@ -899,8 +899,8 @@ export default function CheckoutPage() {
                   wallet.
                 </p>
               </div>
-              <div className="rounded-lg bg-orange-50 p-3">
-                <p className="text-xs text-orange-800">
+              <div className="rounded-lg bg-muted p-3">
+                <p className="text-xs text-foreground">
                   <strong>Benefit:</strong> Your balance stays secure even
                   before delivery starts.
                 </p>

@@ -48,8 +48,8 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="text-xl font-bold text-primary">
-              Mullai Kitchen
+            <Link href="/">
+              <img src="/logo.png" alt="Mullai Kitchen" className="h-8 w-auto" />
             </Link>
           </div>
 

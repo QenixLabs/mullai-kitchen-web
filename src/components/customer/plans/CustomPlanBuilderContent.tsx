@@ -204,7 +204,7 @@ export function CustomPlanBuilderContent({
           {/* Step 1: Duration */}
           <section>
             <div className="flex items-center gap-3 mb-6">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-50 text-[#FF6B35] text-xs font-black">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-rose-50 text-primary text-xs font-black">
                 1
               </div>
               <h2 className="text-xl font-black text-[#0F172A] tracking-tight">
@@ -217,7 +217,7 @@ export function CustomPlanBuilderContent({
           {/* Step 2: Meal Types */}
           <section>
             <div className="flex items-center gap-3 mb-6">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-50 text-[#FF6B35] text-xs font-black">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-rose-50 text-primary text-xs font-black">
                 2
               </div>
               <h2 className="text-xl font-black text-[#0F172A] tracking-tight">
@@ -234,7 +234,7 @@ export function CustomPlanBuilderContent({
           {/* Step 3: Food Preference */}
           <section>
             <div className="flex items-center gap-3 mb-6">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-50 text-[#FF6B35] text-xs font-black">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-rose-50 text-primary text-xs font-black">
                 3
               </div>
               <h2 className="text-xl font-black text-[#0F172A] tracking-tight">
