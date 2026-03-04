@@ -270,7 +270,7 @@ export function CustomPlanBuilderDialog({
                       className={cn(
                         "w-full flex items-center justify-between p-4 rounded-sm transition-all duration-500 border-2",
                         isSelected
-                          ? "border-primary bg-orange-50/50 shadow-primary shadow-lg"
+                          ? "border-primary bg-primary/5 shadow-primary shadow-lg"
                           : "border-border bg-white shadow-md hover:border-primary/30 hover:shadow-primary hover:-translate-y-0.5",
                       )}
                     >
@@ -399,7 +399,7 @@ export function CustomPlanBuilderDialog({
                         className={cn(
                           "w-full flex items-start gap-4 p-4 rounded-sm transition-all duration-500 border-2 text-left group",
                           isSelected
-                            ? "border-primary bg-orange-50/50 shadow-primary shadow-lg ring-1 ring-primary"
+                            ? "border-primary bg-primary/5 shadow-primary shadow-lg ring-1 ring-primary"
                             : "border-border bg-background shadow-md hover:border-primary/30 hover:shadow-primary hover:-translate-y-0.5",
                         )}
                       >

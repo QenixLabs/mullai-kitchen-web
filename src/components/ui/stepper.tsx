@@ -54,8 +54,8 @@ export function Stepper({
                 className={cn(
                   "group relative flex items-start gap-4 rounded-sm border p-4 transition-all",
                   isCurrent &&
-                    "border-orange-300 bg-gradient-to-r from-orange-50 to-white shadow-sm",
-                  isComplete && "border-orange-200 bg-orange-50/50",
+                    "border-primary/30 bg-gradient-to-r from-primary/5 to-white shadow-sm",
+                  isComplete && "border-primary/20 bg-primary/5",
                   !isCurrent && !isComplete && "border-gray-200 bg-white",
                 )}
               >
@@ -65,9 +65,9 @@ export function Stepper({
                     className={cn(
                       "flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all",
                       isCurrent &&
-                        "border-orange-500 bg-orange-500 text-white shadow-lg shadow-orange-200",
+                        "border-primary bg-primary text-white shadow-lg shadow-primary/20",
                       isComplete &&
-                        "border-orange-500 bg-orange-500 text-white",
+                        "border-primary bg-primary text-white",
                       !isCurrent &&
                         !isComplete &&
                         "border-gray-300 bg-white text-gray-500",
@@ -91,7 +91,7 @@ export function Stepper({
                     <div
                       className={cn(
                         "absolute left-5 top-10 h-8 w-0.5 -translate-x-1/2",
-                        isComplete ? "bg-orange-300" : "bg-gray-200",
+                        isComplete ? "bg-primary/30" : "bg-gray-200",
                       )}
                     />
                   )}
@@ -102,8 +102,8 @@ export function Stepper({
                   <p
                     className={cn(
                       "font-semibold transition-colors",
-                      isCurrent && "text-orange-700",
-                      isComplete && "text-orange-600",
+                      isCurrent && "text-primary",
+                      isComplete && "text-primary",
                       !isCurrent && !isComplete && "text-gray-600",
                     )}
                   >
@@ -113,7 +113,7 @@ export function Stepper({
                     <p
                       className={cn(
                         "mt-0.5 text-sm",
-                        isCurrent ? "text-orange-600/80" : "text-gray-500",
+                        isCurrent ? "text-primary/80" : "text-gray-500",
                       )}
                     >
                       {item.description}
@@ -126,7 +126,7 @@ export function Stepper({
                   <motion.div
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="text-orange-500"
+                    className="text-primary"
                   >
                     <ChevronRight className="h-5 w-5" strokeWidth={2.5} />
                   </motion.div>
@@ -157,8 +157,8 @@ export function Stepper({
                 className={cn(
                   "flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-all",
                   isCurrent &&
-                    "bg-orange-500 text-white shadow-md shadow-orange-200",
-                  isComplete && "bg-orange-500 text-white",
+                    "bg-primary text-white shadow-md shadow-primary/20",
+                  isComplete && "bg-primary text-white",
                   !isCurrent && !isComplete && "bg-gray-200 text-gray-600",
                 )}
                 animate={isCurrent ? { scale: [1, 1.08, 1] } : { scale: 1 }}
@@ -179,7 +179,7 @@ export function Stepper({
                   <div
                     className={cn(
                       "h-full",
-                      isComplete ? "bg-orange-300" : "bg-transparent",
+                      isComplete ? "bg-primary/30" : "bg-transparent",
                     )}
                   />
                 </div>

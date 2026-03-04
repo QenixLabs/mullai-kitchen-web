@@ -41,9 +41,9 @@ export function PlanDetailsPanel({
   }
 
   return (
-    <Card className="border-orange-200 bg-white/95 shadow-sm">
+    <Card className="border-primary/20 bg-white/95 shadow-sm">
       <CardHeader className="space-y-3">
-        <div className="inline-flex w-fit items-center rounded-full bg-orange-100 px-2.5 py-1 text-xs font-semibold text-orange-800">
+        <div className="inline-flex w-fit items-center rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
           Selected Plan
         </div>
         <div className="space-y-1">
@@ -53,25 +53,25 @@ export function PlanDetailsPanel({
       </CardHeader>
 
       <CardContent className="space-y-5">
-        <div className="rounded-sm border border-orange-100 bg-orange-50/60 p-4">
+        <div className="rounded-sm border border-primary/10 bg-primary/5 p-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Plan price</p>
           <p className="mt-1 text-2xl font-bold text-gray-900">{currencyFormatter.format(plan.price)}</p>
         </div>
 
         <div className="space-y-2">
           <p className="flex items-center gap-2 text-sm font-semibold text-gray-800">
-            <CalendarDays className="h-4 w-4 text-orange-600" aria-hidden="true" />
+            <CalendarDays className="h-4 w-4 text-primary" aria-hidden="true" />
             Duration: {plan.duration}
           </p>
           <p className="flex items-center gap-2 text-sm text-gray-700">
-            <MapPin className="h-4 w-4 text-orange-600" aria-hidden="true" />
+            <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
             {checkedPincode ? `Pincode ${checkedPincode} is selected` : "Check your pincode for delivery availability"}
           </p>
         </div>
 
         <div className="space-y-2">
           <p className="flex items-center gap-2 text-sm font-semibold text-gray-800">
-            <UtensilsCrossed className="h-4 w-4 text-orange-600" aria-hidden="true" />
+            <UtensilsCrossed className="h-4 w-4 text-primary" aria-hidden="true" />
             Meals included
           </p>
           {plan.meals_included.length > 0 ? (

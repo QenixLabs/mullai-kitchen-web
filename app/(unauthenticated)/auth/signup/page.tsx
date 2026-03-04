@@ -279,7 +279,7 @@ function SignUpForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-gray-50 p-4 transition-colors hover:bg-orange-50/50">
+                        <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-gray-50 p-4 transition-colors hover:bg-primary/5">
                           <Checkbox
                             id="terms"
                             checked={field.value}

@@ -334,7 +334,7 @@ export function ProfileDetailsStep({
           </Button>
           <Button
             type="button"
-            className="h-11 bg-primary font-semibold text-white hover:bg-orange-700"
+            className="h-11 bg-primary font-semibold text-white hover:bg-primary/90"
             onClick={onContinue}
             disabled={hasErrors}
           >

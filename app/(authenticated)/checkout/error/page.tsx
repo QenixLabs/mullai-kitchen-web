@@ -207,27 +207,27 @@ export default function CheckoutErrorPage() {
 
                 {/* Helpful tips based on error type */}
                 {errorType === "payment_failed" && (
-                  <div className="rounded-2xl border border-orange-200 bg-orange-50 p-4">
+                  <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
                     <h3 className="mb-2 text-sm font-semibold text-gray-900">
                       Tips to resolve this:
                     </h3>
                     <ul className="space-y-1.5 text-sm text-gray-700">
                       <li className="flex items-start gap-2">
-                        <span className="text-orange-600">•</span>
+                        <span className="text-primary">•</span>
                         <span>Check if your card has sufficient funds</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-orange-600">•</span>
+                        <span className="text-primary">•</span>
                         <span>
                           Verify your card details and billing address
                         </span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-orange-600">•</span>
+                        <span className="text-primary">•</span>
                         <span>Try using a different payment method</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-orange-600">•</span>
+                        <span className="text-primary">•</span>
                         <span>
                           Contact your bank if you suspect a transaction block
                         </span>
@@ -281,7 +281,7 @@ export default function CheckoutErrorPage() {
                   {config.showRetry && (
                     <Button
                       onClick={handleRetry}
-                      className="flex-1 bg-orange-600 text-white hover:bg-orange-700"
+                      className="flex-1 bg-primary text-white hover:bg-primary/90"
                     >
                       <RefreshCw className="mr-2 h-4 w-4" />
                       {config.actionText}
@@ -307,7 +307,7 @@ export default function CheckoutErrorPage() {
                       Still having trouble?{" "}
                       <Link
                         href="/support"
-                        className="font-semibold text-orange-600 underline underline-offset-2 hover:text-orange-700"
+                        className="font-semibold text-primary underline underline-offset-2 hover:text-primary/90"
                       >
                         Contact our support team
                       </Link>

@@ -55,9 +55,9 @@ const PlanErrorAlert = ({ message, className }: { message?: string; className?: 
 
 // Hoisted empty state - prevents recreation on every render
 const NoPlansFound = ({ className }: { className?: string }) => (
-  <div className={cn("flex flex-col items-center justify-center rounded-sm border border-dashed border-orange-200 bg-orange-50/40 p-10 text-center", className)}>
-    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
-      <SearchX className="h-8 w-8 text-orange-500" />
+  <div className={cn("flex flex-col items-center justify-center rounded-sm border border-dashed border-primary/20 bg-primary/5 p-10 text-center", className)}>
+    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+      <SearchX className="h-8 w-8 text-primary" />
     </div>
     <h3 className="text-lg font-semibold text-gray-900">No plans found</h3>
     <p className="mt-2 text-sm text-gray-600">

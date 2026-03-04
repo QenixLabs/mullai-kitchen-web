@@ -286,7 +286,7 @@ export function AddressFormStep({
                             className={cn(
                               "inline-flex h-10 items-center justify-center gap-2 rounded-sm border text-sm font-medium transition",
                               isActive
-                                ? "border-orange-300 bg-orange-50 text-orange-700"
+                                ? "border-primary/30 bg-primary/5 text-primary"
                                 : "border-gray-300 bg-white text-gray-700 hover:border-gray-400",
                             )}
                             onClick={() => field.onChange(type)}
@@ -455,7 +455,7 @@ export function AddressFormStep({
         <Button
           type="button"
           onClick={handleAddAddress}
-          className="h-11 w-full bg-orange-600 text-white hover:bg-orange-700 sm:w-auto"
+          className="h-11 w-full bg-primary text-white hover:bg-primary/90 sm:w-auto"
           disabled={!isValid || !isFormDirty}
         >
           <PlusCircle className="h-4 w-4" aria-hidden="true" />
@@ -476,7 +476,7 @@ export function AddressFormStep({
         {showInlineContinue ? (
           <Button
             type="button"
-            className="h-11 w-full bg-orange-600 font-semibold text-white hover:bg-orange-700 sm:w-auto"
+            className="h-11 w-full bg-primary font-semibold text-white hover:bg-primary/90 sm:w-auto"
             disabled={!canContinue}
             onClick={onContinue}
           >

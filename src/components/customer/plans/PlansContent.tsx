@@ -300,9 +300,9 @@ export function PlansContent({
                   Breakfast: isActive
                     ? "bg-amber-100 text-amber-900 border-amber-200"
                     : "bg-white text-gray-600 border-gray-200 hover:bg-amber-50 hover:border-amber-100",
-                  Lunch: isActive
-                    ? "bg-orange-100 text-orange-900 border-orange-200"
-                    : "bg-white text-gray-600 border-gray-200 hover:bg-orange-50 hover:border-orange-100",
+Lunch: isActive
+                    ? "bg-primary/10 text-primary border-primary/20"
+                    : "bg-white text-gray-600 border-gray-200 hover:bg-primary/5 hover:border-primary/10",
                   Dinner: isActive
                     ? "bg-indigo-100 text-indigo-900 border-indigo-200"
                     : "bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-indigo-100",

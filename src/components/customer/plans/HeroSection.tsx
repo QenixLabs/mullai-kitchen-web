@@ -83,12 +83,12 @@ export function HeroSection({
   return (
     <section
       className={cn(
-        "relative overflow-hidden rounded-sm border border-orange-100/50 bg-background p-5 shadow-lg sm:rounded-sm sm:p-6 lg:p-8",
+        "relative overflow-hidden rounded-sm border border-primary/10 bg-background p-5 shadow-lg sm:rounded-sm sm:p-6 lg:p-8",
         className,
       )}
     >
       {/* Decorative blurs */}
-      <div className="pointer-events-none absolute -left-12 top-8 h-32 w-32 rounded-full bg-orange-200/20 blur-3xl sm:h-44 sm:w-44" />
+      <div className="pointer-events-none absolute -left-12 top-8 h-32 w-32 rounded-full bg-primary/10 blur-3xl sm:h-44 sm:w-44" />
       <div className="pointer-events-none absolute -right-12 bottom-8 h-40 w-40 rounded-full bg-amber-200/20 blur-3xl sm:h-52 sm:w-52" />
 
       <div className="relative z-10 grid gap-5 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-8">
@@ -108,7 +108,7 @@ export function HeroSection({
           </div>
 
           {/* Pincode Check Form */}
-          <div className="rounded-sm border border-orange-100 bg-white/90 p-4 shadow-sm backdrop-blur sm:rounded-sm sm:p-5">
+          <div className="rounded-sm border border-primary/10 bg-white/90 p-4 shadow-sm backdrop-blur sm:rounded-sm sm:p-5">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleCheck)} className="space-y-3">
                 <FormField
@@ -203,9 +203,9 @@ export function HeroSection({
             {!result && !errorMessage && (
               <div className="mt-3 flex items-center gap-2 text-muted-foreground">
                 <div className="flex -space-x-2">
-                  <div className="h-6 w-6 rounded-full bg-orange-200 ring-2 ring-white" />
-                  <div className="h-6 w-6 rounded-full bg-orange-300 ring-2 ring-white" />
-                  <div className="h-6 w-6 rounded-full bg-orange-400 ring-2 ring-white" />
+                  <div className="h-6 w-6 rounded-full bg-primary/20 ring-2 ring-white" />
+                  <div className="h-6 w-6 rounded-full bg-primary/30 ring-2 ring-white" />
+                  <div className="h-6 w-6 rounded-full bg-primary/40 ring-2 ring-white" />
                 </div>
                 <span className="text-xs font-medium sm:text-sm">
                   <span className="font-bold text-foreground">500+</span> happy households in Chennai
