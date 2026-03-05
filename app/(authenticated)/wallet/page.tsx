@@ -369,72 +369,115 @@ export default function WalletPage() {
 
       {/* Add Funds Dialog */}
       <Dialog open={isAddFundsOpen} onOpenChange={setIsAddFundsOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Wallet className="h-5 w-5 text-primary" />
-              Add Funds to Wallet
-            </DialogTitle>
-            <DialogDescription>
-              Enter the amount you want to add to your wallet. You will be redirected to complete the payment.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="amount">Amount (₹)</Label>
-              <Input
-                id="amount"
-                type="number"
-                inputMode="numeric"
-                placeholder="Enter amount"
-                value={topupAmount}
-                onChange={(e) => setTopupAmount(e.target.value)}
-                min="1"
-                step="1"
-                className="h-11"
-              />
+        <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden border-0 shadow-2xl">
+          {/* Header with gradient */}
+          <div className="relative bg-gradient-to-br from-primary via-primary to-primary/90 px-6 py-8">
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wOCI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+            <DialogHeader className="relative z-10 space-y-3">
+              <div className="mx-auto w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 shadow-lg">
+                <Wallet className="h-8 w-8 text-white" />
+              </div>
+              <div className="text-center">
+                <DialogTitle className="text-2xl font-bold text-white">
+                  Add Funds
+                </DialogTitle>
+                <DialogDescription className="text-white/80 mt-1 text-sm">
+                  Top up your wallet securely
+                </DialogDescription>
+              </div>
+            </DialogHeader>
+          </div>
+
+          {/* Content */}
+          <div className="px-6 py-6 space-y-6">
+            {/* Amount Input */}
+            <div className="space-y-3">
+              <Label htmlFor="amount" className="text-sm font-semibold text-gray-700">
+                Enter Amount
+              </Label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-gray-400">
+                  ₹
+                </span>
+                <Input
+                  id="amount"
+                  type="number"
+                  inputMode="numeric"
+                  placeholder="0"
+                  value={topupAmount}
+                  onChange={(e) => setTopupAmount(e.target.value)}
+                  min="1"
+                  step="1"
+                  className="h-16 pl-12 pr-4 text-3xl font-bold text-gray-900 placeholder:text-gray-300 border-2 border-gray-100 rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
+                />
+              </div>
             </div>
-            <div className="flex gap-2">
-              {[100, 500, 1000, 2000].map((amount) => (
-                <Button
-                  key={amount}
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setTopupAmount(amount.toString())}
-                  className={cn(
-                    "flex-1 transition-all duration-200",
-                    topupAmount === amount.toString() && "border-primary bg-primary/10 text-primary"
-                  )}
-                >
-                  ₹{amount}
-                </Button>
-              ))}
+
+            {/* Quick Select Chips */}
+            <div className="space-y-3">
+              <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                Quick Select
+              </Label>
+              <div className="grid grid-cols-4 gap-2">
+                {[100, 500, 1000, 2000].map((amount) => (
+                  <button
+                    key={amount}
+                    type="button"
+                    onClick={() => setTopupAmount(amount.toString())}
+                    className={cn(
+                      "relative py-2.5 px-2 rounded-lg text-sm font-semibold transition-all duration-200",
+                      "border-2 hover:scale-105 active:scale-95",
+                      topupAmount === amount.toString()
+                        ? "bg-primary text-white border-primary shadow-md shadow-primary/25"
+                        : "bg-white text-gray-700 border-gray-200 hover:border-primary/50 hover:bg-gray-50"
+                    )}
+                  >
+                    ₹{amount}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Info Note */}
+            <div className="flex items-start gap-3 p-3 bg-amber-50 rounded-lg border border-amber-100">
+              <Info className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+              <p className="text-xs text-amber-800 leading-relaxed">
+                You will be redirected to our secure payment partner to complete the transaction.
+              </p>
             </div>
           </div>
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={handleCloseAddFunds}
-              className="flex-1"
-              disabled={isTopupProcessing}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleTopup}
-              disabled={!topupAmount || parseFloat(topupAmount) <= 0 || isTopupProcessing}
-              className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              {isTopupProcessing ? (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                "Proceed to Pay"
-              )}
-            </Button>
+
+          {/* Footer Actions */}
+          <div className="px-6 pb-6 pt-2">
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={handleCloseAddFunds}
+                disabled={isTopupProcessing}
+                className="flex-1 h-12 rounded-xl border-2 border-gray-200 font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleTopup}
+                disabled={!topupAmount || parseFloat(topupAmount) <= 0 || isTopupProcessing}
+                className="flex-1 h-12 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all disabled:opacity-50"
+              >
+                {isTopupProcessing ? (
+                  <span className="flex items-center gap-2">
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    Processing...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    Proceed
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                )}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

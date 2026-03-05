@@ -7,7 +7,6 @@ import {
   LayoutGrid,
   Wallet,
   Menu,
-  User,
   Settings,
   PlusCircle,
   LogOut,
@@ -36,7 +35,7 @@ const MAIN_NAV_ITEMS = [
   { href: "/subscription", icon: Calendar, label: "Subscription" },
   { href: "/plans", icon: LayoutGrid, label: "Plans" },
   { href: "/wallet", icon: Wallet, label: "Wallet" },
-  { href: "/profile", icon: User, label: "Profile" },
+  { href: "/profile", icon: Settings, label: "Settings" },
 ] as const;
 
 export function MobileBottomNav() {
@@ -154,21 +153,15 @@ export function MobileBottomNav() {
                   onClick={() => setIsOpen(false)}
                 />
                 <MenuLink
-                  href="/profile"
-                  icon={User}
-                  label="Profile Settings"
-                  onClick={() => setIsOpen(false)}
-                />
-                <MenuLink
                   href="/add-ons"
                   icon={PlusCircle}
                   label="Manage Add-ons"
                   onClick={() => setIsOpen(false)}
                 />
                 <MenuLink
-                  href="/settings"
+                  href="/profile"
                   icon={Settings}
-                  label="App Preferences"
+                  label="Settings"
                   onClick={() => setIsOpen(false)}
                 />
               </div>
