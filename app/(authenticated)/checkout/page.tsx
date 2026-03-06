@@ -471,7 +471,7 @@ export default function CheckoutPage() {
           <StepIndicator step={1} label="Delivery Details" active />
 
           {/* connector line */}
-          <div className="mx-3 h-0.5 w-24 bg-gradient-to-r from-border to-border sm:w-40" />
+          <div className="mx-3 h-0.5 w-24 bg-linear-to-r from-border to-border sm:w-40" />
 
           <StepIndicator
             step={2}
@@ -862,7 +862,7 @@ export default function CheckoutPage() {
       {/* ── Address Dialog ────────────────────────────────── */}
       {showAddressDialog && (
         <Dialog open={showAddressDialog} onOpenChange={setShowAddressDialog}>
-          <DialogContent className="max-w-lg sm:min-w-[480px] max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-lg sm:min-w-120 max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add New Address</DialogTitle>
             </DialogHeader>

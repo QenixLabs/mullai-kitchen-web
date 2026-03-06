@@ -57,10 +57,10 @@ const staggerContainer = {
   },
 };
 
-const scaleIn = {
-  initial: { opacity: 0, scale: 0.9 },
-  animate: { opacity: 1, scale: 1 },
-};
+// const scaleIn = {
+//   initial: { opacity: 0, scale: 0.9 },
+//   animate: { opacity: 1, scale: 1 },
+// };
 
 // Modern SaaS Hero Section
 function HeroSection() {
@@ -85,7 +85,7 @@ function HeroSection() {
       </div>
 
       {/* Secondary Grid - Offset for depth */}
-      <div className="absolute inset-0 z-0 translate-x-7.5 translate-y-[30px]">
+      <div className="absolute inset-0 z-0 translate-x-7.5 translate-y-7.5">
         <GridPattern
           width={60}
           height={60}
@@ -133,7 +133,7 @@ function HeroSection() {
             x: { duration: 15, repeat: Infinity, ease: "easeInOut" },
             y: { duration: 12, repeat: Infinity, ease: "easeInOut" }
           }}
-          className="absolute -right-40 -top-40 h-175 w-175 rounded-full bg-gradient-to-br from-primary via-primary/80 to-transparent blur-[120px]"
+          className="absolute -right-40 -top-40 h-175 w-175 rounded-full bg-linear-to-br from-primary via-primary/80 to-transparent blur-[120px]"
         />
         
         {/* Secondary Accent Orb */}
@@ -151,7 +151,7 @@ function HeroSection() {
             x: { duration: 18, repeat: Infinity, ease: "easeInOut" },
             y: { duration: 14, repeat: Infinity, ease: "easeInOut" }
           }}
-          className="absolute -left-40 top-1/4 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-accent via-accent/70 to-transparent blur-[120px]"
+          className="absolute -left-40 top-1/4 h-150 w-150 rounded-full bg-linear-to-br from-accent via-accent/70 to-transparent blur-[120px]"
         />
         
         {/* Warm Glow Orb - Bottom Right */}
@@ -169,7 +169,7 @@ function HeroSection() {
             x: { duration: 20, repeat: Infinity, ease: "easeInOut" },
             y: { duration: 16, repeat: Infinity, ease: "easeInOut" }
           }}
-          className="absolute bottom-0 right-1/4 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-amber-600/40 via-orange-500/30 to-transparent blur-[130px]"
+          className="absolute bottom-0 right-1/4 h-125 w-125 rounded-full bg-linear-to-br from-amber-600/40 via-orange-500/30 to-transparent blur-[130px]"
         />
 
         {/* Subtle Purple/Blue Accent */}
@@ -187,12 +187,12 @@ function HeroSection() {
             x: { duration: 22, repeat: Infinity, ease: "easeInOut" },
             y: { duration: 18, repeat: Infinity, ease: "easeInOut" }
           }}
-          className="absolute top-1/2 left-1/3 h-[400px] w-[400px] rounded-full bg-gradient-to-br from-purple-500/30 via-pink-500/20 to-transparent blur-[100px]"
+          className="absolute top-1/2 left-1/3 h-100 w-100 rounded-full bg-linear-to-br from-purple-500/30 via-pink-500/20 to-transparent blur-[100px]"
         />
       </div>
 
       {/* Animated Light Beams */}
-      <div className="absolute inset-0 z-[3] overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 z-3 overflow-hidden pointer-events-none">
         <motion.div
           initial={{ opacity: 0, x: "-100%" }}
           animate={{ opacity: [0, 0.3, 0], x: ["-100%", "200%"] }}
@@ -202,7 +202,7 @@ function HeroSection() {
             repeatDelay: 5,
             ease: "easeInOut"
           }}
-          className="absolute top-0 left-0 h-full w-32 bg-gradient-to-r from-transparent via-white/10 to-transparent rotate-12 blur-xl"
+          className="absolute top-0 left-0 h-full w-32 bg-linear-to-r from-transparent via-white/10 to-transparent rotate-12 blur-xl"
         />
         <motion.div
           initial={{ opacity: 0, x: "-100%" }}
@@ -214,13 +214,13 @@ function HeroSection() {
             ease: "easeInOut",
             delay: 3
           }}
-          className="absolute top-1/3 left-0 h-3/4 w-24 bg-gradient-to-r from-transparent via-primary/10 to-transparent -rotate-6 blur-xl"
+          className="absolute top-1/3 left-0 h-3/4 w-24 bg-linear-to-r from-transparent via-primary/10 to-transparent -rotate-6 blur-xl"
         />
       </div>
 
       {/* Noise Texture Overlay */}
       <div 
-        className="absolute inset-0 z-[4] opacity-[0.03] pointer-events-none"
+        className="absolute inset-0 z-4 opacity-[0.03] pointer-events-none"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
         }}
@@ -228,7 +228,7 @@ function HeroSection() {
 
       {/* Vignette Effect */}
       <div 
-        className="absolute inset-0 z-[5] pointer-events-none"
+        className="absolute inset-0 z-5 pointer-events-none"
         style={{
           background: 'radial-gradient(ellipse at center, transparent 0%, transparent 50%, rgba(var(--background), 0.8) 100%)'
         }}
@@ -333,7 +333,7 @@ function HeroSection() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.6 + i * 0.1 }}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-background bg-gradient-to-br from-primary/20 to-primary/40 text-sm font-semibold text-primary shadow-lg"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-background bg-linear-to-br from-primary/20 to-primary/40 text-sm font-semibold text-primary shadow-lg"
                   >
                     {i}K
                   </motion.div>
@@ -372,7 +372,7 @@ function HeroSection() {
             <div className="relative">
               {/* Main Glass Card */}
               <div className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/70 p-2 shadow-2xl backdrop-blur-xl">
-                <div className="relative h-[520px] overflow-hidden rounded-2xl">
+                <div className="relative h-130 overflow-hidden rounded-2xl">
                 <Image
                   src="/images/food/3.jpg"
                   alt="Delicious home-cooked Indian thali"
@@ -380,7 +380,7 @@ function HeroSection() {
                   className="object-cover"
                   priority
                 />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-primary/30 via-transparent to-transparent" />
                 </div>
               </div>
 
@@ -441,7 +441,7 @@ function HeroSection() {
       </div>
 
       {/* Bottom Fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-background to-transparent" />
     </section>
   );
 }
@@ -615,7 +615,7 @@ function HowItWorksSection() {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 0.3 } : { opacity: 0 }}
           transition={{ duration: 1 }}
-          className="absolute -left-40 top-1/2 h-[500px] w-[500px] -translate-y-1/2 rounded-full bg-primary/5 blur-3xl"
+          className="absolute -left-40 top-1/2 h-125 w-125 -translate-y-1/2 rounded-full bg-primary/5 blur-3xl"
         />
       </div>
 
@@ -665,7 +665,7 @@ function HowItWorksSection() {
             >
               {/* Connector Line */}
               {index < steps.length - 1 && (
-                <div className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-border to-transparent lg:block" />
+                <div className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-linear-to-b from-border to-transparent lg:block" />
               )}
 
               <div className="relative flex h-full w-full flex-col rounded-sm bg-card p-6 shadow-md transition-all duration-300 hover:shadow-lg">
@@ -680,7 +680,7 @@ function HowItWorksSection() {
                 <h3 className="mb-2 text-xl font-semibold text-foreground">
                   {step.title}
                 </h3>
-                <p className="flex-grow text-sm text-muted-foreground">
+                <p className="grow text-sm text-muted-foreground">
                   {step.description}
                 </p>
               </div>
@@ -943,7 +943,7 @@ function PricingSection() {
               Array.from({ length: 3 }).map((_, index) => (
                 <div
                   key={index}
-                  className="h-[26rem] animate-pulse rounded-sm border border-orange-100 bg-white"
+                  className="h-104 animate-pulse rounded-sm border border-orange-100 bg-white"
                 />
               ))
             ) : plans.length > 0 ? (
@@ -1339,7 +1339,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
           <Link href="/" className="flex items-center">
             <Image
