@@ -7,22 +7,16 @@ import { useRouter } from "next/navigation";
 import { motion, useInView } from "motion/react";
 import {
   FaArrowRight,
-  FaClock,
-  FaLeaf,
   FaUtensils,
-  FaShieldAlt,
   FaStar,
   FaChevronRight,
   FaFire,
   FaCalendarAlt,
   FaTruck,
   FaHeart,
-  FaUsers,
-  FaAward,
   FaMapMarkerAlt,
   FaPhone,
   FaEnvelope,
-  FaHamburger,
   FaTools,
   FaBars,
   FaCheckCircle,
@@ -91,7 +85,7 @@ function HeroSection() {
       </div>
 
       {/* Secondary Grid - Offset for depth */}
-      <div className="absolute inset-0 z-0 translate-x-[30px] translate-y-[30px]">
+      <div className="absolute inset-0 z-0 translate-x-7.5 translate-y-[30px]">
         <GridPattern
           width={60}
           height={60}
@@ -104,7 +98,7 @@ function HeroSection() {
 
       {/* Primary Particles Layer */}
       <Particles
-        className="absolute inset-0 z-[1]"
+        className="absolute inset-0 z-1"
         quantity={100}
         ease={70}
         size={0.5}
@@ -114,7 +108,7 @@ function HeroSection() {
 
       {/* Secondary Particles Layer - Golden/Warm */}
       <Particles
-        className="absolute inset-0 z-[1]"
+        className="absolute inset-0 z-1"
         quantity={50}
         ease={60}
         size={0.3}
@@ -123,7 +117,7 @@ function HeroSection() {
       />
 
       {/* Animated Gradient Orbs */}
-      <div className="absolute inset-0 z-[2] overflow-hidden">
+      <div className="absolute inset-0 z-2 overflow-hidden">
         {/* Large Primary Orb */}
         <motion.div
           initial={{ opacity: 0, scale: 0.5 }}
@@ -139,7 +133,7 @@ function HeroSection() {
             x: { duration: 15, repeat: Infinity, ease: "easeInOut" },
             y: { duration: 12, repeat: Infinity, ease: "easeInOut" }
           }}
-          className="absolute -right-40 -top-40 h-[700px] w-[700px] rounded-full bg-gradient-to-br from-primary via-primary/80 to-transparent blur-[120px]"
+          className="absolute -right-40 -top-40 h-175 w-175 rounded-full bg-gradient-to-br from-primary via-primary/80 to-transparent blur-[120px]"
         />
         
         {/* Secondary Accent Orb */}

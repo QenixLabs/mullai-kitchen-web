@@ -14,7 +14,6 @@ import {
 } from "react-icons/fa";
 
 import { usePaymentStore } from "@/hooks/use-payment-store";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -129,11 +128,6 @@ export default function CheckoutErrorPage() {
     } else {
       router.push("/plans");
     }
-  };
-
-  const handleGoHome = () => {
-    paymentStore.resetPayment();
-    router.push("/");
   };
 
   return (

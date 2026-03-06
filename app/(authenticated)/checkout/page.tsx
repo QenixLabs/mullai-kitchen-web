@@ -3,25 +3,31 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
-  FaArrowRight,
   FaCheckCircle,
   FaCreditCard,
   FaInfoCircle,
   FaSpinner,
-  FaLock,
   FaMapMarkerAlt,
-  FaComments,
   FaEdit,
   FaPlusCircle,
-  FaQrcode,
-  FaShieldAlt,
   FaWallet,
   FaCreditCard as FaCreditCardCards,
   FaTimes,
   FaTimesCircle,
   FaCalendar,
 } from "react-icons/fa";
-import { motion } from "motion/react";
+import {
+  CreditCard,
+  QrCode,
+  Info,
+  Wallet,
+  Loader2,
+  ArrowRight,
+  Lock,
+  Shield,
+  MessageCircle,
+  MapPin,
+} from "lucide-react";
 
 import {
   useAuthHydrated,
@@ -167,7 +173,7 @@ interface PaymentOptionProps {
 }
 
 function PaymentOption({
-  id,
+  id: _id,
   label,
   subtitle,
   icon,
@@ -227,7 +233,7 @@ export default function CheckoutPage() {
 
   // Payment state from store
   const paymentStore = usePaymentStore();
-  const { status: paymentStatus, errorMessage: paymentError } = paymentStore;
+  const { status: paymentStatus } = paymentStore;
 
   // React Query hooks for addresses and wallet balance
   const { data: addresses, isLoading: addressesLoading } = useAddressList();
