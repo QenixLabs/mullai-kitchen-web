@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { FaTimes } from "react-icons/fa";
 import { useEffect } from "react";
 
 import type { MenuPreviewDay, MenuPreviewMeal } from "@/api/types/customer.types";
@@ -121,7 +121,7 @@ export function MenuPreviewSheet({
             onClick={() => onOpenChange(false)}
             aria-label="Close menu preview panel"
           >
-            <X className="h-5 w-5" aria-hidden="true" />
+            <FaTimes className="h-5 w-5" aria-hidden="true" />
           </Button>
         </div>
 

@@ -1,4 +1,4 @@
-import { CalendarClock, Leaf, ShieldCheck, Sparkles } from "lucide-react";
+import { FaCalendarCheck, FaLeaf, FaShieldAlt, FaStar, FaCheckCircle, FaClock, FaHeart } from "react-icons/fa";
 
 import { cn } from "@/lib/utils";
 
@@ -9,19 +9,22 @@ interface WhyChooseSectionProps {
 // Static data - can be at module level for Server Components
 const highlights = [
   {
-    icon: ShieldCheck,
+    icon: FaCheckCircle,
     title: "Kitchen hygiene",
     detail: "ISO-certified kitchen operations with daily quality checkpoints.",
+    color: "bg-emerald-100 text-emerald-600",
   },
   {
-    icon: CalendarClock,
+    icon: FaClock,
     title: "Flexible timing",
     detail: "Pause, skip, or resume deliveries anytime based on your routine.",
+    color: "bg-amber-100 text-amber-600",
   },
   {
-    icon: Leaf,
+    icon: FaHeart,
     title: "Earth first",
     detail: "Biodegradable packaging and reduced single-use material footprint.",
+    color: "bg-rose-100 text-rose-600",
   },
 ];
 
@@ -60,7 +63,7 @@ export function WhyChooseSection({ className }: WhyChooseSectionProps) {
                     className="rounded-sm border border-border bg-accent/60 p-4"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary">
+                      <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-sm ${item.color.split(' ')[0]} ${item.color.split(' ')[1]}`}>
                         <item.icon className="h-4 w-4" />
                       </div>
                       <div>
@@ -76,8 +79,8 @@ export function WhyChooseSection({ className }: WhyChooseSectionProps) {
             <div className="relative bg-gradient-to-br from-background via-background to-background p-6 sm:p-8">
               <div className="rounded-sm border border-border bg-card p-5 shadow-sm">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-primary text-primary-foreground">
-                    <Sparkles className="h-5 w-5" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-blue-100 text-blue-600">
+                    <FaShieldAlt className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-foreground">Built for consistency</p>

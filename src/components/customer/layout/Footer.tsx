@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { UtensilsCrossed, Mail } from "lucide-react";
+import { FaUtensils, FaEnvelope } from "react-icons/fa";
 
 const FOOTER_LINKS = [
   { label: "FAQ", href: "/faq" },
@@ -19,7 +19,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-primary">
-              <UtensilsCrossed className="h-5 w-5 text-primary-foreground" />
+              <FaUtensils className="h-5 w-5 text-primary-foreground" />
             </div>
             <div className="text-left">
               <h2 className="text-lg font-bold text-white">Mullai Kitchen</h2>
@@ -45,7 +45,7 @@ export default function Footer() {
             href="mailto:hello@mullaikitchen.in"
             className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-white"
           >
-            <Mail className="h-4 w-4" />
+            <FaEnvelope className="h-4 w-4" />
             <span>hello@mullaikitchen.in</span>
           </a>
 

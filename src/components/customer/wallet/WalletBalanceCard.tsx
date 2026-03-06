@@ -1,12 +1,12 @@
 import {
-  AlertCircle,
-  CreditCard,
-  Plus,
-  RefreshCw,
-  TrendingDown,
-  TrendingUp,
-  Wallet,
-} from "lucide-react";
+  FaExclamationCircle,
+  FaCreditCard,
+  FaPlus,
+  FaSyncAlt,
+  FaArrowDown,
+  FaArrowUp,
+  FaWallet,
+} from "react-icons/fa";
 import { motion } from "motion/react";
 
 import { useWalletBalance } from "@/api/hooks/usePayment";
@@ -65,7 +65,7 @@ export function WalletBalanceCard({
               hasBalance ? "bg-primary/10" : "bg-gray-100",
             )}
           >
-            <Wallet
+            <FaWallet
               className={cn(
                 "h-5 w-5",
                 hasBalance ? "text-primary" : "text-muted-foreground",
@@ -88,7 +88,7 @@ export function WalletBalanceCard({
             disabled={refreshing || isTopupProcessing}
             className="h-8 w-8 text-muted-foreground hover:text-foreground"
           >
-            <RefreshCw
+            <FaSyncAlt
               className={cn("h-4 w-4", refreshing && "animate-spin")}
             />
           </Button>
@@ -103,7 +103,7 @@ export function WalletBalanceCard({
           </div>
         ) : hasError ? (
           <div className="flex items-center gap-3 rounded-sm border border-red-100 bg-red-50 p-4">
-            <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
+            <FaExclamationCircle className="h-5 w-5 shrink-0 text-red-600" />
             <p className="text-sm text-red-900">
               Failed to load wallet balance
             </p>
@@ -133,12 +133,12 @@ export function WalletBalanceCard({
             >
               {isTopupProcessing ? (
                 <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  <FaSyncAlt className="mr-2 h-4 w-4 animate-spin" />
                   Processing...
                 </>
               ) : (
                 <>
-                  <Plus className="mr-2 h-4 w-4" />
+                  <FaPlus className="mr-2 h-4 w-4" />
                   Add Funds
                 </>
               )}
@@ -147,7 +147,7 @@ export function WalletBalanceCard({
             {/* Quick Info */}
             {balance !== null && balance > 0 && (
               <div className="flex items-start gap-2 rounded-sm border border-blue-50 bg-blue-50 p-3">
-                <CreditCard className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
+                <FaCreditCard className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
                 <p className="text-xs text-foreground">
                   Your wallet balance can be used for subscriptions, add-on
                   orders, and meal plan purchases. Funds are automatically
@@ -159,7 +159,7 @@ export function WalletBalanceCard({
             {/* Zero Balance Info */}
             {balance === 0 && (
               <div className="flex items-start gap-2 rounded-sm border border-primary/20 bg-primary/10 p-3">
-                <TrendingDown className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <FaArrowDown className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                 <p className="text-xs text-foreground">
                   Your wallet is empty. Add funds to take advantage of
                   wallet-based payments and earn rewards on every top-up!
@@ -170,7 +170,7 @@ export function WalletBalanceCard({
             {/* High Balance Info */}
             {balance !== null && balance >= 1000 && (
               <div className="flex items-start gap-2 rounded-sm border border-success/10 bg-success/5 p-3">
-                <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                <FaArrowUp className="mt-0.5 h-4 w-4 shrink-0 text-success" />
                 <p className="text-xs text-foreground">
                   Great! You have a healthy wallet balance. Your funds are
                   secure and ready to use for your next subscription or order.

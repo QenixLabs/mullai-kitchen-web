@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  Menu,
-  X,
-} from "lucide-react";
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
 
 import {
   useAuthHydrated,
@@ -95,9 +95,9 @@ export function Navbar() {
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                   {isMobileMenuOpen ? (
-                    <X className="h-6 w-6" aria-hidden="true" />
+                    <FaTimes className="h-6 w-6" aria-hidden="true" />
                   ) : (
-                    <Menu className="h-6 w-6" aria-hidden="true" />
+                    <FaBars className="h-6 w-6" aria-hidden="true" />
                   )}
                 </button>
               </div>

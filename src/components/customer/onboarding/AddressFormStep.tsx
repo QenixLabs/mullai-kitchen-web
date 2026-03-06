@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, MapPin, Trash2, Building2, PlusCircle } from "lucide-react";
+import { FaHome, FaMapMarkerAlt, FaTrash, FaBuilding, FaPlusCircle } from "react-icons/fa";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -212,9 +212,9 @@ export function AddressFormStep({
                   <div className="space-y-1">
                     <div className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
                       {address.type === "Home" || address.type.toUpperCase() === "HOME" ? (
-                        <Home className="h-3.5 w-3.5" aria-hidden="true" />
+                        <FaHome className="h-3.5 w-3.5" aria-hidden="true" />
                       ) : (
-                        <Building2 className="h-3.5 w-3.5" aria-hidden="true" />
+                        <FaBuilding className="h-3.5 w-3.5" aria-hidden="true" />
                       )}
                       {address.type}
                     </div>
@@ -237,7 +237,7 @@ export function AddressFormStep({
                       Set as default
                     </label>
 
-                    <Button
+                      <Button
                       type="button"
                       variant="ghost"
                       size="icon-sm"
@@ -246,7 +246,7 @@ export function AddressFormStep({
                       disabled={addresses.length <= 1}
                       aria-label={`Remove address ${index + 1}`}
                     >
-                      <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      <FaTrash className="h-4 w-4" aria-hidden="true" />
                     </Button>
                   </div>
                 </div>
@@ -293,9 +293,9 @@ export function AddressFormStep({
                             aria-pressed={isActive}
                           >
                             {type === "Home" ? (
-                              <Home className="h-4 w-4" aria-hidden="true" />
+                              <FaHome className="h-4 w-4" aria-hidden="true" />
                             ) : (
-                              <Building2
+                              <FaBuilding
                                 className="h-4 w-4"
                                 aria-hidden="true"
                               />
@@ -356,7 +356,7 @@ export function AddressFormStep({
                     <FormLabel className="text-gray-700">Pincode</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <MapPin
+                        <FaMapMarkerAlt
                           className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
                           aria-hidden="true"
                         />
@@ -458,7 +458,7 @@ export function AddressFormStep({
           className="h-11 w-full bg-primary text-white hover:bg-primary/90 sm:w-auto"
           disabled={!isValid || !isFormDirty}
         >
-          <PlusCircle className="h-4 w-4" aria-hidden="true" />
+          <FaPlusCircle className="h-4 w-4" aria-hidden="true" />
           Save address
         </Button>
       </section>

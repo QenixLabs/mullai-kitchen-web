@@ -7,17 +7,17 @@ import {
   SubscriptionStatus,
 } from "@/api/types/subscription.types";
 import {
-  Calendar,
-  MapPin,
-  MoreVertical,
-  RefreshCcw,
-  Pause,
-  Play,
-  XCircle,
-  CheckCircle2,
-  Clock,
-  Utensils,
-} from "lucide-react";
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaEllipsisV,
+  FaSync,
+  FaPause,
+  FaPlay,
+  FaTimesCircle,
+  FaCheckCircle,
+  FaClock,
+  FaUtensils,
+} from "react-icons/fa";
 import { cn } from "@/lib/utils";
 
 interface SubscriptionCardProps {
@@ -46,32 +46,32 @@ export function SubscriptionCard({
       case "ACTIVE":
         return {
           color: "bg-emerald-500/10 text-emerald-600 border-emerald-200",
-          icon: <CheckCircle2 className="h-3 w-3" />,
+          icon: <FaCheckCircle className="h-3 w-3" />,
         };
       case "PAUSED":
         return {
           color: "bg-amber-500/10 text-amber-600 border-amber-200",
-          icon: <Pause className="h-3 w-3" />,
+          icon: <FaPause className="h-3 w-3" />,
         };
       case "EXPIRED":
         return {
           color: "bg-gray-500/10 text-gray-600 border-gray-200",
-          icon: <Clock className="h-3 w-3" />,
+          icon: <FaClock className="h-3 w-3" />,
         };
       case "CANCELLED":
         return {
           color: "bg-rose-500/10 text-rose-600 border-rose-200",
-          icon: <XCircle className="h-3 w-3" />,
+          icon: <FaTimesCircle className="h-3 w-3" />,
         };
       case "PENDING_RENEWAL":
         return {
           color: "bg-blue-500/10 text-blue-600 border-blue-200",
-          icon: <RefreshCcw className="h-3 w-3" />,
+          icon: <FaSync className="h-3 w-3" />,
         };
       default:
         return {
           color: "bg-gray-500/10 text-gray-600 border-gray-200",
-          icon: <Clock className="h-3 w-3" />,
+          icon: <FaClock className="h-3 w-3" />,
         };
     }
   };
@@ -134,7 +134,7 @@ export function SubscriptionCard({
           </Badge>
           {subscription.auto_renew && (
             <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-md gap-1 px-2.5 py-1.5 font-semibold">
-              <RefreshCcw className="h-3 w-3" />
+              <FaSync className="h-3 w-3" />
               Auto-renew
             </Badge>
           )}
@@ -150,7 +150,7 @@ export function SubscriptionCard({
             onViewDetails?.(subscription._id);
           }}
         >
-          <MoreVertical className="h-5 w-5 drop-shadow-md" strokeWidth={3} />
+          <FaEllipsisV className="h-5 w-5 drop-shadow-md" />
         </Button>
 
         <div className="absolute bottom-3 left-3 z-20">
@@ -168,7 +168,7 @@ export function SubscriptionCard({
         <div className="space-y-2.5">
           <div className="flex items-center gap-2.5 text-sm text-gray-600">
             <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-gray-50 text-primary">
-              <Calendar className="h-3.5 w-3.5" />
+              <FaCalendarAlt className="h-3.5 w-3.5" />
             </div>
             <span className="font-medium">
               {new Date(subscription.start_date).toLocaleDateString(undefined, {
@@ -186,7 +186,7 @@ export function SubscriptionCard({
 
           <div className="flex items-center gap-2.5 text-sm text-gray-600">
             <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-gray-50 text-primary">
-              <MapPin className="h-3.5 w-3.5" />
+              <FaMapMarkerAlt className="h-3.5 w-3.5" />
             </div>
             <span className="line-clamp-1 flex-1">
               {subscription.full_address}
@@ -195,7 +195,7 @@ export function SubscriptionCard({
 
           <div className="flex items-center gap-2.5 text-sm text-gray-600">
             <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-gray-50 text-primary">
-              <Utensils className="h-3.5 w-3.5" />
+              <FaUtensils className="h-3.5 w-3.5" />
             </div>
             <div className="flex gap-1 flex-wrap">
               {subscription.meals_included.map((meal) => (
@@ -262,7 +262,7 @@ export function SubscriptionCard({
                   className="h-8 text-xs font-semibold border-gray-200 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-600 transition-colors"
                   onClick={() => onPause?.(subscription._id)}
                 >
-                  <Pause className="mr-1.5 h-3 w-3" />
+                  <FaPause className="mr-1.5 h-3 w-3" />
                   Pause
                 </Button>
                 <Button
@@ -271,7 +271,7 @@ export function SubscriptionCard({
                   className="h-8 text-xs font-semibold border-gray-200 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 transition-colors"
                   onClick={() => onCancel?.(subscription._id)}
                 >
-                  <XCircle className="mr-1.5 h-3 w-3" />
+                  <FaTimesCircle className="mr-1.5 h-3 w-3" />
                   Cancel
                 </Button>
               </>
@@ -282,7 +282,7 @@ export function SubscriptionCard({
                 className="h-8 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
                 onClick={() => onResume?.(subscription._id)}
               >
-                <Play className="mr-1.5 h-3 w-3" />
+                <FaPlay className="mr-1.5 h-3 w-3" />
                 Resume
               </Button>
             )}
@@ -293,7 +293,7 @@ export function SubscriptionCard({
                 className="h-8 text-xs font-semibold bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20"
                 onClick={() => onRenew?.(subscription._id)}
               >
-                <RefreshCcw className="mr-1.5 h-3 w-3" />
+                <FaSync className="mr-1.5 h-3 w-3" />
                 Renew Plan
               </Button>
             )}

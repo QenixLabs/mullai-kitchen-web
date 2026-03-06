@@ -3,16 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Calendar,
-  LayoutGrid,
-  Wallet,
-  Menu,
   Settings,
   PlusCircle,
-  LogOut,
   ChevronRight,
-  UserCircle,
 } from "lucide-react";
+import {
+  FaCalendarWeek,
+  FaChartLine,
+  FaWallet,
+  FaBars,
+  FaSignOutAlt,
+  FaUser,
+} from "react-icons/fa";
 import {
   useAuthHydrated,
   useIsAuthenticated,
@@ -32,9 +34,9 @@ import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 
 const MAIN_NAV_ITEMS = [
-  { href: "/subscription", icon: Calendar, label: "Subscription" },
-  { href: "/plans", icon: LayoutGrid, label: "Plans" },
-  { href: "/wallet", icon: Wallet, label: "Wallet" },
+  { href: "/subscription", icon: FaCalendarWeek, label: "Subscription" },
+  { href: "/plans", icon: FaChartLine, label: "Plans" },
+  { href: "/wallet", icon: FaWallet, label: "Wallet" },
   { href: "/profile", icon: Settings, label: "Settings" },
 ] as const;
 
@@ -106,7 +108,7 @@ export function MobileBottomNav() {
               )}
             >
               <div className="flex flex-col items-center gap-1">
-                <Menu
+                <FaBars
                   className={cn(
                     "size-[22px] transition-transform duration-300",
                     isOpen ? "scale-110" : "",
@@ -133,7 +135,7 @@ export function MobileBottomNav() {
               {/* User Profile Summary */}
               <div className="flex items-center gap-4 rounded-2xl bg-muted/30 p-4 border border-border/50">
                 <div className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <UserCircle className="size-8" />
+                  <FaUser className="size-8" />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-base font-bold text-foreground line-clamp-1">
@@ -148,7 +150,7 @@ export function MobileBottomNav() {
               <div className="grid grid-cols-1 gap-2">
                 <MenuLink
                   href="/dashboard"
-                  icon={Calendar}
+                  icon={FaCalendarWeek}
                   label="Dashboard"
                   onClick={() => setIsOpen(false)}
                 />
@@ -175,7 +177,7 @@ export function MobileBottomNav() {
                 className="flex w-full items-center justify-between rounded-xl bg-red-500/5 p-4 text-red-500 transition-colors hover:bg-red-500/10"
               >
                 <div className="flex items-center gap-3">
-                  <LogOut className="size-5" />
+                  <FaSignOutAlt className="size-5" />
                   <span className="font-bold">
                     {logoutMutation.isPending ? "Signing out..." : "Log out"}
                   </span>

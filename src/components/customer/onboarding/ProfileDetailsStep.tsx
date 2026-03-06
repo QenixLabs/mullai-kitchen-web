@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { Drumstick, Leaf } from "lucide-react";
+import { FaDrumstickBite, FaLeaf } from "react-icons/fa";
 import type { CallbacksOptions } from "timepicker-ui";
 import { Timepicker } from "timepicker-ui-react";
 
@@ -192,7 +192,7 @@ export function ProfileDetailsStep({
                   <div className="grid grid-cols-2 gap-2">
                     {DIETARY_PREFERENCE_OPTIONS.map((option) => {
                       const isSelected = field.value === option;
-                      const Icon = option === "Veg" ? Leaf : Drumstick;
+                      const Icon = option === "Veg" ? FaLeaf : FaDrumstickBite;
 
                       return (
                         <Button

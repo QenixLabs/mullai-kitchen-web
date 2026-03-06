@@ -17,7 +17,7 @@ import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAddresses } from "@/api/hooks/useOnboarding";
-import { AlertCircle } from "lucide-react";
+import { FaExclamationCircle } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 
@@ -193,7 +193,7 @@ export function CustomPlanBuilderContent({
       {/* Error Alert */}
       {error && (
         <Alert variant="destructive" className="mb-8 rounded-sm border-2">
-          <AlertCircle className="h-4 w-4" />
+          <FaExclamationCircle className="h-4 w-4" />
           <AlertDescription className="font-bold">{error}</AlertDescription>
         </Alert>
       )}

@@ -2,15 +2,15 @@
 
 import React, { useState } from "react";
 import {
-  ArrowDown,
-  ArrowUp,
-  Calendar,
-  ChevronDown,
-  ChevronUp,
-  Filter,
-  Loader2,
-  RefreshCw,
-} from "lucide-react";
+  FaArrowDown,
+  FaArrowUp,
+  FaCalendarAlt,
+  FaChevronDown,
+  FaChevronUp,
+  FaFilter,
+  FaSpinner,
+  FaSyncAlt,
+} from "react-icons/fa";
 import { motion } from "motion/react";
 
 import { useWalletTransactions } from "@/api/hooks/usePayment";
@@ -164,7 +164,7 @@ export function TransactionHistory({
       <div
         className={cn("flex min-h-80 items-center justify-center", className)}
       >
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <FaSpinner className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -187,7 +187,7 @@ export function TransactionHistory({
             size="sm"
             className="mt-4"
           >
-            <RefreshCw className="mr-2 h-4 w-4" />
+            <FaSyncAlt className="mr-2 h-4 w-4" />
             Retry
           </Button>
         </div>
@@ -211,12 +211,12 @@ export function TransactionHistory({
               onClick={() => setShowFilterDropdown(!showFilterDropdown)}
               className="gap-2"
             >
-              <Filter className="h-4 w-4" />
+              <FaFilter className="h-4 w-4" />
               <span className="capitalize">{filter}</span>
               {showFilterDropdown ? (
-                <ChevronUp className="h-4 w-4" />
+                <FaChevronUp className="h-4 w-4" />
               ) : (
-                <ChevronDown className="h-4 w-4" />
+                <FaChevronDown className="h-4 w-4" />
               )}
             </Button>
 
@@ -246,13 +246,13 @@ export function TransactionHistory({
                       {type === "all" && <span>All Transactions</span>}
                       {type === "credit" && (
                         <>
-                          <ArrowUp className="h-4 w-4 text-emerald-500" />
+                          <FaArrowUp className="h-4 w-4 text-emerald-500" />
                           <span>Credits Only</span>
                         </>
                       )}
                       {type === "debit" && (
                         <>
-                          <ArrowDown className="h-4 w-4 text-primary" />
+                          <FaArrowDown className="h-4 w-4 text-primary" />
                           <span>Debits Only</span>
                         </>
                       )}
@@ -271,9 +271,9 @@ export function TransactionHistory({
             title="Sort by date"
           >
             {sortOrder === "desc" ? (
-              <ChevronDown className="h-4 w-4" />
+              <FaChevronDown className="h-4 w-4" />
             ) : (
-              <ChevronUp className="h-4 w-4" />
+              <FaChevronUp className="h-4 w-4" />
             )}
           </Button>
 
@@ -284,7 +284,7 @@ export function TransactionHistory({
             onClick={handleRefresh}
             disabled={refreshing}
           >
-            <RefreshCw
+            <FaSyncAlt
               className={cn("h-4 w-4", refreshing && "animate-spin")}
             />
           </Button>
@@ -295,7 +295,7 @@ export function TransactionHistory({
       {sortedTransactions.length === 0 ? (
         <div className="rounded-sm border border-dashed border-border bg-muted p-12 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-            <Calendar className="h-8 w-8 text-muted-foreground/70" />
+            <FaCalendarAlt className="h-8 w-8 text-muted-foreground/70" />
           </div>
           <h3 className="text-lg font-semibold text-foreground">
             No Transactions Yet
@@ -332,9 +332,9 @@ export function TransactionHistory({
                   )}
                 >
                   {isCredit ? (
-                    <ArrowUp className="h-5 w-5 text-emerald-600" />
+                    <FaArrowUp className="h-5 w-5 text-emerald-600" />
                   ) : (
-                    <ArrowDown className="h-5 w-5 text-primary" />
+                    <FaArrowDown className="h-5 w-5 text-primary" />
                   )}
                 </div>
 
@@ -378,8 +378,8 @@ export function TransactionHistory({
                     <span className="font-medium text-foreground">
                       ₹{tx.balanceBefore.toFixed(2)}
                     </span>
-                    <ArrowDown className="h-3 w-3 text-muted-foreground/70" />
-                    <ArrowUp className="h-3 w-3 text-muted-foreground/70" />
+                    <FaArrowDown className="h-3 w-3 text-muted-foreground/70" />
+                    <FaArrowUp className="h-3 w-3 text-muted-foreground/70" />
                     <span className="font-medium text-foreground">
                       ₹{tx.balanceAfter.toFixed(2)}
                     </span>

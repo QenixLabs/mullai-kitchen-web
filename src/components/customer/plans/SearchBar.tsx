@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, X } from "lucide-react";
+import { FaSearch, FaTimes } from "react-icons/fa";
 import { useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -44,7 +44,7 @@ export function SearchBar({
 
   return (
     <div className={cn("relative w-full", className)}>
-      <Search
+      <FaSearch
         className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-primary/70 sm:left-4 sm:h-4 sm:w-4"
         aria-hidden="true"
       />
@@ -68,7 +68,7 @@ export function SearchBar({
           disabled={disabled}
           aria-label="Clear search"
         >
-          <X className="h-5 w-5 sm:h-4 sm:w-4" aria-hidden="true" />
+          <FaTimes className="h-5 w-5 sm:h-4 sm:w-4" aria-hidden="true" />
         </Button>
       ) : null}
     </div>

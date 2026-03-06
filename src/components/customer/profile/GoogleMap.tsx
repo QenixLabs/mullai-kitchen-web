@@ -7,7 +7,7 @@ import {
   Marker,
   useJsApiLoader,
 } from "@react-google-maps/api";
-import { MapPin } from "lucide-react";
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 const containerStyle = {
   width: "100%",
@@ -66,7 +66,7 @@ export function GoogleMap({
         className={`bg-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg flex items-center justify-center ${height} ${className}`}
       >
         <div className="text-center p-4">
-          <MapPin className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+          <FaMapMarkerAlt className="h-8 w-8 text-slate-400 mx-auto mb-2" />
           <p className="text-sm text-slate-500">Unable to load map</p>
           <p className="text-xs text-slate-400 mt-1">Please check your API key</p>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleCheckBig, MapPinned, UserRoundCheck } from "lucide-react";
+import { FaCheckCircle, FaMapMarkerAlt, FaUserCheck } from "react-icons/fa";
 import { useEffect, useMemo, useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -41,13 +41,13 @@ export function OnboardingComplete({
     () => [
       {
         id: "addresses",
-        icon: MapPinned,
+        icon: FaMapMarkerAlt,
         label: "Addresses saved",
         value: `${addressesCount}`,
       },
       {
         id: "profile",
-        icon: UserRoundCheck,
+        icon: FaUserCheck,
         label: "Profile details",
         value: hasProfileDetails ? "Added" : "Skipped",
       },
@@ -59,7 +59,7 @@ export function OnboardingComplete({
     <div className={cn("space-y-6", className)}>
       <div className="rounded-sm border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-emerald-100/50 p-5 text-center sm:p-8">
         <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-          <CircleCheckBig className="h-8 w-8" aria-hidden="true" />
+          <FaCheckCircle className="h-8 w-8" aria-hidden="true" />
         </div>
         <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Onboarding complete</h2>
         <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground sm:text-base">
