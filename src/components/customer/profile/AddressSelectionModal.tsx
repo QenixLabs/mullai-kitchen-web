@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { FaSearch, FaMapMarkerAlt, FaCheckCircle, FaHome, FaBuilding, FaEllipsisH } from "react-icons/fa";
+import { Search, LocateIcon as MyLocation, Verified, Home, Building2, MoreHorizontal } from "lucide-react";
+import { Marker } from "@react-google-maps/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
@@ -57,6 +58,8 @@ export function AddressSelectionModal({
     isServiceable: boolean;
     message: string;
   } | null>(null);
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [coordinatesRequired, setCoordinatesRequired] = useState(false);
 
   const form = useForm<AddressFormData>({
     resolver: zodResolver(addressFormSchema),
@@ -66,46 +69,61 @@ export function AddressSelectionModal({
   const { isValid, dirtyFields } = form.formState;
   const pincodeValue = form.watch("pincode");
 
-  // Serviceability check on pincode change
+  // Serviceability check on pincode change or coordinates update
   useEffect(() => {
-    if (pincodeValue.length !== 6) {
+    // Need either a valid 6-digit pincode OR coordinates to check
+    const hasValidPincode = pincodeValue.length === 6;
+    const hasCoordinates = coordinates !== null;
+
+    if (!hasValidPincode && !hasCoordinates) {
       setServiceabilityInfo(null);
       return;
     }
 
     const pincodeToCheck = pincodeValue;
+    const coordsToCheck = coordinates;
     const timeoutId = setTimeout(() => {
-      checkServiceability({ pincode: pincodeToCheck })
+      // Build payload - prefer coordinates if available for more accurate check
+      const payload = coordsToCheck
+        ? { lat: coordsToCheck.lat, lng: coordsToCheck.lng }
+        : { pincode: pincodeToCheck };
+
+      checkServiceability(payload)
         .then((result) => {
-          if (form.getValues("pincode") !== pincodeToCheck) {
+          // Validate response is still relevant
+          const currentPincode = form.getValues("pincode");
+          if (!coordsToCheck && currentPincode !== pincodeToCheck) {
             return;
           }
 
           if (result.isServiceable) {
             setServiceabilityInfo({
               isServiceable: true,
-              message: `We are currently delivering in this location (Pincode: ${pincodeToCheck}).`,
+              message: coordsToCheck
+                ? "We are currently delivering to this location."
+                : `We are currently delivering in this location (Pincode: ${pincodeToCheck}).`,
             });
           } else {
             setServiceabilityInfo({
               isServiceable: false,
-              message: "We do not serve this pincode yet. You can still save this address.",
+              message: "We do not serve this location yet. You can still save this address.",
             });
           }
         })
         .catch(() => {
-          if (form.getValues("pincode") !== pincodeToCheck) {
+          const currentPincode = form.getValues("pincode");
+          if (!coordsToCheck && currentPincode !== pincodeToCheck) {
             return;
           }
           setServiceabilityInfo({
             isServiceable: false,
-            message: "Unable to verify pincode serviceability right now.",
+            message: "Unable to verify serviceability right now.",
           });
         });
     }, 400);
 
     return () => clearTimeout(timeoutId);
-  }, [checkServiceability, form, pincodeValue]);
+  }, [checkServiceability, form, pincodeValue, coordinates]);
 
   // Combine flat, floor, and full_address for submission
   const buildFullAddress = () => {
@@ -172,7 +190,10 @@ export function AddressSelectionModal({
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
-        setMapCenter({ lat: latitude, lng: longitude });
+        const newCoords = { lat: latitude, lng: longitude };
+        setMapCenter(newCoords);
+        setCoordinates(newCoords);
+        setCoordinatesRequired(false);
 
         // Reverse geocode to get address details
         await reverseGeocode(latitude, longitude);
@@ -195,6 +216,12 @@ export function AddressSelectionModal({
       return;
     }
 
+    if (!coordinates) {
+      setCoordinatesRequired(true);
+      toast.error("Please select a location on the map");
+      return;
+    }
+
     try {
       const fullAddress = buildFullAddress();
       const formData = form.getValues();
@@ -207,6 +234,8 @@ export function AddressSelectionModal({
         city: formData.city,
         state: formData.state,
         landmark: formData.landmark,
+        lat: coordinates.lat,
+        lng: coordinates.lng,
       });
 
       toast.success("Address saved successfully!");
@@ -214,6 +243,8 @@ export function AddressSelectionModal({
       setSearchQuery("");
       setServiceabilityInfo(null);
       setMapCenter(DEFAULT_COORDS);
+      setCoordinates(null);
+      setCoordinatesRequired(false);
       onOpenChange(false);
       onSuccess?.();
     } catch (error) {
@@ -226,6 +257,8 @@ export function AddressSelectionModal({
     setSearchQuery("");
     setServiceabilityInfo(null);
     setMapCenter(DEFAULT_COORDS);
+    setCoordinates(null);
+    setCoordinatesRequired(false);
     onOpenChange(false);
   };
 
@@ -261,7 +294,29 @@ export function AddressSelectionModal({
 
           {/* Map Section */}
           <div className="space-y-2">
-            <GoogleMap center={mapCenter} height="h-48" />
+            <GoogleMap
+              center={mapCenter}
+              height="h-48"
+              onClick={(e) => {
+                if (e.latLng) {
+                  const lat = e.latLng.lat();
+                  const lng = e.latLng.lng();
+                  setCoordinates({ lat, lng });
+                  setMapCenter({ lat, lng });
+                  setCoordinatesRequired(false);
+                  reverseGeocode(lat, lng);
+                }
+              }}
+            >
+              {coordinates && (
+                <Marker position={coordinates} />
+              )}
+            </GoogleMap>
+            {coordinatesRequired && (
+              <p className="text-xs text-destructive font-medium">
+                Please select a location on the map by clicking on it
+              </p>
+            )}
             <Button
               type="button"
               variant="ghost"

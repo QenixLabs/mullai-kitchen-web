@@ -1,6 +1,7 @@
 import { apiClient } from "@/api/client";
 import { CUSTOMER_ROUTES } from "@/api/routes";
 import type {
+  CheckServiceabilityRequest,
   CheckoutPreviewResponse,
   CreateCheckoutOrderRequest,
   MenuPreviewResponse,
@@ -23,7 +24,7 @@ export const customerApi = {
     );
     return response.data;
   },
-  checkServiceability: async (payload: { pincode: string }): Promise<ServiceabilityResponse> => {
+  checkServiceability: async (payload: CheckServiceabilityRequest): Promise<ServiceabilityResponse> => {
     const response = await apiClient.post<ServiceabilityResponse>(
       CUSTOMER_ROUTES.SERVICEABILITY_CHECK,
       payload,

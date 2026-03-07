@@ -1,8 +1,9 @@
 "use client";
 
-import { FaHome, FaMapMarkerAlt, FaTrash, FaBuilding, FaPlusCircle } from "react-icons/fa";
+import { Home, MapPin, Trash2, Building2, PlusCircle, LocateIcon as MyLocation } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { Marker } from "@react-google-maps/api";
 
 import type { CreateAddressDto } from "@/api/types/customer.types";
 import { useServiceability } from "@/api/hooks/useCustomer";
@@ -22,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { GoogleMap } from "@/components/customer/profile/GoogleMap";
 
 const EMPTY_ADDRESS: AddressFormData = {
   type: "Home",
@@ -35,8 +37,12 @@ const EMPTY_ADDRESS: AddressFormData = {
 
 const PINCODE_LENGTH = 6;
 
+// Chennai default coordinates
+const DEFAULT_COORDS = { lat: 13.0827, lng: 80.2707 };
+
 const normalizeAddressPayload = (
   payload: AddressFormData,
+  coordinates: { lat: number; lng: number } | null,
 ): CreateAddressDto => {
   const landmark = payload.landmark?.trim();
 
@@ -48,6 +54,8 @@ const normalizeAddressPayload = (
     city: payload.city.trim(),
     state: payload.state.trim(),
     landmark,
+    lat: coordinates?.lat,
+    lng: coordinates?.lng,
   };
 };
 
@@ -96,6 +104,12 @@ export function AddressFormStep({
     message: string;
   } | null>(null);
 
+  // Coordinate state for geo-fencing
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [coordinatesRequired, setCoordinatesRequired] = useState(false);
+  const [mapCenter, setMapCenter] = useState(DEFAULT_COORDS);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+
   const form = useForm<AddressFormData>({
     resolver: zodResolver(addressFormSchema),
     defaultValues: EMPTY_ADDRESS,
@@ -116,24 +130,35 @@ export function AddressFormStep({
   }, [addresses.length, canContinue]);
 
   useEffect(() => {
-    if (pincodeValue.length !== PINCODE_LENGTH) {
+    // Need either a valid 6-digit pincode OR coordinates to check
+    const hasValidPincode = pincodeValue.length === PINCODE_LENGTH;
+    const hasCoordinates = coordinates !== null;
+
+    if (!hasValidPincode && !hasCoordinates) {
       setPincodeNotice(null);
       return;
     }
 
     const pincodeToCheck = pincodeValue;
+    const coordsToCheck = coordinates;
     const timeoutId = setTimeout(() => {
-      void checkServiceability({ pincode: pincodeToCheck })
+      // Build payload - prefer coordinates if available for more accurate check
+      const payload = coordsToCheck
+        ? { lat: coordsToCheck.lat, lng: coordsToCheck.lng }
+        : { pincode: pincodeToCheck };
+
+      void checkServiceability(payload)
         .then((result) => {
-          if (form.getValues("pincode") !== pincodeToCheck) {
+          // Validate response is still relevant
+          const currentPincode = form.getValues("pincode");
+          if (!coordsToCheck && currentPincode !== pincodeToCheck) {
             return;
           }
 
           if (!result.isServiceable) {
             setPincodeNotice({
               status: "not-serviceable",
-              message:
-                "We do not serve this pincode yet. You can still save this address.",
+              message: "We do not serve this location yet. You can still save this address.",
             });
             return;
           }
@@ -141,13 +166,14 @@ export function AddressFormStep({
           setPincodeNotice(null);
         })
         .catch(() => {
-          if (form.getValues("pincode") !== pincodeToCheck) {
+          const currentPincode = form.getValues("pincode");
+          if (!coordsToCheck && currentPincode !== pincodeToCheck) {
             return;
           }
 
           setPincodeNotice({
             status: "error",
-            message: "Unable to verify pincode serviceability right now.",
+            message: "Unable to verify serviceability right now.",
           });
         });
     }, 400);
@@ -155,7 +181,42 @@ export function AddressFormStep({
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [checkServiceability, form, pincodeValue]);
+  }, [checkServiceability, form, pincodeValue, coordinates]);
+
+  // Handle map click to capture coordinates
+  const handleMapClick = (e: google.maps.MapMouseEvent) => {
+    if (e.latLng) {
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+      setCoordinates({ lat, lng });
+      setCoordinatesRequired(false);
+    }
+  };
+
+  // Handle getting current location
+  const handleGetCurrentLocation = () => {
+    setIsGettingLocation(true);
+
+    if (!navigator.geolocation) {
+      setIsGettingLocation(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setCoordinates({ lat: latitude, lng: longitude });
+        setMapCenter({ lat: latitude, lng: longitude });
+        setCoordinatesRequired(false);
+        setIsGettingLocation(false);
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        setIsGettingLocation(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   const handleAddAddress = async () => {
     const valid = await form.trigger();
@@ -163,8 +224,17 @@ export function AddressFormStep({
       return;
     }
 
-    onAddAddress(normalizeAddressPayload(form.getValues()));
+    // Validate coordinates are selected
+    if (!coordinates) {
+      setCoordinatesRequired(true);
+      return;
+    }
+
+    onAddAddress(normalizeAddressPayload(form.getValues(), coordinates));
     form.reset(EMPTY_ADDRESS);
+    setCoordinates(null);
+    setCoordinatesRequired(false);
+    setMapCenter(DEFAULT_COORDS);
   };
 
   return (
@@ -451,6 +521,64 @@ export function AddressFormStep({
             />
           </div>
         </Form>
+
+        {/* Map Section for Coordinate Capture */}
+        <div className="space-y-3">
+          <div className="space-y-1">
+            <h4 className="text-sm font-semibold text-gray-700">
+              Pin your location on map
+            </h4>
+            <p className="text-xs text-gray-500">
+              Click on the map to mark your exact location or use current location button.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <GoogleMap
+              center={mapCenter}
+              height="h-48"
+              onClick={handleMapClick}
+            >
+              {coordinates && (
+                <Marker
+                  position={coordinates}
+                  icon={{
+                    url: "/marker.svg",
+                    scaledSize: new window.google.maps.Size(40, 40),
+                  }}
+                />
+              )}
+            </GoogleMap>
+
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full py-3 px-4 bg-primary/10 hover:bg-primary/20 text-primary font-bold rounded-sm gap-2"
+              onClick={handleGetCurrentLocation}
+              disabled={isGettingLocation}
+            >
+              <MyLocation className="h-4 w-4" />
+              {isGettingLocation ? "Getting location..." : "Use Current Location"}
+            </Button>
+          </div>
+
+          {/* Coordinate validation error */}
+          {coordinatesRequired && (
+            <p className="text-xs text-destructive">
+              Please select your location on the map or use current location.
+            </p>
+          )}
+
+          {/* Display selected coordinates */}
+          {coordinates && (
+            <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-sm px-3 py-2">
+              <MapPin className="h-3.5 w-3.5" />
+              <span>
+                Location pinned: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
+              </span>
+            </div>
+          )}
+        </div>
 
         <Button
           type="button"

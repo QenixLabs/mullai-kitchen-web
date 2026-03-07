@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { customerApi } from "@/api/customer.api";
 import { customerKeys } from "@/api/query-keys";
 import type {
+  CheckServiceabilityRequest,
   CreateCheckoutOrderRequest,
   PrepareCheckoutRequest,
   QueryCustomerPlans,
@@ -27,7 +28,7 @@ export function useMenuPreview(planId: string | undefined) {
 
 export function useServiceability() {
   return useMutation({
-    mutationFn: (payload: { pincode: string }) => customerApi.checkServiceability(payload),
+    mutationFn: (payload: CheckServiceabilityRequest) => customerApi.checkServiceability(payload),
   });
 }
 

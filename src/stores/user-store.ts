@@ -35,12 +35,12 @@ const noopStorage: StateStorage = {
   removeItem: () => undefined,
 };
 
-const getSessionStorage = (): StateStorage => {
+const getLocalStorage = (): StateStorage => {
   if (typeof window === "undefined") {
     return noopStorage;
   }
 
-  return window.sessionStorage;
+  return window.localStorage;
 };
 
 export const createUserStore = (initialState: Partial<UserStoreState> = {}) => {
@@ -74,7 +74,7 @@ export const createUserStore = (initialState: Partial<UserStoreState> = {}) => {
       }),
       {
         name: "mk-user-store",
-        storage: createJSONStorage(getSessionStorage),
+        storage: createJSONStorage(getLocalStorage),
         partialize: (state: UserStore) => ({
           user: state.user,
           accessToken: state.accessToken,

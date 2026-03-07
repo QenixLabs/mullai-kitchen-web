@@ -29,6 +29,8 @@ export interface CreateAddressDto {
   city: string;
   state: string;
   landmark?: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface UpdateProfileDto {
@@ -50,6 +52,12 @@ export interface ServiceabilityInfo {
     name?: string;
   };
   message?: string;
+}
+
+export interface CheckServiceabilityRequest {
+  pincode?: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface ServiceabilityResponse {

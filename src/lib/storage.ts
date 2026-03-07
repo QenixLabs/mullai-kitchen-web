@@ -23,7 +23,7 @@ function getStorage(): Storage | null {
     return null;
   }
 
-  return window.sessionStorage;
+  return window.localStorage;
 }
 
 export function getAccessToken(): string | null {
