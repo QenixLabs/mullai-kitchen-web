@@ -130,24 +130,35 @@ export function AddressFormStep({
   }, [addresses.length, canContinue]);
 
   useEffect(() => {
-    if (pincodeValue.length !== PINCODE_LENGTH) {
+    // Need either a valid 6-digit pincode OR coordinates to check
+    const hasValidPincode = pincodeValue.length === PINCODE_LENGTH;
+    const hasCoordinates = coordinates !== null;
+
+    if (!hasValidPincode && !hasCoordinates) {
       setPincodeNotice(null);
       return;
     }
 
     const pincodeToCheck = pincodeValue;
+    const coordsToCheck = coordinates;
     const timeoutId = setTimeout(() => {
-      void checkServiceability({ pincode: pincodeToCheck })
+      // Build payload - prefer coordinates if available for more accurate check
+      const payload = coordsToCheck
+        ? { lat: coordsToCheck.lat, lng: coordsToCheck.lng }
+        : { pincode: pincodeToCheck };
+
+      void checkServiceability(payload)
         .then((result) => {
-          if (form.getValues("pincode") !== pincodeToCheck) {
+          // Validate response is still relevant
+          const currentPincode = form.getValues("pincode");
+          if (!coordsToCheck && currentPincode !== pincodeToCheck) {
             return;
           }
 
           if (!result.isServiceable) {
             setPincodeNotice({
               status: "not-serviceable",
-              message:
-                "We do not serve this pincode yet. You can still save this address.",
+              message: "We do not serve this location yet. You can still save this address.",
             });
             return;
           }
@@ -155,13 +166,14 @@ export function AddressFormStep({
           setPincodeNotice(null);
         })
         .catch(() => {
-          if (form.getValues("pincode") !== pincodeToCheck) {
+          const currentPincode = form.getValues("pincode");
+          if (!coordsToCheck && currentPincode !== pincodeToCheck) {
             return;
           }
 
           setPincodeNotice({
             status: "error",
-            message: "Unable to verify pincode serviceability right now.",
+            message: "Unable to verify serviceability right now.",
           });
         });
     }, 400);
@@ -169,7 +181,7 @@ export function AddressFormStep({
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [checkServiceability, form, pincodeValue]);
+  }, [checkServiceability, form, pincodeValue, coordinates]);
 
   // Handle map click to capture coordinates
   const handleMapClick = (e: google.maps.MapMouseEvent) => {
