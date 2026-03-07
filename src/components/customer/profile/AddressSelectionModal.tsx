@@ -69,46 +69,61 @@ export function AddressSelectionModal({
   const { isValid, dirtyFields } = form.formState;
   const pincodeValue = form.watch("pincode");
 
-  // Serviceability check on pincode change
+  // Serviceability check on pincode change or coordinates update
   useEffect(() => {
-    if (pincodeValue.length !== 6) {
+    // Need either a valid 6-digit pincode OR coordinates to check
+    const hasValidPincode = pincodeValue.length === 6;
+    const hasCoordinates = coordinates !== null;
+
+    if (!hasValidPincode && !hasCoordinates) {
       setServiceabilityInfo(null);
       return;
     }
 
     const pincodeToCheck = pincodeValue;
+    const coordsToCheck = coordinates;
     const timeoutId = setTimeout(() => {
-      checkServiceability({ pincode: pincodeToCheck })
+      // Build payload - prefer coordinates if available for more accurate check
+      const payload = coordsToCheck
+        ? { lat: coordsToCheck.lat, lng: coordsToCheck.lng }
+        : { pincode: pincodeToCheck };
+
+      checkServiceability(payload)
         .then((result) => {
-          if (form.getValues("pincode") !== pincodeToCheck) {
+          // Validate response is still relevant
+          const currentPincode = form.getValues("pincode");
+          if (!coordsToCheck && currentPincode !== pincodeToCheck) {
             return;
           }
 
           if (result.isServiceable) {
             setServiceabilityInfo({
               isServiceable: true,
-              message: `We are currently delivering in this location (Pincode: ${pincodeToCheck}).`,
+              message: coordsToCheck
+                ? "We are currently delivering to this location."
+                : `We are currently delivering in this location (Pincode: ${pincodeToCheck}).`,
             });
           } else {
             setServiceabilityInfo({
               isServiceable: false,
-              message: "We do not serve this pincode yet. You can still save this address.",
+              message: "We do not serve this location yet. You can still save this address.",
             });
           }
         })
         .catch(() => {
-          if (form.getValues("pincode") !== pincodeToCheck) {
+          const currentPincode = form.getValues("pincode");
+          if (!coordsToCheck && currentPincode !== pincodeToCheck) {
             return;
           }
           setServiceabilityInfo({
             isServiceable: false,
-            message: "Unable to verify pincode serviceability right now.",
+            message: "Unable to verify serviceability right now.",
           });
         });
     }, 400);
 
     return () => clearTimeout(timeoutId);
-  }, [checkServiceability, form, pincodeValue]);
+  }, [checkServiceability, form, pincodeValue, coordinates]);
 
   // Combine flat, floor, and full_address for submission
   const buildFullAddress = () => {

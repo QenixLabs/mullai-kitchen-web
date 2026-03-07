@@ -54,6 +54,12 @@ export interface ServiceabilityInfo {
   message?: string;
 }
 
+export interface CheckServiceabilityRequest {
+  pincode?: string;
+  lat?: number;
+  lng?: number;
+}
+
 export interface ServiceabilityResponse {
   isServiceable: boolean;
   outlet: {
