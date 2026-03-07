@@ -1,6 +1,20 @@
 "use client";
 
-import { Home, MapPin, Trash2, Building2, PlusCircle, LocateIcon as MyLocation } from "lucide-react";
+import {
+  Home,
+  MapPin,
+  Trash2,
+  Building2,
+  PlusCircle,
+  LocateIcon as MyLocation,
+} from "lucide-react";
+import {
+  FaHome,
+  FaBuilding,
+  FaTrash,
+  FaMapMarkerAlt,
+  FaPlusCircle,
+} from "react-icons/fa";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Marker } from "@react-google-maps/api";
@@ -105,7 +119,10 @@ export function AddressFormStep({
   } | null>(null);
 
   // Coordinate state for geo-fencing
-  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [coordinates, setCoordinates] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [coordinatesRequired, setCoordinatesRequired] = useState(false);
   const [mapCenter, setMapCenter] = useState(DEFAULT_COORDS);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
@@ -158,7 +175,8 @@ export function AddressFormStep({
           if (!result.isServiceable) {
             setPincodeNotice({
               status: "not-serviceable",
-              message: "We do not serve this location yet. You can still save this address.",
+              message:
+                "We do not serve this location yet. You can still save this address.",
             });
             return;
           }
@@ -214,7 +232,7 @@ export function AddressFormStep({
         console.error("Geolocation error:", error);
         setIsGettingLocation(false);
       },
-      { enableHighAccuracy: true, timeout: 10000 }
+      { enableHighAccuracy: true, timeout: 10000 },
     );
   };
 
@@ -281,10 +299,14 @@ export function AddressFormStep({
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="space-y-1">
                     <div className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
-                      {address.type === "Home" || address.type.toUpperCase() === "HOME" ? (
+                      {address.type === "Home" ||
+                      address.type.toUpperCase() === "HOME" ? (
                         <FaHome className="h-3.5 w-3.5" aria-hidden="true" />
                       ) : (
-                        <FaBuilding className="h-3.5 w-3.5" aria-hidden="true" />
+                        <FaBuilding
+                          className="h-3.5 w-3.5"
+                          aria-hidden="true"
+                        />
                       )}
                       {address.type}
                     </div>
@@ -307,7 +329,7 @@ export function AddressFormStep({
                       Set as default
                     </label>
 
-                      <Button
+                    <Button
                       type="button"
                       variant="ghost"
                       size="icon-sm"
@@ -529,7 +551,8 @@ export function AddressFormStep({
               Pin your location on map
             </h4>
             <p className="text-xs text-gray-500">
-              Click on the map to mark your exact location or use current location button.
+              Click on the map to mark your exact location or use current
+              location button.
             </p>
           </div>
 
@@ -558,7 +581,9 @@ export function AddressFormStep({
               disabled={isGettingLocation}
             >
               <MyLocation className="h-4 w-4" />
-              {isGettingLocation ? "Getting location..." : "Use Current Location"}
+              {isGettingLocation
+                ? "Getting location..."
+                : "Use Current Location"}
             </Button>
           </div>
 
@@ -574,7 +599,8 @@ export function AddressFormStep({
             <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-sm px-3 py-2">
               <MapPin className="h-3.5 w-3.5" />
               <span>
-                Location pinned: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
+                Location pinned: {coordinates.lat.toFixed(6)},{" "}
+                {coordinates.lng.toFixed(6)}
               </span>
             </div>
           )}
