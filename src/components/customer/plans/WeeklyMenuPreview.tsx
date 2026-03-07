@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Calendar, ChevronRight } from "lucide-react";
+import { FaSpinner, FaCalendarAlt, FaChevronRight } from "react-icons/fa";
 import Image from "next/image";
 
 import { useCustomPlanMenuPreview } from "@/api/hooks/useCustomPlans";
@@ -54,7 +54,7 @@ export function WeeklyMenuPreview({ params }: WeeklyMenuPreviewProps) {
   if (!data || data.menu.length === 0) {
     return (
       <div className="p-12 rounded-sm border border-dashed border-gray-200 bg-gray-50/50 text-center">
-        <Calendar className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+        <FaCalendarAlt className="w-10 h-10 text-gray-300 mx-auto mb-3" />
         <p className="text-sm text-gray-500 font-medium tracking-tight">
           Select your preferences to see the weekly menu preview.
         </p>
@@ -81,7 +81,7 @@ export function WeeklyMenuPreview({ params }: WeeklyMenuPreviewProps) {
           className="text-primary font-black text-sm flex items-center gap-1.5 hover:opacity-80 transition-opacity"
         >
           View Full Calendar
-          <Calendar className="w-4 h-4" />
+          <FaCalendarAlt className="w-4 h-4" />
         </button>
       </div>
 

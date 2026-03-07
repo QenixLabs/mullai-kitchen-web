@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Check, Loader2, ShieldCheck } from "lucide-react";
+import { FaArrowRight, FaCheck, FaSpinner, FaShieldAlt } from "react-icons/fa";
 
 import { useCustomPlanPricing } from "@/api/hooks/useCustomPlans";
 import type { CustomPlanMenuPreviewParams } from "@/api/types/customer.types";
@@ -139,13 +139,13 @@ export function OrderSummaryPanel({
               )}
             >
               {isLoading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <FaSpinner className="w-5 h-5 animate-spin" />
               ) : (
                 <>
                   {isAuthenticated
                     ? "Continue to Checkout"
                     : "Sign in to Continue"}
-                  <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
+                  <FaArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
                 </>
               )}
             </Button>
@@ -166,7 +166,7 @@ export function OrderSummaryPanel({
       {/* Trust Promise */}
       <div className="rounded-sm bg-destructive/10 p-4 flex items-start gap-4">
         <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm text-primary flex-shrink-0 mt-0.5">
-          <Check className="w-4 h-4" strokeWidth={4} />
+          <FaCheck className="w-4 h-4" />
         </div>
         <div>
           <p className="text-sm font-black text-foreground tracking-tight mb-0.5">

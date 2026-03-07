@@ -1,4 +1,4 @@
-import { CalendarDays, IndianRupee, MapPin, UtensilsCrossed } from "lucide-react";
+import { FaCalendarWeek, FaRupeeSign, FaMapMarkerAlt, FaUtensils } from "react-icons/fa";
 
 import type { PlanBrowseItem } from "@/api/types/customer.types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,7 +53,7 @@ export function PlanSummary({
         <div className="rounded-sm border border-primary/10 bg-primary/10 p-3">
           <div className="flex items-center justify-between gap-3 text-sm text-foreground">
             <span className="inline-flex items-center gap-2">
-              <CalendarDays className="h-4 w-4 text-primary" aria-hidden="true" />
+              <FaCalendarWeek className="h-4 w-4 text-primary" aria-hidden="true" />
               Duration
             </span>
             <span className="font-semibold text-foreground">{plan.duration}</span>
@@ -64,7 +64,7 @@ export function PlanSummary({
       <CardContent className="space-y-5 px-5 sm:px-6">
         <section className="space-y-2" aria-label="Meals included">
           <p className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
-            <UtensilsCrossed className="h-4 w-4 text-primary" aria-hidden="true" />
+            <FaUtensils className="h-4 w-4 text-primary" aria-hidden="true" />
             Meals included
           </p>
           {plan.meals_included.length > 0 ? (
@@ -82,7 +82,7 @@ export function PlanSummary({
 
         <section className="space-y-3 rounded-sm border border-muted bg-muted/70 p-3" aria-label="Price breakdown">
           <p className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
-            <IndianRupee className="h-4 w-4 text-primary" aria-hidden="true" />
+            <FaRupeeSign className="h-4 w-4 text-primary" aria-hidden="true" />
             Price breakdown
           </p>
           <div className="space-y-2 text-sm">
@@ -107,7 +107,7 @@ export function PlanSummary({
             <p className="font-semibold uppercase tracking-wide text-foreground">Plan intent context</p>
             {checkedPincode ? (
               <p className="inline-flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                <FaMapMarkerAlt className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
                 Checked pincode: <span className="font-semibold text-foreground">{checkedPincode}</span>
               </p>
             ) : null}

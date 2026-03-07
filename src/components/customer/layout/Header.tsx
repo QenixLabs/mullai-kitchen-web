@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, User, LogOut } from 'lucide-react';
+import { FaBars, FaTimes, FaUser, FaSignOutAlt } from "react-icons/fa";
 
 import { useAuthHydrated, useIsAuthenticated } from '@/hooks/use-user-store';
 
@@ -74,14 +74,14 @@ export default function Header() {
                   href="/dashboard"
                   className="inline-flex items-center gap-2 rounded border border-muted px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:border-primary hover:text-primary"
                 >
-                  <User className="h-4 w-4" />
+                  <FaUser className="h-4 w-4" />
                   My Account
                 </Link>
                 <button
                   onClick={handleLogout}
                   className="inline-flex items-center gap-2 rounded bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <FaSignOutAlt className="h-4 w-4" />
                   Logout
                 </button>
               </>
@@ -111,9 +111,9 @@ export default function Header() {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? (
-                <X className="h-6 w-6" aria-hidden="true" />
+                <FaTimes className="h-6 w-6" aria-hidden="true" />
               ) : (
-                <Menu className="h-6 w-6" aria-hidden="true" />
+                <FaBars className="h-6 w-6" aria-hidden="true" />
               )}
             </button>
           </div>
@@ -143,7 +143,7 @@ export default function Header() {
                   className="flex w-full items-center justify-center gap-2 rounded border border-muted px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:border-primary hover:text-primary"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <User className="h-4 w-4" />
+                  <FaUser className="h-4 w-4" />
                   My Account
                 </Link>
                 <button
@@ -153,7 +153,7 @@ export default function Header() {
                   }}
                   className="flex w-full items-center justify-center gap-2 rounded bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <FaSignOutAlt className="h-4 w-4" />
                   Logout
                 </button>
               </>

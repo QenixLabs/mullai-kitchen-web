@@ -16,7 +16,7 @@ import {
   useToggleAutoRenew,
 } from "@/api/hooks/use-subscription";
 import type { Subscription } from "@/api/types/subscription.types";
-import { Plus, AlertCircle, Sparkles, LayoutGrid } from "lucide-react";
+import { FaPlus, FaExclamationCircle, FaStar, FaChartLine } from "react-icons/fa";
 
 export default function SubscriptionPage() {
   const router = useRouter();
@@ -164,7 +164,7 @@ export default function SubscriptionPage() {
     return (
       <div className="container mx-auto p-6 max-w-7xl flex flex-col items-center justify-center min-h-[400px]">
         <div className="p-4 rounded-full bg-destructive/10 text-destructive mb-6">
-          <AlertCircle className="h-10 w-10" />
+          <FaExclamationCircle className="h-10 w-10" />
         </div>
         <h2 className="text-2xl font-bold mb-2">Error Loading Subscriptions</h2>
         <p className="text-muted-foreground mb-8 text-center max-w-md">
@@ -186,7 +186,7 @@ export default function SubscriptionPage() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <div className="p-2 rounded-sm bg-primary/10 text-primary">
-              <LayoutGrid className="h-5 w-5" />
+              <FaChartLine className="h-5 w-5" />
             </div>
             <span className="text-sm font-bold uppercase tracking-widest text-primary/80">
               Manage
@@ -206,7 +206,7 @@ export default function SubscriptionPage() {
           size="lg"
           className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all active:scale-95"
         >
-          <Plus className="h-5 w-5" />
+          <FaPlus className="h-5 w-5" />
           New Subscription
         </Button>
       </div>
@@ -218,7 +218,7 @@ export default function SubscriptionPage() {
         {subscriptions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 px-6 border-2 border-dashed border-gray-200 rounded-sm bg-gray-50/50">
             <div className="p-5 rounded-full bg-white shadow-sm mb-6 text-gray-400">
-              <Sparkles className="h-10 w-10" />
+              <FaStar className="h-10 w-10" />
             </div>
             <h3 className="text-2xl font-bold mb-2">No Active Subscriptions</h3>
             <p className="text-muted-foreground mb-8 text-center max-w-sm">
@@ -230,7 +230,7 @@ export default function SubscriptionPage() {
               size="lg"
               className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
             >
-              <Plus className="h-5 w-5" />
+          <FaPlus className="h-5 w-5" />
               Explore All Plans
             </Button>
           </div>

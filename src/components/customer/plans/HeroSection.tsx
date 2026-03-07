@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin, SearchCheck, Users, ChevronRight } from "lucide-react";
+import { FaMapMarkerAlt, FaCheckCircle, FaUsers, FaChevronRight, FaSearch, FaMapPin } from "react-icons/fa";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -119,8 +119,8 @@ export function HeroSection({
                       <FormControl>
                         <div className="flex flex-col gap-2 sm:flex-row">
                           <div className="relative flex-1">
-                            <MapPin
-                              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary sm:left-4 sm:h-5 sm:w-5"
+                            <FaMapPin
+                              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-rose-500 sm:left-4 sm:h-5 sm:w-5"
                               aria-hidden="true"
                             />
                             <Input
@@ -159,7 +159,7 @@ export function HeroSection({
                               <>
                                 <span className="hidden sm:inline">Check Availability</span>
                                 <span className="sm:hidden">Check</span>
-                                <SearchCheck className="ml-2 h-4 w-4" aria-hidden="true" />
+                                <FaSearch className="ml-2 h-4 w-4 text-white" aria-hidden="true" />
                               </>
                             )}
                           </Button>

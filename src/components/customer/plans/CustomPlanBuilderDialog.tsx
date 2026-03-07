@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import {
-  Leaf,
-  Drumstick,
-  CalendarDays,
-  UtensilsCrossed,
-  Check,
-  MapPin,
-  Loader2,
-  Sparkles,
-} from "lucide-react";
+  FaLeaf,
+  FaDrumstickBite,
+  FaCalendarWeek,
+  FaUtensils,
+  FaCheck,
+  FaMapMarkerAlt,
+  FaSpinner,
+  FaMagic,
+} from "react-icons/fa";
 
 import {
   Dialog,
@@ -194,7 +194,7 @@ export function CustomPlanBuilderDialog({
                         : "bg-green-50 text-green-600 group-hover:bg-green-100",
                     )}
                   >
-                    <Leaf className="w-6 h-6" />
+                    <FaLeaf className="w-6 h-6" />
                   </div>
                   <div className="text-center">
                     <span className="block font-semibold text-foreground">
@@ -206,7 +206,7 @@ export function CustomPlanBuilderDialog({
                   </div>
                   {preference === "VEG" && (
                     <div className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-lg">
-                      <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />
+                      <FaCheck className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
                 </button>
@@ -229,7 +229,7 @@ export function CustomPlanBuilderDialog({
                         : "bg-red-50 text-red-600 group-hover:bg-red-100",
                     )}
                   >
-                    <Drumstick className="w-6 h-6" />
+                    <FaDrumstickBite className="w-6 h-6" />
                   </div>
                   <div className="text-center">
                     <span className="block font-semibold text-foreground">
@@ -241,7 +241,7 @@ export function CustomPlanBuilderDialog({
                   </div>
                   {preference === "NON_VEG" && (
                     <div className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-lg">
-                      <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />
+                      <FaCheck className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
                 </button>
@@ -283,7 +283,7 @@ export function CustomPlanBuilderDialog({
                               : "bg-muted text-muted-foreground",
                           )}
                         >
-                          <UtensilsCrossed className="w-5 h-5" />
+                          <FaUtensils className="w-5 h-5" />
                         </div>
                         <span className="font-semibold text-foreground">
                           {meal}
@@ -292,9 +292,8 @@ export function CustomPlanBuilderDialog({
 
                       {isSelected ? (
                         <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-md">
-                          <Check
+                          <FaCheck
                             className="h-3 w-3 text-primary-foreground"
-                            strokeWidth={3}
                           />
                         </div>
                       ) : (
@@ -345,7 +344,7 @@ export function CustomPlanBuilderDialog({
                   Start Date
                 </h3>
                 <div className="relative">
-                  <CalendarDays className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+                  <FaCalendarWeek className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
                   <input
                     type="date"
                     min={minDate}
@@ -376,11 +375,11 @@ export function CustomPlanBuilderDialog({
 
               {addressesQuery.isLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  <FaSpinner className="w-6 h-6 animate-spin text-primary" />
                 </div>
               ) : addresses.length === 0 ? (
                 <div className="text-center py-10 rounded-sm border-2 border-dashed border-border bg-muted">
-                  <MapPin className="w-8 h-8 text-muted-foreground/50 mx-auto mb-3" />
+                  <FaMapMarkerAlt className="w-8 h-8 text-muted-foreground/50 mx-auto mb-3" />
                   <p className="text-base text-foreground font-semibold">
                     No saved addresses
                   </p>
@@ -411,7 +410,7 @@ export function CustomPlanBuilderDialog({
                               : "bg-muted text-muted-foreground group-hover:bg-accent group-hover:text-primary",
                           )}
                         >
-                          <MapPin className="w-5 h-5" />
+                          <FaMapMarkerAlt className="w-5 h-5" />
                         </div>
                         <div className="flex-1 min-w-0 pt-0.5">
                           <div className="flex items-center gap-2 mb-1.5">
@@ -433,9 +432,8 @@ export function CustomPlanBuilderDialog({
                         </div>
                         {isSelected && (
                           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-md shrink-0 mt-2">
-                            <Check
+                            <FaCheck
                               className="h-3 w-3 text-primary-foreground"
-                              strokeWidth={3}
                             />
                           </div>
                         )}
@@ -509,12 +507,12 @@ export function CustomPlanBuilderDialog({
             >
               {createCustomPlan.isPending ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <FaSpinner className="w-5 h-5 animate-spin" />
                   Creating...
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-5 h-5" />
+                  <FaMagic className="w-5 h-5" />
                   Confirm & Checkout
                 </>
               )}

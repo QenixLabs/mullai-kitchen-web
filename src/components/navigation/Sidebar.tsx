@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Calendar,
-  Wallet,
   PlusCircle,
   Settings,
   Plus,
-  LayoutGrid,
 } from "lucide-react";
+import {
+  FaCalendarWeek,
+  FaWallet,
+  FaChartLine,
+} from "react-icons/fa";
 import {
   useAuthHydrated,
   useIsAuthenticated,
@@ -31,9 +33,9 @@ import {
 import { Button } from "@/components/ui/button";
 
 const SIDEBAR_ITEMS = [
-  { href: "/subscription", icon: Calendar, label: "Subscriptions" },
-  { href: "/plans", icon: LayoutGrid, label: "Plans" },
-  { href: "/wallet", icon: Wallet, label: "Wallet" },
+  { href: "/subscription", icon: FaCalendarWeek, label: "Subscriptions" },
+  { href: "/plans", icon: FaChartLine, label: "Plans" },
+  { href: "/wallet", icon: FaWallet, label: "Wallet" },
   { href: "/add-ons", icon: PlusCircle, label: "Add-ons" },
   { href: "/profile", icon: Settings, label: "Settings" },
 ] as const;

@@ -5,7 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 
 import { PlanCard } from "./PlanCard";
-import { SearchX, Loader2 } from "lucide-react";
+import { FaSearch, FaSpinner } from "react-icons/fa";
 
 interface PlanGridProps {
   plans: PlanBrowseItem[];
@@ -57,7 +57,7 @@ const PlanErrorAlert = ({ message, className }: { message?: string; className?: 
 const NoPlansFound = ({ className }: { className?: string }) => (
   <div className={cn("flex flex-col items-center justify-center rounded-sm border border-dashed border-primary/20 bg-primary/5 p-10 text-center", className)}>
     <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-      <SearchX className="h-8 w-8 text-primary" />
+      <FaSearch className="h-8 w-8 text-primary" />
     </div>
     <h3 className="text-lg font-semibold text-gray-900">No plans found</h3>
     <p className="mt-2 text-sm text-gray-600">
@@ -69,7 +69,7 @@ const NoPlansFound = ({ className }: { className?: string }) => (
 // Loading spinner for inline loading states
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center py-12">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <FaSpinner className="h-8 w-8 animate-spin text-primary" />
   </div>
 );
 

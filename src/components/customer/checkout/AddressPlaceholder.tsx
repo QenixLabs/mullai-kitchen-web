@@ -1,4 +1,4 @@
-import { Home, MapPinned } from "lucide-react";
+import { FaHome, FaMapPin } from "react-icons/fa";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ export function AddressPlaceholder({ className }: AddressPlaceholderProps) {
     <Card className={cn("border-gray-200 bg-white py-5 shadow-sm", className)}>
       <CardHeader className="space-y-3 px-5 pb-0 sm:px-6">
         <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-          <MapPinned className="h-3.5 w-3.5" aria-hidden="true" />
+          <FaMapPin className="h-3.5 w-3.5" aria-hidden="true" />
           Step 1: Delivery Address
         </div>
         <CardTitle className="text-xl font-bold tracking-tight text-foreground">Address selection is coming soon</CardTitle>
@@ -25,7 +25,7 @@ export function AddressPlaceholder({ className }: AddressPlaceholderProps) {
 
         <div className="rounded-sm border border-dashed border-muted bg-muted p-4">
           <p className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
-            <Home className="h-4 w-4 text-primary" aria-hidden="true" />
+            <FaHome className="h-4 w-4 text-primary" aria-hidden="true" />
             Planned enhancements
           </p>
           <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">

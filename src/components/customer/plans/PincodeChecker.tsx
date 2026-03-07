@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin, SearchCheck } from "lucide-react";
+import { FaMapMarkerAlt, FaSearch } from "react-icons/fa";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -92,7 +92,7 @@ export function PincodeChecker({
               <FormItem className="relative flex-1">
                 <FormControl>
                   <div className="relative">
-                    <MapPin
+                    <FaMapMarkerAlt
                       className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
                       aria-hidden="true"
                     />
@@ -124,7 +124,7 @@ export function PincodeChecker({
             disabled={isChecking || !isValid}
             aria-label="Check pincode serviceability"
           >
-            <SearchCheck className="h-4 w-4" aria-hidden="true" />
+            <FaSearch className="h-4 w-4" aria-hidden="true" />
             {isChecking ? "Checking..." : "Check"}
           </Button>
         </form>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Wallet, TrendingUp, Plus } from "lucide-react";
+import { FaWallet, FaChartLine, FaPlus } from "react-icons/fa";
 import { motion } from "motion/react";
 
 import { paymentApi } from "@/api/payment.api";
@@ -71,7 +71,7 @@ export function WalletBadge({
         className,
       )}
     >
-      <Wallet className={cn(ICON_SIZE[size], "text-primary")} />
+      <FaWallet className={cn(ICON_SIZE[size], "text-primary")} />
       <span className="font-semibold text-foreground">
         {loading ? (
           <span className="animate-pulse">...</span>
@@ -79,14 +79,14 @@ export function WalletBadge({
           `${currencySymbol}${balance.toFixed(2)}`
         )}
       </span>
-      {showAddFunds && <Plus className={cn(ICON_SIZE[size], "text-muted-foreground")} />}
+      {showAddFunds && <FaPlus className={cn(ICON_SIZE[size], "text-muted-foreground")} />}
       {showCreditIndicator && balance > 0 && (
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           className="flex items-center gap-0.5 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600"
         >
-          <TrendingUp className="h-2.5 w-2.5" />
+          <FaChartLine className="h-2.5 w-2.5" />
           <span>Active</span>
         </motion.div>
       )}

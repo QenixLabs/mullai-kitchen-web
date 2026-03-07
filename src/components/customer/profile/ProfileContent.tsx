@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import {
-  Camera,
-  MapPin,
-  Shield,
-  Trash2,
-  Mail,
-  Phone,
-  CheckCircle2,
-  AlertCircle,
-} from "lucide-react";
+  FaCamera,
+  FaMapMarkerAlt,
+  FaShieldAlt,
+  FaTrash,
+  FaEnvelope,
+  FaPhone,
+  FaCheckCircle,
+  FaExclamationCircle,
+} from "react-icons/fa";
 import { useCurrentUser } from "@/hooks/use-user-store";
 import { useUpdateProfile } from "@/api/hooks/useUpdateProfile";
 import { useAddressList } from "@/api/hooks/useAddress";
@@ -79,7 +79,7 @@ export function ProfileContent() {
                     </AvatarFallback>
                   </Avatar>
                   <button className="absolute bottom-0 right-0 p-1.5 rounded-full bg-primary text-white shadow-lg transform transition-transform group-hover:scale-110">
-                    <Camera className="h-4 w-4" />
+                    <FaCamera className="h-4 w-4" />
                   </button>
                 </div>
                 <div className="text-center sm:text-left">
@@ -96,9 +96,9 @@ export function ProfileContent() {
                       : "N/A"}
                   </CardDescription>
                   {user?.status === "Active" && (
-                    <Badge className="mt-2 bg-success/10 text-success hover:bg-success/20 border-none">
-                      <CheckCircle2 className="h-3 w-3 mr-1" /> Premium Member
-                    </Badge>
+                  <Badge className="mt-2 bg-success/10 text-success hover:bg-success/20 border-none">
+                    <FaCheckCircle className="h-3 w-3 mr-1" /> Premium Member
+                  </Badge>
                   )}
                 </div>
               </div>
@@ -137,7 +137,7 @@ export function ProfileContent() {
                       className="h-11 pl-4 bg-white border-border/30 opacity-70"
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-xs font-bold text-success capitalize">
-                      <CheckCircle2 className="h-4 w-4" /> Verified
+                      <FaCheckCircle className="h-4 w-4" /> Verified
                     </div>
                   </div>
                 </div>
@@ -149,7 +149,7 @@ export function ProfileContent() {
           <div className="flex items-center justify-between mb-4 mt-2">
             <div className="flex items-center gap-3">
               <div className="text-primary">
-                <MapPin className="h-5 w-5 fill-primary" />
+                <FaMapMarkerAlt className="h-5 w-5 fill-primary" />
               </div>
               <h2 className="text-xl font-bold tracking-tight text-foreground">
                 Addresses
@@ -177,7 +177,7 @@ export function ProfileContent() {
                     >
                       <div className="flex items-start gap-6 flex-1">
                         <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-[#FFE7D9] text-[#FF5630] shrink-0">
-                          <MapPin className="h-6 w-6 fill-current" />
+                          <FaMapMarkerAlt className="h-6 w-6 fill-current" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 mb-2 flex-wrap">
@@ -207,7 +207,7 @@ export function ProfileContent() {
                               onClick={() => handleDeleteAddress(address._id)}
                               className="text-sm font-bold text-foreground hover:text-destructive transition-colors flex items-center gap-2"
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <FaTrash className="h-4 w-4" />
                               Delete
                             </button>
                           </div>
@@ -224,12 +224,12 @@ export function ProfileContent() {
                             backgroundSize: "8px 8px",
                           }}
                         />
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-                          <div className="relative">
-                            <MapPin className="h-6 w-6 text-primary fill-primary/20" />
-                            <div className="absolute -top-1 -right-1 size-3 bg-blue-500 rounded-full border-2 border-white shadow-sm ring-4 ring-blue-500/10" />
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                            <div className="relative">
+                              <FaMapMarkerAlt className="h-6 w-6 text-primary fill-primary/20" />
+                              <div className="absolute -top-1 -right-1 size-3 bg-blue-500 rounded-full border-2 border-white shadow-sm ring-4 ring-blue-500/10" />
+                            </div>
                           </div>
-                        </div>
                         <div className="absolute bottom-2 right-2 flex gap-1">
                           <div className="h-1.5 w-4 bg-muted rounded-full" />
                           <div className="h-1.5 w-1.5 bg-muted rounded-full" />
@@ -241,7 +241,7 @@ export function ProfileContent() {
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 px-6 text-center border border-border/50 rounded-[40px] bg-white">
                   <div className="p-5 rounded-full bg-white shadow-sm text-muted-foreground mb-4">
-                    <AlertCircle className="h-10 w-10" />
+                    <FaExclamationCircle className="h-10 w-10" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">
                     No Addresses Found
@@ -267,7 +267,7 @@ export function ProfileContent() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                  <Shield className="h-5 w-5" />
+                  <FaShieldAlt className="h-5 w-5" />
                 </div>
                 <CardTitle className="text-xl font-bold tracking-tight">
                   Security & Privacy
@@ -278,7 +278,7 @@ export function ProfileContent() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl border border-border/50 bg-white">
                 <div className="flex items-center gap-4">
                   <div className="p-2.5 rounded-lg bg-background border border-border shadow-sm">
-                    <Shield className="h-5 w-5 text-muted-foreground" />
+                    <FaShieldAlt className="h-5 w-5 text-muted-foreground" />
                   </div>
                   <div>
                     <p className="font-bold text-foreground">Password</p>
@@ -304,7 +304,7 @@ export function ProfileContent() {
           <Card className="border-border/50 shadow-sm overflow-hidden bg-white">
             <CardHeader className="bg-white border-b border-border/50">
               <div className="flex items-center gap-2">
-                <Shield className="h-4 w-4 text-primary" />
+                <FaShieldAlt className="h-4 w-4 text-primary" />
                 <CardTitle className="text-lg font-bold">Preferences</CardTitle>
               </div>
             </CardHeader>
@@ -354,7 +354,7 @@ export function ProfileContent() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
+                      <FaEnvelope className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm font-semibold">
                         Email Updates
                       </span>
@@ -363,14 +363,14 @@ export function ProfileContent() {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <FaPhone className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm font-semibold">SMS Alerts</span>
                     </div>
                     <Switch defaultChecked />
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 text-emerald-500">
-                      <Phone className="h-4 w-4" />
+                      <FaPhone className="h-4 w-4" />
                       <span className="text-sm font-semibold text-foreground">
                         WhatsApp
                       </span>
@@ -384,9 +384,9 @@ export function ProfileContent() {
 
           {/* Help Center CTA */}
           <div className="p-6 sm:p-8 rounded-3xl bg-linear-to-br from-primary to-primaryDark text-white shadow-xl shadow-primary/20 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-8 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform duration-500">
-              <Phone className="h-24 w-24" />
-            </div>
+          <div className="absolute top-0 right-0 p-8 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform duration-500">
+            <FaPhone className="h-24 w-24" />
+          </div>
             <h3 className="text-xl font-black tracking-tight mb-2">
               Need help?
             </h3>

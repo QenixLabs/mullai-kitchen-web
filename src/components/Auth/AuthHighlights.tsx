@@ -1,18 +1,18 @@
-import { UtensilsCrossed, RefreshCw, Truck, Flame } from "lucide-react";
+import { FaUtensils, FaSyncAlt, FaTruck, FaFire } from "react-icons/fa";
 
 const FEATURES = [
   {
-    icon: Flame,
+    icon: FaFire,
     title: "Fresh meals, daily",
     description: "Order from our rotating menu of home-style dishes prepared fresh every morning.",
   },
   {
-    icon: RefreshCw,
+    icon: FaSyncAlt,
     title: "Flexible subscriptions",
     description: "Pause, skip, or modify your deliveries anytime with full wallet balance control.",
   },
   {
-    icon: Truck,
+    icon: FaTruck,
     title: "Reliable delivery",
     description: "Track your orders in real-time and get timely updates from kitchen to doorstep.",
   },
@@ -24,7 +24,7 @@ export function AuthHighlights() {
       {/* Brand Identity */}
       <div className="flex items-center gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-white/20 backdrop-blur-sm">
-          <UtensilsCrossed className="h-6 w-6 text-white" />
+          <FaUtensils className="h-6 w-6 text-white" />
         </div>
         <div>
           <h3 className="text-xl font-bold">Mullai Kitchen</h3>

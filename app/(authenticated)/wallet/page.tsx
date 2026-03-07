@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import {
-  ArrowLeft,
-  CreditCard,
-  HelpCircle,
-  Info,
-  RefreshCw,
-  Wallet,
-} from "lucide-react";
+  FaArrowLeft,
+  FaCreditCard,
+  FaQuestionCircle,
+  FaInfoCircle,
+  FaSyncAlt,
+  FaWallet,
+} from "react-icons/fa";
 import { motion } from "motion/react";
 import type {
   TopupWalletResponse,
@@ -155,7 +155,7 @@ export default function WalletPage() {
 
             <Button variant="ghost" size="icon" asChild>
               <a href="/dashboard">
-                <ArrowLeft className="h-5 w-5" />
+                <FaArrowLeft className="h-5 w-5" />
               </a>
             </Button>
           </div>
@@ -294,14 +294,14 @@ export default function WalletPage() {
             {/* Wallet Info */}
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
               <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900">
-                <Info className="h-5 w-5 text-accent" />
+                <FaInfoCircle className="h-5 w-5 text-accent" />
                 About Your Wallet
               </h2>
 
               <div className="space-y-4 text-sm">
                 <div className="flex gap-3">
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
-                    <Wallet className="h-4 w-4 text-primary" />
+                    <FaWallet className="h-4 w-4 text-primary" />
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">
@@ -317,7 +317,7 @@ export default function WalletPage() {
 
                 <div className="flex gap-3">
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent">
-                    <RefreshCw className="h-4 w-4 text-accent-foreground" />
+                    <FaSyncAlt className="h-4 w-4 text-accent-foreground" />
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">
@@ -332,7 +332,7 @@ export default function WalletPage() {
 
                 <div className="flex gap-3">
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent">
-                    <CreditCard className="h-4 w-4 text-accent-foreground" />
+                    <FaCreditCard className="h-4 w-4 text-accent-foreground" />
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">
@@ -359,7 +359,7 @@ export default function WalletPage() {
                   </p>
                 </div>
                 <Button variant="outline" size="icon">
-                  <HelpCircle className="h-5 w-5" />
+                  <FaQuestionCircle className="h-5 w-5" />
                 </Button>
               </div>
             </div>
@@ -375,7 +375,7 @@ export default function WalletPage() {
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wOCI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
             <DialogHeader className="relative z-10 space-y-3">
               <div className="mx-auto w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 shadow-lg">
-                <Wallet className="h-8 w-8 text-white" />
+                <FaWallet className="h-8 w-8 text-white" />
               </div>
               <div className="text-center">
                 <DialogTitle className="text-2xl font-bold text-white">
@@ -440,7 +440,7 @@ export default function WalletPage() {
 
             {/* Info Note */}
             <div className="flex items-start gap-3 p-3 bg-amber-50 rounded-lg border border-amber-100">
-              <Info className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+              <FaInfoCircle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
               <p className="text-xs text-amber-800 leading-relaxed">
                 You will be redirected to our secure payment partner to complete the transaction.
               </p>
@@ -465,17 +465,14 @@ export default function WalletPage() {
               >
                 {isTopupProcessing ? (
                   <span className="flex items-center gap-2">
-                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    <FaSyncAlt className="h-4 w-4 animate-spin" />
                     Processing...
                   </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    Proceed
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </span>
-                )}
+              ) : (
+                <span className="flex items-center gap-2">
+                  Proceed
+                </span>
+              )}
               </Button>
             </div>
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, Check, SlidersHorizontal, UtensilsCrossed, X } from "lucide-react";
+import { FaCalendarWeek, FaCheck, FaSlidersH, FaUtensils, FaTimes } from "react-icons/fa";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -70,7 +70,7 @@ export function FilterChips({
                   aria-pressed={isActive}
                   aria-label={`Filter by ${duration} duration`}
                 >
-                  {isActive ? <Check className="h-3.5 w-3.5" /> : null}
+                  {isActive ? <FaCheck className="h-3.5 w-3.5" /> : null}
                   {duration}
                 </button>
               );
@@ -95,7 +95,7 @@ export function FilterChips({
                   aria-pressed={isActive}
                   aria-label={`Filter by ${mealType} meals`}
                 >
-                  {isActive ? <Check className="h-3.5 w-3.5" /> : null}
+                  {isActive ? <FaCheck className="h-3.5 w-3.5" /> : null}
                   {mealType}
                 </button>
               );
@@ -115,7 +115,7 @@ export function FilterChips({
               className="h-8 rounded-full px-3 text-xs text-foreground hover:bg-background hover:text-primary"
               onClick={clearAllFilters}
             >
-              <X className="mr-1.5 h-3.5 w-3.5" />
+              <FaTimes className="mr-1.5 h-3.5 w-3.5" />
               Clear filters
             </Button>
           </div>
@@ -135,7 +135,7 @@ export function FilterChips({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <SlidersHorizontal className="h-4 w-4" />
+            <FaSlidersH className="h-4 w-4" />
           </div>
           <div>
             <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground">Filter plans</h2>
@@ -154,7 +154,7 @@ export function FilterChips({
           disabled={!hasFilters}
           aria-label="Clear all plan filters"
         >
-          <X className="mr-1.5 h-3.5 w-3.5" />
+          <FaTimes className="mr-1.5 h-3.5 w-3.5" />
           Clear all
         </Button>
       </div>
@@ -163,7 +163,7 @@ export function FilterChips({
         <div className="space-y-2.5 rounded-sm border border-border bg-background/80 p-3">
           <div className="flex items-center justify-between gap-2">
             <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              <CalendarDays className="h-3.5 w-3.5 text-primary" />
+              <FaCalendarWeek className="h-3.5 w-3.5 text-primary" />
               Duration
             </p>
             <span className="text-[11px] font-medium text-muted-foreground">{selectedDurations.length} selected</span>
@@ -185,7 +185,7 @@ export function FilterChips({
                   aria-pressed={isActive}
                   aria-label={`Filter by ${duration} duration`}
                 >
-                  {isActive ? <Check className="h-3.5 w-3.5" /> : null}
+                  {isActive ? <FaCheck className="h-3.5 w-3.5" /> : null}
                   {duration}
                 </button>
               );
@@ -196,7 +196,7 @@ export function FilterChips({
         <div className="space-y-2.5 rounded-sm border border-border bg-background/80 p-3">
           <div className="flex items-center justify-between gap-2">
             <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              <UtensilsCrossed className="h-3.5 w-3.5 text-primary" />
+              <FaUtensils className="h-3.5 w-3.5 text-primary" />
               Meal type
             </p>
             <span className="text-[11px] font-medium text-muted-foreground">{selectedMealTypes.length} selected</span>
@@ -218,7 +218,7 @@ export function FilterChips({
                   aria-pressed={isActive}
                   aria-label={`Filter by ${mealType} meals`}
                 >
-                  {isActive ? <Check className="h-3.5 w-3.5" /> : null}
+                  {isActive ? <FaCheck className="h-3.5 w-3.5" /> : null}
                   {mealType}
                 </button>
               );

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronRight } from "lucide-react";
+import { FaCheck, FaChevronRight } from "react-icons/fa";
 import { motion } from "motion/react";
 
 import { cn } from "@/lib/utils";
@@ -80,7 +80,7 @@ export function Stepper({
                     }}
                   >
                     {isComplete ? (
-                      <Check className="h-5 w-5" strokeWidth={3} />
+                      <FaCheck className="h-5 w-5" strokeWidth={3} />
                     ) : (
                       <span>{index + 1}</span>
                     )}
@@ -128,7 +128,7 @@ export function Stepper({
                     animate={{ opacity: 1, x: 0 }}
                     className="text-primary"
                   >
-                    <ChevronRight className="h-5 w-5" strokeWidth={2.5} />
+                    <FaChevronRight className="h-5 w-5" strokeWidth={2.5} />
                   </motion.div>
                 )}
               </motion.li>
@@ -169,7 +169,7 @@ export function Stepper({
                 }}
               >
                 {isComplete ? (
-                  <Check className="h-4 w-4" strokeWidth={3} />
+                  <FaCheck className="h-4 w-4" strokeWidth={3} />
                 ) : (
                   <span>{index + 1}</span>
                 )}

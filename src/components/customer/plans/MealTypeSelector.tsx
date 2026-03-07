@@ -1,6 +1,6 @@
 "use client";
 
-import { Coffee, Beef, Soup, Check } from "lucide-react";
+import { FaCoffee, FaDrumstickBite, FaUtensils, FaCheck } from "react-icons/fa";
 
 import { cn } from "@/lib/utils";
 
@@ -8,11 +8,11 @@ export type MealType = "Breakfast" | "Lunch" | "Dinner";
 
 const MEAL_TYPES_CONFIG: Record<
   MealType,
-  { label: string; icon: typeof Coffee; time: string }
+  { label: string; icon: typeof FaCoffee; time: string }
 > = {
-  Breakfast: { label: "Breakfast", icon: Coffee, time: "8:00 AM - 9:30 AM" },
-  Lunch: { label: "Lunch", icon: Beef, time: "12:30 PM - 2:00 PM" },
-  Dinner: { label: "Dinner", icon: Soup, time: "7:30 PM - 9:00 PM" },
+  Breakfast: { label: "Breakfast", icon: FaCoffee, time: "8:00 AM - 9:30 AM" },
+  Lunch: { label: "Lunch", icon: FaDrumstickBite, time: "12:30 PM - 2:00 PM" },
+  Dinner: { label: "Dinner", icon: FaUtensils, time: "7:30 PM - 9:00 PM" },
 };
 
 interface MealTypeSelectorProps {
@@ -69,7 +69,7 @@ export function MealTypeSelector({
                 )}
               >
                 {isSelected && (
-                  <Check className="w-3.5 h-3.5 text-primary-foreground" strokeWidth={4} />
+                  <FaCheck className="w-3.5 h-3.5 text-primary-foreground" />
                 )}
               </div>
 
@@ -90,7 +90,7 @@ export function MealTypeSelector({
                   isSelected && "text-primary",
                 )}
               >
-                <Icon className="w-5 h-5" strokeWidth={2} />
+                <Icon className="w-5 h-5" />
               </div>
             </div>
           </button>

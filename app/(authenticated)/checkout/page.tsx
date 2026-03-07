@@ -3,25 +3,31 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ArrowRight,
-  CheckCircle2,
+  FaCheckCircle,
+  FaCreditCard,
+  FaInfoCircle,
+  FaSpinner,
+  FaMapMarkerAlt,
+  FaEdit,
+  FaPlusCircle,
+  FaWallet,
+  FaCreditCard as FaCreditCardCards,
+  FaTimes,
+  FaTimesCircle,
+  FaCalendar,
+} from "react-icons/fa";
+import {
   CreditCard,
-  Info,
-  Loader2,
-  Lock,
-  MapPin,
-  MessageCircle,
-  Pencil,
-  PlusCircle,
   QrCode,
-  Shield,
+  Info,
   Wallet,
-  WalletCards,
-  X,
-  XCircle,
-  Calendar,
+  Loader2,
+  ArrowRight,
+  Lock,
+  Shield,
+  MessageCircle,
+  MapPin,
 } from "lucide-react";
-import { motion } from "motion/react";
 
 import {
   useAuthHydrated,
@@ -121,11 +127,11 @@ function AddressCard({ address, selected, onClick }: AddressCardProps) {
       <div className="flex w-full items-center justify-between">
         <span className="flex items-center gap-1.5 text-sm font-semibold text-gray-900">
           {address.type}
-          {address.is_default && selected && (
-            <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-          )}
+            {address.is_default && selected && (
+              <FaCheckCircle className="h-3.5 w-3.5 text-primary" />
+            )}
         </span>
-        <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+          <FaEdit className="h-3.5 w-3.5 text-muted-foreground" />
       </div>
       <p className="text-xs text-gray-600">{address.full_address}</p>
       <p className="text-xs text-gray-600">
@@ -149,7 +155,7 @@ function AddNewAddressCard({ onClick }: AddNewAddressCardProps) {
       onClick={onClick}
       className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 bg-white p-6 text-center transition-all hover:border-border hover:bg-muted/40"
     >
-      <PlusCircle className="h-6 w-6 text-muted-foreground" />
+      <FaPlusCircle className="h-6 w-6 text-muted-foreground" />
       <span className="text-sm font-medium text-gray-500">Add New Address</span>
     </button>
   );
@@ -167,7 +173,7 @@ interface PaymentOptionProps {
 }
 
 function PaymentOption({
-  id,
+  id: _id,
   label,
   subtitle,
   icon,
@@ -227,7 +233,7 @@ export default function CheckoutPage() {
 
   // Payment state from store
   const paymentStore = usePaymentStore();
-  const { status: paymentStatus, errorMessage: paymentError } = paymentStore;
+  const { status: paymentStatus } = paymentStore;
 
   // React Query hooks for addresses and wallet balance
   const { data: addresses, isLoading: addressesLoading } = useAddressList();
@@ -465,7 +471,7 @@ export default function CheckoutPage() {
           <StepIndicator step={1} label="Delivery Details" active />
 
           {/* connector line */}
-          <div className="mx-3 h-0.5 w-24 bg-gradient-to-r from-border to-border sm:w-40" />
+          <div className="mx-3 h-0.5 w-24 bg-linear-to-r from-border to-border sm:w-40" />
 
           <StepIndicator
             step={2}
@@ -485,14 +491,14 @@ export default function CheckoutPage() {
             {/* 1. Select Delivery Address */}
             <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-gray-900 sm:text-lg">
-                <MapPin className="h-5 w-5 text-primary" />
+                <FaMapMarkerAlt className="h-5 w-5 text-primary" />
                 1. Select Delivery Address
               </h2>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {addressesLoading ? (
                   <div className="col-span-2 flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 p-4">
-                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    <FaSpinner className="h-4 w-4 animate-spin text-primary" />
                     <span className="text-sm text-gray-500">
                       Loading addresses...
                     </span>
@@ -519,7 +525,7 @@ export default function CheckoutPage() {
               {/* Start Date Selector */}
               <div className="mt-4 border-t border-gray-100 pt-4">
                 <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-900">
-                  <Calendar className="h-4 w-4 text-primary" />
+                  <FaCalendar className="h-4 w-4 text-primary" />
                   Subscription Start Date
                 </label>
                 <DatePicker
@@ -541,7 +547,7 @@ export default function CheckoutPage() {
             {/* Two-Phase Wallet info banner */}
             <div className="flex items-start gap-3 rounded-2xl border border-border bg-muted p-4 sm:p-5">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
-                <Info className="h-4 w-4 text-white" />
+                <FaInfoCircle className="h-4 w-4 text-white" />
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-900">
@@ -565,21 +571,21 @@ export default function CheckoutPage() {
             {/* 2. Payment Selection */}
             <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-gray-900 sm:text-lg">
-                <CreditCard className="h-5 w-5 text-primary" />
+                <FaCreditCard className="h-5 w-5 text-primary" />
                 2. Payment Selection
               </h2>
 
               {/* Wallet Balance Display */}
               {walletLoading ? (
                 <div className="mb-4 flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 p-3">
-                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                  <FaSpinner className="h-4 w-4 animate-spin text-primary" />
                   <span className="text-sm text-gray-600">
                     Loading wallet balance...
                   </span>
                 </div>
               ) : walletError ? (
                 <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3">
-                  <XCircle className="h-4 w-4 text-red-600" />
+                  <FaTimesCircle className="h-4 w-4 text-red-600" />
                   <span className="text-sm text-red-900">
                     Failed to load wallet balance
                   </span>
@@ -595,7 +601,7 @@ export default function CheckoutPage() {
                 <div className="mb-4 flex items-center justify-between rounded-xl bg-primary p-4 shadow-sm shadow-primary/10">
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
-                      <Wallet className="h-5 w-5 text-white" />
+                      <FaWallet className="h-5 w-5 text-white" />
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-white">
@@ -641,7 +647,7 @@ export default function CheckoutPage() {
                       onClick={() => setApplyWallet(false)}
                       className="text-muted-foreground hover:text-gray-600"
                     >
-                      <X className="h-4 w-4" />
+                      <FaTimes className="h-4 w-4" />
                     </button>
                   )}
                 </div>
@@ -659,7 +665,7 @@ export default function CheckoutPage() {
                   }
                   icon={
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
-                      <WalletCards className="h-4 w-4 text-foreground" />
+                      <FaCreditCardCards className="h-4 w-4 text-foreground" />
                     </div>
                   }
                   selected={selectedPayment === PAYMENT_METHODS.WALLET}
@@ -856,7 +862,7 @@ export default function CheckoutPage() {
       {/* ── Address Dialog ────────────────────────────────── */}
       {showAddressDialog && (
         <Dialog open={showAddressDialog} onOpenChange={setShowAddressDialog}>
-          <DialogContent className="max-w-lg sm:min-w-[480px] max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-lg sm:min-w-120 max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add New Address</DialogTitle>
             </DialogHeader>

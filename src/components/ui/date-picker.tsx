@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CalendarIcon } from "lucide-react"
+import { FaCalendarAlt } from "react-icons/fa"
 import { format, addDays } from "date-fns"
 
 import { Calendar } from "@/components/ui/calendar"
@@ -61,7 +61,7 @@ function DatePicker({
           )}
           disabled={typeof disabled === 'boolean' ? disabled : false}
         >
-          <CalendarIcon className="mr-2 h-4 w-4" />
+          <FaCalendarAlt className="mr-2 h-4 w-4" />
           {selectedDate ? format(selectedDate, "PPP") : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>

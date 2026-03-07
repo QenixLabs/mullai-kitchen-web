@@ -269,7 +269,7 @@ export function AddressSelectionModal({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-sm bg-primary/10 text-primary">
-                <MyLocation className="h-5 w-5" />
+                <FaMapMarkerAlt className="h-5 w-5" />
               </div>
               <DialogTitle className="text-xl font-bold tracking-tight">
                 Select Delivery Address
@@ -282,7 +282,7 @@ export function AddressSelectionModal({
           {/* Search Section */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-slate-400" />
+              <FaSearch className="h-4 w-4 text-slate-400" />
             </div>
             <Input
               placeholder="Search for area, street name or pincode..."
@@ -324,7 +324,7 @@ export function AddressSelectionModal({
               onClick={handleGetCurrentLocation}
               disabled={isGettingLocation}
             >
-              <MyLocation className="h-5 w-5" />
+              <FaMapMarkerAlt className="h-5 w-5" />
               {isGettingLocation ? "Getting location..." : "Use Current Location"}
             </Button>
           </div>
@@ -338,7 +338,7 @@ export function AddressSelectionModal({
                   : "bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800"
               }`}
             >
-              <Verified
+              <FaCheckCircle
                 className={`text-xl ${
                   serviceabilityInfo.isServiceable
                     ? "text-green-600 dark:text-green-400"
@@ -546,9 +546,9 @@ export function AddressSelectionModal({
                               : "border-slate-200 dark:border-slate-700 hover:border-slate-300"
                           }`}
                         >
-                          {type === "Home" && <Home className="h-4 w-4" />}
-                          {type === "Office" && <Building2 className="h-4 w-4" />}
-                          {type === "Other" && <MoreHorizontal className="h-4 w-4" />}
+                          {type === "Home" && <FaHome className="h-4 w-4" />}
+                          {type === "Office" && <FaBuilding className="h-4 w-4" />}
+                          {type === "Other" && <FaEllipsisH className="h-4 w-4" />}
                           <span className="text-sm font-medium">{type}</span>
                         </div>
                       </label>

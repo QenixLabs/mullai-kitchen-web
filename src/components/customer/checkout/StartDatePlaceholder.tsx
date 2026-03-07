@@ -1,4 +1,4 @@
-import { CalendarClock, CalendarDays } from "lucide-react";
+import { FaCalendarCheck, FaCalendarWeek } from "react-icons/fa";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ export function StartDatePlaceholder({ className }: StartDatePlaceholderProps) {
     <Card className={cn("border-gray-200 bg-white py-5 shadow-sm", className)}>
       <CardHeader className="space-y-3 px-5 pb-0 sm:px-6">
         <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-          <CalendarDays className="h-3.5 w-3.5" aria-hidden="true" />
+          <FaCalendarWeek className="h-3.5 w-3.5" aria-hidden="true" />
           Step 2: Start Date
         </div>
         <CardTitle className="text-xl font-bold tracking-tight text-foreground">Start date picker is coming soon</CardTitle>
@@ -25,7 +25,7 @@ export function StartDatePlaceholder({ className }: StartDatePlaceholderProps) {
 
         <div className="rounded-sm border border-dashed border-muted bg-muted p-4">
           <p className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
-            <CalendarClock className="h-4 w-4 text-primary" aria-hidden="true" />
+            <FaCalendarCheck className="h-4 w-4 text-primary" aria-hidden="true" />
             Planned enhancements
           </p>
           <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">

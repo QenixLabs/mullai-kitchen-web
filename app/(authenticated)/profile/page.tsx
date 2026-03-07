@@ -1,6 +1,6 @@
 "use client";
 
-import { Save, User } from "lucide-react";
+import { FaSave, FaUser } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { ProfileContent } from "@/components/customer/profile/ProfileContent";
 
@@ -12,7 +12,7 @@ export default function ProfilePage() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <div className="p-2 rounded-sm bg-primary/10 text-primary">
-              <User className="h-5 w-5" />
+              <FaUser className="h-5 w-5" />
             </div>
             <span className="text-sm font-bold uppercase tracking-widest text-primary/80">
               Account
@@ -29,7 +29,7 @@ export default function ProfilePage() {
           size="lg"
           className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all active:scale-95"
         >
-          <Save className="h-5 w-5" />
+          <FaSave className="h-5 w-5" />
           Save Changes
         </Button>
       </div>

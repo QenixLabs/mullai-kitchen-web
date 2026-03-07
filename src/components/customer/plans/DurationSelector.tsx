@@ -1,6 +1,6 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { FaCheck } from "react-icons/fa";
 
 import { cn } from "@/lib/utils";
 
@@ -80,7 +80,7 @@ export function DurationSelector({
 
           {value === option.value && (
             <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-lg border-2 border-background">
-              <Check className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={4} />
+              <FaCheck className="h-3.5 w-3.5 text-primary-foreground" />
             </div>
           )}
         </button>

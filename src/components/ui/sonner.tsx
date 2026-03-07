@@ -1,12 +1,12 @@
 "use client";
 
 import {
-  CircleCheckIcon,
-  InfoIcon,
-  Loader2Icon,
-  OctagonXIcon,
-  TriangleAlertIcon,
-} from "lucide-react";
+  FaCheckCircle,
+  FaInfoCircle,
+  FaSpinner,
+  FaTimesCircle,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
@@ -18,11 +18,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       icons={{
-        success: <CircleCheckIcon className="size-5 text-success" />,
-        info: <InfoIcon className="size-5 text-info" />,
-        warning: <TriangleAlertIcon className="size-5 text-warning" />,
-        error: <OctagonXIcon className="size-5 text-destructive" />,
-        loading: <Loader2Icon className="size-5 text-primary animate-spin" />,
+        success: <FaCheckCircle className="size-5 text-success" />,
+        info: <FaInfoCircle className="size-5 text-info" />,
+        warning: <FaExclamationTriangle className="size-5 text-warning" />,
+        error: <FaTimesCircle className="size-5 text-destructive" />,
+        loading: <FaSpinner className="size-5 text-primary animate-spin" />,
       }}
       toastOptions={{
         classNames: {

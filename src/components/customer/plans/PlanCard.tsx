@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Sparkles, Calendar, UtensilsCrossed, ArrowRight, Clock, Flame } from "lucide-react";
+import { FaCheck, FaStar, FaCalendarAlt, FaUtensils, FaArrowRight, FaClock, FaFire } from "react-icons/fa";
 
 import type { PlanBrowseItem } from "@/api/types/customer.types";
 import { Badge } from "@/components/ui/badge";
@@ -56,7 +56,7 @@ export function PlanCard({
         {/* Selection indicator */}
         {isSelected && (
           <div className="absolute right-2 top-2 z-20 flex h-6 w-6 items-center justify-center rounded-sm bg-primary shadow-lg">
-            <Check className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={3} />
+            <FaCheck className="h-3.5 w-3.5 text-primary-foreground" />
           </div>
         )}
 
@@ -77,7 +77,7 @@ export function PlanCard({
           {/* Badge */}
           {plan.badge && (
             <Badge className="absolute left-3 top-3 z-10 gap-1 border-0 bg-primary px-2 py-1 text-[10px] text-primary-foreground">
-              <Sparkles className="h-2.5 w-2.5" />
+              <FaStar className="h-2.5 w-2.5" />
               {plan.badge}
             </Badge>
           )}
@@ -101,7 +101,7 @@ export function PlanCard({
                 "inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-[10px] font-medium",
                 isWeekly ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
               )}>
-                <Calendar className="h-2.5 w-2.5" />
+                <FaCalendarAlt className="h-2.5 w-2.5" />
                 {isWeekly ? "Weekly" : "Monthly"}
               </span>
               <span className="text-[10px] text-gray-400">{mealsPerDay} meals/day</span>
@@ -116,7 +116,7 @@ export function PlanCard({
                 key={`${plan._id}-${meal}`}
                 className="inline-flex shrink-0 items-center gap-1 rounded-sm bg-gray-100 px-2.5 py-1 text-xs text-gray-600"
               >
-                <Check className="h-2.5 w-2.5 text-primary" />
+                <FaCheck className="h-2.5 w-2.5 text-primary" />
                 {meal}
               </span>
             ))}
@@ -133,7 +133,7 @@ export function PlanCard({
             onClick={() => onSelectPlan(plan)}
           >
             Get Started
-            <ArrowRight className="ml-1 h-4 w-4" />
+            <FaArrowRight className="ml-1 h-4 w-4" />
           </Button>
         </div>
       </article>
@@ -159,7 +159,7 @@ export function PlanCard({
       {/* Selection indicator */}
       {isSelected && (
         <div className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-sm bg-primary shadow-lg">
-          <Check className="h-4 w-4 text-primary-foreground" strokeWidth={3} />
+            <FaCheck className="h-4 w-4 text-primary-foreground" />
         </div>
       )}
 
@@ -183,7 +183,7 @@ export function PlanCard({
           <Badge
             className="absolute left-4 top-4 z-10 gap-1.5 border-0 bg-primary px-3 py-1.5 text-primary-foreground shadow-md"
           >
-            <Sparkles className="h-3 w-3" />
+            <FaStar className="h-3 w-3" />
             {plan.badge}
           </Badge>
         )}
@@ -196,7 +196,7 @@ export function PlanCard({
               ? "bg-emerald-500/20 text-emerald-100"
               : "bg-amber-500/20 text-amber-100"
           )}>
-            <Calendar className="h-3 w-3" />
+            <FaCalendarAlt className="h-3 w-3" />
             {isWeekly ? "Weekly Plan" : "Monthly Plan"}
           </div>
         </div>
@@ -232,11 +232,11 @@ export function PlanCard({
         {/* Quick stats */}
         <div className="mb-4 flex items-center gap-4 text-xs text-gray-500">
           <div className="flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5 text-primary" />
+            <FaClock className="h-3.5 w-3.5 text-primary" />
             <span>{isWeekly ? "7 days" : "30 days"}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Flame className="h-3.5 w-3.5 text-primary" />
+            <FaFire className="h-3.5 w-3.5 text-primary" />
             <span>{mealsPerDay} meals/day</span>
           </div>
         </div>
@@ -244,7 +244,7 @@ export function PlanCard({
         {/* Meals included */}
         <div className="mb-4 flex-1 sm:mb-5">
           <div className="mb-2 flex items-center gap-2">
-            <UtensilsCrossed className="h-4 w-4 text-primary" />
+            <FaUtensils className="h-4 w-4 text-primary" />
             <span className="text-xs font-semibold uppercase tracking-wide text-gray-600 sm:text-sm">Meals Included</span>
           </div>
           {plan.meals_included.length > 0 ? (
@@ -255,7 +255,7 @@ export function PlanCard({
                   className="flex items-center gap-1.5 rounded-sm bg-gray-50 px-2.5 py-1.5 text-xs text-gray-700 transition-colors group-hover:bg-accent sm:px-3 sm:py-2 sm:text-sm"
                 >
                   <span className="flex h-4 w-4 items-center justify-center rounded-sm bg-primary/10 sm:h-5 sm:w-5">
-                    <Check className="h-2.5 w-2.5 text-primary sm:h-3 sm:w-3" strokeWidth={3} />
+                    <FaCheck className="h-2.5 w-2.5 text-primary sm:h-3 sm:w-3" />
                   </span>
                   <span className="font-medium">{meal}</span>
                 </li>
@@ -281,7 +281,7 @@ export function PlanCard({
           >
             <span className="relative z-10 flex items-center justify-center gap-2">
               Get Started Now
-              <ArrowRight
+              <FaArrowRight
                 className={cn(
                   "h-4 w-4 transition-transform duration-300",
                   isHovered && "translate-x-1"

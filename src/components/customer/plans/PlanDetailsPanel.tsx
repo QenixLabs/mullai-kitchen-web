@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, CircleCheck, MapPin, ShoppingCart, UtensilsCrossed } from "lucide-react";
+import { FaCalendarWeek, FaCheckCircle, FaMapMarkerAlt, FaShoppingCart, FaUtensils } from "react-icons/fa";
 
 import type { PlanBrowseItem } from "@/api/types/customer.types";
 import { Button } from "@/components/ui/button";
@@ -60,25 +60,25 @@ export function PlanDetailsPanel({
 
         <div className="space-y-2">
           <p className="flex items-center gap-2 text-sm font-semibold text-gray-800">
-            <CalendarDays className="h-4 w-4 text-primary" aria-hidden="true" />
+            <FaCalendarWeek className="h-4 w-4 text-primary" aria-hidden="true" />
             Duration: {plan.duration}
           </p>
           <p className="flex items-center gap-2 text-sm text-gray-700">
-            <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
+            <FaMapMarkerAlt className="h-4 w-4 text-primary" aria-hidden="true" />
             {checkedPincode ? `Pincode ${checkedPincode} is selected` : "Check your pincode for delivery availability"}
           </p>
         </div>
 
         <div className="space-y-2">
           <p className="flex items-center gap-2 text-sm font-semibold text-gray-800">
-            <UtensilsCrossed className="h-4 w-4 text-primary" aria-hidden="true" />
+            <FaUtensils className="h-4 w-4 text-primary" aria-hidden="true" />
             Meals included
           </p>
           {plan.meals_included.length > 0 ? (
             <ul className="space-y-1" aria-label="Included meals">
               {plan.meals_included.map((meal) => (
                 <li key={`${plan._id}-${meal}`} className="flex items-center gap-2 text-sm text-gray-700">
-                  <CircleCheck className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                  <FaCheckCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
                   {meal}
                 </li>
               ))}
@@ -95,7 +95,7 @@ export function PlanDetailsPanel({
             onClick={onProceedToCheckout}
             disabled={isCheckingOut}
           >
-            <ShoppingCart className="h-4 w-4" aria-hidden="true" />
+            <FaShoppingCart className="h-4 w-4" aria-hidden="true" />
             {isCheckingOut ? "Redirecting..." : "Proceed to Checkout"}
           </Button>
           <Button

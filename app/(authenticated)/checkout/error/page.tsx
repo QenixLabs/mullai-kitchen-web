@@ -4,17 +4,16 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import {
-  AlertCircle,
-  ArrowLeft,
-  CreditCard,
-  Home,
-  RefreshCw,
-  ShieldAlert,
-  Timer,
-} from "lucide-react";
+  FaExclamationCircle,
+  FaArrowLeft,
+  FaCreditCard,
+  FaHome,
+  FaSyncAlt,
+  FaExclamationTriangle,
+  FaClock,
+} from "react-icons/fa";
 
 import { usePaymentStore } from "@/hooks/use-payment-store";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -40,7 +39,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Payment Failed",
     description:
       "Your payment couldn't be processed. This could be due to insufficient funds, an expired card, or a temporary issue with your bank. Please try again or use a different payment method.",
-    icon: <AlertCircle className="h-8 w-8" />,
+    icon: <FaExclamationCircle className="h-8 w-8" />,
     actionText: "Try Again",
     showRetry: true,
     showContactSupport: true,
@@ -49,7 +48,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Payment Cancelled",
     description:
       "You cancelled the payment process. Your subscription hasn't been created and no charges were made. You can restart the checkout whenever you're ready.",
-    icon: <Timer className="h-8 w-8" />,
+    icon: <FaClock className="h-8 w-8" />,
     actionText: "Restart Checkout",
     showRetry: true,
     showContactSupport: false,
@@ -58,7 +57,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Session Expired",
     description:
       "Your checkout session has expired. For security reasons, payment sessions are only valid for 15 minutes. Please start a new checkout to continue.",
-    icon: <Timer className="h-8 w-8" />,
+    icon: <FaClock className="h-8 w-8" />,
     actionText: "Start New Checkout",
     showRetry: true,
     showContactSupport: true,
@@ -67,7 +66,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Insufficient Wallet Balance",
     description:
       "Your Mullai Wallet balance is insufficient for this subscription. Please add funds to your wallet or use another payment method to complete the purchase.",
-    icon: <CreditCard className="h-8 w-8" />,
+    icon: <FaCreditCard className="h-8 w-8" />,
     actionText: "Add Funds to Wallet",
     showRetry: true,
     showContactSupport: false,
@@ -76,7 +75,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Network Error",
     description:
       "We couldn't connect to our servers. Please check your internet connection and try again. If the problem persists, our servers might be temporarily unavailable.",
-    icon: <ShieldAlert className="h-8 w-8" />,
+    icon: <FaExclamationTriangle className="h-8 w-8" />,
     actionText: "Retry",
     showRetry: true,
     showContactSupport: true,
@@ -85,7 +84,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Something Went Wrong",
     description:
       "An unexpected error occurred during checkout. Don't worry, no charges were made. Please try again, and if the problem continues, contact our support team.",
-    icon: <AlertCircle className="h-8 w-8" />,
+    icon: <FaExclamationCircle className="h-8 w-8" />,
     actionText: "Try Again",
     showRetry: true,
     showContactSupport: true,
@@ -131,11 +130,6 @@ export default function CheckoutErrorPage() {
     }
   };
 
-  const handleGoHome = () => {
-    paymentStore.resetPayment();
-    router.push("/");
-  };
-
   return (
     <div className="min-h-screen bg-linear-to-b from-red-50 to-stone-100">
       <div className="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-4 py-12">
@@ -173,7 +167,7 @@ export default function CheckoutErrorPage() {
                 {/* Error details if available */}
                 {errorMessage && (
                   <Alert className="border-red-200 bg-red-50 text-red-900">
-                    <AlertCircle className="h-4 w-4" />
+                    <FaExclamationCircle className="h-4 w-4" />
                     <AlertTitle>Error Details</AlertTitle>
                     <AlertDescription className="mt-1">
                       {errorMessage}
@@ -283,7 +277,7 @@ export default function CheckoutErrorPage() {
                       onClick={handleRetry}
                       className="flex-1 bg-primary text-white hover:bg-primary/90"
                     >
-                      <RefreshCw className="mr-2 h-4 w-4" />
+                      <FaSyncAlt className="mr-2 h-4 w-4" />
                       {config.actionText}
                     </Button>
                   )}
@@ -294,7 +288,7 @@ export default function CheckoutErrorPage() {
                     className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
                   >
                     <Link href="/dashboard">
-                      <Home className="mr-2 h-4 w-4" />
+                      <FaHome className="mr-2 h-4 w-4" />
                       Go to Dashboard
                     </Link>
                   </Button>
@@ -324,7 +318,7 @@ export default function CheckoutErrorPage() {
                     size="sm"
                   >
                     <Link href="/plans">
-                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      <FaArrowLeft className="mr-2 h-4 w-4" />
                       Back to Plans
                     </Link>
                   </Button>

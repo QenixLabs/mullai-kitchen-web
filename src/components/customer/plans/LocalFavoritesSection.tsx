@@ -1,4 +1,4 @@
-import { Clock, Headphones, Leaf, ShieldCheck } from "lucide-react";
+import { FaCheckCircle, FaHeadset, FaLeaf, FaShieldAlt, FaStar, FaRocket } from "react-icons/fa";
 
 import { cn } from "@/lib/utils";
 
@@ -9,24 +9,28 @@ interface LocalFavoritesSectionProps {
 // Static trust badges data
 const trustBadges = [
   {
-    icon: ShieldCheck,
+    icon: FaCheckCircle,
     title: "FSSAI Certified",
     description: "Food safety certified kitchens",
+    color: "bg-emerald-500",
   },
   {
-    icon: Leaf,
+    icon: FaLeaf,
     title: "Eco-friendly Packaging",
     description: "Sustainable & biodegradable materials",
+    color: "bg-green-500",
   },
   {
-    icon: Clock,
+    icon: FaRocket,
     title: "Always On-time",
     description: "Reliable delivery you can count on",
+    color: "bg-amber-500",
   },
   {
-    icon: Headphones,
+    icon: FaStar,
     title: "24/7 Local Support",
     description: "Help whenever you need it",
+    color: "bg-yellow-500",
   },
 ];
 
@@ -101,9 +105,9 @@ export function LocalFavoritesSection({ className }: LocalFavoritesSectionProps)
                 key={badge.title}
                 className="flex flex-col items-center rounded-sm border border-border bg-muted/50 p-5 text-center transition-all hover:shadow-md hover:border-border"
               >
-                {/* Circular Orange Icon */}
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
-                  <badge.icon className="h-6 w-6 text-primary-foreground" />
+                {/* Circular Icon with semantic color */}
+                <div className={`mb-3 flex h-12 w-12 items-center justify-center rounded-full ${badge.color}`}>
+                  <badge.icon className="h-6 w-6 text-white" />
                 </div>
 
                 {/* Badge Title */}
