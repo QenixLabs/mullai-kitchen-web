@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Search, LocateIcon as MyLocation, Verified, Home, Building2, MoreHorizontal } from "lucide-react";
+import { Marker } from "@react-google-maps/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
@@ -57,6 +58,8 @@ export function AddressSelectionModal({
     isServiceable: boolean;
     message: string;
   } | null>(null);
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [coordinatesRequired, setCoordinatesRequired] = useState(false);
 
   const form = useForm<AddressFormData>({
     resolver: zodResolver(addressFormSchema),
@@ -172,7 +175,10 @@ export function AddressSelectionModal({
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
-        setMapCenter({ lat: latitude, lng: longitude });
+        const newCoords = { lat: latitude, lng: longitude };
+        setMapCenter(newCoords);
+        setCoordinates(newCoords);
+        setCoordinatesRequired(false);
 
         // Reverse geocode to get address details
         await reverseGeocode(latitude, longitude);
@@ -195,6 +201,12 @@ export function AddressSelectionModal({
       return;
     }
 
+    if (!coordinates) {
+      setCoordinatesRequired(true);
+      toast.error("Please select a location on the map");
+      return;
+    }
+
     try {
       const fullAddress = buildFullAddress();
       const formData = form.getValues();
@@ -207,6 +219,8 @@ export function AddressSelectionModal({
         city: formData.city,
         state: formData.state,
         landmark: formData.landmark,
+        lat: coordinates.lat,
+        lng: coordinates.lng,
       });
 
       toast.success("Address saved successfully!");
@@ -214,6 +228,8 @@ export function AddressSelectionModal({
       setSearchQuery("");
       setServiceabilityInfo(null);
       setMapCenter(DEFAULT_COORDS);
+      setCoordinates(null);
+      setCoordinatesRequired(false);
       onOpenChange(false);
       onSuccess?.();
     } catch (error) {
@@ -226,6 +242,8 @@ export function AddressSelectionModal({
     setSearchQuery("");
     setServiceabilityInfo(null);
     setMapCenter(DEFAULT_COORDS);
+    setCoordinates(null);
+    setCoordinatesRequired(false);
     onOpenChange(false);
   };
 
@@ -261,7 +279,29 @@ export function AddressSelectionModal({
 
           {/* Map Section */}
           <div className="space-y-2">
-            <GoogleMap center={mapCenter} height="h-48" />
+            <GoogleMap
+              center={mapCenter}
+              height="h-48"
+              onClick={(e) => {
+                if (e.latLng) {
+                  const lat = e.latLng.lat();
+                  const lng = e.latLng.lng();
+                  setCoordinates({ lat, lng });
+                  setMapCenter({ lat, lng });
+                  setCoordinatesRequired(false);
+                  reverseGeocode(lat, lng);
+                }
+              }}
+            >
+              {coordinates && (
+                <Marker position={coordinates} />
+              )}
+            </GoogleMap>
+            {coordinatesRequired && (
+              <p className="text-xs text-destructive font-medium">
+                Please select a location on the map by clicking on it
+              </p>
+            )}
             <Button
               type="button"
               variant="ghost"

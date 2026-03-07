@@ -29,6 +29,8 @@ export interface CreateAddressDto {
   city: string;
   state: string;
   landmark?: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface UpdateProfileDto {

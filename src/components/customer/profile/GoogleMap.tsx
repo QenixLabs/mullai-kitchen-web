@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import {
   GoogleMap as GoogleMapComponent,
   LoadScript,
@@ -28,6 +28,8 @@ export interface GoogleMapProps {
   onLocationChange?: (location: { lat: number; lng: number }) => void;
   className?: string;
   height?: string;
+  onClick?: (e: google.maps.MapMouseEvent) => void;
+  children?: React.ReactNode;
 }
 
 export function GoogleMap({
@@ -36,6 +38,8 @@ export function GoogleMap({
   onLocationChange,
   className,
   height = "h-48",
+  onClick,
+  children,
 }: GoogleMapProps) {
   const { isLoaded, loadError } = useJsApiLoader({
     id: "google-map-script",
@@ -96,6 +100,7 @@ export function GoogleMap({
         zoom={zoom}
         onLoad={onLoad}
         onUnmount={onUnmount}
+        onClick={onClick}
         options={{
           disableDefaultUI: false,
           zoomControl: true,
@@ -111,7 +116,7 @@ export function GoogleMap({
           ],
         }}
       >
-        <Marker position={mapCenter} />
+        {children ? children : <Marker position={mapCenter} />}
       </GoogleMapComponent>
 
       {/* Pin with pulse animation overlay */}
