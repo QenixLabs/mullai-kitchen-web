@@ -12,8 +12,8 @@ import {
   XCircle,
   ExternalLink,
   CreditCard,
-  Target,
-  Sparkles,
+  ShieldCheck,
+  Loader2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -25,6 +25,33 @@ import { Badge } from "@/components/ui/badge";
 
 type ConfirmationStatus = "loading" | "confirmed" | "failed";
 
+// Animated ring spinner for loading state
+function LoadingRing({ className }: { className?: string }) {
+  return (
+    <div className={cn("relative", className)}>
+      <svg className="h-full w-full animate-spin" viewBox="0 0 24 24">
+        <circle
+          className="opacity-10"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="2"
+          fill="none"
+        />
+        <path
+          className="opacity-100"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          d="M12 2a10 10 0 0 1 10 10"
+        />
+      </svg>
+    </div>
+  );
+}
+
 function CheckoutSuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -33,8 +60,7 @@ function CheckoutSuccessContent() {
   const [countdown, setCountdown] = useState(5);
 
   const paymentStore = usePaymentStore();
-  const { orderId, razorpayPaymentId, amount, errorMessage } =
-    paymentStore;
+  const { orderId, razorpayPaymentId, amount, errorMessage } = paymentStore;
 
   const { data: orderStatus } = useOrderStatus(orderId || "");
 
@@ -103,311 +129,263 @@ function CheckoutSuccessContent() {
   };
 
   return (
-    <div className="relative min-h-[90vh] flex items-center justify-center p-4">
-      {/* Dynamic Background Elements - Leveraging System Design Tokens */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-5%] left-[-5%] w-[45%] h-[45%] bg-primary/10 blur-[130px] rounded-full" />
-        <div className="absolute bottom-[-5%] right-[-5%] w-[45%] h-[45%] bg-success/10 blur-[130px] rounded-full" />
+    <div className="relative min-h-screen flex items-center justify-center p-4 sm:p-6">
+      {/* Subtle background gradient */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-b from-primary/5 to-transparent blur-3xl" />
       </div>
 
       <AnimatePresence mode="wait">
         <motion.div
           key={status}
-          initial={{ opacity: 0, scale: 0.98, y: 15 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.98, y: -15 }}
-          className="w-full relative"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="w-full "
         >
-          {/* Main Card - Using --radius-2xl (Hero Scale) */}
-          <div className="bg-card/95 backdrop-blur-2xl border border-border shadow-2xl rounded-2xl overflow-hidden ring-1 ring-border/50">
-            {/* Celebration Sparkles (Visible on Confirmed) */}
-            {status === "confirmed" && (
-              <div className="absolute inset-x-0 -top-4 flex justify-center pointer-events-none z-20">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <Badge className="h-9 px-4 gap-2 text-sm font-bold bg-success text-success-foreground border-4 border-card shadow-lg">
-                    <Sparkles className="h-4 w-4" />
-                    Order Success!
-                  </Badge>
-                </motion.div>
-              </div>
-            )}
-
-            {/* Header / Status Icon */}
+          {/* Card */}
+          <div className="bg-card border border-border shadow-xl rounded-2xl overflow-hidden">
+            
+            {/* Header Section */}
             <div
               className={cn(
-                "relative px-8 pt-16 pb-8 text-center flex flex-col items-center gap-6",
-                status === "confirmed"
-                  ? "bg-linear-to-b from-success/10 to-transparent"
-                  : status === "failed"
-                    ? "bg-linear-to-b from-destructive/10 to-transparent"
-                    : "bg-linear-to-b from-info/10 to-transparent",
+                "px-6 sm:px-10 pt-12 pb-8 text-center",
+                status === "confirmed" && "bg-gradient-to-b from-success/5 to-transparent",
+                status === "failed" && "bg-gradient-to-b from-destructive/5 to-transparent"
               )}
             >
-              {status === "loading" && (
-                <div className="relative">
-                  <RefreshCw
-                    className="h-20 w-20 text-info animate-spin"
-                    strokeWidth={1.5}
-                  />
-                  <div className="absolute inset-0 bg-info/20 blur-2xl rounded-full" />
-                </div>
-              )}
-
-              {status === "confirmed" && (
-                <motion.div
-                  initial={{ rotate: -15, scale: 0.8 }}
-                  animate={{ rotate: 0, scale: 1 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                  className="relative group"
-                >
-                  <div className="absolute inset-0 bg-success/30 blur-3xl rounded-full animate-pulse transition-all duration-1000" />
-                  <div className="relative bg-success p-6 rounded-2xl shadow-xl ring-8 ring-success/5 text-success-foreground">
-                    <CheckCircle2 className="h-16 w-16" strokeWidth={2.5} />
-                  </div>
-                </motion.div>
-              )}
-
-              {status === "failed" && (
-                <div className="relative">
-                  <div className="absolute inset-0 bg-destructive/15 blur-3xl rounded-full" />
-                  <div className="relative bg-destructive p-6 rounded-2xl shadow-xl text-destructive-foreground">
-                    <XCircle className="h-16 w-16" strokeWidth={2} />
-                  </div>
-                </div>
-              )}
-
-              <div className="space-y-4">
-                <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
-                  {status === "loading"
-                    ? "Almost There..."
-                    : status === "confirmed"
-                      ? "Order Confirmed!"
-                      : "Verification Failed"}
-                </h1>
-                <p className="text-muted-foreground text-lg font-medium max-w-[85%] mx-auto leading-relaxed">
-                  {status === "loading"
-                    ? "We're just wrapping up some final details with your secure payment."
-                    : status === "confirmed"
-                      ? `Your ${planName} is now active and ready for your next healthy meal.`
-                      : derivedError ||
-                        "Something went wrong with your transaction verification. Please contact support."}
-                </p>
-              </div>
-            </div>
-
-            {/* Main Body */}
-            <div className="px-8 pb-12 space-y-8 text-foreground">
-              {status === "confirmed" && (
-                <>
+              {/* Icon */}
+              <div className="mb-6">
+                {status === "loading" && (
                   <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="bg-muted/40 rounded-xl p-8 border border-border/50 relative overflow-hidden group"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="inline-flex"
                   >
-                    <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
-                      <Target className="w-24 h-24 rotate-12" />
-                    </div>
-
-                    <div className="space-y-6 relative">
-                      <div className="flex items-center gap-3 text-muted-foreground text-[10px] sm:text-xs font-black uppercase tracking-[0.25em]">
-                        <Receipt className="w-4 h-4" />
-                        <span>Receipt Overview</span>
-                      </div>
-
-                      <div className="grid gap-5 divide-y divide-border/60">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pt-0">
-                          <span className="text-muted-foreground text-sm font-medium">
-                            Transaction Reference
-                          </span>
-                          <span className="font-mono text-[0.85rem] font-bold text-foreground bg-background border border-border px-3 py-1.5 rounded-md shadow-xs">
-                            {razorpayPaymentId ||
-                              searchParams.get("razorpay_payment_id") ||
-                              "ID Unavailable"}
-                          </span>
-                        </div>
-
-                        {orderId && (
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pt-5">
-                            <span className="text-muted-foreground text-sm font-medium">
-                              Internal Order Reference
-                            </span>
-                            <span className="font-mono text-[0.85rem] font-bold text-foreground bg-background border border-border px-3 py-1.5 rounded-md shadow-xs">
-                              {orderId}
-                            </span>
-                          </div>
-                        )}
-
-                        <div className="flex items-center justify-between pt-6">
-                          <span className="text-foreground font-extrabold text-lg">
-                            Total Charged
-                          </span>
-                          <div className="text-right">
-                            <span className="text-3xl font-black text-foreground">
-                              ₹
-                              {(amount ? amount / 100 : 0).toLocaleString(
-                                undefined,
-                                { minimumFractionDigits: 2 },
-                              )}
-                            </span>
-                            <p className="text-[10px] text-success font-black uppercase tracking-widest mt-1">
-                              Payment Completed
-                            </p>
-                          </div>
-                        </div>
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-info/20 blur-2xl rounded-full" />
+                      <div className="relative text-info">
+                        <LoadingRing className="h-16 w-16" />
                       </div>
                     </div>
                   </motion.div>
+                )}
 
-                  {/* Redirection indicator - Using Primary Token */}
-                  <div className="bg-primary/5 border border-primary/20 rounded-xl p-6 flex flex-col gap-4">
-                    <div className="flex items-center justify-between font-bold">
-                      <div className="flex items-center gap-3">
-                        <RefreshCw className="h-4 w-4 text-primary animate-spin" />
-                        <span className="text-sm text-primary uppercase tracking-tight">
-                          Dashboard redirect pending...
+                {status === "confirmed" && (
+                  <motion.div
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                    className="inline-flex"
+                  >
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-success/30 blur-2xl rounded-full" />
+                      <div className="relative bg-success text-success-foreground rounded-full p-4 shadow-lg">
+                        <CheckCircle2 className="h-10 w-10" strokeWidth={2} />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {status === "failed" && (
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="inline-flex"
+                  >
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-destructive/20 blur-2xl rounded-full" />
+                      <div className="relative bg-destructive text-destructive-foreground rounded-full p-4 shadow-lg">
+                        <XCircle className="h-10 w-10" strokeWidth={2} />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Title */}
+              <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight mb-3">
+                {status === "loading" && "Verifying Payment"}
+                {status === "confirmed" && "Payment Successful"}
+                {status === "failed" && "Payment Failed"}
+              </h1>
+
+              {/* Subtitle */}
+              <p className="text-muted-foreground text-base leading-relaxed mx-auto">
+                {status === "loading" && "We're confirming your transaction with the payment gateway."}
+                {status === "confirmed" && `Your ${planName} subscription is now active.`}
+                {status === "failed" && (derivedError || "Something went wrong. Please try again or contact support.")}
+              </p>
+            </div>
+
+            {/* Content Section */}
+            <div className="px-6 sm:px-10 pb-10">
+              
+              {/* Loading State - Simple Progress */}
+              {status === "loading" && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="space-y-6"
+                >
+                  {/* Progress Bar */}
+                  <div className="space-y-3">
+                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                      <motion.div
+                        animate={{ 
+                          width: ["0%", "70%", "50%", "80%"],
+                        }}
+                        transition={{
+                          duration: 4,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
+                        className="h-full bg-info rounded-full"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Processing</span>
+                      <span className="text-info font-medium">Verifying...</span>
+                    </div>
+                  </div>
+
+                  {/* Trust indicators */}
+                  <div className="flex items-center justify-center gap-6 pt-4 text-muted-foreground/60">
+                    <div className="flex items-center gap-1.5 text-xs">
+                      <ShieldCheck className="h-3.5 w-3.5" />
+                      <span>Secure</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs">
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      <span>Encrypted</span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Confirmed State */}
+              {status === "confirmed" && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="space-y-6"
+                >
+                  {/* Receipt Card */}
+                  <div className="bg-muted/50 rounded-xl p-5 border border-border">
+                    <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium uppercase tracking-wider mb-4">
+                      <Receipt className="h-3.5 w-3.5" />
+                      Transaction Details
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Transaction ID</span>
+                        <span className="font-mono text-foreground">
+                          {razorpayPaymentId || searchParams.get("razorpay_payment_id") || "N/A"}
                         </span>
                       </div>
-                      <span className="text-sm text-primary/60">
-                        {countdown}s
-                      </span>
+                      
+                      {orderId && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Order ID</span>
+                          <span className="font-mono text-foreground">{orderId}</span>
+                        </div>
+                      )}
+                      
+                      <div className="h-px bg-border my-3" />
+                      
+                      <div className="flex justify-between items-baseline">
+                        <span className="text-foreground font-medium">Total Paid</span>
+                        <span className="text-2xl font-semibold text-foreground">
+                          ₹{(amount ? amount : 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
                     </div>
-                    <div className="h-2 w-full bg-primary/10 rounded-full overflow-hidden">
+                  </div>
+
+                  {/* Redirect Notice */}
+                  <div className="flex items-center justify-between bg-primary/5 rounded-lg px-4 py-3">
+                    <div className="flex items-center gap-2 text-sm">
+                      <RefreshCw className="h-4 w-4 text-primary animate-spin" />
+                      <span className="text-primary">Redirecting in {countdown}s</span>
+                    </div>
+                    <div className="w-20 h-1 bg-primary/20 rounded-full overflow-hidden">
                       <motion.div
-                        initial={{ width: "0%" }}
-                        animate={{ width: "100%" }}
+                        initial={{ width: "100%" }}
+                        animate={{ width: "0%" }}
                         transition={{ duration: 5, ease: "linear" }}
-                        className="h-full bg-primary rounded-full shadow-[0_0_12px_hsl(var(--primary)/0.4)]"
+                        className="h-full bg-primary rounded-full"
                       />
                     </div>
                   </div>
 
-                  {/* Actions - Using shadcn Component Patterns */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Button
-                      asChild
-                      size="lg"
-                      className="h-16 text-base font-bold rounded-xl shadow-lg shadow-primary/20 group"
-                    >
-                      <Link
-                        href="/subscription"
-                        className="flex items-center justify-center gap-3"
-                      >
-                        Manage Subscription
-                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  {/* Actions */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button asChild size="lg" className="h-12 font-medium">
+                      <Link href="/subscription" className="flex items-center justify-center gap-2">
+                        View Subscription
+                        <ArrowRight className="h-4 w-4" />
                       </Link>
                     </Button>
+                    <Button asChild variant="outline" size="lg" className="h-12 font-medium">
+                      <Link href="/dashboard" className="flex items-center justify-center gap-2">
+                        <Home className="h-4 w-4" />
+                        Dashboard
+                      </Link>
+                    </Button>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Failed State */}
+              {status === "failed" && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="space-y-6"
+                >
+                  <div className="bg-destructive/5 border border-destructive/10 rounded-xl p-5">
+                    <p className="text-sm text-destructive/90 leading-relaxed">
+                      If funds were deducted from your account, don't worry. 
+                      Verification can take up to 2 minutes. Please wait or try again.
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
                     <Button
-                      asChild
-                      variant="outline"
-                      size="lg"
-                      className="h-16 text-base font-bold rounded-xl shadow-xs"
+                      onClick={handleRetry}
+                      disabled={retryCount >= 3}
+                      className="w-full h-12 bg-destructive hover:bg-destructive/90 text-white font-medium"
                     >
-                      <Link
-                        href="/dashboard"
-                        className="flex items-center justify-center gap-3"
-                      >
-                        <Home className="w-5 h-5" />
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      Try Again
+                    </Button>
+                    <Button asChild variant="ghost" className="w-full h-12 font-medium">
+                      <Link href="/dashboard" className="flex items-center justify-center gap-2">
+                        <Home className="h-4 w-4" />
                         Go to Dashboard
                       </Link>
                     </Button>
                   </div>
-                </>
-              )}
-
-              {(status === "loading" || (status as string) === "loading") && (
-                <div className="space-y-8 py-12">
-                  <div className="h-3 w-full bg-muted/60 rounded-full overflow-hidden">
-                    <motion.div
-                      animate={{ x: ["-100%", "100%"] }}
-                      transition={{
-                        duration: 1.8,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                      className="h-full w-1/4 bg-linear-to-r from-transparent via-info to-transparent"
-                    />
-                  </div>
-                  <p className="text-center text-muted-foreground font-black text-sm uppercase tracking-widest animate-pulse">
-                    Verifying Transaction Pipeline...
-                  </p>
-                </div>
-              )}
-
-              {status === "failed" && (status as string) !== "loading" && (
-                <div className="space-y-8">
-                  <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-8 flex items-start gap-5">
-                    <div className="bg-destructive/15 p-3 rounded-xl text-destructive">
-                      <Receipt className="w-6 h-6" />
-                    </div>
-                    <div className="space-y-2">
-                      <h4 className="text-destructive font-black text-sm uppercase tracking-widest">
-                        Status Inconclusive
-                      </h4>
-                      <p className="text-destructive/80 text-sm leading-relaxed font-medium">
-                        If funds were debited from your account, please do not
-                        worry. Verification can sometimes take up to 2 minutes.
-                        Refresh this page or exit to your dashboard.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-4">
-                    <Button
-                      onClick={handleRetry}
-                      className="h-16 bg-destructive hover:bg-destructive/90 text-white font-bold text-lg rounded-xl transition-all shadow-xl shadow-destructive/10 active:scale-[0.98]"
-                      disabled={
-                        retryCount >= 3 || (status as string) === "loading"
-                      }
-                    >
-                      <RefreshCw
-                        className={cn(
-                          "mr-3 h-6 w-6",
-                          (status as string) === "loading" && "animate-spin",
-                        )}
-                      />
-                      {(status as string) === "loading"
-                        ? "Verifying Status..."
-                        : "Verify Again"}
-                    </Button>
-                    <Button
-                      asChild
-                      variant="ghost"
-                      className="h-14 font-bold text-muted-foreground hover:text-foreground"
-                    >
-                      <Link
-                        href="/dashboard"
-                        className="flex items-center gap-3 justify-center"
-                      >
-                        <Home className="h-5 w-5" />
-                        Return to Dashboard
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
+                </motion.div>
               )}
             </div>
           </div>
 
-          {/* Footer Assistance - Token Aligned */}
-          <div className="mt-8 text-center space-y-5">
-            <p className="text-muted-foreground text-sm font-semibold">
-              Payment secured by Razorpay. Need assistance?{" "}
-              <Link
-                href="/support"
-                className="text-primary font-extrabold hover:underline underline-offset-8 decoration-2 ring-primary/20"
-              >
+          {/* Footer */}
+          <div className="mt-8 text-center">
+            <p className="text-sm text-muted-foreground mb-3">
+              Need help?{" "}
+              <Link href="/support" className="text-primary hover:underline font-medium">
                 Contact Support
               </Link>
             </p>
-            <div className="flex items-center justify-center gap-6 text-muted-foreground/30">
-              <CreditCard className="w-6 h-6" />
-              <Receipt className="w-6 h-6" />
-              <ExternalLink className="w-6 h-6" />
+            <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground/50">
+              <ShieldCheck className="h-3 w-3" />
+              <span>Secured by Razorpay</span>
             </div>
           </div>
         </motion.div>
@@ -416,22 +394,27 @@ function CheckoutSuccessContent() {
   );
 }
 
-export default function CheckoutSuccessPage() {
+// Suspense Fallback - Clean minimal loader
+function PageLoader() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center bg-background">
-          <div className="relative">
-            <div className="h-24 w-24 border-8 border-muted border-t-primary rounded-full animate-spin shadow-2xl shadow-primary/20" />
-            <div className="mt-8 text-center">
-              <p className="text-foreground font-black text-xl animate-pulse tracking-tight">
-                Preparing Experience...
-              </p>
-            </div>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="text-center">
+        <div className="relative inline-flex mb-6">
+          <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full" />
+          <div className="relative text-primary">
+            <LoadingRing className="h-12 w-12" />
           </div>
         </div>
-      }
-    >
+        <h2 className="text-lg font-medium text-foreground mb-1">Loading...</h2>
+        <p className="text-sm text-muted-foreground">Please wait</p>
+      </div>
+    </div>
+  );
+}
+
+export default function CheckoutSuccessPage() {
+  return (
+    <Suspense fallback={<PageLoader />}>
       <CheckoutSuccessContent />
     </Suspense>
   );

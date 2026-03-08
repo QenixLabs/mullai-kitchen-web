@@ -221,7 +221,7 @@ export default function SubscriptionPage() {
               <FaStar className="h-10 w-10" />
             </div>
             <h3 className="text-2xl font-bold mb-2">No Active Subscriptions</h3>
-            <p className="text-muted-foreground mb-8 text-center max-w-sm">
+            <p className="text-muted-foreground mb-8 text-center ">
               Discover delicious, chef-curated meals delivered right to your
               doorstep. Start your journey today!
             </p>
