@@ -326,7 +326,9 @@ export default function SubscriptionPage() {
         totalDeliveries={selectedSubscription?.total_deliveries || 0}
         maxOptOutDays={selectedSubscription ? Math.floor((selectedSubscription.total_deliveries || 0) * 0.5) : 0}
         daysAlreadyOptedOut={optOutData?.opt_out_periods?.reduce((acc, period) => acc + (period.days_opted_out || 0), 0) || 0}
-        mealCount={selectedSubscription?.meals_included?.length || 1}
+        perDayPrice={selectedSubscription?.total_amount && selectedSubscription?.total_deliveries
+          ? selectedSubscription.total_amount / selectedSubscription.total_deliveries
+          : 0}
         onSuccess={() => {
           setSelectedSubscription(null);
         }}

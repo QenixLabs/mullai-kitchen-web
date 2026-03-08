@@ -9,13 +9,10 @@ import { X, PiggyBank } from "lucide-react";
 interface OptOutDateSelectorProps {
   startDate: Date;
   endDate: Date;
-  mealCount: number;
   selectedDates: Date[];
   onChange: (dates: Date[]) => void;
   maxOptOutDays: number;
-  vegPrice?: number;
-  nonvegPrice?: number;
-  preference?: 'VEG' | 'NON_VEG';
+  perDayPrice: number;  // Simple per-day price
   className?: string;
   /**
    * Total remaining meals in subscription (for the badge)
@@ -28,19 +25,15 @@ const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export function OptOutDateSelector({
   startDate,
   endDate,
-  mealCount,
   selectedDates,
   onChange,
   maxOptOutDays,
-  vegPrice = 80,
-  nonvegPrice = 120,
-  preference = 'VEG',
+  perDayPrice,  // Use this directly
   className,
   mealsRemaining,
 }: OptOutDateSelectorProps) {
-  const mealPrice = preference === 'NON_VEG' ? nonvegPrice : vegPrice;
-  const discountPerDay = mealPrice * mealCount;
-  const totalDiscount = selectedDates.length * discountPerDay;
+  // Simple calculation
+  const totalDiscount = selectedDates.length * perDayPrice;
   const daysRemaining = maxOptOutDays - selectedDates.length;
 
   // Generate array of ALL dates from start to end

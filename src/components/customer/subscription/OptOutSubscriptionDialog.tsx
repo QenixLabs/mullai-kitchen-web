@@ -30,8 +30,7 @@ interface OptOutSubscriptionDialogProps {
   totalDeliveries: number;
   maxOptOutDays: number;
   daysAlreadyOptedOut: number;
-  mealPrice?: number;
-  mealCount?: number;
+  perDayPrice: number;  // Simple per-day price
   onSuccess?: () => void;
 }
 
@@ -44,16 +43,14 @@ export function OptOutSubscriptionDialog({
   totalDeliveries,
   maxOptOutDays,
   daysAlreadyOptedOut,
-  mealPrice = 80,
-  mealCount = 1,
+  perDayPrice,  // Simple per-day price
   onSuccess,
 }: OptOutSubscriptionDialogProps) {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const createOptOutMutation = useCreateOptOutPeriod();
 
   const daysRemaining = maxOptOutDays - daysAlreadyOptedOut;
-  const discountPerDay = mealPrice * mealCount;
-  const totalCredit = selectedDates.length * discountPerDay;
+  const totalCredit = selectedDates.length * perDayPrice;
 
   const form = useForm<z.infer<typeof optOutSchema>>({
     resolver: zodResolver(optOutSchema),
@@ -233,7 +230,7 @@ export function OptOutSubscriptionDialog({
                     ₹{totalCredit.toLocaleString()} will be credited to your wallet
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {selectedDates.length} day{selectedDates.length !== 1 ? 's' : ''} × ₹{mealPrice} × {mealCount} meal{mealCount !== 1 ? 's' : ''}
+                    {selectedDates.length} day{selectedDates.length !== 1 ? 's' : ''} × ₹{perDayPrice}
                   </p>
                 </div>
               </div>

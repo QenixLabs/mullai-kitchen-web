@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { Search, LocateIcon as MyLocation, Verified, Home, Building2, MoreHorizontal } from "lucide-react";
 import { Marker } from "@react-google-maps/api";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FaMapMarkerAlt, FaSearch, FaCheckCircle, FaHome, FaBuilding, FaEllipsisH } from "react-icons/fa";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

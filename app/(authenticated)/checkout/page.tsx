@@ -463,12 +463,13 @@ export default function CheckoutPage() {
   const subscriptionDays = durationMatch ? parseInt(durationMatch[0], 10) : 30;
   const maxOptOutDays = Math.floor(subscriptionDays * 0.5);
 
-  // Calculate meal price and count for opt-out discount (use defaults)
-  const mealPrice = 80; // Default veg price
-  const mealCount = plan.meals_included?.length || 1;
+  // Calculate simple per-day price
+  const perDayPrice = subscriptionDays > 0
+    ? plan.price / subscriptionDays
+    : 0;
 
   // Calculate opt-out discount
-  const optOutDiscount = optOutDates.length * mealPrice * mealCount;
+  const optOutDiscount = optOutDates.length * perDayPrice;
   const discountedSubtotal = Math.max(0, subtotal - optOutDiscount);
 
   const taxes = parseFloat((discountedSubtotal * ESTIMATED_TAXES_RATE).toFixed(2));
@@ -567,10 +568,11 @@ export default function CheckoutPage() {
                 <OptOutDateSelector
                   startDate={startDate}
                   endDate={addDays(startDate, subscriptionDays)}
-                  mealCount={mealCount}
                   selectedDates={optOutDates}
                   onChange={setOptOutDates}
                   maxOptOutDays={maxOptOutDays}
+                  perDayPrice={perDayPrice}
+                  mealsRemaining={subscriptionDays - optOutDates.length}
                 />
               </div>
             </section>

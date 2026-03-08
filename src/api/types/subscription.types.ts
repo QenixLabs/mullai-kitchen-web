@@ -152,6 +152,7 @@ export interface Subscription {
   start_date: Date;
   end_date: Date;
   renewal_date?: Date;
+  total_amount?: number;  // Total subscription price
   total_deliveries?: number;
   completed_deliveries: number;
   remaining_deliveries?: number;
@@ -408,7 +409,10 @@ export interface CreateOptOutRequest {
 export interface CreateOptOutResponse {
   success: boolean;
   message: string;
-  opt_out_period?: OptOutPeriod;
+  opt_out_period_id?: string;
+  credit_amount?: number;
+  remaining_opt_out_days?: number;
+  per_day_price?: number;  // Added for transparency
 }
 
 // ===========================================
