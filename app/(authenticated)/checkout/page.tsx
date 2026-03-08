@@ -6,9 +6,9 @@ import { CreditCard, QrCode, MapPin } from "lucide-react";
 import { addDays } from "date-fns";
 import { toast } from "sonner";
 
-import { useCurrentUser } from "@/hooks/use-user-store";
-import { usePaymentStore } from "@/hooks/use-payment-store";
-import { useCheckout } from "@/hooks/use-checkout";
+import { useCurrentUser } from "@/hooks/useUserStore";
+import { usePaymentStore } from "@/hooks/usePaymentStore";
+import { useCheckout } from "@/hooks/useCheckout";
 import { useCreateAddress } from "@/api/hooks/useCreateAddress";
 import { openRazorpayCheckout } from "@/lib/razorpay";
 import { CHECKOUT_CONFIG, PAYMENT_METHODS } from "@/lib/checkout-config";

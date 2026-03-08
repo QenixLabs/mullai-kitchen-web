@@ -18,7 +18,7 @@ import { HowItWorksSection } from "@/components/customer/plans/HowItWorksSection
 import { LocalFavoritesSection } from "@/components/customer/plans/LocalFavoritesSection";
 import { MenuPreviewSheet } from "@/components/customer/plans/MenuPreviewSheet";
 import { PlanGrid } from "@/components/customer/plans/PlanGrid";
-import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
+import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
 import { Sparkles, ChevronRight, PenLine, ArrowRight } from "lucide-react";
 import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import { cn } from "@/lib/utils";

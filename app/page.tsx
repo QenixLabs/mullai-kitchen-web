@@ -32,7 +32,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   useAuthHydrated,
   useIsAuthenticated,
-} from "@/hooks/use-user-store";
+} from "@/hooks/useUserStore";
 import { Particles } from "@/components/ui/particles";
 import { AuroraText } from "@/components/ui/aurora-text";
 import { GridPattern } from "@/components/ui/grid-pattern";

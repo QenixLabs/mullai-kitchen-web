@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { addDays } from "date-fns";
 import { toast } from "sonner";
 
-import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
-import { usePaymentStore } from "@/hooks/use-payment-store";
-import { useCheckoutPlanId, useCheckoutPlanData, useHasCheckoutPlanIntent } from "@/hooks/use-checkout-store";
+import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
+import { usePaymentStore } from "@/hooks/usePaymentStore";
+import { useCheckoutPlanId, useCheckoutPlanData, useHasCheckoutPlanIntent } from "@/hooks/useCheckoutStore";
 import { useAddressList } from "@/api/hooks/useAddress";
 import { usePreviewPricing, useWalletBalance, useCreateOrder } from "@/api/hooks/usePayment";
 import { loadRazorpayScript } from "@/lib/razorpay";

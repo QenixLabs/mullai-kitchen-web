@@ -12,7 +12,7 @@ import { ProfileDetailsStep } from "@/components/customer/onboarding/ProfileDeta
 import { OnboardingShell } from "@/components/customer/onboarding/OnboardingShell";
 import { WelcomeStep } from "@/components/customer/onboarding/WelcomeStep";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { useAuthHydrated, useCurrentUser, useIsAuthenticated } from "@/hooks/use-user-store";
+import { useAuthHydrated, useCurrentUser, useIsAuthenticated } from "@/hooks/useUserStore";
 import { useUserStore } from "@/providers/user-store-provider";
 import { createOnboardingStore } from "@/stores/onboarding-store";
 

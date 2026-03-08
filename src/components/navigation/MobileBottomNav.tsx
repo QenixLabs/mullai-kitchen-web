@@ -19,7 +19,7 @@ import {
   useAuthHydrated,
   useIsAuthenticated,
   useCurrentUser,
-} from "@/hooks/use-user-store";
+} from "@/hooks/useUserStore";
 import { useLogout } from "@/api/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import {

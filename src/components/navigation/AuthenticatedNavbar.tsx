@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { useLogout } from "@/api/hooks/useAuth";
-import { useCurrentUser } from "@/hooks/use-user-store";
+import { useCurrentUser } from "@/hooks/useUserStore";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

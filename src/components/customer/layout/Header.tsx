@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FaBars, FaTimes, FaUser, FaSignOutAlt } from "react-icons/fa";
 
-import { useAuthHydrated, useIsAuthenticated } from '@/hooks/use-user-store';
+import { useAuthHydrated, useIsAuthenticated } from '@/hooks/useUserStore';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);

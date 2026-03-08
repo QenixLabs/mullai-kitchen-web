@@ -11,7 +11,7 @@ import {
   FaCheckCircle,
   FaExclamationCircle,
 } from "react-icons/fa";
-import { useCurrentUser } from "@/hooks/use-user-store";
+import { useCurrentUser } from "@/hooks/useUserStore";
 import { useUpdateProfile } from "@/api/hooks/useUpdateProfile";
 import { useAddressList } from "@/api/hooks/useAddress";
 import { useDeleteAddress } from "@/api/hooks/useDeleteAddress";
