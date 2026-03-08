@@ -15,6 +15,7 @@ import {
   FaTimes,
   FaTimesCircle,
   FaCalendar,
+  FaPiggyBank,
 } from "react-icons/fa";
 import {
   CreditCard,
@@ -43,6 +44,7 @@ import { loadRazorpayScript, openRazorpayCheckout } from "@/lib/razorpay";
 import type { Address } from "@/api/types/customer.types";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "@/components/ui/date-picker";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -52,7 +54,8 @@ import {
 } from "@/components/ui/dialog";
 import { AddressFormStep } from "@/components/customer/onboarding/AddressFormStep";
 import { OptOutDateSelector } from "@/components/customer/checkout/OptOutDateSelector";
-import { addDays, differenceInDays } from "date-fns";
+import { addDays, differenceInDays, format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -257,6 +260,7 @@ export default function CheckoutPage() {
   );
   const [showAddressDialog, setShowAddressDialog] = useState(false);
   const [showWalletInfo, setShowWalletInfo] = useState(false);
+  const [showOptOutDialog, setShowOptOutDialog] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(
     PAYMENT_METHODS.WALLET,
   );
@@ -563,17 +567,102 @@ export default function CheckoutPage() {
                 </p>
               </div>
 
-              {/* Opt-Out Date Selector */}
+              {/* Opt-Out Date Selector - Collapsed Summary */}
               <div className="mt-4 border-t border-gray-100 pt-4">
-                <OptOutDateSelector
-                  startDate={startDate}
-                  endDate={addDays(startDate, subscriptionDays)}
-                  selectedDates={optOutDates}
-                  onChange={setOptOutDates}
-                  maxOptOutDays={maxOptOutDays}
-                  perDayPrice={perDayPrice}
-                  mealsRemaining={subscriptionDays - optOutDates.length}
-                />
+                <div className="flex items-center justify-between mb-3">
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                    <FaPiggyBank className="h-4 w-4 text-primary" />
+                    Skip Delivery Days
+                  </label>
+                  <span className="text-xs text-muted-foreground">
+                    Max {maxOptOutDays} days (50% of subscription)
+                  </span>
+                </div>
+
+                {optOutDates.length === 0 ? (
+                  // Empty state - show button to open selector
+                  <button
+                    type="button"
+                    onClick={() => setShowOptOutDialog(true)}
+                    className="w-full flex items-center justify-between rounded-xl border border-dashed border-gray-300 bg-gray-50/50 p-4 text-left transition-all hover:border-primary hover:bg-primary/5"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                        <FaCalendar className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          Select days to skip
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Save ₹{perDayPrice.toFixed(0)} per day you opt out
+                        </p>
+                      </div>
+                    </div>
+                    <Badge variant="secondary" className="rounded-full">
+                      Optional
+                    </Badge>
+                  </button>
+                ) : (
+                  // Summary state - show selected dates and savings
+                  <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                          <FaPiggyBank className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-foreground">
+                            ₹{optOutDiscount.toFixed(0)} savings
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {optOutDates.length} day{optOutDates.length !== 1 ? 's' : ''} selected
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setOptOutDates([])}
+                          className="text-xs text-muted-foreground hover:text-destructive transition-colors"
+                        >
+                          Clear
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowOptOutDialog(true)}
+                          className="text-xs font-medium text-primary hover:underline"
+                        >
+                          Modify
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Selected dates preview */}
+                    <div className="flex flex-wrap gap-2">
+                      {optOutDates
+                        .sort((a, b) => a.getTime() - b.getTime())
+                        .slice(0, 5)
+                        .map((date, idx) => (
+                          <Badge
+                            key={idx}
+                            variant="secondary"
+                            className="rounded-lg bg-white text-primary border-primary/20"
+                          >
+                            {format(date, "MMM d")}
+                          </Badge>
+                        ))}
+                      {optOutDates.length > 5 && (
+                        <Badge
+                          variant="secondary"
+                          className="rounded-lg bg-white text-muted-foreground border-border"
+                        >
+                          +{optOutDates.length - 5} more
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </section>
 
@@ -957,6 +1046,40 @@ export default function CheckoutPage() {
                   before delivery starts.
                 </p>
               </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* ── Opt-Out Date Selector Dialog ───────────────────── */}
+      {showOptOutDialog && (
+        <Dialog open={showOptOutDialog} onOpenChange={setShowOptOutDialog}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <FaPiggyBank className="h-5 w-5 text-primary" />
+                Select Days to Skip
+              </DialogTitle>
+            </DialogHeader>
+            <OptOutDateSelector
+              startDate={startDate}
+              endDate={addDays(startDate, subscriptionDays)}
+              selectedDates={optOutDates}
+              onChange={(dates) => {
+                setOptOutDates(dates);
+                // Auto-close when user clicks "Clear All" or if they want to keep it open they can close manually
+              }}
+              maxOptOutDays={maxOptOutDays}
+              perDayPrice={perDayPrice}
+              mealsRemaining={subscriptionDays - optOutDates.length}
+            />
+            <div className="flex justify-end gap-2 mt-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowOptOutDialog(false)}
+              >
+                Done
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
