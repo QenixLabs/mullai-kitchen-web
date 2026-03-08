@@ -38,7 +38,7 @@ import {
 import { usePaymentStore } from "@/hooks/use-payment-store";
 import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import { useAddressList } from "@/api/hooks/useAddress";
-import { useCreateOrder, useWalletBalance } from "@/api/hooks/usePayment";
+import { useCreateOrder, usePreviewPricing, useWalletBalance } from "@/api/hooks/usePayment";
 import { useCreateAddress } from "@/api/hooks/useCreateAddress";
 import { loadRazorpayScript, openRazorpayCheckout } from "@/lib/razorpay";
 import type { Address } from "@/api/types/customer.types";
@@ -66,9 +66,6 @@ const PAYMENT_METHODS = {
   CARD: "card",
   UPI: "upi",
 } as const satisfies Record<string, PaymentMethod>;
-
-const DELIVERY_FEE = 12.5;
-const ESTIMATED_TAXES_RATE = 0.05;
 
 const CHECKOUT_CONFIG = {
   companyName: "MullaiKitchen",
@@ -253,6 +250,7 @@ export default function CheckoutPage() {
 
   // Mutation for creating payment orders
   const createOrderMutation = useCreateOrder();
+  const previewPricingMutation = usePreviewPricing();
   const createAddressMutation = useCreateAddress();
 
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
@@ -270,6 +268,12 @@ export default function CheckoutPage() {
   const [startDate, setStartDate] = useState<Date>(() => {
     return addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday);
   });
+
+  // Ensure date is set correctly after hydration
+  useEffect(() => {
+    const tomorrow = addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday);
+    setStartDate(tomorrow);
+  }, []);
 
   // Opt-out dates state
   const [optOutDates, setOptOutDates] = useState<Date[]>([]);
@@ -329,6 +333,20 @@ export default function CheckoutPage() {
     if (!hasHydrated || !isAuthenticated) return;
     if (!hasPlanIntent) router.replace("/plans");
   }, [hasHydrated, hasPlanIntent, isAuthenticated, router]);
+
+  // Fetch preview pricing when checkout data changes
+  useEffect(() => {
+    if (!plan?._id || !selectedAddressId || !startDate) return;
+
+    const previewData = {
+      plan_id: plan._id,
+      address_id: selectedAddressId,
+      start_date: startDate.toISOString(),
+      opt_out_dates: optOutDates.map((date) => date.toISOString()),
+    };
+
+    previewPricingMutation.mutate(previewData);
+  }, [plan?._id, selectedAddressId, startDate, optOutDates]);
 
   // Handle payment success
   const handlePaymentSuccess = (response: {
@@ -459,7 +477,7 @@ export default function CheckoutPage() {
     );
   }
 
-  // Pricing
+  // Pricing - use server preview values if available, otherwise calculate locally
   const subtotal = plan.price;
 
   // Calculate subscription duration and max opt-out days (parse duration like "30 days")
@@ -476,8 +494,11 @@ export default function CheckoutPage() {
   const optOutDiscount = optOutDates.length * perDayPrice;
   const discountedSubtotal = Math.max(0, subtotal - optOutDiscount);
 
-  const taxes = parseFloat((discountedSubtotal * ESTIMATED_TAXES_RATE).toFixed(2));
-  const total = discountedSubtotal + DELIVERY_FEE + taxes;
+  // Use server preview pricing if available, otherwise use local calculations
+  const previewData = previewPricingMutation.data;
+  const deliveryCharge = previewData?.deliveryCharge ?? 30;
+  const taxes = previewData?.tax ?? parseFloat((discountedSubtotal * 0.05).toFixed(2));
+  const total = previewData?.total ?? (discountedSubtotal + deliveryCharge + taxes);
 
   // Calculate amount after wallet
   const amountAfterWallet =
@@ -877,7 +898,7 @@ export default function CheckoutPage() {
                     <Info className="h-3 w-3 text-muted-foreground" />
                   </span>
                   <span className="font-medium text-gray-800">
-                    ₹{DELIVERY_FEE.toFixed(2)}
+                    ₹{deliveryCharge.toFixed(2)}
                   </span>
                 </div>
 
@@ -1054,7 +1075,7 @@ export default function CheckoutPage() {
       {/* ── Opt-Out Date Selector Dialog ───────────────────── */}
       {showOptOutDialog && (
         <Dialog open={showOptOutDialog} onOpenChange={setShowOptOutDialog}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="w-[calc(100vw-2rem)] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <FaPiggyBank className="h-5 w-5 text-primary" />

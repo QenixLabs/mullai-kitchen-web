@@ -32,6 +32,7 @@ export const CUSTOMER_ROUTES = {
 
 export const PAYMENT_ROUTES = {
   CREATE_ORDER: "/payment/create-order",
+  PREVIEW_PRICING: "/payment/preview-pricing",
   WEBHOOK: "/payment/webhook",
   ORDER_STATUS: (orderId: string) => `/payment/orders/${orderId}/status`,
   RESERVATION_STATUS: (reservationId: string) => `/payment/reservations/${reservationId}/status`,

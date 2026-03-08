@@ -4,6 +4,8 @@ import type {
   CreatePaymentOrderRequest,
   OrderStatusResponse,
   PaymentOrderResponse,
+  PreviewPricingRequest,
+  PreviewPricingResponse,
   ReservationStatusResponse,
   TopupWalletRequest,
   TopupWalletResponse,
@@ -12,6 +14,19 @@ import type {
 } from "@/api/types/payment.types";
 
 export const paymentApi = {
+  /**
+   * Preview pricing for a subscription without creating an order
+   */
+  previewPricing: async (
+    payload: PreviewPricingRequest,
+  ): Promise<PreviewPricingResponse> => {
+    const response = await apiClient.post<PreviewPricingResponse>(
+      PAYMENT_ROUTES.PREVIEW_PRICING,
+      payload,
+    );
+    return response.data;
+  },
+
   /**
    * Creates a payment order with wallet reservation
    */

@@ -147,19 +147,19 @@ export function OptOutDateSelector({
   return (
     <section
       className={cn(
-        "bg-card rounded-xl p-6 shadow-sm border border-border",
+        "bg-card rounded-xl p-4 sm:p-6 shadow-sm border border-border",
         className
       )}
     >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-start sm:gap-4 mb-4 sm:mb-6">
         <div>
           <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
             <CalendarDays className="h-5 w-5 text-primary" />
             Skip Delivery Days
           </h3>
           <p className="text-muted-foreground text-sm mt-1">
-            Select days you don&apos;t want delivery and get ₹{perDayPrice} credit per
+            Select days you don&apos;t want delivery and get ₹{perDayPrice} off per
             day
           </p>
         </div>
@@ -174,7 +174,7 @@ export function OptOutDateSelector({
       </div>
 
       {/* Stats Bar */}
-      <div className="flex items-center justify-between bg-muted/50 rounded-lg p-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-muted/50 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
         <div className="flex items-center gap-6">
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wide">
@@ -191,7 +191,7 @@ export function OptOutDateSelector({
           <div className="h-10 w-px bg-border" />
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wide">
-              Credit Earned
+              You'll Save
             </p>
             <p className="text-2xl font-bold text-primary">
               ₹{totalDiscount.toLocaleString()}
@@ -200,7 +200,7 @@ export function OptOutDateSelector({
         </div>
 
         {/* Quick Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {selectedDates.length > 0 && (
             <Button
               variant="ghost"
@@ -216,7 +216,7 @@ export function OptOutDateSelector({
             size="sm"
             onClick={selectAllWeekends}
             disabled={daysRemaining <= 0}
-            className="rounded-lg"
+            className="rounded-lg whitespace-nowrap"
           >
             Auto-select Weekends
           </Button>
@@ -330,7 +330,7 @@ export function OptOutDateSelector({
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center gap-6 mt-4 text-xs text-muted-foreground">
+      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full bg-primary" />
           <span>Opted Out</span>
@@ -402,18 +402,17 @@ export function OptOutDateSelector({
 
       {/* Total Savings */}
       {totalDiscount > 0 && (
-        <div className="mt-6 p-4 bg-primary/5 border border-primary/10 rounded-xl flex items-center gap-3">
-          <div className="bg-primary/10 p-2 rounded-lg">
+        <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-primary/5 border border-primary/10 rounded-xl flex items-center gap-3">
+          <div className="bg-primary/10 p-2 rounded-lg shrink-0">
             <PiggyBank className="h-5 w-5 text-primary" />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-sm font-medium text-foreground">
-              ₹{totalDiscount.toLocaleString()} credit will be added to your
-              wallet
+              ₹{totalDiscount.toLocaleString()} discount applied
             </p>
             <p className="text-xs text-muted-foreground">
               {selectedDates.length} day{selectedDates.length !== 1 ? "s" : ""} ×
-              ₹{perDayPrice}
+              ₹{perDayPrice} off your subscription
             </p>
           </div>
         </div>

@@ -201,7 +201,7 @@ export function OptOutSubscriptionDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[calc(100vw-2rem)] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold flex items-center gap-2">
             <CalendarDays className="h-5 w-5 text-primary" />
@@ -212,7 +212,7 @@ export function OptOutSubscriptionDialog({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             {/* Stats Bar */}
-            <div className="flex items-center justify-between bg-muted/50 rounded-lg p-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-muted/50 rounded-lg p-4">
               <div className="flex items-center gap-6">
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-wide">
@@ -228,7 +228,7 @@ export function OptOutSubscriptionDialog({
                 <div className="h-10 w-px bg-border" />
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                    Credit
+                    You'll Save
                   </p>
                   <p className="text-2xl font-bold text-primary">
                     ₹{totalCredit.toLocaleString()}
@@ -241,7 +241,7 @@ export function OptOutSubscriptionDialog({
                   variant="ghost"
                   size="sm"
                   onClick={clearAll}
-                  className="text-muted-foreground hover:text-destructive"
+                  className="text-muted-foreground hover:text-destructive w-fit"
                 >
                   Clear All
                 </Button>
@@ -354,7 +354,7 @@ export function OptOutSubscriptionDialog({
             </div>
 
             {/* Legend */}
-            <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 rounded-full bg-primary" />
                 <span>Opted Out</span>
@@ -376,7 +376,7 @@ export function OptOutSubscriptionDialog({
                 size="sm"
                 onClick={selectAllWeekends}
                 disabled={daysRemaining <= 0}
-                className="rounded-lg"
+                className="rounded-lg whitespace-nowrap"
               >
                 Auto-select Weekends
               </Button>
@@ -415,18 +415,18 @@ export function OptOutSubscriptionDialog({
               </div>
             )}
 
-            {/* Credit display */}
+            {/* Discount display */}
             {totalCredit > 0 && (
               <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 flex items-center gap-3">
-                <div className="bg-primary/10 p-2 rounded-lg">
+                <div className="bg-primary/10 p-2 rounded-lg shrink-0">
                   <PiggyBank className="h-5 w-5 text-primary" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-bold text-foreground">
-                    ₹{totalCredit.toLocaleString()} will be credited to your wallet
+                    ₹{totalCredit.toLocaleString()} discount applied
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {selectedDates.length} day{selectedDates.length !== 1 ? "s" : ""} × ₹{perDayPrice}
+                    {selectedDates.length} day{selectedDates.length !== 1 ? "s" : ""} × ₹{perDayPrice} off your subscription
                   </p>
                 </div>
               </div>
@@ -452,14 +452,14 @@ export function OptOutSubscriptionDialog({
               )}
             />
 
-            <DialogFooter className="gap-2">
-              <Button type="button" variant="outline" onClick={handleClose} className="rounded-lg">
+            <DialogFooter className="gap-2 flex-col sm:flex-row">
+              <Button type="button" variant="outline" onClick={handleClose} className="rounded-lg w-full sm:w-auto">
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={selectedDates.length === 0 || createOptOutMutation.isPending}
-                className="rounded-lg bg-primary hover:bg-primary/90"
+                className="rounded-lg bg-primary hover:bg-primary/90 w-full sm:w-auto whitespace-nowrap"
               >
                 {createOptOutMutation.isPending ? (
                   <>

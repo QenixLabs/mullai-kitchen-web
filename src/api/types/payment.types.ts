@@ -81,6 +81,28 @@ export interface PaymentOrderResponse {
   order_id: string;
   walletReservationAmount: number;
   optOutDiscount?: number;
+  deliveryCharge?: number;
+  tax?: number;
+}
+
+// ===========================================
+// Preview Pricing Types
+// ===========================================
+
+export interface PreviewPricingRequest {
+  plan_id: string;
+  address_id: string;
+  start_date: string;
+  opt_out_dates?: string[];
+}
+
+export interface PreviewPricingResponse {
+  planPrice: number;
+  originalPlanPrice: number;
+  optOutDiscount: number;
+  deliveryCharge: number;
+  tax: number;
+  total: number;
 }
 
 // ===========================================
