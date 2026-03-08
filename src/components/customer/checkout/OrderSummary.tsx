@@ -1,6 +1,6 @@
 import { FaCalendar, FaSpinner, FaTimesCircle } from "react-icons/fa";
 import { Info, Wallet, Loader2, ArrowRight, Lock, Shield } from "lucide-react";
-import type { PricingBreakdown } from "../_hooks/types";
+import type { PricingBreakdown } from "@/lib/checkout-config";
 
 interface OrderSummaryProps {
   planName: string;

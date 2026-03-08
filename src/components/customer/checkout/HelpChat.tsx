@@ -1,5 +1,5 @@
 import { MessageCircle } from "lucide-react";
-import { CHECKOUT_CONFIG } from "../_hooks/types";
+import { CHECKOUT_CONFIG } from "@/lib/checkout-config";
 
 export function HelpChat() {
   return (

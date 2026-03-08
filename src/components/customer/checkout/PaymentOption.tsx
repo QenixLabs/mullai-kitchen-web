@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import type { PaymentMethod } from "../_hooks/types";
+import type { PaymentMethod } from "@/lib/checkout-config";
 
 interface PaymentOptionProps {
   id: PaymentMethod;

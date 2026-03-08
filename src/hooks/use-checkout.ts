@@ -7,27 +7,82 @@ import { toast } from "sonner";
 
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
 import { usePaymentStore } from "@/hooks/use-payment-store";
-import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
+import { useCheckoutPlanId, useCheckoutPlanData, useHasCheckoutPlanIntent } from "@/hooks/use-checkout-store";
 import { useAddressList } from "@/api/hooks/useAddress";
 import { usePreviewPricing, useWalletBalance, useCreateOrder } from "@/api/hooks/usePayment";
 import { loadRazorpayScript } from "@/lib/razorpay";
+import { CHECKOUT_CONFIG, PAYMENT_METHODS, type PaymentMethod, type PricingBreakdown } from "@/lib/checkout-config";
+import type { PaymentStore } from "@/stores/payment-store";
 
-import {
-  CHECKOUT_CONFIG,
-  PAYMENT_METHODS,
-  type PaymentMethod,
-  type PricingBreakdown,
-  type CheckoutState,
-} from "./types";
+export interface CheckoutState {
+  selectedAddressId: string | null;
+  selectedPayment: PaymentMethod;
+  applyWallet: boolean;
+  startDate: Date;
+  optOutDates: Date[];
+  showAddressDialog: boolean;
+  showWalletInfo: boolean;
+  showOptOutDialog: boolean;
+}
 
-export function useCheckout() {
+export interface UseCheckoutReturn {
+  // Auth state
+  hasHydrated: boolean;
+  isAuthenticated: boolean;
+  hasPlanIntent: boolean;
+  
+  // Plan data
+  plan: ReturnType<typeof useCheckoutPlanData>;
+  planId: ReturnType<typeof useCheckoutPlanId>;
+  
+  // Address data
+  addresses: ReturnType<typeof useAddressList>["data"];
+  addressesLoading: boolean;
+  
+  // Wallet data
+  walletBalance: number | null;
+  walletLoading: boolean;
+  walletError: Error | null;
+  refetchWallet: () => void;
+  
+  // Payment state
+  paymentStatus: PaymentStore["status"];
+  createOrderMutation: ReturnType<typeof useCreateOrder>;
+  previewPricingMutation: ReturnType<typeof usePreviewPricing>;
+  
+  // Local state
+  state: CheckoutState;
+  pricing: PricingBreakdown;
+  
+  // Derived values
+  subscriptionDays: number;
+  maxOptOutDays: number;
+  perDayPrice: number;
+  optOutDiscount: number;
+  
+  // Actions
+  setSelectedPayment: (payment: PaymentMethod) => void;
+  setApplyWallet: (apply: boolean) => void;
+  setSelectedAddressId: (id: string) => void;
+  setOptOutDates: (dates: Date[]) => void;
+  setStartDate: (date: Date) => void;
+  toggleAddressDialog: (show?: boolean) => void;
+  toggleWalletInfo: (show?: boolean) => void;
+  toggleOptOutDialog: (show?: boolean) => void;
+  handleStartDateChange: (date: Date | undefined) => void;
+  handlePaymentSuccess: (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => void;
+  handlePaymentFailure: (error: { code: string; description: string }) => void;
+  handlePaymentDismissed: () => void;
+}
+
+export function useCheckout(): UseCheckoutReturn {
   const router = useRouter();
   const hasHydrated = useAuthHydrated();
   const isAuthenticated = useIsAuthenticated();
   
-  const planId = usePlanIntentStore((s) => s.planId);
-  const plan = usePlanIntentStore((s) => s.plan);
-  const hasPlanIntent = Boolean(planId && plan);
+  const planId = useCheckoutPlanId();
+  const plan = useCheckoutPlanData();
+  const hasPlanIntent = useHasCheckoutPlanIntent();
   
   const paymentStore = usePaymentStore();
   const { status: paymentStatus } = paymentStore;
@@ -116,13 +171,12 @@ export function useCheckout() {
     maxOptOutDays,
   ]);
 
-  // Reset payment store once on mount (not on every store change)
+  // Effects
   useEffect(() => {
     paymentStore.resetPayment();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Initialize start date once on mount
   useEffect(() => {
     setState((prev) => ({
       ...prev,
@@ -164,18 +218,13 @@ export function useCheckout() {
   const { mutate: mutatePreviewPricing } = previewPricingMutation;
   
   useEffect(() => {
-    // Only fetch when we have all required data
     if (!plan?._id || !state.selectedAddressId) return;
 
-    // Ensure start date is at least 1 day from now
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const minDate = addDays(today, CHECKOUT_CONFIG.minDaysFromToday);
 
-    if (state.startDate < minDate) {
-      // Don't make the API call with invalid date
-      return;
-    }
+    if (state.startDate < minDate) return;
 
     const previewData = {
       plan_id: plan._id,
@@ -243,6 +292,10 @@ export function useCheckout() {
     setState((prev) => ({ ...prev, optOutDates: dates }));
   }, []);
 
+  const setStartDate = useCallback((date: Date) => {
+    setState((prev) => ({ ...prev, startDate: date }));
+  }, []);
+
   const toggleAddressDialog = useCallback((show?: boolean) => {
     setState((prev) => ({ ...prev, showAddressDialog: show ?? !prev.showAddressDialog }));
   }, []);
@@ -256,50 +309,37 @@ export function useCheckout() {
   }, []);
 
   return {
-    // Auth state
     hasHydrated,
     isAuthenticated,
     hasPlanIntent,
-    
-    // Plan data
     plan,
     planId,
-    
-    // Address data
     addresses,
     addressesLoading,
-    
-    // Wallet data
     walletBalance,
     walletLoading,
     walletError,
     refetchWallet,
-    
-    // Payment state
     paymentStatus,
     createOrderMutation,
-    
-    // Local state
+    previewPricingMutation,
     state,
     pricing,
-    
-    // Derived values
     subscriptionDays,
     maxOptOutDays,
     perDayPrice,
     optOutDiscount,
-    
-    // Handlers
-    handleStartDateChange,
-    handlePaymentSuccess,
-    handlePaymentFailure,
-    handlePaymentDismissed,
     setSelectedPayment,
     setApplyWallet,
     setSelectedAddressId,
     setOptOutDates,
+    setStartDate,
     toggleAddressDialog,
     toggleWalletInfo,
     toggleOptOutDialog,
+    handleStartDateChange,
+    handlePaymentSuccess,
+    handlePaymentFailure,
+    handlePaymentDismissed,
   };
 }

@@ -8,24 +8,22 @@ import { toast } from "sonner";
 
 import { useCurrentUser } from "@/hooks/use-user-store";
 import { usePaymentStore } from "@/hooks/use-payment-store";
+import { useCheckout } from "@/hooks/use-checkout";
 import { useCreateAddress } from "@/api/hooks/useCreateAddress";
 import { openRazorpayCheckout } from "@/lib/razorpay";
+import { CHECKOUT_CONFIG, PAYMENT_METHODS } from "@/lib/checkout-config";
 import { DatePicker } from "@/components/ui/date-picker";
-import { CHECKOUT_CONFIG, PAYMENT_METHODS } from "./_hooks/types";
-import { useCheckout } from "./_hooks/useCheckout";
 
-import {
-  StepIndicator,
-  AddressCard,
-  AddNewAddressCard,
-  PaymentOption,
-  OptOutSummary,
-  OrderSummary,
-  WalletBanner,
-  WalletDisplay,
-  HelpChat,
-  CheckoutDialogs,
-} from "./_components";
+import { StepIndicator } from "@/components/customer/checkout/StepIndicator";
+import { AddressCard } from "@/components/customer/checkout/AddressCard";
+import { AddNewAddressCard } from "@/components/customer/checkout/AddNewAddressCard";
+import { PaymentOption } from "@/components/customer/checkout/PaymentOption";
+import { OptOutSummary } from "@/components/customer/checkout/OptOutSummary";
+import { OrderSummary } from "@/components/customer/checkout/OrderSummary";
+import { WalletBanner } from "@/components/customer/checkout/WalletBanner";
+import { WalletDisplay } from "@/components/customer/checkout/WalletDisplay";
+import { HelpChat } from "@/components/customer/checkout/HelpChat";
+import { CheckoutDialogs } from "@/components/customer/checkout/CheckoutDialogs";
 
 export default function CheckoutPage() {
   const user = useCurrentUser();
@@ -33,34 +31,21 @@ export default function CheckoutPage() {
   const paymentStore = usePaymentStore();
 
   const {
-    // Auth state
     hasHydrated,
     isAuthenticated,
     hasPlanIntent,
-    
-    // Plan data
     plan,
     planId,
-    
-    // Address data
     addresses,
     addressesLoading,
-    
-    // Wallet data
     walletBalance,
     walletLoading,
     walletError,
     refetchWallet,
-    
-    // Payment state
     paymentStatus,
     createOrderMutation,
-    
-    // Local state
     state,
     pricing,
-    
-    // Handlers
     handleStartDateChange,
     handlePaymentSuccess,
     handlePaymentFailure,
@@ -74,7 +59,6 @@ export default function CheckoutPage() {
     toggleOptOutDialog,
   } = useCheckout();
 
-  // Handle Pay & Subscribe click
   const handlePay = useCallback(async () => {
     if (!planId || !state.selectedAddressId) {
       toast.error("Incomplete Checkout", {
@@ -105,7 +89,6 @@ export default function CheckoutPage() {
 
       paymentStore.setPaymentProcessing(result);
 
-      // If amount is 0, skip Razorpay and handle success immediately
       if (result.amount === 0) {
         handlePaymentSuccess({
           razorpay_payment_id: "WALLET_PAYMENT",
@@ -115,7 +98,6 @@ export default function CheckoutPage() {
         return;
       }
 
-      // Open Razorpay checkout
       openRazorpayCheckout({
         keyId: result.keyId,
         amount: result.amount,
@@ -155,7 +137,6 @@ export default function CheckoutPage() {
     handlePaymentDismissed,
   ]);
 
-  // Loading / redirect states
   if (!hasHydrated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-muted/30">
@@ -189,7 +170,6 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-muted/30">
-      {/* Progress Steps */}
       <div className="mx-auto max-w-5xl px-4 pb-2 pt-8 sm:px-6 lg:px-8">
         <div className="flex items-center justify-center gap-0">
           <StepIndicator step={1} label="Delivery Details" active />
@@ -198,12 +178,9 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      {/* Main content */}
       <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-          {/* Left column */}
           <div className="flex-1 space-y-5">
-            {/* 1. Select Delivery Address */}
             <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-gray-900 sm:text-lg">
                 <FaMapMarkerAlt className="h-5 w-5 text-primary" />
@@ -232,7 +209,6 @@ export default function CheckoutPage() {
                 <AddNewAddressCard onClick={() => toggleAddressDialog(true)} />
               </div>
 
-              {/* Start Date Selector */}
               <div className="mt-4 border-t border-gray-100 pt-4">
                 <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-900">
                   <FaCalendar className="h-4 w-4 text-primary" />
@@ -249,7 +225,6 @@ export default function CheckoutPage() {
                 </p>
               </div>
 
-              {/* Opt-Out Date Selector */}
               <OptOutSummary
                 optOutDates={state.optOutDates}
                 optOutDiscount={pricing.optOutDiscount}
@@ -260,10 +235,8 @@ export default function CheckoutPage() {
               />
             </section>
 
-            {/* Wallet Banner */}
             <WalletBanner onLearnMore={() => toggleWalletInfo(true)} />
 
-            {/* 2. Payment Selection */}
             <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-gray-900 sm:text-lg">
                 <FaCreditCard className="h-5 w-5 text-primary" />
@@ -327,7 +300,6 @@ export default function CheckoutPage() {
             </section>
           </div>
 
-          {/* Right sidebar */}
           <div className="w-full space-y-4 lg:w-72 xl:w-80">
             <OrderSummary
               planName={plan.name}
@@ -343,7 +315,6 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      {/* Delivery zones info footer */}
       <div className="mt-4 flex items-center justify-center rounded-2xl border border-border bg-muted px-6 py-6">
         <div className="flex items-center gap-3">
           <MapPin className="h-6 w-6 text-foreground" />
@@ -354,7 +325,6 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      {/* Dialogs */}
       <CheckoutDialogs
         showAddressDialog={state.showAddressDialog}
         showWalletInfo={state.showWalletInfo}
