@@ -393,7 +393,7 @@ export function OptOutDateSelector({
       {daysRemaining > 0 && daysRemaining <= 3 && (
         <div className="mt-4 p-3 bg-warning/10 border border-warning/20 rounded-lg flex items-start gap-2">
           <Info className="h-4 w-4 text-warning mt-0.5 shrink-0" />
-          <p className="text-sm text-warning-foreground">
+          <p className="text-sm text-foreground">
             You can opt out of {daysRemaining} more day
             {daysRemaining !== 1 ? "s" : ""}.
           </p>

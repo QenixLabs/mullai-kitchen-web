@@ -113,8 +113,24 @@ export function useCheckout(): UseCheckoutReturn {
 
   // Derived values
   const subscriptionDays = useMemo(() => {
+    // Map duration enum to days
+    const durationMap: Record<string, number> = {
+      'Weekly': 7,
+      'Monthly': 30,
+      'Quarterly': 90,
+    };
+    
+    if (plan?.duration && durationMap[plan.duration]) {
+      return durationMap[plan.duration];
+    }
+    
+    // Fallback: try to extract number from duration string (for backward compatibility)
     const durationMatch = plan?.duration?.match(/\d+/);
-    return durationMatch ? parseInt(durationMatch[0], 10) : 30;
+    if (durationMatch) {
+      return parseInt(durationMatch[0], 10);
+    }
+    
+    return 30; // Default fallback
   }, [plan?.duration]);
 
   const maxOptOutDays = useMemo(

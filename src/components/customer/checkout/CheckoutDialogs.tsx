@@ -104,7 +104,7 @@ export function CheckoutDialogs({
           </DialogHeader>
           <OptOutDateSelector
             startDate={startDate}
-            endDate={addDays(startDate, subscriptionDays)}
+            endDate={addDays(startDate, subscriptionDays - 1)}
             selectedDates={optOutDates}
             onChange={onOptOutDatesChange}
             maxOptOutDays={maxOptOutDays}

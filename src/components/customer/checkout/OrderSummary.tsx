@@ -11,6 +11,14 @@ interface OrderSummaryProps {
   onPay: () => void;
 }
 
+// Helper function to get plan type label from duration
+function getPlanTypeLabel(duration: string): string {
+  const durationLower = duration?.toLowerCase() || '';
+  if (durationLower.includes('week')) return 'Weekly Subscription Plan';
+  if (durationLower.includes('quarter')) return 'Quarterly Subscription Plan';
+  return 'Monthly Subscription Plan';
+}
+
 export function OrderSummary({
   planName,
   planDuration,
@@ -36,7 +44,7 @@ export function OrderSummary({
         {/* Plan row */}
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="font-medium text-gray-800">Monthly Subscription Plan</p>
+            <p className="font-medium text-gray-800">{getPlanTypeLabel(planDuration)}</p>
             <p className="text-xs text-gray-500">
               {planName} ({planDuration})
             </p>
