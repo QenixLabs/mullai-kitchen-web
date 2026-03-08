@@ -1,387 +1,82 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import {
-  FaCheckCircle,
-  FaCreditCard,
-  FaInfoCircle,
-  FaSpinner,
-  FaMapMarkerAlt,
-  FaEdit,
-  FaPlusCircle,
-  FaWallet,
-  FaCreditCard as FaCreditCardCards,
-  FaTimes,
-  FaTimesCircle,
-  FaCalendar,
-  FaPiggyBank,
-} from "react-icons/fa";
-import {
-  CreditCard,
-  QrCode,
-  Info,
-  Wallet,
-  Loader2,
-  ArrowRight,
-  Lock,
-  Shield,
-  MessageCircle,
-  MapPin,
-} from "lucide-react";
-
-import {
-  useAuthHydrated,
-  useIsAuthenticated,
-  useCurrentUser,
-} from "@/hooks/use-user-store";
-import { usePaymentStore } from "@/hooks/use-payment-store";
-import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
-import { useAddressList } from "@/api/hooks/useAddress";
-import { useCreateOrder, usePreviewPricing, useWalletBalance } from "@/api/hooks/usePayment";
-import { useCreateAddress } from "@/api/hooks/useCreateAddress";
-import { loadRazorpayScript, openRazorpayCheckout } from "@/lib/razorpay";
-import type { Address } from "@/api/types/customer.types";
-import { cn } from "@/lib/utils";
-import { DatePicker } from "@/components/ui/date-picker";
-import { Button } from "@/components/ui/button";
+import { useCallback } from "react";
+import { FaMapMarkerAlt, FaCreditCard, FaCalendar } from "react-icons/fa";
+import { CreditCard, QrCode, MapPin } from "lucide-react";
+import { addDays } from "date-fns";
 import { toast } from "sonner";
+
+import { useCurrentUser } from "@/hooks/use-user-store";
+import { usePaymentStore } from "@/hooks/use-payment-store";
+import { useCreateAddress } from "@/api/hooks/useCreateAddress";
+import { openRazorpayCheckout } from "@/lib/razorpay";
+import { DatePicker } from "@/components/ui/date-picker";
+import { CHECKOUT_CONFIG, PAYMENT_METHODS } from "./_hooks/types";
+import { useCheckout } from "./_hooks/useCheckout";
+
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { AddressFormStep } from "@/components/customer/onboarding/AddressFormStep";
-import { OptOutDateSelector } from "@/components/customer/checkout/OptOutDateSelector";
-import { addDays, differenceInDays, format } from "date-fns";
-import { Badge } from "@/components/ui/badge";
-
-// ─── Types ──────────────────────────────────────────────────────────────────
-
-type PaymentMethod = "wallet" | "card" | "upi";
-
-const PAYMENT_METHODS = {
-  WALLET: "wallet",
-  CARD: "card",
-  UPI: "upi",
-} as const satisfies Record<string, PaymentMethod>;
-
-const CHECKOUT_CONFIG = {
-  companyName: "MullaiKitchen",
-  email: "support@mullaikitchen.com",
-  supportEmailSubject: "Checkout Support",
-  minDaysFromToday: 1,
-} as const;
-
-// ─── Sub-components ──────────────────────────────────────────────────────────
-
-interface StepIndicatorProps {
-  step: number;
-  label: string;
-  active: boolean;
-}
-
-function StepIndicator({ step, label, active }: StepIndicatorProps) {
-  return (
-    <div className="flex flex-col items-center gap-1.5">
-      <div
-        className={cn(
-          "flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold transition-colors",
-          active
-            ? "bg-primary text-white shadow-primary"
-            : "border-2 border-gray-300 bg-white text-muted-foreground",
-        )}
-      >
-        {step}
-      </div>
-      <span
-        className={cn(
-          "text-xs font-semibold",
-          active ? "text-primary" : "text-muted-foreground",
-        )}
-      >
-        {label}
-      </span>
-    </div>
-  );
-}
-
-interface AddressCardProps {
-  address: Address;
-  selected: boolean;
-  onClick: () => void;
-}
-
-function AddressCard({ address, selected, onClick }: AddressCardProps) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "relative flex w-full flex-col items-start gap-1 rounded-xl border p-4 text-left transition-all",
-        selected
-          ? "border-border bg-muted shadow-sm"
-          : "border-gray-200 bg-white hover:border-border hover:bg-muted/40",
-      )}
-    >
-      <div className="flex w-full items-center justify-between">
-        <span className="flex items-center gap-1.5 text-sm font-semibold text-gray-900">
-          {address.type}
-            {address.is_default && selected && (
-              <FaCheckCircle className="h-3.5 w-3.5 text-primary" />
-            )}
-        </span>
-          <FaEdit className="h-3.5 w-3.5 text-muted-foreground" />
-      </div>
-      <p className="text-xs text-gray-600">{address.full_address}</p>
-      <p className="text-xs text-gray-600">
-        {address.area}, {address.city}
-      </p>
-      <p className="text-xs text-gray-500">
-        {address.state} - {address.pincode}
-      </p>
-    </button>
-  );
-}
-
-interface AddNewAddressCardProps {
-  onClick: () => void;
-}
-
-function AddNewAddressCard({ onClick }: AddNewAddressCardProps) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 bg-white p-6 text-center transition-all hover:border-border hover:bg-muted/40"
-    >
-      <FaPlusCircle className="h-6 w-6 text-muted-foreground" />
-      <span className="text-sm font-medium text-gray-500">Add New Address</span>
-    </button>
-  );
-}
-
-interface PaymentOptionProps {
-  id: PaymentMethod;
-  label: string;
-  subtitle?: string;
-  icon: React.ReactNode;
-  badge?: React.ReactNode;
-  selected: boolean;
-  disabled?: boolean;
-  onClick: () => void;
-}
-
-function PaymentOption({
-  id: _id,
-  label,
-  subtitle,
-  icon,
-  badge,
-  selected,
-  disabled = false,
-  onClick,
-}: PaymentOptionProps) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className={cn(
-        "flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-all",
-        disabled
-          ? "cursor-not-allowed opacity-50"
-          : selected
-            ? "border-border bg-muted/60"
-            : "border-gray-200 bg-white hover:border-border",
-      )}
-    >
-      {/* Radio circle */}
-      <div
-        className={cn(
-          "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-          selected ? "border-primary bg-primary" : "border-gray-300",
-        )}
-      >
-        {selected && <div className="h-2 w-2 rounded-full bg-white" />}
-      </div>
-
-      <div className="flex shrink-0 items-center justify-center">{icon}</div>
-
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-gray-900">{label}</p>
-        {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
-      </div>
-
-      {badge}
-    </button>
-  );
-}
-
-// ─── Main Page ────────────────────────────────────────────────────────────────
+  StepIndicator,
+  AddressCard,
+  AddNewAddressCard,
+  PaymentOption,
+  OptOutSummary,
+  OrderSummary,
+  WalletBanner,
+  WalletDisplay,
+  HelpChat,
+  CheckoutDialogs,
+} from "./_components";
 
 export default function CheckoutPage() {
-  const router = useRouter();
-  const hasHydrated = useAuthHydrated();
-  const isAuthenticated = useIsAuthenticated();
   const user = useCurrentUser();
-
-  const planId = usePlanIntentStore((s) => s.planId);
-  const plan = usePlanIntentStore((s) => s.plan);
-
-  const hasPlanIntent = Boolean(planId && plan);
-
-  // Payment state from store
+  const createAddressMutation = useCreateAddress();
   const paymentStore = usePaymentStore();
-  const { status: paymentStatus } = paymentStore;
-
-  // React Query hooks for addresses and wallet balance
-  const { data: addresses, isLoading: addressesLoading } = useAddressList();
 
   const {
-    data: walletData,
-    isLoading: walletLoading,
-    error: walletError,
-    refetch: refetchWallet,
-  } = useWalletBalance();
-
-  const walletBalance = walletData?.balance ?? null;
-
-  // Mutation for creating payment orders
-  const createOrderMutation = useCreateOrder();
-  const previewPricingMutation = usePreviewPricing();
-  const createAddressMutation = useCreateAddress();
-
-  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
-    null,
-  );
-  const [showAddressDialog, setShowAddressDialog] = useState(false);
-  const [showWalletInfo, setShowWalletInfo] = useState(false);
-  const [showOptOutDialog, setShowOptOutDialog] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(
-    PAYMENT_METHODS.WALLET,
-  );
-  const [applyWallet, setApplyWallet] = useState(true);
-
-  // Start date (default to minimum days from today)
-  const [startDate, setStartDate] = useState<Date>(() => {
-    return addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday);
-  });
-
-  // Ensure date is set correctly after hydration
-  useEffect(() => {
-    const tomorrow = addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday);
-    setStartDate(tomorrow);
-  }, []);
-
-  // Opt-out dates state
-  const [optOutDates, setOptOutDates] = useState<Date[]>([]);
-
-  // Handle date change with type safety
-  const handleStartDateChange = (date: Date | undefined) => {
-    if (date) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const minDate = addDays(today, CHECKOUT_CONFIG.minDaysFromToday);
-      const selectedDate = new Date(date);
-      selectedDate.setHours(0, 0, 0, 0);
-
-      if (selectedDate < minDate) {
-        toast.error("Invalid Date", {
-          description: `Subscription date should be at least ${CHECKOUT_CONFIG.minDaysFromToday} day(s) from today.`,
-        });
-        return;
-      }
-      setStartDate(date);
-    }
-  };
-
-  // Set default address when addresses are loaded
-  useEffect(() => {
-    if (addresses && addresses.length > 0 && !selectedAddressId) {
-      const defaultAddr = addresses.find((a) => a.is_default) ?? addresses[0];
-      if (defaultAddr) setSelectedAddressId(defaultAddr._id);
-    }
-  }, [addresses, selectedAddressId]);
-
-  // Reset payment state on mount so a stale "processing" status from a
-  // previous attempt never locks the button after a page reload.
-  useEffect(() => {
-    paymentStore.resetPayment();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Load Razorpay script on mount
-  useEffect(() => {
-    loadRazorpayScript().catch((err) => {
-      console.error("Failed to load Razorpay script:", err);
-      toast.error("System Error", {
-        description:
-          "Failed to load payment system. Please refresh and try again.",
-      });
-    });
-  }, []);
-
-  // Auth + intent guards
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) router.replace("/auth/signin?redirect=/checkout");
-  }, [hasHydrated, isAuthenticated, router]);
-
-  useEffect(() => {
-    if (!hasHydrated || !isAuthenticated) return;
-    if (!hasPlanIntent) router.replace("/plans");
-  }, [hasHydrated, hasPlanIntent, isAuthenticated, router]);
-
-  // Fetch preview pricing when checkout data changes
-  useEffect(() => {
-    if (!plan?._id || !selectedAddressId || !startDate) return;
-
-    const previewData = {
-      plan_id: plan._id,
-      address_id: selectedAddressId,
-      start_date: startDate.toISOString(),
-      opt_out_dates: optOutDates.map((date) => date.toISOString()),
-    };
-
-    previewPricingMutation.mutate(previewData);
-  }, [plan?._id, selectedAddressId, startDate, optOutDates]);
-
-  // Handle payment success
-  const handlePaymentSuccess = (response: {
-    razorpay_payment_id: string;
-    razorpay_order_id: string;
-    razorpay_signature: string;
-  }) => {
-    paymentStore.setPaymentSuccess(response);
-    // Redirect to success page
-    router.push(
-      `/checkout/success?planName=${encodeURIComponent(plan?.name || "Subscription")}`,
-    );
-  };
-
-  // Handle payment failure
-  const handlePaymentFailure = (error: {
-    code: string;
-    description: string;
-    source: string;
-    metadata: unknown;
-  }) => {
-    toast.error("Payment Failed", {
-      description: error.description,
-    });
-    router.push("/checkout/error");
-  };
-
-  // Handle payment dismissed
-  const handlePaymentDismissed = () => {
-    paymentStore.setPaymentCancelled();
-  };
+    // Auth state
+    hasHydrated,
+    isAuthenticated,
+    hasPlanIntent,
+    
+    // Plan data
+    plan,
+    planId,
+    
+    // Address data
+    addresses,
+    addressesLoading,
+    
+    // Wallet data
+    walletBalance,
+    walletLoading,
+    walletError,
+    refetchWallet,
+    
+    // Payment state
+    paymentStatus,
+    createOrderMutation,
+    
+    // Local state
+    state,
+    pricing,
+    
+    // Handlers
+    handleStartDateChange,
+    handlePaymentSuccess,
+    handlePaymentFailure,
+    handlePaymentDismissed,
+    setSelectedPayment,
+    setApplyWallet,
+    setSelectedAddressId,
+    setOptOutDates,
+    toggleAddressDialog,
+    toggleWalletInfo,
+    toggleOptOutDialog,
+  } = useCheckout();
 
   // Handle Pay & Subscribe click
-  const handlePay = async () => {
-    if (!planId || !selectedAddressId || !startDate) {
+  const handlePay = useCallback(async () => {
+    if (!planId || !state.selectedAddressId) {
       toast.error("Incomplete Checkout", {
         description: "Please complete all checkout fields.",
       });
@@ -400,16 +95,14 @@ export default function CheckoutPage() {
     });
 
     try {
-      // Create payment order using React Query mutation
       const result = await createOrderMutation.mutateAsync({
         plan_id: planId,
-        address_id: selectedAddressId,
-        start_date: startDate.toISOString().split("T")[0],
-        apply_wallet: applyWallet,
-        opt_out_dates: optOutDates.map(d => d.toISOString().split("T")[0]),
+        address_id: state.selectedAddressId,
+        start_date: state.startDate.toISOString().split("T")[0],
+        apply_wallet: state.applyWallet,
+        opt_out_dates: state.optOutDates.map((d) => d.toISOString().split("T")[0]),
       });
 
-      // Store order details
       paymentStore.setPaymentProcessing(result);
 
       // If amount is 0, skip Razorpay and handle success immediately
@@ -440,28 +133,37 @@ export default function CheckoutPage() {
         },
       });
     } catch (err) {
-      // Error is handled by mutation's onError callback
-      // Set error message for display
       const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Payment failed. Please try again.";
-      toast.error("Payment Failed", {
-        description: errorMessage,
-      });
+        err instanceof Error ? err.message : "Payment failed. Please try again.";
+      toast.error("Payment Failed", { description: errorMessage });
     }
-  };
+  }, [
+    planId,
+    state.selectedAddressId,
+    state.startDate,
+    state.applyWallet,
+    state.optOutDates,
+    plan?.name,
+    plan?.duration,
+    user?.name,
+    user?.email,
+    user?.phone,
+    paymentStore,
+    createOrderMutation,
+    handlePaymentSuccess,
+    handlePaymentFailure,
+    handlePaymentDismissed,
+  ]);
 
   // Loading / redirect states
   if (!hasHydrated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-muted/30">
-        <p className="text-sm text-gray-500">
-          Preparing your checkout session…
-        </p>
+        <p className="text-sm text-gray-500">Preparing your checkout session…</p>
       </div>
     );
   }
+
   if (!isAuthenticated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-muted/30">
@@ -469,6 +171,7 @@ export default function CheckoutPage() {
       </div>
     );
   }
+
   if (!hasPlanIntent || !plan) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-muted/30">
@@ -477,61 +180,28 @@ export default function CheckoutPage() {
     );
   }
 
-  // Pricing - use server preview values if available, otherwise calculate locally
-  const subtotal = plan.price;
-
-  // Calculate subscription duration and max opt-out days (parse duration like "30 days")
-  const durationMatch = plan.duration.match(/\d+/);
-  const subscriptionDays = durationMatch ? parseInt(durationMatch[0], 10) : 30;
-  const maxOptOutDays = Math.floor(subscriptionDays * 0.5);
-
-  // Calculate simple per-day price
-  const perDayPrice = subscriptionDays > 0
-    ? plan.price / subscriptionDays
-    : 0;
-
-  // Calculate opt-out discount
-  const optOutDiscount = optOutDates.length * perDayPrice;
-  const discountedSubtotal = Math.max(0, subtotal - optOutDiscount);
-
-  // Use server preview pricing if available, otherwise use local calculations
-  const previewData = previewPricingMutation.data;
-  const deliveryCharge = previewData?.deliveryCharge ?? 30;
-  const taxes = previewData?.tax ?? parseFloat((discountedSubtotal * 0.05).toFixed(2));
-  const total = previewData?.total ?? (discountedSubtotal + deliveryCharge + taxes);
-
-  // Calculate amount after wallet
-  const amountAfterWallet =
-    applyWallet && walletBalance !== null
-      ? Math.max(0, total - walletBalance)
-      : total;
-  const walletReservation =
-    applyWallet && walletBalance !== null ? Math.min(walletBalance, total) : 0;
+  const isProcessing = paymentStatus === "processing" || createOrderMutation.isPending;
+  const canUseCardOrUPI = !(
+    state.applyWallet &&
+    walletBalance !== null &&
+    walletBalance >= pricing.total
+  );
 
   return (
     <div className="min-h-screen bg-muted/30">
-      {/* ── Progress Steps ──────────────────────────────────── */}
+      {/* Progress Steps */}
       <div className="mx-auto max-w-5xl px-4 pb-2 pt-8 sm:px-6 lg:px-8">
         <div className="flex items-center justify-center gap-0">
           <StepIndicator step={1} label="Delivery Details" active />
-
-          {/* connector line */}
           <div className="mx-3 h-0.5 w-24 bg-linear-to-r from-border to-border sm:w-40" />
-
-          <StepIndicator
-            step={2}
-            label="Payment & Review"
-            active={
-              paymentStatus === "processing" || createOrderMutation.isPending
-            }
-          />
+          <StepIndicator step={2} label="Payment & Review" active={isProcessing} />
         </div>
       </div>
 
-      {/* ── Main content ─────────────────────────────────────── */}
+      {/* Main content */}
       <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-          {/* ─── Left column ───────────────────────────────── */}
+          {/* Left column */}
           <div className="flex-1 space-y-5">
             {/* 1. Select Delivery Address */}
             <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
@@ -543,28 +213,23 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {addressesLoading ? (
                   <div className="col-span-2 flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 p-4">
-                    <FaSpinner className="h-4 w-4 animate-spin text-primary" />
-                    <span className="text-sm text-gray-500">
-                      Loading addresses...
-                    </span>
+                    <span className="text-sm text-gray-500">Loading addresses...</span>
                   </div>
-                ) : addresses && addresses.length === 0 ? (
+                ) : !addresses?.length ? (
                   <div className="col-span-2 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 text-center">
-                    <p className="text-sm text-gray-500">
-                      No saved addresses. Please add one to continue.
-                    </p>
+                    <p className="text-sm text-gray-500">No saved addresses. Please add one to continue.</p>
                   </div>
                 ) : (
-                  addresses?.map((addr) => (
+                  addresses.map((addr) => (
                     <AddressCard
                       key={addr._id}
                       address={addr}
-                      selected={selectedAddressId === addr._id}
+                      selected={state.selectedAddressId === addr._id}
                       onClick={() => setSelectedAddressId(addr._id)}
                     />
                   ))
                 )}
-                <AddNewAddressCard onClick={() => setShowAddressDialog(true)} />
+                <AddNewAddressCard onClick={() => toggleAddressDialog(true)} />
               </div>
 
               {/* Start Date Selector */}
@@ -574,142 +239,29 @@ export default function CheckoutPage() {
                   Subscription Start Date
                 </label>
                 <DatePicker
-                  date={startDate}
+                  date={state.startDate}
                   onDateChange={handleStartDateChange}
                   placeholder="Select start date"
-                  minDate={addDays(
-                    new Date(),
-                    CHECKOUT_CONFIG.minDaysFromToday,
-                  )}
+                  minDate={addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday)}
                 />
                 <p className="mt-2 text-xs text-gray-500">
-                  Subscriptions start at least{" "}
-                  {CHECKOUT_CONFIG.minDaysFromToday} day(s) from today
+                  Subscriptions start at least {CHECKOUT_CONFIG.minDaysFromToday} day(s) from today
                 </p>
               </div>
 
-              {/* Opt-Out Date Selector - Collapsed Summary */}
-              <div className="mt-4 border-t border-gray-100 pt-4">
-                <div className="flex items-center justify-between mb-3">
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                    <FaPiggyBank className="h-4 w-4 text-primary" />
-                    Skip Delivery Days
-                  </label>
-                  <span className="text-xs text-muted-foreground">
-                    Max {maxOptOutDays} days (50% of subscription)
-                  </span>
-                </div>
-
-                {optOutDates.length === 0 ? (
-                  // Empty state - show button to open selector
-                  <button
-                    type="button"
-                    onClick={() => setShowOptOutDialog(true)}
-                    className="w-full flex items-center justify-between rounded-xl border border-dashed border-gray-300 bg-gray-50/50 p-4 text-left transition-all hover:border-primary hover:bg-primary/5"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                        <FaCalendar className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Select days to skip
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Save ₹{perDayPrice.toFixed(0)} per day you opt out
-                        </p>
-                      </div>
-                    </div>
-                    <Badge variant="secondary" className="rounded-full">
-                      Optional
-                    </Badge>
-                  </button>
-                ) : (
-                  // Summary state - show selected dates and savings
-                  <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                          <FaPiggyBank className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-foreground">
-                            ₹{optOutDiscount.toFixed(0)} savings
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {optOutDates.length} day{optOutDates.length !== 1 ? 's' : ''} selected
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setOptOutDates([])}
-                          className="text-xs text-muted-foreground hover:text-destructive transition-colors"
-                        >
-                          Clear
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setShowOptOutDialog(true)}
-                          className="text-xs font-medium text-primary hover:underline"
-                        >
-                          Modify
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Selected dates preview */}
-                    <div className="flex flex-wrap gap-2">
-                      {optOutDates
-                        .sort((a, b) => a.getTime() - b.getTime())
-                        .slice(0, 5)
-                        .map((date, idx) => (
-                          <Badge
-                            key={idx}
-                            variant="secondary"
-                            className="rounded-lg bg-white text-primary border-primary/20"
-                          >
-                            {format(date, "MMM d")}
-                          </Badge>
-                        ))}
-                      {optOutDates.length > 5 && (
-                        <Badge
-                          variant="secondary"
-                          className="rounded-lg bg-white text-muted-foreground border-border"
-                        >
-                          +{optOutDates.length - 5} more
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
+              {/* Opt-Out Date Selector */}
+              <OptOutSummary
+                optOutDates={state.optOutDates}
+                optOutDiscount={pricing.optOutDiscount}
+                perDayPrice={pricing.perDayPrice}
+                maxOptOutDays={pricing.maxOptOutDays}
+                onClear={() => setOptOutDates([])}
+                onModify={() => toggleOptOutDialog(true)}
+              />
             </section>
 
-            {/* Two-Phase Wallet info banner */}
-            <div className="flex items-start gap-3 rounded-2xl border border-border bg-muted p-4 sm:p-5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
-                <FaInfoCircle className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900">
-                  Two-Phase Wallet Reservation
-                </p>
-                <p className="mt-0.5 text-xs leading-relaxed text-gray-600">
-                  Funds are first reserved in your Mullai Wallet to secure your
-                  subscription. Deductions from your actual balance occur only
-                  upon delivery confirmation.{" "}
-                  <button
-                    type="button"
-                    onClick={() => setShowWalletInfo(true)}
-                    className="font-medium text-primary hover:underline"
-                  >
-                    Learn more about how it works.
-                  </button>
-                </p>
-              </div>
-            </div>
+            {/* Wallet Banner */}
+            <WalletBanner onLearnMore={() => toggleWalletInfo(true)} />
 
             {/* 2. Payment Selection */}
             <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
@@ -718,293 +270,80 @@ export default function CheckoutPage() {
                 2. Payment Selection
               </h2>
 
-              {/* Wallet Balance Display */}
-              {walletLoading ? (
-                <div className="mb-4 flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 p-3">
-                  <FaSpinner className="h-4 w-4 animate-spin text-primary" />
-                  <span className="text-sm text-gray-600">
-                    Loading wallet balance...
-                  </span>
-                </div>
-              ) : walletError ? (
-                <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3">
-                  <FaTimesCircle className="h-4 w-4 text-red-600" />
-                  <span className="text-sm text-red-900">
-                    Failed to load wallet balance
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => refetchWallet()}
-                    className="ml-auto text-sm font-semibold text-red-700 hover:underline"
-                  >
-                    Retry
-                  </button>
-                </div>
-              ) : (
-                <div className="mb-4 flex items-center justify-between rounded-xl bg-primary p-4 shadow-sm shadow-primary/10">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
-                      <FaWallet className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-white">
-                        Wallet Balance
-                      </p>
-                      <p className="text-xs text-white/70">Available funds</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-extrabold text-white">
-                      ₹{walletBalance?.toFixed(2) || "0.00"}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Apply Wallet Toggle */}
-              {walletBalance !== null && walletBalance > 0 && (
-                <div className="mb-4 flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      id="apply-wallet"
-                      checked={applyWallet}
-                      onChange={(e) => setApplyWallet(e.target.checked)}
-                      className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary"
-                    />
-                    <div>
-                      <label
-                        htmlFor="apply-wallet"
-                        className="text-sm font-semibold text-gray-900"
-                      >
-                        Apply Wallet Balance
-                      </label>
-                      <p className="text-xs text-gray-500">
-                        Reserve ₹{walletReservation.toFixed(2)} from wallet
-                      </p>
-                    </div>
-                  </div>
-                  {applyWallet && (
-                    <button
-                      type="button"
-                      onClick={() => setApplyWallet(false)}
-                      className="text-muted-foreground hover:text-gray-600"
-                    >
-                      <FaTimes className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-              )}
+              <WalletDisplay
+                walletBalance={walletBalance}
+                walletLoading={walletLoading}
+                walletError={walletError}
+                applyWallet={state.applyWallet}
+                walletReservation={pricing.walletReservation}
+                onRetry={refetchWallet}
+                onToggleApply={setApplyWallet}
+              />
 
               <div className="space-y-3">
-                {/* Mullai Wallet */}
                 <PaymentOption
                   id={PAYMENT_METHODS.WALLET}
                   label="Mullai Wallet + Card/UPI"
                   subtitle={
-                    applyWallet && walletBalance !== null
-                      ? `₹${walletReservation.toFixed(2)} reserved, ₹${amountAfterWallet.toFixed(2)} remaining`
+                    state.applyWallet && walletBalance !== null
+                      ? `₹${pricing.walletReservation.toFixed(2)} reserved, ₹${pricing.amountAfterWallet.toFixed(2)} remaining`
                       : undefined
                   }
                   icon={
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
-                      <FaCreditCardCards className="h-4 w-4 text-foreground" />
+                      <FaCreditCard className="h-4 w-4 text-foreground" />
                     </div>
                   }
-                  selected={selectedPayment === PAYMENT_METHODS.WALLET}
+                  selected={state.selectedPayment === PAYMENT_METHODS.WALLET}
                   onClick={() => setSelectedPayment(PAYMENT_METHODS.WALLET)}
                 />
 
-                {/* Credit / Debit Card */}
                 <PaymentOption
                   id={PAYMENT_METHODS.CARD}
                   label="Credit / Debit Card"
-                  disabled={
-                    applyWallet &&
-                    walletBalance !== null &&
-                    walletBalance >= total
-                  }
+                  disabled={!canUseCardOrUPI}
                   icon={
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100">
                       <CreditCard className="h-4 w-4 text-gray-500" />
                     </div>
                   }
-                  selected={selectedPayment === PAYMENT_METHODS.CARD}
+                  selected={state.selectedPayment === PAYMENT_METHODS.CARD}
                   onClick={() => setSelectedPayment(PAYMENT_METHODS.CARD)}
                 />
 
-                {/* UPI */}
                 <PaymentOption
                   id={PAYMENT_METHODS.UPI}
                   label="UPI (PhonePe, GPay, etc.)"
-                  disabled={
-                    applyWallet &&
-                    walletBalance !== null &&
-                    walletBalance >= total
-                  }
+                  disabled={!canUseCardOrUPI}
                   icon={
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100">
                       <QrCode className="h-4 w-4 text-gray-500" />
                     </div>
                   }
-                  selected={selectedPayment === PAYMENT_METHODS.UPI}
+                  selected={state.selectedPayment === PAYMENT_METHODS.UPI}
                   onClick={() => setSelectedPayment(PAYMENT_METHODS.UPI)}
                 />
               </div>
             </section>
           </div>
 
-          {/* ─── Right sidebar ─────────────────────────────── */}
+          {/* Right sidebar */}
           <div className="w-full space-y-4 lg:w-72 xl:w-80">
-            {/* Order Summary */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
-              <h3 className="mb-4 text-base font-bold text-gray-900">
-                Order Summary
-              </h3>
+            <OrderSummary
+              planName={plan.name}
+              planDuration={plan.duration}
+              pricing={pricing}
+              applyWallet={state.applyWallet}
+              isProcessing={isProcessing}
+              onPay={handlePay}
+            />
 
-              <div className="space-y-3 text-sm">
-                {/* Plan row */}
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="font-medium text-gray-800">
-                      Monthly Subscription Plan
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {plan.name} ({plan.duration})
-                    </p>
-                  </div>
-                  <span className="shrink-0 font-semibold text-gray-900">
-                    ₹{subtotal.toFixed(2)}
-                  </span>
-                </div>
-
-                {/* Opt-Out Discount */}
-                {optOutDiscount > 0 && (
-                  <div className="flex items-center justify-between text-green-600">
-                    <span className="flex items-center gap-1">
-                      <FaCalendar className="h-3 w-3" />
-                      Opt-Out Discount ({optOutDates.length} days)
-                    </span>
-                    <span className="font-medium">
-                      -₹{optOutDiscount.toFixed(2)}
-                    </span>
-                  </div>
-                )}
-
-                {/* Delivery Fee */}
-                <div className="flex items-center justify-between text-gray-600">
-                  <span className="flex items-center gap-1">
-                    Delivery Fee
-                    <Info className="h-3 w-3 text-muted-foreground" />
-                  </span>
-                  <span className="font-medium text-gray-800">
-                    ₹{deliveryCharge.toFixed(2)}
-                  </span>
-                </div>
-
-                {/* Taxes */}
-                <div className="flex items-center justify-between text-gray-600">
-                  <span>Estimated Taxes</span>
-                  <span className="font-medium text-gray-800">
-                    ₹{taxes.toFixed(2)}
-                  </span>
-                </div>
-
-                {/* Wallet Applied */}
-                {applyWallet && walletReservation > 0 && (
-                  <div className="flex items-center justify-between text-success">
-                    <span className="flex items-center gap-1">
-                      <Wallet className="h-3 w-3" />
-                      Wallet Applied
-                    </span>
-                    <span className="font-medium">
-                      -₹{walletReservation.toFixed(2)}
-                    </span>
-                  </div>
-                )}
-
-                <div className="h-px bg-gray-100" />
-
-                {/* Total */}
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                    {applyWallet && walletReservation > 0
-                      ? "You're Paying"
-                      : "Total to Reserve"}
-                  </p>
-                  <div className="flex items-end justify-between">
-                    <p className="mt-0.5 text-3xl font-extrabold text-gray-900">
-                      ₹{amountAfterWallet.toFixed(2)}
-                    </p>
-                  </div>
-                </div>
-
-                {/* CTA */}
-                <button
-                  type="button"
-                  onClick={handlePay}
-                  disabled={
-                    paymentStatus === "processing" ||
-                    createOrderMutation.isPending
-                  }
-                  className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3.5 text-sm font-bold text-white shadow-primary transition-all hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                  {paymentStatus === "processing" ||
-                  createOrderMutation.isPending ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      Pay & Subscribe
-                      <ArrowRight className="h-4 w-4" />
-                    </>
-                  )}
-                </button>
-
-                {/* Trust badges */}
-                <div className="flex items-center justify-center gap-3 pt-1 text-[10px] text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Lock className="h-3 w-3" /> Secure
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Shield className="h-3 w-3" /> PCI-DSS
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Shield className="h-3 w-3" /> 256-BIT
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Help chat */}
-            <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-                  <MessageCircle className="h-4 w-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-gray-800">
-                    Need help with payment?
-                  </p>
-                  <p className="text-[11px] text-gray-500">
-                    Our concierge is available 24/7
-                  </p>
-                </div>
-              </div>
-              <a
-                href={`mailto:${CHECKOUT_CONFIG.email}?subject=${encodeURIComponent(CHECKOUT_CONFIG.supportEmailSubject)}`}
-                className="text-xs font-semibold text-primary underline underline-offset-2 hover:text-foreground"
-              >
-                Chat
-              </a>
-            </div>
+            <HelpChat />
           </div>
         </div>
       </div>
 
-      {/* ── Delivery zones info footer ─────────────────────── */}
+      {/* Delivery zones info footer */}
       <div className="mt-4 flex items-center justify-center rounded-2xl border border-border bg-muted px-6 py-6">
         <div className="flex items-center gap-3">
           <MapPin className="h-6 w-6 text-foreground" />
@@ -1015,96 +354,22 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      {/* ── Address Dialog ────────────────────────────────── */}
-      {showAddressDialog && (
-        <Dialog open={showAddressDialog} onOpenChange={setShowAddressDialog}>
-          <DialogContent className="max-w-lg sm:min-w-120 max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Add New Address</DialogTitle>
-            </DialogHeader>
-            <AddressFormStep
-              hideList
-              hideHeader
-              onAddAddress={async (address) => {
-                await createAddressMutation.mutateAsync(address);
-                setShowAddressDialog(false);
-              }}
-            />
-          </DialogContent>
-        </Dialog>
-      )}
-
-      {/* ── Wallet Info Dialog ─────────────────────────────── */}
-      {showWalletInfo && (
-        <Dialog open={showWalletInfo} onOpenChange={setShowWalletInfo}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>How Two-Phase Wallet Works</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 text-sm text-gray-700">
-              <div>
-                <p className="font-semibold text-gray-900">
-                  Phase 1: Reservation
-                </p>
-                <p>
-                  When you subscribe, funds are first reserved from your wallet
-                  to guarantee your subscription slot.
-                </p>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">
-                  Phase 2: Deduction
-                </p>
-                <p>
-                  Actual deductions happen only when meals are delivered and
-                  confirmed. Any reserved but unused funds remain in your
-                  wallet.
-                </p>
-              </div>
-              <div className="rounded-lg bg-muted p-3">
-                <p className="text-xs text-foreground">
-                  <strong>Benefit:</strong> Your balance stays secure even
-                  before delivery starts.
-                </p>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
-
-      {/* ── Opt-Out Date Selector Dialog ───────────────────── */}
-      {showOptOutDialog && (
-        <Dialog open={showOptOutDialog} onOpenChange={setShowOptOutDialog}>
-          <DialogContent className="w-[calc(100vw-2rem)] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <FaPiggyBank className="h-5 w-5 text-primary" />
-                Select Days to Skip
-              </DialogTitle>
-            </DialogHeader>
-            <OptOutDateSelector
-              startDate={startDate}
-              endDate={addDays(startDate, subscriptionDays)}
-              selectedDates={optOutDates}
-              onChange={(dates) => {
-                setOptOutDates(dates);
-                // Auto-close when user clicks "Clear All" or if they want to keep it open they can close manually
-              }}
-              maxOptOutDays={maxOptOutDays}
-              perDayPrice={perDayPrice}
-              mealsRemaining={subscriptionDays - optOutDates.length}
-            />
-            <div className="flex justify-end gap-2 mt-4">
-              <Button
-                variant="outline"
-                onClick={() => setShowOptOutDialog(false)}
-              >
-                Done
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
+      {/* Dialogs */}
+      <CheckoutDialogs
+        showAddressDialog={state.showAddressDialog}
+        showWalletInfo={state.showWalletInfo}
+        showOptOutDialog={state.showOptOutDialog}
+        startDate={state.startDate}
+        subscriptionDays={pricing.subscriptionDays}
+        optOutDates={state.optOutDates}
+        maxOptOutDays={pricing.maxOptOutDays}
+        perDayPrice={pricing.perDayPrice}
+        createAddressMutation={createAddressMutation}
+        onToggleAddressDialog={toggleAddressDialog}
+        onToggleWalletInfo={toggleWalletInfo}
+        onToggleOptOutDialog={toggleOptOutDialog}
+        onOptOutDatesChange={setOptOutDates}
+      />
     </div>
   );
 }
