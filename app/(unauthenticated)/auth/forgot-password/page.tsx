@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { formatAuthError, getAuthErrorTitle } from "@/lib/auth-errors";
 
 export default function ForgotPasswordPage() {
   const forgotMutation = useForgotPassword();
@@ -67,9 +68,9 @@ export default function ForgotPasswordPage() {
 
           {forgotMutation.isError ? (
             <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800">
-              <AlertTitle>Reset link failed</AlertTitle>
+              <AlertTitle>{getAuthErrorTitle("forgot-password")}</AlertTitle>
               <AlertDescription>
-                {(forgotMutation.error as Error)?.message ?? "Unable to send reset link. Please try again."}
+                {formatAuthError(forgotMutation.error, "forgot-password")}
               </AlertDescription>
             </Alert>
           ) : null}

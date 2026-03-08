@@ -21,10 +21,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Stepper } from "@/components/ui/stepper";
 import { useUserStore } from "@/providers/user-store-provider";
 import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import { cn } from "@/lib/utils";
+import { formatAuthError, getAuthErrorTitle } from "@/lib/auth-errors";
 
 const AUTH_ROUTES = new Set(["/auth/signin", "/auth/signup"]);
 
@@ -258,10 +260,9 @@ function SignUpForm() {
                     <FormItem>
                       <FormLabel className="text-sm font-medium text-gray-700">Password</FormLabel>
                       <FormControl>
-                        <Input
+                        <PasswordInput
                           {...field}
                           id="password"
-                          type="password"
                           autoComplete="new-password"
                           placeholder="Create a strong password"
                           className={inputBaseClass}
@@ -324,9 +325,9 @@ function SignUpForm() {
 
             {registerMutation.isError ? (
               <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800">
-                <AlertTitle>Sign up failed</AlertTitle>
+                <AlertTitle>{getAuthErrorTitle("signup")}</AlertTitle>
                 <AlertDescription>
-                  {(registerMutation.error as Error)?.message ?? "Unable to create account. Please try again."}
+                  {formatAuthError(registerMutation.error, "signup")}
                 </AlertDescription>
               </Alert>
             ) : null}

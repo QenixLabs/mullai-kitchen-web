@@ -20,9 +20,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { useUserStore } from "@/providers/user-store-provider";
 import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import { cn } from "@/lib/utils";
+import { formatAuthError, getAuthErrorTitle } from "@/lib/auth-errors";
 
 const AUTH_ROUTES = new Set(["/auth/signin", "/auth/signup"]);
 
@@ -133,10 +135,9 @@ function SignInForm() {
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-gray-700">Password</FormLabel>
                   <FormControl>
-                    <Input
+                    <PasswordInput
                       {...field}
                       id="password"
-                      type="password"
                       autoComplete="current-password"
                       placeholder="Enter your password"
                       className={cn(
@@ -153,9 +154,9 @@ function SignInForm() {
 
             {loginMutation.isError ? (
               <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800">
-                <AlertTitle>Sign in failed</AlertTitle>
+                <AlertTitle>{getAuthErrorTitle("signin")}</AlertTitle>
                 <AlertDescription>
-                  {(loginMutation.error as Error)?.message ?? "Unable to sign in. Please try again."}
+                  {formatAuthError(loginMutation.error, "signin")}
                 </AlertDescription>
               </Alert>
             ) : null}

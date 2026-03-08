@@ -6,6 +6,7 @@ import {
   PlusCircle,
   Settings,
   Plus,
+  LogOut,
 } from "lucide-react";
 import {
   FaCalendarWeek,
@@ -108,7 +109,7 @@ export function Sidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <div className="mt-auto px-4 pb-10">
+        <div className="mt-auto px-4 pb-6">
           <div className="rounded-sm bg-primary p-6 shadow-sm">
             <p className="text-sm font-medium text-primary-foreground/90">
               Wallet Balance
@@ -127,6 +128,20 @@ export function Sidebar() {
               </Link>
             </Button>
           </div>
+
+          <Button
+            variant="ghost"
+            onClick={handleLogout}
+            disabled={logoutMutation.isPending}
+            className={cn(
+              "mt-4 w-full h-11 justify-start gap-4 px-4 rounded-sm",
+              "text-muted-foreground hover:text-destructive hover:bg-destructive/10",
+              "transition-all duration-200 font-semibold text-base"
+            )}
+          >
+            <LogOut className="h-5 w-5 shrink-0" />
+            {logoutMutation.isPending ? "Logging out..." : "Log out"}
+          </Button>
         </div>
       </SidebarContent>
     </ShadcnSidebar>

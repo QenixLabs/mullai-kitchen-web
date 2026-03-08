@@ -9,8 +9,10 @@ import { AuthFooterLinks, AuthFormCard, AuthHeader, AuthHighlights, AuthShell } 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { formatAuthError, getAuthErrorTitle } from "@/lib/auth-errors";
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -72,28 +74,22 @@ function ResetPasswordForm() {
             <Label htmlFor="new_password" className="text-sm font-medium text-gray-700">
               New password
             </Label>
-            <Input
+            <PasswordInput
               id="new_password"
-              name="new_password"
-              type="password"
               autoComplete="new-password"
               placeholder="Enter a new password"
               value={newPassword}
               onChange={(event) => setNewPassword(event.target.value)}
               required
-              className={cn(
-                "h-11 rounded-xl border-gray-200 bg-gray-50 text-gray-900",
-                "placeholder:text-gray-400",
-                "focus:border-primary focus:bg-white focus:ring-primary/20"
-              )}
+              className="h-11 rounded-xl border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:border-primary focus:bg-white focus:ring-primary/20"
             />
           </div>
 
           {resetMutation.isError ? (
             <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800">
-              <AlertTitle>Reset failed</AlertTitle>
+              <AlertTitle>{getAuthErrorTitle("reset-password")}</AlertTitle>
               <AlertDescription>
-                {(resetMutation.error as Error)?.message ?? "Unable to reset password. Please try again."}
+                {formatAuthError(resetMutation.error, "reset-password")}
               </AlertDescription>
             </Alert>
           ) : null}

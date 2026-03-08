@@ -125,6 +125,15 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
+// Auth endpoints that should NOT trigger token refresh on 401
+// These are "public" auth endpoints where 401 means invalid credentials, not expired token
+const PUBLIC_AUTH_ENDPOINTS = [
+  AUTH_ROUTES.LOGIN,
+  AUTH_ROUTES.REGISTER,
+  AUTH_ROUTES.FORGOT_PASSWORD,
+  AUTH_ROUTES.RESET_PASSWORD,
+] as const;
+
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     // If backend returns { data, success, message }, unwrap the inner data
@@ -142,11 +151,20 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as RetryableRequestConfig | undefined;
     const responseMessage = getErrorMessage(error.response?.data);
-    const isRefreshRequest =
-      originalRequest?.url?.includes(AUTH_ROUTES.REFRESH) ?? false;
-    const isAuthFailure = error.response?.status === 401 && !isRefreshRequest;
+    const requestUrl = originalRequest?.url ?? "";
 
-    if (originalRequest && !originalRequest._retry && isAuthFailure) {
+    const isRefreshRequest = requestUrl.includes(AUTH_ROUTES.REFRESH);
+    const isPublicAuthEndpoint = PUBLIC_AUTH_ENDPOINTS.some(endpoint =>
+      requestUrl.includes(endpoint)
+    );
+
+    // Only try to refresh token for 401 on protected endpoints (not login/register/etc)
+    const shouldAttemptRefresh =
+      error.response?.status === 401 &&
+      !isRefreshRequest &&
+      !isPublicAuthEndpoint;
+
+    if (originalRequest && !originalRequest._retry && shouldAttemptRefresh) {
       originalRequest._retry = true;
       originalRequest._refreshAttempted = true;
 
