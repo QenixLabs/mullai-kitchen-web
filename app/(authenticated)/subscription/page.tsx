@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SubscriptionList } from "@/components/customer/subscription/SubscriptionList";
 import { PauseSubscriptionDialog } from "@/components/customer/subscription/PauseSubscriptionDialog";
 import { CancelSubscriptionDialog } from "@/components/customer/subscription/CancelSubscriptionDialog";
+import { OptOutSubscriptionDialog } from "@/components/customer/subscription/OptOutSubscriptionDialog";
 import {
   useSubscriptions,
   usePauseSubscription,
@@ -14,9 +15,13 @@ import {
   useCancelSubscription,
   useRenewSubscription,
   useToggleAutoRenew,
+  useOptOutPeriods,
+  useCancelOptOutPeriod,
 } from "@/api/hooks/use-subscription";
-import type { Subscription } from "@/api/types/subscription.types";
-import { FaPlus, FaExclamationCircle, FaStar, FaChartLine } from "react-icons/fa";
+import type { Subscription, OptOutPeriod } from "@/api/types/subscription.types";
+import { FaPlus, FaExclamationCircle, FaStar, FaChartLine, FaCalendarTimes } from "react-icons/fa";
+import { Badge } from "@/components/ui/badge";
+import { X, CalendarX } from "lucide-react";
 
 export default function SubscriptionPage() {
   const router = useRouter();
@@ -24,6 +29,7 @@ export default function SubscriptionPage() {
   // State for dialogs
   const [pauseDialogOpen, setPauseDialogOpen] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [optOutDialogOpen, setOptOutDialogOpen] = useState(false);
   const [selectedSubscription, setSelectedSubscription] =
     useState<Subscription | null>(null);
 
@@ -36,6 +42,10 @@ export default function SubscriptionPage() {
   const cancelMutation = useCancelSubscription();
   const renewMutation = useRenewSubscription();
   const toggleAutoRenewMutation = useToggleAutoRenew();
+  const cancelOptOutMutation = useCancelOptOutPeriod();
+
+  // Query opt-out periods for selected subscription
+  const { data: optOutData } = useOptOutPeriods(selectedSubscription?._id || "");
 
   const subscriptions = data?.subscriptions ?? [];
 
@@ -68,6 +78,28 @@ export default function SubscriptionPage() {
       setSelectedSubscription(subscription);
       setCancelDialogOpen(true);
     }
+  };
+
+  const handleOptOut = (id: string) => {
+    const subscription = subscriptions.find((s) => s._id === id);
+    if (subscription) {
+      setSelectedSubscription(subscription);
+      setOptOutDialogOpen(true);
+    }
+  };
+
+  const handleCancelOptOut = (subscriptionId: string, optOutId: string) => {
+    cancelOptOutMutation.mutate(
+      { id: subscriptionId, optOutId },
+      {
+        onSuccess: () => {
+          // TODO: Show success toast
+        },
+        onError: (error) => {
+          // TODO: Show error toast
+        },
+      },
+    );
   };
 
   const handleRenew = (id: string) => {
@@ -243,6 +275,7 @@ export default function SubscriptionPage() {
               onCancel={handleCancel}
               onRenew={handleRenew}
               onToggleAutoRenew={handleToggleAutoRenew}
+              onOptOut={handleOptOut}
               onViewDetails={(id) => {
                 // TODO: Implement subscription details page
                 console.log("Subscription details coming soon for:", id);
@@ -280,6 +313,21 @@ export default function SubscriptionPage() {
         onSubmit={handleCancelSubmit}
         onCancel={() => {
           setCancelDialogOpen(false);
+          setSelectedSubscription(null);
+        }}
+      />
+
+      <OptOutSubscriptionDialog
+        open={optOutDialogOpen}
+        onOpenChange={setOptOutDialogOpen}
+        subscriptionId={selectedSubscription?._id || ""}
+        subscriptionStartDate={selectedSubscription ? new Date(selectedSubscription.start_date) : new Date()}
+        subscriptionEndDate={selectedSubscription ? new Date(selectedSubscription.end_date) : new Date()}
+        totalDeliveries={selectedSubscription?.total_deliveries || 0}
+        maxOptOutDays={selectedSubscription ? Math.floor((selectedSubscription.total_deliveries || 0) * 0.5) : 0}
+        daysAlreadyOptedOut={optOutData?.opt_out_periods?.reduce((acc, period) => acc + (period.days_opted_out || 0), 0) || 0}
+        mealCount={selectedSubscription?.meals_included?.length || 1}
+        onSuccess={() => {
           setSelectedSubscription(null);
         }}
       />

@@ -47,6 +47,18 @@ export type PauseCreditStatus = 'PENDING_CREDIT' | 'CREDITED' | 'CANCELLED';
 export type PausePeriodStatus = 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
 
 /**
+ * Opt-Out Period Status Enum
+ * Defines the different states of an opt-out period
+ */
+export type OptOutPeriodStatus = 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
+
+/**
+ * Opt-Out Source Enum
+ * Defines where the opt-out was initiated from
+ */
+export type OptOutSource = 'CHECKOUT' | 'SUBSCRIPTION';
+
+/**
  * Cancellation Option Enum
  * Defines options for subscription cancellation
  */
@@ -247,6 +259,42 @@ export interface PausePeriodsResponse {
   };
 }
 
+/**
+ * Opt-Out Period Interface
+ * Opt-out period for subscriptions (days skipped without credit)
+ */
+export interface OptOutPeriod {
+  _id: string;
+  subscription_id: string;
+  start_date: Date;
+  end_date: Date;
+  days_opted_out: number;
+  reason?: string;
+  opted_out_dates: Date[];
+  source: OptOutSource;
+  status: OptOutPeriodStatus;
+  cancelled_at?: Date;
+  created_at: Date;
+  updated_at: Date;
+}
+
+/**
+ * Opt-Out Periods Response
+ * Response containing opt-out periods for a subscription
+ */
+export interface OptOutPeriodsResponse {
+  subscription_id: string;
+  opt_out_periods: OptOutPeriod[];
+  total: number;
+  pagination?: {
+    page: number;
+    limit: number;
+    total_pages: number;
+    has_next: boolean;
+    has_prev: boolean;
+  };
+}
+
 // ===========================================
 // Request Types (DTOs)
 // ===========================================
@@ -336,6 +384,45 @@ export interface QueryPausePeriodsParams {
   limit?: number;
   status?: PausePeriodStatus;
   credit_status?: PauseCreditStatus;
+  sort_by?: 'start_date' | 'created_at';
+  sort_order?: 'asc' | 'desc';
+}
+
+// ===========================================
+// Opt-Out Request Types (DTOs)
+// ===========================================
+
+/**
+ * Create Opt-Out Request
+ * Request to create an opt-out period for a subscription
+ */
+export interface CreateOptOutRequest {
+  opted_out_dates: string[]; // ISO date strings
+  reason?: string;
+}
+
+/**
+ * Create Opt-Out Response
+ * Response from creating an opt-out period
+ */
+export interface CreateOptOutResponse {
+  success: boolean;
+  message: string;
+  opt_out_period?: OptOutPeriod;
+}
+
+// ===========================================
+// Opt-Out Query Types
+// ===========================================
+
+/**
+ * Query Opt-Out Periods Parameters
+ */
+export interface QueryOptOutPeriodsParams {
+  page?: number;
+  limit?: number;
+  status?: OptOutPeriodStatus;
+  source?: OptOutSource;
   sort_by?: 'start_date' | 'created_at';
   sort_order?: 'asc' | 'desc';
 }

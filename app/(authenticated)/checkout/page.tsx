@@ -51,7 +51,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { AddressFormStep } from "@/components/customer/onboarding/AddressFormStep";
-import { addDays } from "date-fns";
+import { OptOutDateSelector } from "@/components/customer/checkout/OptOutDateSelector";
+import { addDays, differenceInDays } from "date-fns";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -266,6 +267,9 @@ export default function CheckoutPage() {
     return addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday);
   });
 
+  // Opt-out dates state
+  const [optOutDates, setOptOutDates] = useState<Date[]>([]);
+
   // Handle date change with type safety
   const handleStartDateChange = (date: Date | undefined) => {
     if (date) {
@@ -380,6 +384,7 @@ export default function CheckoutPage() {
         address_id: selectedAddressId,
         start_date: startDate.toISOString().split("T")[0],
         apply_wallet: applyWallet,
+        opt_out_dates: optOutDates.map(d => d.toISOString().split("T")[0]),
       });
 
       // Store order details
@@ -452,8 +457,22 @@ export default function CheckoutPage() {
 
   // Pricing
   const subtotal = plan.price;
-  const taxes = parseFloat((subtotal * ESTIMATED_TAXES_RATE).toFixed(2));
-  const total = subtotal + DELIVERY_FEE + taxes;
+
+  // Calculate subscription duration and max opt-out days (parse duration like "30 days")
+  const durationMatch = plan.duration.match(/\d+/);
+  const subscriptionDays = durationMatch ? parseInt(durationMatch[0], 10) : 30;
+  const maxOptOutDays = Math.floor(subscriptionDays * 0.5);
+
+  // Calculate meal price and count for opt-out discount (use defaults)
+  const mealPrice = 80; // Default veg price
+  const mealCount = plan.meals_included?.length || 1;
+
+  // Calculate opt-out discount
+  const optOutDiscount = optOutDates.length * mealPrice * mealCount;
+  const discountedSubtotal = Math.max(0, subtotal - optOutDiscount);
+
+  const taxes = parseFloat((discountedSubtotal * ESTIMATED_TAXES_RATE).toFixed(2));
+  const total = discountedSubtotal + DELIVERY_FEE + taxes;
 
   // Calculate amount after wallet
   const amountAfterWallet =
@@ -541,6 +560,18 @@ export default function CheckoutPage() {
                   Subscriptions start at least{" "}
                   {CHECKOUT_CONFIG.minDaysFromToday} day(s) from today
                 </p>
+              </div>
+
+              {/* Opt-Out Date Selector */}
+              <div className="mt-4 border-t border-gray-100 pt-4">
+                <OptOutDateSelector
+                  startDate={startDate}
+                  endDate={addDays(startDate, subscriptionDays)}
+                  mealCount={mealCount}
+                  selectedDates={optOutDates}
+                  onChange={setOptOutDates}
+                  maxOptOutDays={maxOptOutDays}
+                />
               </div>
             </section>
 
@@ -734,6 +765,19 @@ export default function CheckoutPage() {
                     ₹{subtotal.toFixed(2)}
                   </span>
                 </div>
+
+                {/* Opt-Out Discount */}
+                {optOutDiscount > 0 && (
+                  <div className="flex items-center justify-between text-green-600">
+                    <span className="flex items-center gap-1">
+                      <FaCalendar className="h-3 w-3" />
+                      Opt-Out Discount ({optOutDates.length} days)
+                    </span>
+                    <span className="font-medium">
+                      -₹{optOutDiscount.toFixed(2)}
+                    </span>
+                  </div>
+                )}
 
                 {/* Delivery Fee */}
                 <div className="flex items-center justify-between text-gray-600">

@@ -8,6 +8,7 @@ interface SubscriptionListProps {
   onCancel?: (id: string) => void;
   onRenew?: (id: string) => void;
   onToggleAutoRenew?: (id: string) => void;
+  onOptOut?: (id: string) => void;
   onViewDetails?: (id: string) => void;
 }
 
@@ -18,6 +19,7 @@ export function SubscriptionList({
   onCancel,
   onRenew,
   onToggleAutoRenew,
+  onOptOut,
   onViewDetails,
 }: SubscriptionListProps) {
   if (subscriptions.length === 0) {
@@ -39,6 +41,7 @@ export function SubscriptionList({
           onCancel={onCancel}
           onRenew={onRenew}
           onToggleAutoRenew={onToggleAutoRenew}
+          onOptOut={onOptOut}
           onViewDetails={onViewDetails}
         />
       ))}

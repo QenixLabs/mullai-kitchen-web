@@ -17,6 +17,7 @@ import {
   FaCheckCircle,
   FaClock,
   FaUtensils,
+  FaCalendarTimes,
 } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +28,7 @@ interface SubscriptionCardProps {
   onCancel?: (id: string) => void;
   onRenew?: (id: string) => void;
   onToggleAutoRenew?: (id: string) => void;
+  onOptOut?: (id: string) => void;
   onViewDetails?: (id: string) => void;
 }
 
@@ -37,6 +39,7 @@ export function SubscriptionCard({
   onCancel,
   onRenew,
   onToggleAutoRenew,
+  onOptOut,
   onViewDetails,
 }: SubscriptionCardProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -256,6 +259,15 @@ export function SubscriptionCard({
           <div className="flex gap-2">
             {subscription.status === "ACTIVE" && (
               <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-xs font-semibold border-gray-200 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                  onClick={() => onOptOut?.(subscription._id)}
+                >
+                  <FaCalendarTimes className="mr-1.5 h-3 w-3" />
+                  Opt Out
+                </Button>
                 <Button
                   variant="outline"
                   size="sm"

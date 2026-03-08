@@ -50,4 +50,7 @@ export const SUBSCRIPTION_ROUTES = {
   CANCEL: (id: string) => `/customer/subscriptions/${id}/cancel`,
   RENEW: (id: string) => `/customer/subscriptions/${id}/renew`,
   TOGGLE_AUTO_RENEW: (id: string) => `/customer/subscriptions/${id}/auto-renew`,
+  OPT_OUT_PERIODS: (id: string) => `/customer/subscriptions/${id}/opt-out-periods`,
+  OPT_OUT: (id: string) => `/customer/subscriptions/${id}/opt-out`,
+  CANCEL_OPT_OUT: (id: string, optOutId: string) => `/customer/subscriptions/${id}/opt-out/${optOutId}`,
 } as const;

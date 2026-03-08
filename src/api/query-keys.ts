@@ -43,4 +43,6 @@ export const subscriptionKeys = {
   dailyOrders: (id: string, params?: { page?: number; limit?: number; status?: string }) =>
     ["subscription", id, "daily-orders", params] as const,
   pausePeriods: (id: string) => ["subscription", id, "pause-periods"] as const,
+  optOutPeriods: (id: string, params?: { status?: string; page?: number; limit?: number }) =>
+    ["subscription", id, "opt-out-periods", params] as const,
 };

@@ -12,6 +12,9 @@ import type {
   CancelSubscriptionRequest,
   RenewSubscriptionRequest,
   ToggleAutoRenewRequest,
+  OptOutPeriodsResponse,
+  CreateOptOutRequest,
+  QueryOptOutPeriodsParams,
 } from "@/api/types/subscription.types";
 
 // Queries
@@ -53,6 +56,15 @@ export function usePausePeriods(id: string) {
   return useQuery<PausePeriodsResponse>({
     queryKey: subscriptionKeys.pausePeriods(id),
     queryFn: () => subscriptionApi.getPausePeriods(id),
+    enabled: !!id,
+    staleTime: 60_000,
+  });
+}
+
+export function useOptOutPeriods(id: string, params?: QueryOptOutPeriodsParams) {
+  return useQuery<OptOutPeriodsResponse>({
+    queryKey: subscriptionKeys.optOutPeriods(id, params),
+    queryFn: () => subscriptionApi.getOptOutPeriods(id, params),
     enabled: !!id,
     staleTime: 60_000,
   });
@@ -128,6 +140,38 @@ export function useToggleAutoRenew() {
     },
     onError: (error) => {
       console.error("Toggle auto-renew failed:", error);
+    },
+  });
+}
+
+export function useCreateOptOutPeriod() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    { success: boolean; message: string; opt_out_period?: { _id: string } },
+    Error,
+    { id: string } & CreateOptOutRequest
+  >({
+    mutationFn: ({ id, ...data }) => subscriptionApi.createOptOutPeriod(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: subscriptionKeys.all() });
+    },
+    onError: (error) => {
+      console.error("Create opt-out period failed:", error);
+    },
+  });
+}
+
+export function useCancelOptOutPeriod() {
+  const queryClient = useQueryClient();
+
+  return useMutation<{ success: boolean; message: string }, Error, { id: string; optOutId: string }>({
+    mutationFn: ({ id, optOutId }) => subscriptionApi.cancelOptOutPeriod(id, optOutId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: subscriptionKeys.all() });
+    },
+    onError: (error) => {
+      console.error("Cancel opt-out period failed:", error);
     },
   });
 }

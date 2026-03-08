@@ -14,6 +14,10 @@ import type {
   QuerySubscriptionsParams,
   QueryDailyOrdersParams,
   QueryPausePeriodsParams,
+  OptOutPeriodsResponse,
+  CreateOptOutRequest,
+  CreateOptOutResponse,
+  QueryOptOutPeriodsParams,
 } from "@/api/types/subscription.types";
 
 export const subscriptionApi = {
@@ -126,6 +130,44 @@ export const subscriptionApi = {
     const response = await apiClient.patch<{ success: boolean; message: string }>(
       SUBSCRIPTION_ROUTES.TOGGLE_AUTO_RENEW(id),
       payload,
+    );
+    return response.data;
+  },
+
+  /**
+   * Gets opt-out periods for subscription
+   */
+  getOptOutPeriods: async (id: string, params?: QueryOptOutPeriodsParams): Promise<OptOutPeriodsResponse> => {
+    const response = await apiClient.get<OptOutPeriodsResponse>(
+      SUBSCRIPTION_ROUTES.OPT_OUT_PERIODS(id),
+      { params },
+    );
+    return response.data;
+  },
+
+  /**
+   * Creates an opt-out period for subscription
+   */
+  createOptOutPeriod: async (
+    id: string,
+    payload: CreateOptOutRequest,
+  ): Promise<CreateOptOutResponse> => {
+    const response = await apiClient.post<CreateOptOutResponse>(
+      SUBSCRIPTION_ROUTES.OPT_OUT(id),
+      payload,
+    );
+    return response.data;
+  },
+
+  /**
+   * Cancels an opt-out period
+   */
+  cancelOptOutPeriod: async (
+    id: string,
+    optOutId: string,
+  ): Promise<{ success: boolean; message: string }> => {
+    const response = await apiClient.delete<{ success: boolean; message: string }>(
+      SUBSCRIPTION_ROUTES.CANCEL_OPT_OUT(id, optOutId),
     );
     return response.data;
   },

@@ -67,6 +67,7 @@ export interface CreatePaymentOrderRequest {
   address_id: string;
   start_date: string;
   apply_wallet?: boolean;
+  opt_out_dates?: string[];
 }
 
 export interface PaymentOrderResponse {
@@ -79,6 +80,7 @@ export interface PaymentOrderResponse {
   image?: string;
   order_id: string;
   walletReservationAmount: number;
+  optOutDiscount?: number;
 }
 
 // ===========================================
