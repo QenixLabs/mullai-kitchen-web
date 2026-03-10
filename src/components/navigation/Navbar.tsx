@@ -10,7 +10,7 @@ import {
 import {
   useAuthHydrated,
   useIsAuthenticated,
-} from "@/hooks/use-user-store";
+} from "@/hooks/useUserStore";
 import { cn } from "@/lib/utils";
 
 const UNAUTH_NAV_ITEMS = [

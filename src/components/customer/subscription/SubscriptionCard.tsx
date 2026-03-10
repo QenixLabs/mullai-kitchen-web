@@ -7,18 +7,37 @@ import {
   SubscriptionStatus,
 } from "@/api/types/subscription.types";
 import {
-  FaCalendarAlt,
-  FaMapMarkerAlt,
-  FaEllipsisV,
-  FaSync,
-  FaPause,
-  FaPlay,
-  FaTimesCircle,
-  FaCheckCircle,
-  FaClock,
-  FaUtensils,
-  FaCalendarTimes,
-} from "react-icons/fa";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Switch } from "@/components/ui/switch";
+
+const STATUS = {
+  ACTIVE: 'active' as SubscriptionStatus,
+  PAUSED: 'paused' as SubscriptionStatus,
+  EXPIRED: 'expired' as SubscriptionStatus,
+  CANCELLED: 'cancelled' as SubscriptionStatus,
+  PENDING_RENEWAL: 'pending_renewal' as SubscriptionStatus,
+} as const;
+
+import {
+  CalendarDays,
+  MapPin,
+  MoreVertical,
+  RotateCcw,
+  Pause,
+  Play,
+  XCircle,
+  CheckCircle2,
+  Clock,
+  Utensils,
+  CalendarX2,
+  ChevronRight,
+  Settings2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SubscriptionCardProps {
@@ -42,50 +61,56 @@ export function SubscriptionCard({
   onOptOut,
   onViewDetails,
 }: SubscriptionCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const getStatusConfig = (status: SubscriptionStatus) => {
     switch (status) {
-      case "ACTIVE":
+      case STATUS.ACTIVE:
         return {
-          color: "bg-emerald-500/10 text-emerald-600 border-emerald-200",
-          icon: <FaCheckCircle className="h-3 w-3" />,
+          bg: "bg-emerald-500",
+          light: "bg-emerald-50 text-emerald-700 border-emerald-200",
+          icon: CheckCircle2,
         };
-      case "PAUSED":
+      case STATUS.PAUSED:
         return {
-          color: "bg-amber-500/10 text-amber-600 border-amber-200",
-          icon: <FaPause className="h-3 w-3" />,
+          bg: "bg-amber-500",
+          light: "bg-amber-50 text-amber-700 border-amber-200",
+          icon: Pause,
         };
-      case "EXPIRED":
+      case STATUS.EXPIRED:
         return {
-          color: "bg-gray-500/10 text-gray-600 border-gray-200",
-          icon: <FaClock className="h-3 w-3" />,
+          bg: "bg-slate-500",
+          light: "bg-slate-50 text-slate-700 border-slate-200",
+          icon: Clock,
         };
-      case "CANCELLED":
+      case STATUS.CANCELLED:
         return {
-          color: "bg-rose-500/10 text-rose-600 border-rose-200",
-          icon: <FaTimesCircle className="h-3 w-3" />,
+          bg: "bg-rose-500",
+          light: "bg-rose-50 text-rose-700 border-rose-200",
+          icon: XCircle,
         };
-      case "PENDING_RENEWAL":
+      case STATUS.PENDING_RENEWAL:
         return {
-          color: "bg-blue-500/10 text-blue-600 border-blue-200",
-          icon: <FaSync className="h-3 w-3" />,
+          bg: "bg-blue-500",
+          light: "bg-blue-50 text-blue-700 border-blue-200",
+          icon: RotateCcw,
         };
       default:
         return {
-          color: "bg-gray-500/10 text-gray-600 border-gray-200",
-          icon: <FaClock className="h-3 w-3" />,
+          bg: "bg-slate-500",
+          light: "bg-slate-50 text-slate-700 border-slate-200",
+          icon: Clock,
         };
     }
   };
 
   const progress =
     subscription.total_deliveries && subscription.total_deliveries > 0
-      ? (subscription.completed_deliveries / subscription.total_deliveries) *
-        100
+      ? Math.round((subscription.completed_deliveries / subscription.total_deliveries) * 100)
       : 0;
 
   const statusConfig = getStatusConfig(subscription.status);
+  const StatusIcon = statusConfig.icon;
 
   // Fallback images based on meal types or plan name
   const getFallbackImage = () => {
@@ -97,229 +122,243 @@ export function SubscriptionCard({
     return "/images/plans/why-choose.jpg";
   };
 
+  const formatDate = (date: string | Date) => {
+    const d = typeof date === 'string' ? new Date(date) : date;
+    return d.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
+  const formatDateWithYear = (date: string | Date) => {
+    const d = typeof date === 'string' ? new Date(date) : date;
+    return d.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
+  const isActive = subscription.status === STATUS.ACTIVE;
+  const isPaused = subscription.status === STATUS.PAUSED;
+  const isInactive = subscription.status === STATUS.EXPIRED || subscription.status === STATUS.CANCELLED;
+
   return (
-    <article
-      className={cn(
-        "group relative flex flex-col overflow-hidden rounded-sm bg-white transition-all duration-500 ease-out",
-        "shadow-md hover:shadow-xl hover:shadow-primary/5",
-        "border border-gray-100",
-      )}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Header Image Section */}
-      <div className="relative h-32 overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent z-10" />
+    <Card className="group overflow-hidden border-border/60 bg-card transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
+      {/* Image Header */}
+      <div className="relative h-36 overflow-hidden">
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10" />
+
+        {/* Image */}
         <img
           src={getFallbackImage()}
           alt={subscription.plan_name}
           className={cn(
-            "h-full w-full object-cover transition-transform duration-700 ease-out",
-            isHovered && "scale-105",
+            "h-full w-full object-cover transition-all duration-700",
+            "group-hover:scale-105",
+            !imageLoaded && "blur-sm"
           )}
+          onLoad={() => setImageLoaded(true)}
         />
 
-        {/* Overlays */}
-        {/* Overlays */}
-        <div className="absolute top-3 left-3 z-30 flex gap-2">
+        {/* Status Badge */}
+        <div className="absolute top-3 left-3 z-20">
           <Badge
             className={cn(
-              "gap-1 px-2.5 py-1.5 border-0 shadow-lg backdrop-blur-md font-bold text-white",
-              subscription.status === "ACTIVE"
-                ? "bg-emerald-500"
-                : subscription.status === "PAUSED"
-                  ? "bg-amber-500"
-                  : "bg-gray-600",
+              "gap-1.5 px-2.5 py-1 text-xs font-semibold border-0 shadow-lg",
+              statusConfig.bg,
+              "text-white"
             )}
           >
-            {statusConfig.icon}
-            {subscription.status.replace(/_/g, " ")}
+            <StatusIcon className="h-3.5 w-3.5" />
+            <span className="capitalize">{subscription.status.replace(/_/g, " ")}</span>
           </Badge>
-          {subscription.auto_renew && (
-            <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-md gap-1 px-2.5 py-1.5 font-semibold">
-              <FaSync className="h-3 w-3" />
-              Auto-renew
-            </Badge>
-          )}
         </div>
 
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          className="absolute top-3 right-3 z-40 text-white hover:bg-white/30 bg-black/40 backdrop-blur-sm rounded-full h-8 w-8 shadow-lg"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onViewDetails?.(subscription._id);
-          }}
-        >
-          <FaEllipsisV className="h-5 w-5 drop-shadow-md" />
-        </Button>
+        {/* Auto-renew Badge */}
+        {subscription.auto_renew && (
+          <div className="absolute top-3 right-3 z-20">
+            <Badge
+              variant="secondary"
+              className="gap-1.5 px-2 py-1 text-[10px] font-medium bg-white/90 text-slate-700 backdrop-blur-sm border-0 shadow-md"
+            >
+              <RotateCcw className="h-3 w-3" />
+              Auto
+            </Badge>
+          </div>
+        )}
 
-        <div className="absolute bottom-3 left-3 z-20">
-          <h3 className="text-lg font-bold text-white tracking-tight">
+        {/* Plan Info */}
+        <div className="absolute bottom-0 left-0 right-0 z-20 p-4">
+          <h3 className="text-lg font-bold text-white leading-tight drop-shadow-md">
             {subscription.plan_name}
           </h3>
-          <p className="text-xs text-white/80 font-medium">
+          <p className="text-sm text-white/80 font-medium">
             {subscription.outlet_name || "Mullai Kitchen"}
           </p>
         </div>
       </div>
 
-      <CardContent className="p-5 space-y-5">
-        {/* Info Rows */}
+      <CardContent className="p-4 space-y-4">
+        {/* Info Grid */}
         <div className="space-y-2.5">
-          <div className="flex items-center gap-2.5 text-sm text-gray-600">
-            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-gray-50 text-primary">
-              <FaCalendarAlt className="h-3.5 w-3.5" />
+          {/* Date Range */}
+          <div className="flex items-center gap-2.5 text-sm">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600">
+              <CalendarDays className="h-3.5 w-3.5" />
             </div>
-            <span className="font-medium">
-              {new Date(subscription.start_date).toLocaleDateString(undefined, {
-                month: "short",
-                day: "numeric",
-              })}{" "}
-              -{" "}
-              {new Date(subscription.end_date).toLocaleDateString(undefined, {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
+            <span className="text-slate-700 font-medium">
+              {formatDate(subscription.start_date)}
+              <span className="text-slate-400 mx-1.5">→</span>
+              {formatDateWithYear(subscription.end_date)}
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5 text-sm text-gray-600">
-            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-gray-50 text-primary">
-              <FaMapMarkerAlt className="h-3.5 w-3.5" />
+          {/* Address */}
+          <div className="flex items-start gap-2.5 text-sm">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600 mt-0.5">
+              <MapPin className="h-3.5 w-3.5" />
             </div>
-            <span className="line-clamp-1 flex-1">
+            <span className="text-slate-600 line-clamp-2 leading-relaxed">
               {subscription.full_address}
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5 text-sm text-gray-600">
-            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-gray-50 text-primary">
-              <FaUtensils className="h-3.5 w-3.5" />
+          {/* Meals */}
+          <div className="flex items-center gap-2.5 text-sm">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600">
+              <Utensils className="h-3.5 w-3.5" />
             </div>
-            <div className="flex gap-1 flex-wrap">
+            <div className="flex flex-wrap gap-1">
               {subscription.meals_included.map((meal) => (
-                <span
+                <Badge
                   key={meal}
-                  className="text-[10px] uppercase tracking-wider font-bold bg-gray-100 px-1.5 py-0.5 rounded-sm"
+                  variant="secondary"
+                  className="text-[10px] font-semibold uppercase tracking-wide bg-slate-100 text-slate-700 hover:bg-slate-100 px-1.5 py-0.5"
                 >
                   {meal}
-                </span>
+                </Badge>
               ))}
             </div>
           </div>
         </div>
 
         {/* Progress Section */}
-        <div className="pt-2">
-          <div className="flex justify-between items-end mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-              Deliveries
-            </span>
-            <span className="text-sm font-bold text-gray-900">
+        <div className="space-y-2 pt-1">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-slate-500 font-medium">Progress</span>
+            <span className="text-slate-900 font-semibold">
               {subscription.completed_deliveries}{" "}
-              <span className="text-gray-400 font-normal">
+              <span className="text-slate-400 font-normal">
                 / {subscription.total_deliveries ?? "-"}
               </span>
+              <span className="ml-1 text-slate-500">({progress}%)</span>
             </span>
           </div>
-          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
             <div
-              className="h-full bg-primary rounded-full transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(255,107,0,0.4)]"
+              className={cn(
+                "h-full rounded-full transition-all duration-700 ease-out",
+                progress >= 100 ? "bg-emerald-500" : "bg-primary"
+              )}
               style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
             />
           </div>
         </div>
 
         {/* Actions */}
-        <div className="pt-2 flex items-center justify-between gap-3">
+        <div className="pt-2 flex items-center gap-3">
+          {/* Auto-renew Toggle */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-gray-500">
-              Auto-renew
-            </span>
-            <button
-              onClick={() => onToggleAutoRenew?.(subscription._id)}
-              className={cn(
-                "relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-                subscription.auto_renew ? "bg-primary" : "bg-gray-200",
-              )}
+            <Switch
+              id={`auto-renew-${subscription._id}`}
+              checked={subscription.auto_renew}
+              onCheckedChange={() => onToggleAutoRenew?.(subscription._id)}
+              className="data-[state=checked]:bg-primary"
+            />
+            <label
+              htmlFor={`auto-renew-${subscription._id}`}
+              className="text-xs font-medium text-slate-600 cursor-pointer"
             >
-              <span
-                className={cn(
-                  "inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform duration-200 ease-in-out",
-                  subscription.auto_renew ? "translate-x-4.5" : "translate-x-1",
-                )}
-              />
-            </button>
+              Auto-renew
+            </label>
           </div>
 
-          <div className="flex gap-2">
-            {subscription.status === "ACTIVE" && (
-              <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 text-xs font-semibold border-gray-200 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                  onClick={() => onOptOut?.(subscription._id)}
-                >
-                  <FaCalendarTimes className="mr-1.5 h-3 w-3" />
-                  Opt Out
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 text-xs font-semibold border-gray-200 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-600 transition-colors"
-                  onClick={() => onPause?.(subscription._id)}
-                >
-                  <FaPause className="mr-1.5 h-3 w-3" />
-                  Pause
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 text-xs font-semibold border-gray-200 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 transition-colors"
-                  onClick={() => onCancel?.(subscription._id)}
-                >
-                  <FaTimesCircle className="mr-1.5 h-3 w-3" />
-                  Cancel
-                </Button>
-              </>
-            )}
-            {subscription.status === "PAUSED" && (
+          <div className="flex-1" />
+
+          {/* Primary Action */}
+          {isActive && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 text-xs font-semibold border-amber-200 text-amber-700 hover:bg-amber-50 hover:text-amber-800"
+              onClick={() => onPause?.(subscription._id)}
+            >
+              <Pause className="mr-1.5 h-3.5 w-3.5" />
+              Pause
+            </Button>
+          )}
+
+          {isPaused && (
+            <Button
+              size="sm"
+              className="h-8 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
+              onClick={() => onResume?.(subscription._id)}
+            >
+              <Play className="mr-1.5 h-3.5 w-3.5" />
+              Resume
+            </Button>
+          )}
+
+          {isInactive && (
+            <Button
+              size="sm"
+              className="h-8 text-xs font-semibold bg-primary hover:bg-primary/90 text-white"
+              onClick={() => onRenew?.(subscription._id)}
+            >
+              <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
+              Renew
+            </Button>
+          )}
+
+          {/* More Actions Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button
-                size="sm"
-                className="h-8 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
-                onClick={() => onResume?.(subscription._id)}
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-slate-500 hover:text-slate-700 hover:bg-slate-100"
               >
-                <FaPlay className="mr-1.5 h-3 w-3" />
-                Resume
+                <Settings2 className="h-4 w-4" />
               </Button>
-            )}
-            {(subscription.status === "EXPIRED" ||
-              subscription.status === "CANCELLED") && (
-              <Button
-                size="sm"
-                className="h-8 text-xs font-semibold bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20"
-                onClick={() => onRenew?.(subscription._id)}
-              >
-                <FaSync className="mr-1.5 h-3 w-3" />
-                Renew Plan
-              </Button>
-            )}
-          </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => onViewDetails?.(subscription._id)}>
+                <ChevronRight className="mr-2 h-4 w-4" />
+                View Details
+              </DropdownMenuItem>
+
+              {isActive && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => onOptOut?.(subscription._id)}>
+                    <CalendarX2 className="mr-2 h-4 w-4" />
+                    Opt Out Dates
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => onCancel?.(subscription._id)}
+                    className="text-rose-600 focus:text-rose-600"
+                  >
+                    <XCircle className="mr-2 h-4 w-4" />
+                    Cancel Plan
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardContent>
-
-      {/* Decorative Blur */}
-      <div
-        className={cn(
-          "absolute -right-8 -bottom-8 h-16 w-16 rounded-full bg-primary/5 blur-xl transition-opacity duration-500",
-          isHovered ? "opacity-100" : "opacity-0",
-        )}
-      />
-    </article>
+    </Card>
   );
 }

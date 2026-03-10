@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
+import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
 
 interface UnauthenticatedLayoutProps {
   children: ReactNode;

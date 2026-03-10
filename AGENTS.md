@@ -14,6 +14,33 @@ This document defines the design system and patterns used across Mullai Kitchen 
 
 ---
 
+## File Naming Conventions
+
+### Hooks
+All custom React hooks must follow **camelCase** naming convention:
+
+| Old Pattern (kebab-case) | New Pattern (camelCase) |
+|--------------------------|--------------------------|
+| `use-checkout.ts` | `useCheckout.ts` |
+| `use-user-store.ts` | `useUserStore.ts` |
+| `use-payment-store.ts` | `usePaymentStore.ts` |
+| `use-checkout-store.ts` | `useCheckoutStore.ts` |
+| `use-mobile.ts` | `useMobile.ts` |
+
+**Import examples:**
+```tsx
+// ✅ Correct - camelCase
+import { useCheckout } from '@/hooks/useCheckout';
+import { useUserStore } from '@/hooks/useUserStore';
+import { usePaymentStore } from '@/hooks/usePaymentStore';
+import { useMobile } from '@/hooks/useMobile';
+
+// ❌ Incorrect - kebab-case (legacy)
+import { useCheckout } from '@/hooks/use-checkout';
+```
+
+---
+
 ## Design System Location
 
 The design system implementation is located in `src/lib/design-system/` and contains:

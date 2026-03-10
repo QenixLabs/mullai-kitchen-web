@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/navigation/Sidebar";
 import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
+import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
 import { cn } from "@/lib/utils";
 
 interface AuthenticatedLayoutProps {

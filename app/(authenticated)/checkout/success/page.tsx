@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-import { usePaymentStore } from "@/hooks/use-payment-store";
+import { usePaymentStore } from "@/hooks/usePaymentStore";
 import { useOrderStatus } from "@/api/hooks/usePayment";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";

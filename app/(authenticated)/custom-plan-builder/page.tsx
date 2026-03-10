@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
+import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
 import { CustomPlanBuilderContent } from "@/components/customer/plans/CustomPlanBuilderContent";
 
 function CustomPlanBuilderPage() {

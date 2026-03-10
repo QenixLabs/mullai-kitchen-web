@@ -43,7 +43,7 @@ import {
   useWalletTransactions,
 } from "@/api/hooks/usePayment";
 import { loadRazorpayScript, openRazorpayCheckout } from "@/lib/razorpay";
-import { useCurrentUser } from "@/hooks/use-user-store";
+import { useCurrentUser } from "@/hooks/useUserStore";
 import React from "react";
 
 export default function WalletPage() {

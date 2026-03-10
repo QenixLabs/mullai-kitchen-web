@@ -267,6 +267,31 @@ client/
 └── CLAUDE.md            # This file
 ```
 
+## File Naming Conventions
+
+### Hooks
+All custom React hooks must follow **camelCase** naming:
+
+| Hook Type | Filename Pattern | Import Path |
+|-----------|------------------|-------------|
+| Custom hooks | `useHookName.ts` | `@/hooks/useHookName` |
+
+**Examples:**
+- ✅ `useCheckout.ts` (not `use-checkout.ts`)
+- ✅ `useUserStore.ts` (not `use-user-store.ts`)
+- ✅ `usePaymentStore.ts` (not `use-payment-store.ts`)
+- ✅ `useMobile.ts` (not `use-mobile.ts`)
+
+**Import pattern:**
+```tsx
+// ✅ Correct
+import { useCheckout } from '@/hooks/useCheckout';
+import { useUserStore } from '@/hooks/useUserStore';
+
+// ❌ Incorrect - don't use kebab-case
+import { useCheckout } from '@/hooks/use-checkout';
+```
+
 ## Brand Colors
 
 The primary brand color is **Burgundy** (`#39070F`).

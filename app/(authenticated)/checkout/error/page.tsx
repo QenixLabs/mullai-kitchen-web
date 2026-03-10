@@ -13,7 +13,7 @@ import {
   FaClock,
 } from "react-icons/fa";
 
-import { usePaymentStore } from "@/hooks/use-payment-store";
+import { usePaymentStore } from "@/hooks/usePaymentStore";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 

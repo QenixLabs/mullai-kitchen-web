@@ -13,7 +13,7 @@ import {
 import { PreferenceToggle } from "@/components/customer/plans/PreferenceToggle";
 import { WeeklyMenuPreview } from "@/components/customer/plans/WeeklyMenuPreview";
 import { OrderSummaryPanel } from "@/components/customer/plans/OrderSummaryPanel";
-import { useAuthHydrated, useIsAuthenticated } from "@/hooks/use-user-store";
+import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAddresses } from "@/api/hooks/useOnboarding";

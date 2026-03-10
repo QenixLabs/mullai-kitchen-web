@@ -3,6 +3,8 @@ import { paymentApi } from "@/api/payment.api";
 import { paymentKeys } from "@/api/query-keys";
 import type {
   CreatePaymentOrderRequest,
+  PreviewPricingRequest,
+  PreviewPricingResponse,
   WalletBalanceResponse,
   WalletTransaction,
   OrderStatusResponse,
@@ -52,6 +54,15 @@ export function useReservationStatus(reservationId: string) {
     queryFn: () => paymentApi.getReservationStatus(reservationId),
     enabled: !!reservationId,
     staleTime: 30_000, // 30 seconds - status may change
+  });
+}
+
+export function usePreviewPricing() {
+  return useMutation<PreviewPricingResponse, Error, PreviewPricingRequest>({
+    mutationFn: paymentApi.previewPricing,
+    onError: (error) => {
+      console.error("Pricing preview failed:", error);
+    },
   });
 }
 
