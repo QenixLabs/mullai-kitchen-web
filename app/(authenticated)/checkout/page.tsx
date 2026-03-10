@@ -15,6 +15,7 @@ import {
   FaTimes,
   FaTimesCircle,
   FaCalendar,
+  FaTag,
 } from "react-icons/fa";
 import {
   CreditCard,
@@ -52,7 +53,8 @@ import {
 } from "@/components/ui/dialog";
 import { AddressFormStep } from "@/components/customer/onboarding/AddressFormStep";
 import { OptOutDateSelector } from "@/components/customer/checkout/OptOutDateSelector";
-import { addDays, differenceInDays } from "date-fns";
+import { CouponSelector, type AppliedCoupon } from "@/components/customer/checkout/CouponSelector";
+import { addDays } from "date-fns";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -174,6 +176,7 @@ interface PaymentOptionProps {
 }
 
 function PaymentOption({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   id: _id,
   label,
   subtitle,
@@ -269,6 +272,9 @@ export default function CheckoutPage() {
 
   // Opt-out dates state
   const [optOutDates, setOptOutDates] = useState<Date[]>([]);
+
+  // Applied coupon state
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
 
   // Handle date change with type safety
   const handleStartDateChange = (date: Date | undefined) => {
@@ -385,6 +391,7 @@ export default function CheckoutPage() {
         start_date: startDate.toISOString().split("T")[0],
         apply_wallet: applyWallet,
         opt_out_dates: optOutDates.map(d => d.toISOString().split("T")[0]),
+        coupon_id: appliedCoupon?.couponId,
       });
 
       // Store order details
@@ -472,8 +479,12 @@ export default function CheckoutPage() {
   const optOutDiscount = optOutDates.length * perDayPrice;
   const discountedSubtotal = Math.max(0, subtotal - optOutDiscount);
 
-  const taxes = parseFloat((discountedSubtotal * ESTIMATED_TAXES_RATE).toFixed(2));
-  const total = discountedSubtotal + DELIVERY_FEE + taxes;
+  // Calculate coupon discount
+  const couponDiscount = appliedCoupon?.discountAmount ?? 0;
+  const subtotalAfterCoupon = Math.max(0, discountedSubtotal - couponDiscount);
+
+  const taxes = parseFloat((subtotalAfterCoupon * ESTIMATED_TAXES_RATE).toFixed(2));
+  const total = subtotalAfterCoupon + DELIVERY_FEE + taxes;
 
   // Calculate amount after wallet
   const amountAfterWallet =
@@ -576,6 +587,14 @@ export default function CheckoutPage() {
                 />
               </div>
             </section>
+
+            {/* Coupon Selector */}
+            <CouponSelector
+              orderType="SUBSCRIPTION"
+              orderAmount={discountedSubtotal}
+              planId={planId || undefined}
+              onCouponApply={setAppliedCoupon}
+            />
 
             {/* Two-Phase Wallet info banner */}
             <div className="flex items-start gap-3 rounded-2xl border border-border bg-muted p-4 sm:p-5">
@@ -777,6 +796,19 @@ export default function CheckoutPage() {
                     </span>
                     <span className="font-medium">
                       -₹{optOutDiscount.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+
+                {/* Coupon Discount */}
+                {couponDiscount > 0 && appliedCoupon && (
+                  <div className="flex items-center justify-between text-success">
+                    <span className="flex items-center gap-1">
+                      <FaTag className="h-3 w-3" />
+                      Coupon ({appliedCoupon.code})
+                    </span>
+                    <span className="font-medium">
+                      -₹{couponDiscount.toFixed(2)}
                     </span>
                   </div>
                 )}

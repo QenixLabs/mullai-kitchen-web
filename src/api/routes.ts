@@ -54,3 +54,8 @@ export const SUBSCRIPTION_ROUTES = {
   OPT_OUT: (id: string) => `/customer/subscriptions/${id}/opt-out`,
   CANCEL_OPT_OUT: (id: string, optOutId: string) => `/customer/subscriptions/${id}/opt-out/${optOutId}`,
 } as const;
+
+export const COUPON_ROUTES = {
+  VALIDATE: "/coupons/validate",
+  LIST: "/coupons",
+} as const;

@@ -68,6 +68,7 @@ export interface CreatePaymentOrderRequest {
   start_date: string;
   apply_wallet?: boolean;
   opt_out_dates?: string[];
+  coupon_id?: string;
 }
 
 export interface PaymentOrderResponse {
