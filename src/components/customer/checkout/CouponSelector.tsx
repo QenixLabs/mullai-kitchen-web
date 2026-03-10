@@ -34,6 +34,7 @@ export interface CouponSelectorProps {
   orderType: "SUBSCRIPTION" | "ADDON";
   orderAmount: number;
   planId?: string;
+  appliedCoupon: AppliedCoupon | null;
   onCouponApply: (coupon: AppliedCoupon | null) => void;
   className?: string;
 }
@@ -76,8 +77,8 @@ function CouponCard({ coupon, onSelect, isLoading }: CouponCardProps) {
       onClick={() => onSelect(coupon.code)}
       disabled={isLoading}
       className={cn(
-        "flex w-full items-start gap-3 rounded-xl border p-4 text-left transition-all",
-        "border-gray-200 bg-white hover:border-primary/50 hover:bg-primary/5",
+        "flex w-full items-start gap-3 rounded-sm border p-4 text-left transition-all",
+        "border-border bg-card hover:border-primary/50 hover:bg-primary/5",
         "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
         isLoading && "opacity-50 cursor-not-allowed"
       )}
@@ -87,7 +88,7 @@ function CouponCard({ coupon, onSelect, isLoading }: CouponCardProps) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-gray-900 uppercase tracking-wide">
+          <span className="font-bold text-foreground uppercase tracking-wide">
             {coupon.code}
           </span>
           <span className="rounded-full bg-success/10 px-2 py-0.5 text-xs font-medium text-success">
@@ -125,7 +126,7 @@ function AppliedCouponBadge({ coupon, onRemove }: AppliedCouponBadgeProps) {
           <FaCheckCircle className="h-5 w-5" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-foreground">
             Coupon Applied!
           </p>
           <p className="text-xs text-muted-foreground">
@@ -158,19 +159,21 @@ export function CouponSelector({
   orderType,
   orderAmount,
   planId,
+  appliedCoupon,
   onCouponApply,
   className,
 }: CouponSelectorProps) {
-  const [couponCode, setCouponCode] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
+  const [couponCode, setCouponCode] = useState(appliedCoupon?.code ?? "");
   const [showAvailable, setShowAvailable] = useState(false);
   const [validationResult, setValidationResult] = useState<CouponValidationResponse | null>(null);
 
   const validateCouponMutation = useValidateCoupon();
-  const { data: availableCoupons, isLoading: loadingCoupons } = useAvailableCoupons({
+  const { data: couponsList, isLoading: loadingCoupons } = useAvailableCoupons({
     order_type: orderType,
     order_amount: orderAmount,
   });
+  // Response interceptor unwraps { data, success, message } to just the data array
+  const availableCoupons = Array.isArray(couponsList) ? couponsList : [];
 
   const handleValidateCoupon = useCallback(async () => {
     if (!couponCode.trim()) {
@@ -196,7 +199,6 @@ export function CouponSelector({
           couponId: result.coupon_id,
           discountAmount: result.discount_amount,
         };
-        setAppliedCoupon(coupon);
         onCouponApply(coupon);
         toast.success("Coupon applied successfully!", {
           description: `You saved ₹${result.discount_amount.toFixed(2)}`,
@@ -211,7 +213,6 @@ export function CouponSelector({
   }, [couponCode, orderType, orderAmount, planId, onCouponApply, validateCouponMutation]);
 
   const handleRemoveCoupon = useCallback(() => {
-    setAppliedCoupon(null);
     setValidationResult(null);
     setCouponCode("");
     onCouponApply(null);
@@ -234,8 +235,8 @@ export function CouponSelector({
   // Show applied coupon state
   if (appliedCoupon) {
     return (
-      <section className={cn("rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6", className)}>
-        <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-gray-900 sm:text-lg">
+      <section className={cn("rounded-sm border border-border bg-card p-5 shadow-md sm:p-6", className)}>
+        <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-foreground sm:text-lg">
           <FaTag className="h-5 w-5 text-primary" />
           Coupon Applied
         </h2>
@@ -244,14 +245,14 @@ export function CouponSelector({
     );
   }
 
-  const hasAvailableCoupons = availableCoupons?.data && availableCoupons.data.length > 0;
+  const hasAvailableCoupons = availableCoupons && availableCoupons.length > 0;
 
   return (
-    <section className={cn("rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6", className)}>
-      <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-gray-900 sm:text-lg">
-        <Ticket className="h-5 w-5 text-primary" />
-        Apply Coupon
-      </h2>
+      <section className={cn("rounded-sm border border-border bg-card p-5 shadow-md sm:p-6", className)}>
+        <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-foreground sm:text-lg">
+          <Ticket className="h-5 w-5 text-primary" />
+          Apply Coupon
+        </h2>
 
       {/* Coupon Input */}
       <div className="space-y-3">
@@ -308,13 +309,13 @@ export function CouponSelector({
 
       {/* Available Coupons Section */}
       {hasAvailableCoupons && (
-        <div className="mt-4 border-t border-gray-100 pt-4">
+        <div className="mt-4 border-t border-border pt-4">
           <button
             type="button"
             onClick={() => setShowAvailable(!showAvailable)}
             className="flex w-full items-center justify-between text-sm font-medium text-primary hover:text-primary/80 transition-colors"
           >
-            <span>View available coupons ({availableCoupons.data.length})</span>
+            <span>View available coupons ({availableCoupons.length})</span>
             {showAvailable ? (
               <FaChevronUp className="h-4 w-4" />
             ) : (
@@ -329,7 +330,7 @@ export function CouponSelector({
                   <FaSpinner className="h-5 w-5 animate-spin text-primary" />
                 </div>
               ) : (
-                availableCoupons.data.map((coupon) => (
+                availableCoupons.map((coupon: AvailableCoupon) => (
                   <CouponCard
                     key={coupon._id}
                     coupon={coupon}

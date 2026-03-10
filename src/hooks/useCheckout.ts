@@ -173,10 +173,12 @@ export function useCheckout(): UseCheckoutReturn {
   const pricing: PricingBreakdown = useMemo(() => {
     const subtotal = plan?.price ?? 0;
     const discountedSubtotal = Math.max(0, subtotal - optOutDiscount);
-    const couponDiscount = state.appliedCoupon?.discountAmount ?? 0;
-    const discountedWithCoupon = Math.max(0, discountedSubtotal - couponDiscount);
 
     const previewData = previewPricingMutation.data;
+    // Use server-provided coupon discount if available, fallback to local calculation
+    const couponDiscount = previewData?.couponDiscount ?? state.appliedCoupon?.discountAmount ?? 0;
+    const discountedWithCoupon = Math.max(0, discountedSubtotal - couponDiscount);
+
     const deliveryCharge = previewData?.deliveryCharge ?? 30;
     const taxes =
       previewData?.tax ?? parseFloat((discountedWithCoupon * 0.05).toFixed(2));

@@ -102,6 +102,7 @@ export interface PreviewPricingResponse {
   planPrice: number;
   originalPlanPrice: number;
   optOutDiscount: number;
+  couponDiscount?: number;
   deliveryCharge: number;
   tax: number;
   total: number;
