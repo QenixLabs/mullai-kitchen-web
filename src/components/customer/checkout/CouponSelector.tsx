@@ -1,17 +1,18 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, memo } from "react";
 import {
-  FaTag,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaSpinner,
-  FaChevronDown,
-  FaChevronUp,
-  FaPercentage,
-  FaRupeeSign,
-} from "react-icons/fa";
-import { Ticket, X } from "lucide-react";
+  Ticket,
+  X,
+  Tag,
+  CheckCircle2,
+  CircleX,
+  Loader2,
+  ChevronDown,
+  ChevronUp,
+  Percent,
+  IndianRupee,
+} from "lucide-react";
 
 import { useValidateCoupon, useAvailableCoupons } from "@/api/hooks/useCoupon";
 import type { AvailableCoupon, CouponValidationResponse } from "@/api/types/coupon.types";
@@ -54,9 +55,9 @@ function formatDiscount(coupon: AvailableCoupon): string {
 
 function getCouponIcon(type: AvailableCoupon["type"]) {
   return type === "PERCENTAGE" ? (
-    <FaPercentage className="h-4 w-4" />
+    <Percent className="h-4 w-4" />
   ) : (
-    <FaRupeeSign className="h-4 w-4" />
+    <IndianRupee className="h-4 w-4" />
   );
 }
 
@@ -70,11 +71,15 @@ interface CouponCardProps {
   isLoading?: boolean;
 }
 
-function CouponCard({ coupon, onSelect, isLoading }: CouponCardProps) {
+const CouponCard = memo(function CouponCard({ coupon, onSelect, isLoading }: CouponCardProps) {
+  const handleClick = useCallback(() => {
+    onSelect(coupon.code);
+  }, [coupon.code, onSelect]);
+
   return (
     <button
       type="button"
-      onClick={() => onSelect(coupon.code)}
+      onClick={handleClick}
       disabled={isLoading}
       className={cn(
         "flex w-full items-start gap-3 rounded-sm border p-4 text-left transition-all",
@@ -105,25 +110,27 @@ function CouponCard({ coupon, onSelect, isLoading }: CouponCardProps) {
         )}
       </div>
       {isLoading ? (
-        <FaSpinner className="h-4 w-4 animate-spin text-primary" />
+        <Loader2 className="h-4 w-4 animate-spin text-primary" />
       ) : (
         <span className="text-xs font-medium text-primary">Apply</span>
       )}
     </button>
   );
-}
+});
+
+CouponCard.displayName = "CouponCard";
 
 interface AppliedCouponBadgeProps {
   coupon: AppliedCoupon;
   onRemove: () => void;
 }
 
-function AppliedCouponBadge({ coupon, onRemove }: AppliedCouponBadgeProps) {
+const AppliedCouponBadge = memo(function AppliedCouponBadge({ coupon, onRemove }: AppliedCouponBadgeProps) {
   return (
-    <div className="flex items-center justify-between rounded-xl border border-success/30 bg-success/10 p-4">
+    <div className="flex items-center justify-between rounded-sm border border-success/30 bg-success/10 p-4">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-success text-white">
-          <FaCheckCircle className="h-5 w-5" />
+          <CheckCircle2 className="h-5 w-5" />
         </div>
         <div>
           <p className="text-sm font-semibold text-foreground">
@@ -141,7 +148,7 @@ function AppliedCouponBadge({ coupon, onRemove }: AppliedCouponBadgeProps) {
         <button
           type="button"
           onClick={onRemove}
-          className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-success/20 hover:text-gray-700 transition-colors"
+          className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-success/20 hover:text-foreground transition-colors"
           aria-label="Remove coupon"
         >
           <X className="h-4 w-4" />
@@ -149,7 +156,9 @@ function AppliedCouponBadge({ coupon, onRemove }: AppliedCouponBadgeProps) {
       </div>
     </div>
   );
-}
+});
+
+AppliedCouponBadge.displayName = "AppliedCouponBadge";
 
 // ===========================================
 // Main Component
@@ -175,8 +184,8 @@ export function CouponSelector({
   // Response interceptor unwraps { data, success, message } to just the data array
   const availableCoupons = Array.isArray(couponsList) ? couponsList : [];
 
-  const handleValidateCoupon = useCallback(async () => {
-    if (!couponCode.trim()) {
+  const validateAndApplyCoupon = useCallback(async (code: string) => {
+    if (!code.trim()) {
       toast.error("Please enter a coupon code");
       return;
     }
@@ -185,7 +194,7 @@ export function CouponSelector({
 
     try {
       const result = await validateCouponMutation.mutateAsync({
-        code: couponCode.trim().toUpperCase(),
+        code: code.trim().toUpperCase(),
         order_type: orderType,
         order_amount: orderAmount,
         plan_id: planId,
@@ -210,7 +219,11 @@ export function CouponSelector({
       const message = error instanceof Error ? error.message : "Failed to validate coupon";
       toast.error(message);
     }
-  }, [couponCode, orderType, orderAmount, planId, onCouponApply, validateCouponMutation]);
+  }, [orderType, orderAmount, planId, onCouponApply, validateCouponMutation]);
+
+  const handleValidateCoupon = useCallback(() => {
+    validateAndApplyCoupon(couponCode);
+  }, [couponCode, validateAndApplyCoupon]);
 
   const handleRemoveCoupon = useCallback(() => {
     setValidationResult(null);
@@ -222,10 +235,8 @@ export function CouponSelector({
   const handleSelectAvailableCoupon = useCallback((code: string) => {
     setCouponCode(code);
     // Auto-validate when selecting from available list
-    setTimeout(() => {
-      handleValidateCoupon();
-    }, 0);
-  }, [handleValidateCoupon]);
+    validateAndApplyCoupon(code);
+  }, [validateAndApplyCoupon]);
 
   // Don't show if order amount is 0
   if (orderAmount <= 0) {
@@ -237,7 +248,7 @@ export function CouponSelector({
     return (
       <section className={cn("rounded-sm border border-border bg-card p-5 shadow-md sm:p-6", className)}>
         <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-foreground sm:text-lg">
-          <FaTag className="h-5 w-5 text-primary" />
+          <Tag className="h-5 w-5 text-primary" />
           Coupon Applied
         </h2>
         <AppliedCouponBadge coupon={appliedCoupon} onRemove={handleRemoveCoupon} />
@@ -270,7 +281,7 @@ export function CouponSelector({
                 }
               }}
               className={cn(
-                "h-12 rounded-xl border-gray-200 text-sm uppercase tracking-wide placeholder:normal-case",
+                "h-12 rounded-sm border-input text-sm uppercase tracking-wide placeholder:normal-case",
                 validationResult && !validationResult.valid && "border-destructive focus-visible:ring-destructive"
               )}
               disabled={validateCouponMutation.isPending}
@@ -279,7 +290,7 @@ export function CouponSelector({
               <button
                 type="button"
                 onClick={() => setCouponCode("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-gray-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -288,10 +299,10 @@ export function CouponSelector({
           <Button
             onClick={handleValidateCoupon}
             disabled={validateCouponMutation.isPending || !couponCode.trim()}
-            className="h-12 px-6 rounded-xl bg-primary text-white hover:bg-primary/90"
+            className="h-12 px-6 rounded-sm bg-primary text-primary-foreground hover:bg-primary/90"
           >
             {validateCouponMutation.isPending ? (
-              <FaSpinner className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               "Apply"
             )}
@@ -301,7 +312,7 @@ export function CouponSelector({
         {/* Validation Error */}
         {validationResult && !validationResult.valid && (
           <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            <FaTimesCircle className="h-4 w-4 shrink-0" />
+            <CircleX className="h-4 w-4 shrink-0" />
             <span>{validationResult.message || "Invalid coupon code"}</span>
           </div>
         )}
@@ -317,9 +328,9 @@ export function CouponSelector({
           >
             <span>View available coupons ({availableCoupons.length})</span>
             {showAvailable ? (
-              <FaChevronUp className="h-4 w-4" />
+              <ChevronUp className="h-4 w-4" />
             ) : (
-              <FaChevronDown className="h-4 w-4" />
+              <ChevronDown className="h-4 w-4" />
             )}
           </button>
 
@@ -327,7 +338,7 @@ export function CouponSelector({
             <div className="mt-3 space-y-2 max-h-64 overflow-y-auto pr-1 scrollbar-thin">
               {loadingCoupons ? (
                 <div className="flex items-center justify-center py-4">
-                  <FaSpinner className="h-5 w-5 animate-spin text-primary" />
+                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
                 </div>
               ) : (
                 availableCoupons.map((coupon: AvailableCoupon) => (
@@ -348,3 +359,5 @@ export function CouponSelector({
     </section>
   );
 }
+
+CouponSelector.displayName = "CouponSelector";
