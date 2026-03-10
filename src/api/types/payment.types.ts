@@ -95,6 +95,7 @@ export interface PreviewPricingRequest {
   address_id: string;
   start_date: string;
   opt_out_dates?: string[];
+  coupon_id?: string;
 }
 
 export interface PreviewPricingResponse {

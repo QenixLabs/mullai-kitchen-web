@@ -17,6 +17,7 @@ export interface PricingBreakdown {
   subtotal: number;
   optOutDiscount: number;
   discountedSubtotal: number;
+  couponDiscount: number;
   deliveryCharge: number;
   taxes: number;
   total: number;

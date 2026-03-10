@@ -7,12 +7,26 @@ import { toast } from "sonner";
 
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
 import { usePaymentStore } from "@/hooks/usePaymentStore";
-import { useCheckoutPlanId, useCheckoutPlanData, useHasCheckoutPlanIntent } from "@/hooks/useCheckoutStore";
+import {
+  useCheckoutPlanId,
+  useCheckoutPlanData,
+  useHasCheckoutPlanIntent,
+} from "@/hooks/useCheckoutStore";
 import { useAddressList } from "@/api/hooks/useAddress";
-import { usePreviewPricing, useWalletBalance, useCreateOrder } from "@/api/hooks/usePayment";
+import {
+  usePreviewPricing,
+  useWalletBalance,
+  useCreateOrder,
+} from "@/api/hooks/usePayment";
 import { loadRazorpayScript } from "@/lib/razorpay";
-import { CHECKOUT_CONFIG, PAYMENT_METHODS, type PaymentMethod, type PricingBreakdown } from "@/lib/checkout-config";
+import {
+  CHECKOUT_CONFIG,
+  PAYMENT_METHODS,
+  type PaymentMethod,
+  type PricingBreakdown,
+} from "@/lib/checkout-config";
 import type { PaymentStore } from "@/stores/payment-store";
+import type { AppliedCoupon } from "@/components/customer/checkout/CouponSelector";
 
 export interface CheckoutState {
   selectedAddressId: string | null;
@@ -23,6 +37,7 @@ export interface CheckoutState {
   showAddressDialog: boolean;
   showWalletInfo: boolean;
   showOptOutDialog: boolean;
+  appliedCoupon: AppliedCoupon | null;
 }
 
 export interface UseCheckoutReturn {
@@ -30,36 +45,36 @@ export interface UseCheckoutReturn {
   hasHydrated: boolean;
   isAuthenticated: boolean;
   hasPlanIntent: boolean;
-  
+
   // Plan data
   plan: ReturnType<typeof useCheckoutPlanData>;
   planId: ReturnType<typeof useCheckoutPlanId>;
-  
+
   // Address data
   addresses: ReturnType<typeof useAddressList>["data"];
   addressesLoading: boolean;
-  
+
   // Wallet data
   walletBalance: number | null;
   walletLoading: boolean;
   walletError: Error | null;
   refetchWallet: () => void;
-  
+
   // Payment state
   paymentStatus: PaymentStore["status"];
   createOrderMutation: ReturnType<typeof useCreateOrder>;
   previewPricingMutation: ReturnType<typeof usePreviewPricing>;
-  
+
   // Local state
   state: CheckoutState;
   pricing: PricingBreakdown;
-  
+
   // Derived values
   subscriptionDays: number;
   maxOptOutDays: number;
   perDayPrice: number;
   optOutDiscount: number;
-  
+
   // Actions
   setSelectedPayment: (payment: PaymentMethod) => void;
   setApplyWallet: (apply: boolean) => void;
@@ -69,8 +84,13 @@ export interface UseCheckoutReturn {
   toggleAddressDialog: (show?: boolean) => void;
   toggleWalletInfo: (show?: boolean) => void;
   toggleOptOutDialog: (show?: boolean) => void;
+  setAppliedCoupon: (coupon: AppliedCoupon | null) => void;
   handleStartDateChange: (date: Date | undefined) => void;
-  handlePaymentSuccess: (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => void;
+  handlePaymentSuccess: (response: {
+    razorpay_payment_id: string;
+    razorpay_order_id: string;
+    razorpay_signature: string;
+  }) => void;
   handlePaymentFailure: (error: { code: string; description: string }) => void;
   handlePaymentDismissed: () => void;
 }
@@ -79,11 +99,11 @@ export function useCheckout(): UseCheckoutReturn {
   const router = useRouter();
   const hasHydrated = useAuthHydrated();
   const isAuthenticated = useIsAuthenticated();
-  
+
   const planId = useCheckoutPlanId();
   const plan = useCheckoutPlanData();
   const hasPlanIntent = useHasCheckoutPlanIntent();
-  
+
   const paymentStore = usePaymentStore();
   const { status: paymentStatus } = paymentStore;
 
@@ -109,33 +129,34 @@ export function useCheckout(): UseCheckoutReturn {
     showAddressDialog: false,
     showWalletInfo: false,
     showOptOutDialog: false,
+    appliedCoupon: null,
   });
 
   // Derived values
   const subscriptionDays = useMemo(() => {
     // Map duration enum to days
     const durationMap: Record<string, number> = {
-      'Weekly': 7,
-      'Monthly': 30,
-      'Quarterly': 90,
+      Weekly: 7,
+      Monthly: 30,
+      Quarterly: 90,
     };
-    
+
     if (plan?.duration && durationMap[plan.duration]) {
       return durationMap[plan.duration];
     }
-    
+
     // Fallback: try to extract number from duration string (for backward compatibility)
     const durationMatch = plan?.duration?.match(/\d+/);
     if (durationMatch) {
       return parseInt(durationMatch[0], 10);
     }
-    
+
     return 30; // Default fallback
   }, [plan?.duration]);
 
   const maxOptOutDays = useMemo(
     () => Math.floor(subscriptionDays * 0.5),
-    [subscriptionDays]
+    [subscriptionDays],
   );
 
   const perDayPrice = useMemo(() => {
@@ -145,28 +166,37 @@ export function useCheckout(): UseCheckoutReturn {
 
   const optOutDiscount = useMemo(
     () => state.optOutDates.length * perDayPrice,
-    [state.optOutDates.length, perDayPrice]
+    [state.optOutDates.length, perDayPrice],
   );
 
   // Pricing calculations with useMemo
   const pricing: PricingBreakdown = useMemo(() => {
     const subtotal = plan?.price ?? 0;
     const discountedSubtotal = Math.max(0, subtotal - optOutDiscount);
-    
+    const couponDiscount = state.appliedCoupon?.discountAmount ?? 0;
+    const discountedWithCoupon = Math.max(0, discountedSubtotal - couponDiscount);
+
     const previewData = previewPricingMutation.data;
     const deliveryCharge = previewData?.deliveryCharge ?? 30;
-    const taxes = previewData?.tax ?? parseFloat((discountedSubtotal * 0.05).toFixed(2));
-    const total = previewData?.total ?? (discountedSubtotal + deliveryCharge + taxes);
+    const taxes =
+      previewData?.tax ?? parseFloat((discountedWithCoupon * 0.05).toFixed(2));
+    const total =
+      previewData?.total ?? discountedWithCoupon + deliveryCharge + taxes;
 
     const walletReservation =
-      state.applyWallet && walletBalance !== null ? Math.min(walletBalance, total) : 0;
+      state.applyWallet && walletBalance !== null
+        ? Math.min(walletBalance, total)
+        : 0;
     const amountAfterWallet =
-      state.applyWallet && walletBalance !== null ? Math.max(0, total - walletBalance) : total;
+      state.applyWallet && walletBalance !== null
+        ? Math.max(0, total - walletBalance)
+        : total;
 
     return {
       subtotal,
       optOutDiscount,
       discountedSubtotal,
+      couponDiscount,
       deliveryCharge,
       taxes,
       total,
@@ -179,6 +209,7 @@ export function useCheckout(): UseCheckoutReturn {
   }, [
     plan?.price,
     optOutDiscount,
+    state.appliedCoupon,
     previewPricingMutation.data,
     state.applyWallet,
     walletBalance,
@@ -213,7 +244,8 @@ export function useCheckout(): UseCheckoutReturn {
     loadRazorpayScript().catch((err) => {
       console.error("Failed to load Razorpay script:", err);
       toast.error("System Error", {
-        description: "Failed to load payment system. Please refresh and try again.",
+        description:
+          "Failed to load payment system. Please refresh and try again.",
       });
     });
   }, []);
@@ -232,7 +264,7 @@ export function useCheckout(): UseCheckoutReturn {
 
   // Fetch preview pricing when dependencies change
   const { mutate: mutatePreviewPricing } = previewPricingMutation;
-  
+
   useEffect(() => {
     if (!plan?._id || !state.selectedAddressId) return;
 
@@ -247,10 +279,18 @@ export function useCheckout(): UseCheckoutReturn {
       address_id: state.selectedAddressId,
       start_date: state.startDate.toISOString(),
       opt_out_dates: state.optOutDates.map((date) => date.toISOString()),
+      coupon_id: state.appliedCoupon?.couponId,
     };
 
     mutatePreviewPricing(previewData);
-  }, [plan?._id, state.selectedAddressId, state.startDate, state.optOutDates, mutatePreviewPricing]);
+  }, [
+    plan?._id,
+    state.selectedAddressId,
+    state.startDate,
+    state.optOutDates,
+    mutatePreviewPricing,
+    state.appliedCoupon?.couponId,
+  ]);
 
   // Handlers
   const handleStartDateChange = useCallback((date: Date | undefined) => {
@@ -273,11 +313,17 @@ export function useCheckout(): UseCheckoutReturn {
   }, []);
 
   const handlePaymentSuccess = useCallback(
-    (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
+    (response: {
+      razorpay_payment_id: string;
+      razorpay_order_id: string;
+      razorpay_signature: string;
+    }) => {
       paymentStore.setPaymentSuccess(response);
-      router.push(`/checkout/success?planName=${encodeURIComponent(plan?.name || "Subscription")}`);
+      router.push(
+        `/checkout/success?planName=${encodeURIComponent(plan?.name || "Subscription")}`,
+      );
     },
-    [paymentStore, router, plan?.name]
+    [paymentStore, router, plan?.name],
   );
 
   const handlePaymentFailure = useCallback(
@@ -285,7 +331,7 @@ export function useCheckout(): UseCheckoutReturn {
       toast.error("Payment Failed", { description: error.description });
       router.push("/checkout/error");
     },
-    [router]
+    [router],
   );
 
   const handlePaymentDismissed = useCallback(() => {
@@ -313,15 +359,28 @@ export function useCheckout(): UseCheckoutReturn {
   }, []);
 
   const toggleAddressDialog = useCallback((show?: boolean) => {
-    setState((prev) => ({ ...prev, showAddressDialog: show ?? !prev.showAddressDialog }));
+    setState((prev) => ({
+      ...prev,
+      showAddressDialog: show ?? !prev.showAddressDialog,
+    }));
   }, []);
 
   const toggleWalletInfo = useCallback((show?: boolean) => {
-    setState((prev) => ({ ...prev, showWalletInfo: show ?? !prev.showWalletInfo }));
+    setState((prev) => ({
+      ...prev,
+      showWalletInfo: show ?? !prev.showWalletInfo,
+    }));
   }, []);
 
   const toggleOptOutDialog = useCallback((show?: boolean) => {
-    setState((prev) => ({ ...prev, showOptOutDialog: show ?? !prev.showOptOutDialog }));
+    setState((prev) => ({
+      ...prev,
+      showOptOutDialog: show ?? !prev.showOptOutDialog,
+    }));
+  }, []);
+
+  const setAppliedCoupon = useCallback((coupon: AppliedCoupon | null) => {
+    setState((prev) => ({ ...prev, appliedCoupon: coupon }));
   }, []);
 
   return {
@@ -353,6 +412,7 @@ export function useCheckout(): UseCheckoutReturn {
     toggleAddressDialog,
     toggleWalletInfo,
     toggleOptOutDialog,
+    setAppliedCoupon,
     handleStartDateChange,
     handlePaymentSuccess,
     handlePaymentFailure,
