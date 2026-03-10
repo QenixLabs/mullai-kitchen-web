@@ -68,6 +68,7 @@ export interface CreatePaymentOrderRequest {
   start_date: string;
   apply_wallet?: boolean;
   opt_out_dates?: string[];
+  coupon_id?: string;
 }
 
 export interface PaymentOrderResponse {
@@ -94,12 +95,14 @@ export interface PreviewPricingRequest {
   address_id: string;
   start_date: string;
   opt_out_dates?: string[];
+  coupon_id?: string;
 }
 
 export interface PreviewPricingResponse {
   planPrice: number;
   originalPlanPrice: number;
   optOutDiscount: number;
+  couponDiscount?: number;
   deliveryCharge: number;
   tax: number;
   total: number;

@@ -1,4 +1,4 @@
-import { FaCalendar, FaSpinner, FaTimesCircle } from "react-icons/fa";
+import { FaCalendar, FaSpinner, FaTimesCircle, FaTag } from "react-icons/fa";
 import { Info, Wallet, Loader2, ArrowRight, Lock, Shield } from "lucide-react";
 import type { PricingBreakdown } from "@/lib/checkout-config";
 
@@ -13,10 +13,10 @@ interface OrderSummaryProps {
 
 // Helper function to get plan type label from duration
 function getPlanTypeLabel(duration: string): string {
-  const durationLower = duration?.toLowerCase() || '';
-  if (durationLower.includes('week')) return 'Weekly Subscription Plan';
-  if (durationLower.includes('quarter')) return 'Quarterly Subscription Plan';
-  return 'Monthly Subscription Plan';
+  const durationLower = duration?.toLowerCase() || "";
+  if (durationLower.includes("week")) return "Weekly Subscription Plan";
+  if (durationLower.includes("quarter")) return "Quarterly Subscription Plan";
+  return "Monthly Subscription Plan";
 }
 
 export function OrderSummary({
@@ -32,6 +32,7 @@ export function OrderSummary({
     optOutDiscount,
     deliveryCharge,
     taxes,
+    couponDiscount,
     amountAfterWallet,
     walletReservation,
   } = pricing;
@@ -44,7 +45,9 @@ export function OrderSummary({
         {/* Plan row */}
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="font-medium text-gray-800">{getPlanTypeLabel(planDuration)}</p>
+            <p className="font-medium text-gray-800">
+              {getPlanTypeLabel(planDuration)}
+            </p>
             <p className="text-xs text-gray-500">
               {planName} ({planDuration})
             </p>
@@ -65,13 +68,26 @@ export function OrderSummary({
           </div>
         )}
 
+        {/* Coupon Discount */}
+        {couponDiscount > 0 && (
+          <div className="flex items-center justify-between text-success">
+            <span className="flex items-center gap-1">
+              <FaTag className="h-3 w-3" />
+              Coupon Applied
+            </span>
+            <span className="font-medium">-₹{couponDiscount.toFixed(2)}</span>
+          </div>
+        )}
+
         {/* Delivery Fee */}
         <div className="flex items-center justify-between text-gray-600">
           <span className="flex items-center gap-1">
             Delivery Fee
             <Info className="h-3 w-3 text-muted-foreground" />
           </span>
-          <span className="font-medium text-gray-800">₹{deliveryCharge.toFixed(2)}</span>
+          <span className="font-medium text-gray-800">
+            ₹{deliveryCharge.toFixed(2)}
+          </span>
         </div>
 
         {/* Taxes */}
@@ -87,7 +103,9 @@ export function OrderSummary({
               <Wallet className="h-3 w-3" />
               Wallet Applied
             </span>
-            <span className="font-medium">-₹{walletReservation.toFixed(2)}</span>
+            <span className="font-medium">
+              -₹{walletReservation.toFixed(2)}
+            </span>
           </div>
         )}
 
@@ -96,7 +114,9 @@ export function OrderSummary({
         {/* Total */}
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            {applyWallet && walletReservation > 0 ? "You're Paying" : "Total to Reserve"}
+            {applyWallet && walletReservation > 0
+              ? "You're Paying"
+              : "Total to Reserve"}
           </p>
           <div className="flex items-end justify-between">
             <p className="mt-0.5 text-3xl font-extrabold text-gray-900">

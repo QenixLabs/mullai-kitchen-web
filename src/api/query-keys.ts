@@ -46,3 +46,10 @@ export const subscriptionKeys = {
   optOutPeriods: (id: string, params?: { status?: string; page?: number; limit?: number }) =>
     ["subscription", id, "opt-out-periods", params] as const,
 };
+
+export const couponKeys = {
+  all: () => ["coupon"] as const,
+  available: (params?: { order_type?: string; order_amount?: number }) =>
+    ["coupon", "available", params] as const,
+  validation: (code: string) => ["coupon", "validation", code] as const,
+};

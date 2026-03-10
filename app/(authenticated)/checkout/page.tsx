@@ -24,6 +24,7 @@ import { WalletBanner } from "@/components/customer/checkout/WalletBanner";
 import { WalletDisplay } from "@/components/customer/checkout/WalletDisplay";
 import { HelpChat } from "@/components/customer/checkout/HelpChat";
 import { CheckoutDialogs } from "@/components/customer/checkout/CheckoutDialogs";
+import { CouponSelector } from "@/components/customer/checkout/CouponSelector";
 
 export default function CheckoutPage() {
   const user = useCurrentUser();
@@ -57,6 +58,7 @@ export default function CheckoutPage() {
     toggleAddressDialog,
     toggleWalletInfo,
     toggleOptOutDialog,
+    setAppliedCoupon,
   } = useCheckout();
 
   const handlePay = useCallback(async () => {
@@ -85,6 +87,7 @@ export default function CheckoutPage() {
         start_date: state.startDate.toISOString().split("T")[0],
         apply_wallet: state.applyWallet,
         opt_out_dates: state.optOutDates.map((d) => d.toISOString().split("T")[0]),
+        coupon_id: state.appliedCoupon?.couponId,
       });
 
       paymentStore.setPaymentProcessing(result);
@@ -135,6 +138,7 @@ export default function CheckoutPage() {
     handlePaymentSuccess,
     handlePaymentFailure,
     handlePaymentDismissed,
+    state.appliedCoupon?.couponId,
   ]);
 
   if (!hasHydrated) {
@@ -181,20 +185,20 @@ export default function CheckoutPage() {
       <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
           <div className="flex-1 space-y-5">
-            <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
-              <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-gray-900 sm:text-lg">
+            <section className="rounded-sm border border-border bg-card p-5 shadow-md sm:p-6">
+              <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-foreground sm:text-lg">
                 <FaMapMarkerAlt className="h-5 w-5 text-primary" />
                 1. Select Delivery Address
               </h2>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {addressesLoading ? (
-                  <div className="col-span-2 flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 p-4">
-                    <span className="text-sm text-gray-500">Loading addresses...</span>
+                  <div className="col-span-2 flex items-center gap-2 rounded-sm border border-border bg-muted p-4">
+                    <span className="text-sm text-muted-foreground">Loading addresses...</span>
                   </div>
                 ) : !addresses?.length ? (
-                  <div className="col-span-2 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 text-center">
-                    <p className="text-sm text-gray-500">No saved addresses. Please add one to continue.</p>
+                    <div className="col-span-2 rounded-sm border border-dashed border-border bg-muted p-4 text-center">
+                    <p className="text-sm text-muted-foreground">No saved addresses. Please add one to continue.</p>
                   </div>
                 ) : (
                   addresses.map((addr) => (
@@ -209,8 +213,8 @@ export default function CheckoutPage() {
                 <AddNewAddressCard onClick={() => toggleAddressDialog(true)} />
               </div>
 
-              <div className="mt-4 border-t border-gray-100 pt-4">
-                <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-900">
+              <div className="mt-4 border-t border-border pt-4">
+                <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
                   <FaCalendar className="h-4 w-4 text-primary" />
                   Subscription Start Date
                 </label>
@@ -220,7 +224,7 @@ export default function CheckoutPage() {
                   placeholder="Select start date"
                   minDate={addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday)}
                 />
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-muted-foreground">
                   Subscriptions start at least {CHECKOUT_CONFIG.minDaysFromToday} day(s) from today
                 </p>
               </div>
@@ -235,10 +239,19 @@ export default function CheckoutPage() {
               />
             </section>
 
+            {/* Coupon Selector */}
+            <CouponSelector
+              orderType="SUBSCRIPTION"
+              orderAmount={pricing.discountedSubtotal}
+              planId={planId || undefined}
+              appliedCoupon={state.appliedCoupon}
+              onCouponApply={setAppliedCoupon}
+            />
+
             <WalletBanner onLearnMore={() => toggleWalletInfo(true)} />
 
-            <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
-              <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-gray-900 sm:text-lg">
+            <section className="rounded-sm border border-border bg-card p-5 shadow-md sm:p-6">
+              <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-foreground sm:text-lg">
                 <FaCreditCard className="h-5 w-5 text-primary" />
                 2. Payment Selection
               </h2>
@@ -315,10 +328,10 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-center rounded-2xl border border-border bg-muted px-6 py-6">
+      <div className="mt-4 flex items-center justify-center rounded-sm border border-border bg-muted px-6 py-6">
         <div className="flex items-center gap-3">
           <MapPin className="h-6 w-6 text-foreground" />
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-foreground">
             We deliver to selected serviceable pincodes. Enter your address
             during checkout to check availability.
           </p>
