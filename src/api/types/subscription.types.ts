@@ -11,11 +11,11 @@
  * Defines the different states of a customer subscription
  */
 export type SubscriptionStatus =
-  | 'ACTIVE'
-  | 'PAUSED'
-  | 'EXPIRED'
-  | 'CANCELLED'
-  | 'PENDING_RENEWAL';
+  | 'active'
+  | 'paused'
+  | 'expired'
+  | 'cancelled'
+  | 'pending_renewal';
 
 /**
  * Subscription Renewal Status Enum
