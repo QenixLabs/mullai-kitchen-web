@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaCheck, FaStar, FaCalendarAlt, FaUtensils, FaArrowRight, FaClock, FaFire } from "react-icons/fa";
 
 import type { PlanBrowseItem } from "@/api/types/customer.types";
@@ -40,6 +40,15 @@ export function PlanCard({
   const isWeekly = plan.duration.toLowerCase().includes("week");
   const periodLabel = isWeekly ? "week" : "month";
   const mealsPerDay = plan.meals_included.length;
+
+  const handleSelectPlan = () => {
+    onSelectPlan(plan);
+  };
+
+  const handleViewMenu = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onViewMenu(plan);
+  };
 
   // Compact variant for mobile horizontal scroll
   if (variant === "compact") {
@@ -122,7 +131,7 @@ export function PlanCard({
             ))}
           </div>
 
-          {/* CTA */}
+          {/* CTA - Simple Get Started */}
           <Button
             type="button"
             className={cn(
@@ -130,7 +139,7 @@ export function PlanCard({
               "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
               "active:scale-[0.98]"
             )}
-            onClick={() => onSelectPlan(plan)}
+            onClick={handleSelectPlan}
           >
             Get Started
             <FaArrowRight className="ml-1 h-4 w-4" />
@@ -276,7 +285,7 @@ export function PlanCard({
               "active:scale-[0.98]",
               "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             )}
-            onClick={() => onSelectPlan(plan)}
+            onClick={handleSelectPlan}
             aria-label={`Get started with ${plan.name} plan`}
           >
             <span className="relative z-10 flex items-center justify-center gap-2">
@@ -299,7 +308,7 @@ export function PlanCard({
               "hover:border-primary/30 hover:bg-accent hover:text-primary",
               "active:scale-[0.98]"
             )}
-            onClick={() => onViewMenu(plan)}
+            onClick={handleViewMenu}
             aria-label={`View menu for ${plan.name}`}
           >
             View Menu

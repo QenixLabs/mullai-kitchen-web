@@ -13,6 +13,7 @@ import {
   useHasCheckoutPlanIntent,
 } from "@/hooks/useCheckoutStore";
 import { useAddressList } from "@/api/hooks/useAddress";
+import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import {
   usePreviewPricing,
   useWalletBalance,
@@ -27,6 +28,8 @@ import {
 } from "@/lib/checkout-config";
 import type { PaymentStore } from "@/stores/payment-store";
 import type { AppliedCoupon } from "@/components/customer/checkout/CouponSelector";
+import type { MealType } from "@/stores/plan-intent-store";
+import type { AddressType } from "@/api/types/customer.types";
 
 export interface CheckoutState {
   selectedAddressId: string | null;
@@ -38,6 +41,7 @@ export interface CheckoutState {
   showWalletInfo: boolean;
   showOptOutDialog: boolean;
   appliedCoupon: AppliedCoupon | null;
+  selectedMealType: MealType | null;
 }
 
 export interface UseCheckoutReturn {
@@ -86,6 +90,9 @@ export interface UseCheckoutReturn {
   toggleOptOutDialog: (show?: boolean) => void;
   setAppliedCoupon: (coupon: AppliedCoupon | null) => void;
   handleStartDateChange: (date: Date | undefined) => void;
+  setSelectedMealType: (mealType: MealType | null) => void;
+  // Helper to get suggested address type based on selected meal
+  getSuggestedAddressType: () => AddressType | null;
   handlePaymentSuccess: (response: {
     razorpay_payment_id: string;
     razorpay_order_id: string;
@@ -108,6 +115,9 @@ export function useCheckout(): UseCheckoutReturn {
   const { status: paymentStatus } = paymentStore;
 
   const { data: addresses, isLoading: addressesLoading } = useAddressList();
+
+  // Read pre-selected address from plan-intent-store
+  const preSelectedAddressId = usePlanIntentStore((state) => state.selectedAddressId);
   const {
     data: walletData,
     isLoading: walletLoading,
@@ -119,17 +129,28 @@ export function useCheckout(): UseCheckoutReturn {
   const createOrderMutation = useCreateOrder();
   const previewPricingMutation = usePreviewPricing();
 
+  // Helper to get minimum start date (normalized to midnight)
+  const getMinStartDate = () => {
+    const date = addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  };
+
+  // Read from plan-intent-store
+  const preSelectedMealType = usePlanIntentStore((state) => state.selectedMealType);
+
   // Consolidated state
   const [state, setState] = useState<CheckoutState>({
     selectedAddressId: null,
     selectedPayment: PAYMENT_METHODS.WALLET,
     applyWallet: true,
-    startDate: addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday),
+    startDate: getMinStartDate(),
     optOutDates: [],
     showAddressDialog: false,
     showWalletInfo: false,
     showOptOutDialog: false,
     appliedCoupon: null,
+    selectedMealType: preSelectedMealType,
   });
 
   // Derived values
@@ -233,14 +254,25 @@ export function useCheckout(): UseCheckoutReturn {
     }));
   }, []);
 
+  // Set default address: prefer pre-selected from plan-intent-store, then default address, then first address
   useEffect(() => {
     if (addresses?.length && !state.selectedAddressId) {
-      const defaultAddr = addresses.find((a) => a.is_default) ?? addresses[0];
-      if (defaultAddr) {
-        setState((prev) => ({ ...prev, selectedAddressId: defaultAddr._id }));
+      // Check if pre-selected address exists in user's addresses
+      const preSelectedExists = preSelectedAddressId && addresses.some((a) => a._id === preSelectedAddressId);
+
+      let addressToSelect = null;
+      if (preSelectedExists) {
+        addressToSelect = addresses.find((a) => a._id === preSelectedAddressId);
+      } else {
+        // Fall back to default address or first address
+        addressToSelect = addresses.find((a) => a.is_default) ?? addresses[0];
+      }
+
+      if (addressToSelect) {
+        setState((prev) => ({ ...prev, selectedAddressId: addressToSelect._id }));
       }
     }
-  }, [addresses, state.selectedAddressId]);
+  }, [addresses, state.selectedAddressId, preSelectedAddressId]);
 
   useEffect(() => {
     loadRazorpayScript().catch((err) => {
@@ -270,19 +302,47 @@ export function useCheckout(): UseCheckoutReturn {
   useEffect(() => {
     if (!plan?._id || !state.selectedAddressId) return;
 
+    // Ensure startDate is a valid Date
+    if (!(state.startDate instanceof Date) || isNaN(state.startDate.getTime())) return;
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const minDate = addDays(today, CHECKOUT_CONFIG.minDaysFromToday);
+    minDate.setHours(0, 0, 0, 0);
 
-    if (state.startDate < minDate) return;
+    // Normalize start date to midnight for comparison
+    const normalizedStartDate = new Date(state.startDate);
+    normalizedStartDate.setHours(0, 0, 0, 0);
+
+    // Skip if start date is before minimum date
+    if (normalizedStartDate < minDate) {
+      console.log('[useCheckout] Skipping preview pricing - date too early:', {
+        normalizedStartDate: normalizedStartDate.toISOString(),
+        minDate: minDate.toISOString(),
+        minDaysFromToday: CHECKOUT_CONFIG.minDaysFromToday,
+      });
+      return;
+    }
+
+    // Format dates as YYYY-MM-DD to avoid timezone issues
+    const formatDate = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
 
     const previewData = {
       plan_id: plan._id,
       address_id: state.selectedAddressId,
-      start_date: state.startDate.toISOString(),
-      opt_out_dates: state.optOutDates.map((date) => date.toISOString()),
+      start_date: formatDate(normalizedStartDate),
+      opt_out_dates: state.optOutDates.map((date) =>
+        date instanceof Date ? formatDate(date) : formatDate(new Date(date))
+      ),
       coupon_id: state.appliedCoupon?.couponId,
     };
+
+    console.log('[useCheckout] Calling preview pricing with:', previewData);
 
     mutatePreviewPricing(previewData);
   }, [
@@ -385,6 +445,27 @@ export function useCheckout(): UseCheckoutReturn {
     setState((prev) => ({ ...prev, appliedCoupon: coupon }));
   }, []);
 
+  const setSelectedMealType = useCallback((mealType: MealType | null) => {
+    setState((prev) => ({ ...prev, selectedMealType: mealType }));
+  }, []);
+
+  const getSuggestedAddressType = useCallback((): AddressType | null => {
+    const mealType = state.selectedMealType;
+    if (!mealType) return null;
+
+    // Breakfast → Home, Dinner → Office, Lunch → Home (or Office as fallback)
+    switch (mealType) {
+      case "Breakfast":
+        return "Home";
+      case "Dinner":
+        return "Office";
+      case "Lunch":
+        return "Home"; // Default to Home for lunch
+      default:
+        return null;
+    }
+  }, [state.selectedMealType]);
+
   return {
     hasHydrated,
     isAuthenticated,
@@ -419,5 +500,7 @@ export function useCheckout(): UseCheckoutReturn {
     handlePaymentSuccess,
     handlePaymentFailure,
     handlePaymentDismissed,
+    setSelectedMealType,
+    getSuggestedAddressType,
   };
 }

@@ -861,6 +861,8 @@ function PricingSection() {
   const isAuthenticated = useIsAuthenticated();
   const setPlanIntent = usePlanIntentStore((store) => store.setPlanIntent);
   const setSourceRoute = usePlanIntentStore((store) => store.setSourceRoute);
+  const setSelectedMealType = usePlanIntentStore((store) => store.setSelectedMealType);
+  const setSelectedAddressId = usePlanIntentStore((store) => store.setSelectedAddressId);
 
   const plansQuery = useCustomerPlans({});
   const plans = plansQuery.data?.plans ?? [];
@@ -868,6 +870,9 @@ function PricingSection() {
   const handleSelectPlan = (plan: PlanBrowseItem) => {
     setPlanIntent(plan._id, plan);
     setSourceRoute("/");
+    // Meal type and address selection happens in checkout
+    setSelectedMealType(null);
+    setSelectedAddressId(null);
 
     const isSignedIn = hasHydrated && isAuthenticated;
     router.push(isSignedIn ? "/checkout" : "/auth/signin?redirect=/checkout");
