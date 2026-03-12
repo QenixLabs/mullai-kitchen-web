@@ -343,3 +343,36 @@ body {
 .animate-spin-around {
   animation: spin-around var(--speed, 3s) linear infinite;
 }
+
+/* Custom Select Dropdown Styling - Use project primary color instead of browser default blue */
+select {
+  accent-color: hsl(var(--primary));
+}
+
+select option {
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+}
+
+select option:checked {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+/* For WebKit browsers - style the dropdown */
+select::-webkit-scrollbar {
+  width: 8px;
+}
+
+select::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+select::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.5);
+  border-radius: 4px;
+}
+
+select::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}

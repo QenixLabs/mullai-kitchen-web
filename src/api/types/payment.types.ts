@@ -62,6 +62,11 @@ export type InvoiceStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";
 // Payment Order Types
 // ===========================================
 
+export interface MealAddressMappingRequest {
+  meal_type: string;
+  address_id: string;
+}
+
 export interface CreatePaymentOrderRequest {
   plan_id: string;
   address_id: string;
@@ -69,6 +74,7 @@ export interface CreatePaymentOrderRequest {
   apply_wallet?: boolean;
   opt_out_dates?: string[];
   coupon_id?: string;
+  meal_address_mappings?: MealAddressMappingRequest[];
 }
 
 export interface PaymentOrderResponse {

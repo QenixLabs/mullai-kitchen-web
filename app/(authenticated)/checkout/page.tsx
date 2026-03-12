@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import { FaMapMarkerAlt, FaCreditCard, FaCalendar } from "react-icons/fa";
+import { FaCreditCard, FaCalendar } from "react-icons/fa";
 import { CreditCard, QrCode, MapPin } from "lucide-react";
 import { addDays } from "date-fns";
 import { toast } from "sonner";
@@ -15,7 +15,6 @@ import { CHECKOUT_CONFIG, PAYMENT_METHODS } from "@/lib/checkout-config";
 import { DatePicker } from "@/components/ui/date-picker";
 
 import { StepIndicator } from "@/components/customer/checkout/StepIndicator";
-import { AddressDropdown } from "@/components/customer/plans/AddressDropdown";
 import { PaymentOption } from "@/components/customer/checkout/PaymentOption";
 import { OptOutSummary } from "@/components/customer/checkout/OptOutSummary";
 import { OrderSummary } from "@/components/customer/checkout/OrderSummary";
@@ -54,7 +53,6 @@ export default function CheckoutPage() {
     handlePaymentDismissed,
     setSelectedPayment,
     setApplyWallet,
-    setSelectedAddressId,
     setOptOutDates,
     toggleAddressDialog,
     toggleWalletInfo,
@@ -62,7 +60,8 @@ export default function CheckoutPage() {
     setAppliedCoupon,
     previewPricingMutation,
     setSelectedMealType,
-    getSuggestedAddressType,
+    setMealAddressMapping,
+    getMealAddressMapping,
   } = useCheckout();
 
   // Show toast when pricing preview fails
@@ -116,6 +115,7 @@ export default function CheckoutPage() {
         apply_wallet: state.applyWallet,
         opt_out_dates: state.optOutDates.map((d) => formatDate(d)),
         coupon_id: state.appliedCoupon?.couponId,
+        meal_address_mappings: state.mealAddressMappings.length > 0 ? state.mealAddressMappings : undefined,
       });
 
       paymentStore.setPaymentProcessing(result);
@@ -156,6 +156,7 @@ export default function CheckoutPage() {
     state.startDate,
     state.applyWallet,
     state.optOutDates,
+    state.mealAddressMappings,
     plan?.name,
     plan?.duration,
     user?.name,
@@ -227,67 +228,62 @@ export default function CheckoutPage() {
       <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
           <div className="flex-1 space-y-5">
-            {/* Meal Type Selection */}
+            {/* Meal Type Selection with Integrated Address Selection */}
             <section className="rounded-sm border border-border bg-card p-5 shadow-md sm:p-6">
               <MealTypeSelector
                 availableMealTypes={availableMealTypes}
                 selectedMealType={state.selectedMealType}
-                onMealTypeChange={setSelectedMealType}
+                onMealTypeChange={(mealType) => {
+                  setSelectedMealType(mealType);
+                  // If this meal type doesn't have an address mapping yet, set it to default
+                  const existingMapping = getMealAddressMapping(mealType);
+                  if (!existingMapping && state.selectedAddressId) {
+                    setMealAddressMapping(mealType, state.selectedAddressId);
+                  }
+                }}
                 disabled={isProcessing}
+                addresses={addresses || []}
+                addressesLoading={addressesLoading}
+                defaultAddressId={state.selectedAddressId}
+                mealAddressMappings={state.mealAddressMappings}
+                onAddressChange={setMealAddressMapping}
+                onAddNewAddress={() => toggleAddressDialog(true)}
               />
             </section>
 
-            {/* Address Selection */}
+            {/* Subscription Details */}
             <section className="rounded-sm border border-border bg-card p-5 shadow-md sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-foreground sm:text-lg">
-                <FaMapMarkerAlt className="h-5 w-5 text-primary" />
-                Select Delivery Address
-                {state.selectedMealType && (
-                  <span className="ml-2 text-xs font-normal text-muted-foreground">
-                    (Suggests: {getSuggestedAddressType() === "Home" ? "Home" : "Office"})
-                  </span>
-                )}
+                <FaCalendar className="h-5 w-5 text-primary" />
+                Subscription Details
               </h2>
 
-              {addressesLoading ? (
-                <div className="flex items-center gap-2 rounded-sm border border-border bg-muted p-4">
-                  <span className="text-sm text-muted-foreground">Loading addresses...</span>
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <FaCalendar className="h-4 w-4 text-primary" />
+                    Subscription Start Date
+                  </label>
+                  <DatePicker
+                    date={state.startDate}
+                    onDateChange={handleStartDateChange}
+                    placeholder="Select start date"
+                    minDate={addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday)}
+                  />
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Subscriptions start at least {CHECKOUT_CONFIG.minDaysFromToday} day(s) from today
+                  </p>
                 </div>
-              ) : (
-                <AddressDropdown
-                  addresses={addresses || []}
-                  selectedAddressId={state.selectedAddressId}
-                  onSelectAddress={setSelectedAddressId}
-                  onAddNewAddress={() => toggleAddressDialog(true)}
-                  disabled={isProcessing}
-                  suggestedAddressType={getSuggestedAddressType()}
-                />
-              )}
 
-              <div className="mt-4 border-t border-border pt-4">
-                <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
-                  <FaCalendar className="h-4 w-4 text-primary" />
-                  Subscription Start Date
-                </label>
-                <DatePicker
-                  date={state.startDate}
-                  onDateChange={handleStartDateChange}
-                  placeholder="Select start date"
-                  minDate={addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday)}
+                <OptOutSummary
+                  optOutDates={state.optOutDates}
+                  optOutDiscount={pricing.optOutDiscount}
+                  perDayPrice={pricing.perDayPrice}
+                  maxOptOutDays={pricing.maxOptOutDays}
+                  onClear={() => setOptOutDates([])}
+                  onModify={() => toggleOptOutDialog(true)}
                 />
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Subscriptions start at least {CHECKOUT_CONFIG.minDaysFromToday} day(s) from today
-                </p>
               </div>
-
-              <OptOutSummary
-                optOutDates={state.optOutDates}
-                optOutDiscount={pricing.optOutDiscount}
-                perDayPrice={pricing.perDayPrice}
-                maxOptOutDays={pricing.maxOptOutDays}
-                onClear={() => setOptOutDates([])}
-                onModify={() => toggleOptOutDialog(true)}
-              />
             </section>
 
             {/* Coupon Selector */}

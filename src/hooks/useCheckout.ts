@@ -31,6 +31,11 @@ import type { AppliedCoupon } from "@/components/customer/checkout/CouponSelecto
 import type { MealType } from "@/stores/plan-intent-store";
 import type { AddressType } from "@/api/types/customer.types";
 
+export interface MealAddressMapping {
+  meal_type: string;
+  address_id: string;
+}
+
 export interface CheckoutState {
   selectedAddressId: string | null;
   selectedPayment: PaymentMethod;
@@ -42,6 +47,7 @@ export interface CheckoutState {
   showOptOutDialog: boolean;
   appliedCoupon: AppliedCoupon | null;
   selectedMealType: MealType | null;
+  mealAddressMappings: MealAddressMapping[];
 }
 
 export interface UseCheckoutReturn {
@@ -91,6 +97,10 @@ export interface UseCheckoutReturn {
   setAppliedCoupon: (coupon: AppliedCoupon | null) => void;
   handleStartDateChange: (date: Date | undefined) => void;
   setSelectedMealType: (mealType: MealType | null) => void;
+  // Meal address mapping actions
+  setMealAddressMapping: (mealType: string, addressId: string) => void;
+  removeMealAddressMapping: (mealType: string) => void;
+  getMealAddressMapping: (mealType: string) => string | null;
   // Helper to get suggested address type based on selected meal
   getSuggestedAddressType: () => AddressType | null;
   handlePaymentSuccess: (response: {
@@ -151,6 +161,7 @@ export function useCheckout(): UseCheckoutReturn {
     showOptOutDialog: false,
     appliedCoupon: null,
     selectedMealType: preSelectedMealType,
+    mealAddressMappings: [],
   });
 
   // Derived values
@@ -449,6 +460,43 @@ export function useCheckout(): UseCheckoutReturn {
     setState((prev) => ({ ...prev, selectedMealType: mealType }));
   }, []);
 
+  // Set or update a meal address mapping
+  const setMealAddressMapping = useCallback((mealType: string, addressId: string) => {
+    setState((prev) => {
+      const existingIndex = prev.mealAddressMappings.findIndex(
+        (m) => m.meal_type === mealType
+      );
+      if (existingIndex >= 0) {
+        // Update existing mapping
+        const updated = [...prev.mealAddressMappings];
+        updated[existingIndex] = { meal_type: mealType, address_id: addressId };
+        return { ...prev, mealAddressMappings: updated };
+      }
+      // Add new mapping
+      return {
+        ...prev,
+        mealAddressMappings: [...prev.mealAddressMappings, { meal_type: mealType, address_id: addressId }],
+      };
+    });
+  }, []);
+
+  // Remove a meal address mapping
+  const removeMealAddressMapping = useCallback((mealType: string) => {
+    setState((prev) => ({
+      ...prev,
+      mealAddressMappings: prev.mealAddressMappings.filter((m) => m.meal_type !== mealType),
+    }));
+  }, []);
+
+  // Get address ID for a specific meal type
+  const getMealAddressMapping = useCallback(
+    (mealType: string): string | null => {
+      const mapping = state.mealAddressMappings.find((m) => m.meal_type === mealType);
+      return mapping?.address_id || null;
+    },
+    [state.mealAddressMappings]
+  );
+
   const getSuggestedAddressType = useCallback((): AddressType | null => {
     const mealType = state.selectedMealType;
     if (!mealType) return null;
@@ -502,5 +550,8 @@ export function useCheckout(): UseCheckoutReturn {
     handlePaymentDismissed,
     setSelectedMealType,
     getSuggestedAddressType,
+    setMealAddressMapping,
+    removeMealAddressMapping,
+    getMealAddressMapping,
   };
 }
