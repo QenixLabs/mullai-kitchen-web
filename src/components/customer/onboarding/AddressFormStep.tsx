@@ -359,6 +359,68 @@ export function AddressFormStep({
           </p>
         </div>
 
+        {/* Map Section for Coordinate Capture - Moved to top */}
+        <div className="space-y-3">
+          <div className="space-y-1">
+            <h4 className="text-sm font-semibold text-gray-700">
+              Pin your location on map
+            </h4>
+            <p className="text-xs text-gray-500">
+              Click on the map to mark your exact location or use current
+              location button.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <GoogleMap
+              center={mapCenter}
+              height="h-48"
+              onClick={handleMapClick}
+            >
+              {coordinates && (
+                <Marker
+                  position={coordinates}
+                  icon={{
+                    url: "/marker.svg",
+                    scaledSize: new window.google.maps.Size(40, 40),
+                  }}
+                />
+              )}
+            </GoogleMap>
+
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full py-3 px-4 bg-primary/10 hover:bg-primary/20 text-primary font-bold rounded-sm gap-2"
+              onClick={handleGetCurrentLocation}
+              disabled={isGettingLocation}
+            >
+              <MyLocation className="h-4 w-4" />
+              {isGettingLocation
+                ? "Getting location..."
+                : "Use Current Location"}
+            </Button>
+          </div>
+
+          {/* Coordinate validation error */}
+          {coordinatesRequired && (
+            <p className="text-xs text-destructive">
+              Please select your location on the map or use current location.
+            </p>
+          )}
+
+          {/* Display selected coordinates */}
+          {coordinates && (
+            <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-sm px-3 py-2">
+              <MapPin className="h-3.5 w-3.5" />
+              <span>
+                Location pinned: {coordinates.lat.toFixed(6)},{" "}
+                {coordinates.lng.toFixed(6)}
+              </span>
+            </div>
+          )}
+        </div>
+
         <Form {...form}>
           <div className="grid gap-4">
             <FormField
@@ -543,68 +605,6 @@ export function AddressFormStep({
             />
           </div>
         </Form>
-
-        {/* Map Section for Coordinate Capture */}
-        <div className="space-y-3">
-          <div className="space-y-1">
-            <h4 className="text-sm font-semibold text-gray-700">
-              Pin your location on map
-            </h4>
-            <p className="text-xs text-gray-500">
-              Click on the map to mark your exact location or use current
-              location button.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <GoogleMap
-              center={mapCenter}
-              height="h-48"
-              onClick={handleMapClick}
-            >
-              {coordinates && (
-                <Marker
-                  position={coordinates}
-                  icon={{
-                    url: "/marker.svg",
-                    scaledSize: new window.google.maps.Size(40, 40),
-                  }}
-                />
-              )}
-            </GoogleMap>
-
-            <Button
-              type="button"
-              variant="ghost"
-              className="w-full py-3 px-4 bg-primary/10 hover:bg-primary/20 text-primary font-bold rounded-sm gap-2"
-              onClick={handleGetCurrentLocation}
-              disabled={isGettingLocation}
-            >
-              <MyLocation className="h-4 w-4" />
-              {isGettingLocation
-                ? "Getting location..."
-                : "Use Current Location"}
-            </Button>
-          </div>
-
-          {/* Coordinate validation error */}
-          {coordinatesRequired && (
-            <p className="text-xs text-destructive">
-              Please select your location on the map or use current location.
-            </p>
-          )}
-
-          {/* Display selected coordinates */}
-          {coordinates && (
-            <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-sm px-3 py-2">
-              <MapPin className="h-3.5 w-3.5" />
-              <span>
-                Location pinned: {coordinates.lat.toFixed(6)},{" "}
-                {coordinates.lng.toFixed(6)}
-              </span>
-            </div>
-          )}
-        </div>
 
         <Button
           type="button"
