@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { subscriptionApi } from "@/api/subscription.api";
-import { subscriptionKeys } from "@/api/query-keys";
+import { subscriptionKeys, paymentKeys } from "@/api/query-keys";
 import type {
   SubscriptionListResponse,
   SubscriptionResponse,
@@ -8,6 +8,7 @@ import type {
   DailyOrdersResponse,
   PausePeriodsResponse,
   PauseSubscriptionRequest,
+  PauseSubscriptionResponse,
   ResumeSubscriptionRequest,
   CancelSubscriptionRequest,
   RenewSubscriptionRequest,
@@ -74,10 +75,13 @@ export function useOptOutPeriods(id: string, params?: QueryOptOutPeriodsParams) 
 export function usePauseSubscription() {
   const queryClient = useQueryClient();
 
-  return useMutation<{ success: boolean; message: string }, Error, { id: string } & PauseSubscriptionRequest>({
+  return useMutation<PauseSubscriptionResponse, Error, { id: string } & PauseSubscriptionRequest>({
     mutationFn: ({ id, ...data }) => subscriptionApi.pauseSubscription(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: subscriptionKeys.all() });
+      // Invalidate wallet cache since pause adds credits to wallet
+      queryClient.invalidateQueries({ queryKey: paymentKeys.walletBalance() });
+      queryClient.invalidateQueries({ queryKey: paymentKeys.walletTransactions() });
     },
     onError: (error) => {
       console.error("Pause subscription failed:", error);

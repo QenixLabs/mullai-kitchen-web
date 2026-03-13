@@ -7,6 +7,7 @@ import type {
   DailyOrdersResponse,
   PausePeriodsResponse,
   PauseSubscriptionRequest,
+  PauseSubscriptionResponse,
   ResumeSubscriptionRequest,
   CancelSubscriptionRequest,
   RenewSubscriptionRequest,
@@ -70,8 +71,8 @@ export const subscriptionApi = {
   pauseSubscription: async (
     id: string,
     payload: PauseSubscriptionRequest,
-  ): Promise<{ success: boolean; message: string }> => {
-    const response = await apiClient.post<{ success: boolean; message: string }>(
+  ): Promise<PauseSubscriptionResponse> => {
+    const response = await apiClient.post<PauseSubscriptionResponse>(
       SUBSCRIPTION_ROUTES.PAUSE(id),
       payload,
     );
