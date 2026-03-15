@@ -52,22 +52,22 @@ const deliveryZones = [
 
 // Counter animation hook
 function useCounter(target: number, duration: number = 2) {
-  const count = useMotionValue(0);
-  const rounded = useTransform(count, (latest) => Math.round(latest));
+  const [displayValue, setDisplayValue] = useState(0);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
   useEffect(() => {
     if (isInView) {
-      const controls = animate(count, target, {
+      const controls = animate(0, target, {
         duration,
-        ease: "easeOut"
+        ease: "easeOut",
+        onUpdate: (latest) => setDisplayValue(Math.round(latest))
       });
       return controls.stop;
     }
-  }, [isInView, target, duration, count]);
+  }, [isInView, target, duration]);
 
-  return { ref, rounded };
+  return { ref, displayValue };
 }
 
 // Stat Card Component
@@ -86,7 +86,7 @@ function StatCard({
   trend?: "up" | "down" | "neutral";
   delay?: number;
 }) {
-  const { ref, rounded } = useCounter(value);
+  const { ref, displayValue } = useCounter(value);
 
   return (
     <motion.div
@@ -96,38 +96,34 @@ function StatCard({
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="group relative overflow-hidden rounded-2xl bg-white/95 backdrop-blur-sm border border-gray-100/50 p-5 shadow-lg hover:shadow-xl transition-all duration-300"
+      className="group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-5 transition-all duration-300"
     >
-      {/* Gradient accent */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#39070F] via-[#D4A574] to-[#39070F] opacity-80" />
+      {/* Subtle Top Border */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#D4A574]/50 to-transparent opacity-80" />
+
+      {/* Live Badge - Absolute positioned top-right */}
+      {trend && (
+        <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
+          <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Live</span>
+        </div>
+      )}
 
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#39070F] to-[#5a0f1a] shadow-lg shadow-[#39070F]/20">
-          <Icon className="h-6 w-6 text-white" />
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#D4A574]/10 border border-[#D4A574]/20">
+          <Icon className="h-6 w-6 text-[#D4A574]" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline gap-1.5">
-            <motion.span className="text-3xl font-bold text-gray-900 tracking-tight">
-              {rounded}
-            </motion.span>
+            <span className="text-3xl font-bold text-white tracking-tight">
+              {displayValue}
+            </span>
             {suffix && (
               <span className="text-lg font-semibold text-[#D4A574]">{suffix}</span>
             )}
           </div>
-          <p className="text-sm text-gray-500 mt-0.5">{label}</p>
+          <p className="text-sm text-white/60 mt-0.5">{label}</p>
         </div>
-        {trend && (
-          <div className={cn(
-            "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium",
-            trend === "up" && "bg-emerald-50 text-emerald-600",
-            trend === "down" && "bg-red-50 text-red-600",
-            trend === "neutral" && "bg-gray-100 text-gray-600"
-          )}>
-            {trend === "up" && "↑"}
-            {trend === "down" && "↓"}
-            Live
-          </div>
-        )}
       </div>
     </motion.div>
   );
@@ -160,28 +156,28 @@ function DeliveryZoneCard({
       className={cn(
         "group flex items-center justify-between p-3.5 rounded-xl border transition-all duration-300 cursor-pointer",
         zone.active
-          ? "bg-gradient-to-r from-emerald-50 to-transparent border-emerald-200/50 hover:border-emerald-300 hover:shadow-md"
-          : "bg-gray-50/50 border-gray-200/50 hover:border-gray-300"
+          ? "bg-[#10B981]/10 border-[#10B981]/20 hover:border-[#10B981]/40"
+          : "bg-white/5 border-white/5 hover:border-white/10"
       )}
     >
       <div className="flex items-center gap-3">
         <div className="relative">
           <div className={cn(
-            "w-2.5 h-2.5 rounded-full",
-            zone.active ? "bg-emerald-500" : "bg-gray-400"
+            "w-2 h-2 rounded-full",
+            zone.active ? "bg-emerald-500" : "bg-gray-600"
           )} />
           {zone.active && (
-            <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+            <div className="absolute inset-0 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
           )}
         </div>
         <div>
           <p className={cn(
             "font-semibold text-sm",
-            zone.active ? "text-emerald-900" : "text-gray-700"
+            zone.active ? "text-emerald-400" : "text-white/70"
           )}>
             {zone.name}
           </p>
-          <p className="text-xs text-gray-500">
+          <p className="text-[11px] text-white/40">
             {zone.active ? `${zone.orders} orders in progress` : `Next delivery ${zone.time}`}
           </p>
         </div>
@@ -193,9 +189,9 @@ function DeliveryZoneCard({
           animate={{ scale: 1 }}
           transition={{ delay: index * 0.05 + 0.2 }}
         >
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500 rounded-full">
-            <Truck className="h-3 w-3 text-white" />
-            <span className="text-xs font-semibold text-white">{zone.time}</span>
+          <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/30 rounded-full">
+            <Truck className="h-3 w-3 text-emerald-400" />
+            <span className="text-[10px] font-bold text-emerald-400">{zone.time}</span>
           </div>
         </motion.div>
       )}
@@ -206,12 +202,12 @@ function DeliveryZoneCard({
 // Live Badge Component
 function LiveBadge() {
   return (
-    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#39070F] to-[#5a0f1a] shadow-lg shadow-[#39070F]/30">
+    <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-linear-to-r from-[#39070F] to-[#5a0f1a] border border-[#D4A574]/20 shadow-lg shadow-[#39070F]/30">
       <div className="relative flex h-2 w-2">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
       </div>
-      <span className="text-sm font-semibold text-white tracking-wide">LIVE FROM KITCHEN</span>
+      <span className="text-[11px] font-bold text-white uppercase tracking-[0.2em]">Live from Kitchen</span>
     </div>
   );
 }
@@ -258,7 +254,7 @@ export function LiveKitchenStatus() {
           <MapContainer
             center={CHENNAI_CENTER}
             zoom={12}
-            className="!rounded-none h-full w-full"
+            className="rounded-none! h-full w-full"
             zoomControl={false}
             scrollWheelZoom={true}
           >
@@ -330,8 +326,8 @@ export function LiveKitchenStatus() {
       </div>
 
       {/* Dark Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/70 z-10" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-transparent z-10" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/40 to-black/80 z-10" />
+      <div className="absolute inset-0 bg-linear-to-r from-black/80 via-transparent to-transparent z-10" />
 
       {/* Content */}
       <div className="relative z-20 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 py-16 lg:py-24">
@@ -350,7 +346,7 @@ export function LiveKitchenStatus() {
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1]">
                 Live from Our
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#e8c4a0]">
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4A574] to-[#e8c4a0]">
                   Cloud Kitchen
                 </span>
               </h2>
@@ -403,7 +399,7 @@ export function LiveKitchenStatus() {
             >
               <Button
                 size="lg"
-                className="h-14 px-8 bg-gradient-to-r from-[#39070F] to-[#5a0f1a] hover:from-[#4a0a15] hover:to-[#6b1020] text-white font-semibold rounded-full shadow-xl shadow-[#39070F]/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="h-14 px-8 bg-linear-to-r from-[#39070F] to-[#5a0f1a] hover:from-[#4a0a15] hover:to-[#6b1020] text-white font-semibold rounded-full shadow-xl shadow-[#39070F]/30 transition-all hover:scale-[1.02] active:scale-[0.98] border border-[#D4A574]/20"
               >
                 <Zap className="w-5 h-5 mr-2" />
                 Order Now
@@ -411,7 +407,7 @@ export function LiveKitchenStatus() {
               <Button
                 size="lg"
                 variant="outline"
-                className="h-14 px-8 bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 font-semibold rounded-full transition-all"
+                className="h-14 px-8 bg-white/5 backdrop-blur-sm border-white/10 text-white hover:bg-white/10 font-semibold rounded-full transition-all"
               >
                 <Phone className="w-5 h-5 mr-2" />
                 Contact Kitchen
@@ -427,15 +423,18 @@ export function LiveKitchenStatus() {
             className="space-y-6"
           >
             {/* Schedule Card */}
-            <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/20">
+            <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10 relative overflow-hidden group">
+              {/* Subtle Top Border */}
+              <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#D4A574]/50 to-transparent opacity-80" />
+              
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-gray-900">Delivery Zones</h3>
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full">
+                <h3 className="text-xl font-bold text-white">Delivery Zones</h3>
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
                   <div className="relative w-2 h-2">
                     <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping" />
                     <div className="relative w-2 h-2 bg-emerald-500 rounded-full" />
                   </div>
-                  <span className="text-xs font-semibold text-emerald-700">{activeZones.length} Active</span>
+                  <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">{activeZones.length} Active</span>
                 </div>
               </div>
 
@@ -447,14 +446,14 @@ export function LiveKitchenStatus() {
               </div>
 
               {/* Footer */}
-              <div className="mt-6 pt-4 border-t border-gray-100">
+              <div className="mt-6 pt-4 border-t border-white/10">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-gray-600">
+                  <div className="flex items-center gap-2 text-white/60">
                     <Clock className="h-4 w-4" />
                     <span className="text-sm">Next batch in</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-[#39070F]">12:30</span>
+                    <span className="text-lg font-bold text-white">12:30</span>
                     <ArrowRight className="w-4 h-4 text-[#D4A574]" />
                   </div>
                 </div>
@@ -462,9 +461,9 @@ export function LiveKitchenStatus() {
             </div>
 
             {/* Quick Info Card */}
-            <div className="bg-gradient-to-br from-[#39070F] to-[#5a0f1a] rounded-2xl p-5 shadow-xl">
+            <div className="bg-linear-to-br from-[#39070F] to-[#5a0f1a] rounded-2xl p-5 shadow-xl border border-[#D4A574]/20">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0">
                   <Flame className="w-6 h-6 text-[#D4A574]" />
                 </div>
                 <div>
@@ -488,11 +487,11 @@ export function LiveKitchenStatus() {
           background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #d1d5db;
+          background: rgba(255, 255, 255, 0.1);
           border-radius: 2px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #9ca3af;
+          background: rgba(255, 255, 255, 0.2);
         }
 
         /* Leaflet custom styles */
@@ -501,7 +500,13 @@ export function LiveKitchenStatus() {
         }
         .leaflet-popup-content-wrapper {
           border-radius: 12px;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+          background: rgba(13, 2, 5, 0.9) !important;
+          backdrop-filter: blur(8px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: white !important;
+        }
+        .leaflet-popup-tip {
+          background: rgba(13, 2, 5, 0.9) !important;
         }
         .leaflet-popup-content {
           margin: 8px 12px;
@@ -511,16 +516,17 @@ export function LiveKitchenStatus() {
           box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
         }
         .leaflet-control-zoom a {
-          background-color: white !important;
-          color: #39070F !important;
-          border: none !important;
+          background-color: rgba(255, 255, 255, 0.05) !important;
+          backdrop-filter: blur(8px);
+          color: white !important;
+          border: 1px solid rgba(255, 255, 255, 0.1) !important;
           width: 36px !important;
           height: 36px !important;
           line-height: 36px !important;
           font-size: 18px !important;
         }
         .leaflet-control-zoom a:hover {
-          background-color: #f3f4f6 !important;
+          background-color: rgba(255, 255, 255, 0.1) !important;
         }
       `}</style>
     </section>

@@ -1,16 +1,17 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect } from "react";
-import { MapPin, Menu, X, ChevronDown, UtensilsCrossed, Phone } from "lucide-react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "motion/react";
+import { MapPin, Menu, X, ChevronDown, UtensilsCrossed } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { fadeInDown, slideInRight } from "./animations";
+import { fadeInDown } from "./animations";
+import { cn } from "@/lib/utils";
 
 const chennaiAreas = [
-  "Anna Nagar", "T. Nagar", "Adyar", "Mylapore", "Velachery", 
-  "Nungambakkam", "Kodambakkam", "Porur", "Guindy", "Chromepet"
+  "Anna Nagar", "T. Nagar", "Adyar", "Mylapore", "Velachery",
+  "Nungambakkam", "Kodambakkam", "Porur", "Guindy", "Chromepet", "Tambaram", "ECR", "OMR", "Anna Salai",
+  "Pallavaram", "Chetpet", "Poonamallee"
 ];
 
 export function LandingNavbar() {
@@ -32,118 +33,103 @@ export function LandingNavbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? "bg-[#FAF7F2]/95 backdrop-blur-lg shadow-lg" 
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        isScrolled
+          ? "bg-[#1a0509]/95 backdrop-blur-lg shadow-lg border-b border-white/10"
           : "bg-transparent"
-      }`}
+      )}
     >
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#39070F]">
-              <UtensilsCrossed className="h-5 w-5 text-white" />
-            </div>
-            <span className={`text-xl font-bold transition-colors ${
-              isScrolled ? "text-[#39070F]" : "text-white"
-            }`}>
-              Mullai Kitchen
-            </span>
-          </Link>
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 flex items-center justify-between h-20">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#39070F] to-[#5a0f1a] shadow-lg shadow-[#39070F]/30">
+            <UtensilsCrossed className="h-5 w-5 text-white" />
+          </div>
+          <span className="text-xl font-bold text-white tracking-tight">
+            Mullai Kitchen
+          </span>
+        </Link>
 
-          {/* Desktop Location Pill */}
-          <div className="hidden md:flex items-center">
-            <motion.div 
-              variants={fadeInDown}
-              initial="initial"
-              animate="animate"
-              className="flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-4 py-2 shadow-md border border-[#39070F]/10"
-            >
-              <div className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
-              </div>
-              <MapPin className="h-4 w-4 text-[#39070F]" />
-              <span className="text-sm font-medium text-gray-700">Delivering to</span>
+        {/* Desktop Location Pill & Nav Items */}
+        <div className="hidden md:flex items-center gap-8">
+          <motion.div
+            variants={fadeInDown}
+            initial="initial"
+            animate="animate"
+            className="relative"
+          >
+            <div className="flex items-center gap-3 rounded-full bg-white/10 backdrop-blur-xl px-5 py-2.5 border border-white/20 hover:border-[#D4A574]/40 transition-all">
+              <span className="text-xs font-medium text-white/60 uppercase tracking-widest">Delivering to</span>
+              <div className="w-px h-4 bg-white/20" />
               <button
                 onClick={() => setShowAreaDropdown(!showAreaDropdown)}
-                className="flex items-center gap-1 text-sm font-semibold text-[#39070F] hover:text-[#D4A574] transition-colors"
+                className="flex items-center gap-2 text-sm font-semibold text-white hover:text-[#D4A574] transition-colors"
+                aria-expanded={showAreaDropdown}
               >
+                <MapPin className="h-4 w-4 text-[#D4A574]" />
                 {selectedArea}, Chennai
-                <ChevronDown className={`h-4 w-4 transition-transform ${showAreaDropdown ? "rotate-180" : ""}`} />
+                <ChevronDown className={cn(
+                  "h-4 w-4 transition-transform duration-300",
+                  showAreaDropdown && "rotate-180"
+                )} />
               </button>
-            </motion.div>
-          </div>
+            </div>
 
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-4">
-            <Link 
-              href="tel:+919876543210"
-              className={`flex items-center gap-2 text-sm font-medium transition-colors ${
-                isScrolled ? "text-gray-700 hover:text-[#39070F]" : "text-white/90 hover:text-white"
-              }`}
-            >
-              <Phone className="h-4 w-4" />
-              Support
-            </Link>
-            <Link href="/plans">
-              <Button 
-                className="h-10 rounded-full bg-[#39070F] px-6 text-sm font-semibold text-white hover:bg-[#39070F]/90 shadow-lg shadow-[#39070F]/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
-              >
-                Get Started
-              </Button>
-            </Link>
-          </div>
+            {/* Area Dropdown */}
+            <AnimatePresence>
+              {showAreaDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute top-full mt-3 right-0 w-64 bg-[#1a0509]/98 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-2 z-50"
+                  onMouseLeave={() => setShowAreaDropdown(false)}
+                >
+                  <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+                    {chennaiAreas.map((area) => (
+                      <button
+                        key={area}
+                        onClick={() => {
+                          setSelectedArea(area);
+                          setShowAreaDropdown(false);
+                        }}
+                        className={cn(
+                          "w-full text-left px-4 py-2.5 text-sm transition-colors",
+                          selectedArea === area
+                            ? "text-[#D4A574] bg-white/5 font-semibold"
+                            : "text-white/70 hover:text-white hover:bg-white/10"
+                        )}
+                      >
+                        {area}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
 
-          {/* Mobile Menu Button */}
+          <Link href="/auth/signin" className="text-sm font-medium text-white/80 hover:text-white transition-all hover:translate-y-[-1px]">
+            Login
+          </Link>
+          
+          <Button className="bg-[#D4A574] hover:bg-[#C39463] text-[#1a0509] font-bold rounded-full px-8 shadow-lg shadow-[#D4A574]/20 hover:shadow-[#D4A574]/30 transition-all active:scale-95">
+            Get Started
+          </Button>
+        </div>
+
+        {/* Mobile menu button */}
+        <div className="flex md:hidden items-center gap-4">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+            className="p-2 text-white hover:bg-white/10 rounded-xl transition-colors"
+            aria-label="Toggle menu"
           >
-            {isMobileMenuOpen ? (
-              <X className={`h-6 w-6 ${isScrolled ? "text-gray-900" : "text-white"}`} />
-            ) : (
-              <Menu className={`h-6 w-6 ${isScrolled ? "text-gray-900" : "text-white"}`} />
-            )}
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
-
-      {/* Area Dropdown */}
-      <AnimatePresence>
-        {showAreaDropdown && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50"
-          >
-            <div className="p-2">
-              <p className="px-3 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Select Your Area
-              </p>
-              {chennaiAreas.map((area) => (
-                <button
-                  key={area}
-                  onClick={() => {
-                    setSelectedArea(area);
-                    setShowAreaDropdown(false);
-                  }}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                    selectedArea === area 
-                      ? "bg-[#39070F]/10 text-[#39070F] font-medium" 
-                      : "text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  {area}, Chennai
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Mobile Menu */}
       <AnimatePresence>
@@ -152,27 +138,42 @@ export function LandingNavbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden bg-white border-t border-gray-100"
+            className="md:hidden bg-[#1a0509] border-t border-white/10 overflow-hidden"
           >
-            <div className="px-4 py-4 space-y-4">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <MapPin className="h-4 w-4 text-[#39070F]" />
-                <span>Delivering to {selectedArea}, Chennai</span>
+            <div className="px-4 py-8 space-y-8">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-[#D4A574] font-medium px-2">
+                  <MapPin className="h-4 w-4" />
+                  <span className="text-sm">Select Delivery Area</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 p-2 bg-white/5 rounded-2xl max-h-[250px] overflow-y-auto">
+                  {chennaiAreas.map((area) => (
+                    <button
+                      key={area}
+                      onClick={() => {
+                        setSelectedArea(area);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={cn(
+                        "text-left px-3 py-2.5 text-xs rounded-lg transition-all",
+                        selectedArea === area 
+                          ? "bg-[#D4A574] text-[#1a0509] font-bold" 
+                          : "text-white/60 hover:text-white hover:bg-white/10"
+                      )}
+                    >
+                      {area}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="space-y-2">
-                <Link href="/plans" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button className="w-full h-12 rounded-full bg-[#39070F] text-white font-semibold">
-                    Get Started
-                  </Button>
-                </Link>
-                <Link 
-                  href="tel:+919876543210" 
-                  className="flex items-center justify-center gap-2 py-3 text-sm font-medium text-gray-700"
-                >
-                  <Phone className="h-4 w-4" />
-                  Call Support
-                </Link>
+              
+              <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
+                <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 w-full rounded-xl h-12">
+                  Login to Account
+                </Button>
+                <Button className="bg-[#D4A574] hover:bg-[#C39463] text-[#1a0509] w-full font-bold rounded-xl h-12 shadow-lg shadow-[#D4A574]/20">
+                  Get Started Now
+                </Button>
               </div>
             </div>
           </motion.div>

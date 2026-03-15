@@ -3,8 +3,8 @@ import { Variants } from "motion/react";
 
 export const fadeInUp: Variants = {
   initial: { opacity: 0, y: 40 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     y: 0,
     transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
   },
@@ -12,8 +12,8 @@ export const fadeInUp: Variants = {
 
 export const fadeInDown: Variants = {
   initial: { opacity: 0, y: -20 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     y: 0,
     transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
   },
@@ -21,7 +21,7 @@ export const fadeInDown: Variants = {
 
 export const fadeIn: Variants = {
   initial: { opacity: 0 },
-  animate: { 
+  animate: {
     opacity: 1,
     transition: { duration: 0.5 }
   },
@@ -29,8 +29,8 @@ export const fadeIn: Variants = {
 
 export const scaleIn: Variants = {
   initial: { opacity: 0, scale: 0.9 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     scale: 1,
     transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
   },
@@ -38,8 +38,8 @@ export const scaleIn: Variants = {
 
 export const slideInLeft: Variants = {
   initial: { opacity: 0, x: -60 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     x: 0,
     transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
   },
@@ -47,8 +47,8 @@ export const slideInLeft: Variants = {
 
 export const slideInRight: Variants = {
   initial: { opacity: 0, x: 60 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     x: 0,
     transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
   },
@@ -87,4 +87,37 @@ export const hoverScale = {
 
 export const tapScale = {
   scale: 0.98,
+};
+
+// Premium card hover effect
+export const hoverPremiumLift = {
+  y: -8,
+  scale: 1.01,
+  transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
+};
+
+// Glow pulse animation
+export const glowPulse = {
+  boxShadow: [
+    "0 0 20px rgba(212, 165, 116, 0.3)",
+    "0 0 40px rgba(212, 165, 116, 0.5)",
+    "0 0 20px rgba(212, 165, 116, 0.3)"
+  ],
+  transition: { duration: 2, repeat: Infinity, ease: "easeInOut" as const }
+};
+
+// Float animation for decorative elements
+export const floatAnimation = {
+  y: [0, -20, 0],
+  transition: { duration: 6, repeat: Infinity, ease: "easeInOut" as const }
+};
+
+// Counter animation helper
+export const counterVariants: Variants = {
+  initial: { opacity: 0, scale: 0.5 },
+  animate: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+  },
 };
