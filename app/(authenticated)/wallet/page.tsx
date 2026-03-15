@@ -10,6 +10,7 @@ import {
   FaWallet,
 } from "react-icons/fa";
 import { motion } from "motion/react";
+import { toast } from "sonner";
 import type {
   TopupWalletResponse,
 } from "@/api/types/payment.types";
@@ -100,7 +101,6 @@ export default function WalletPage() {
       // Step 4: Open Zoho checkout
       openZohoCheckout({
         accountId: order.providerAccountId,
-        apiKey: process.env.NEXT_PUBLIC_ZOHO_API_KEY || '',
         paymentSessionId: order.paymentSessionId,
         customer: {
           name: user?.name,
@@ -119,7 +119,7 @@ export default function WalletPage() {
         },
         onFailure: (error: ZohoPaymentError) => {
           console.error("Payment failed:", error);
-          alert(`Payment failed: ${error.description}`);
+          toast.error("Payment Failed", { description: error.description });
           setIsTopupProcessing(false);
         },
         onDismiss: () => {
@@ -130,7 +130,7 @@ export default function WalletPage() {
     } catch (err: unknown) {
       const error = err as Error;
       console.error("Top-up failed:", error);
-      alert(`Failed to initiate payment: ${error.message || "Unknown error"}`);
+      toast.error("Payment Error", { description: error.message || "Failed to initiate payment" });
     } finally {
       setIsTopupProcessing(false);
     }

@@ -67,7 +67,6 @@ export function loadZohoPaymentsScript(): Promise<void> {
 
 export function openZohoCheckout(config: {
   accountId: string;
-  apiKey: string;
   paymentSessionId: string;
   customer?: {
     name?: string;
@@ -85,12 +84,11 @@ export function openZohoCheckout(config: {
     throw new Error("Zoho Payments SDK not loaded. Call loadZohoPaymentsScript() first.");
   }
 
+  // Initialize Zoho Payments with account ID only
+  // The payment session is already created server-side with proper authentication
   const zohoInstance = new window.ZPayments({
     account_id: config.accountId,
     domain: 'IN',
-    otherOptions: {
-      api_key: config.apiKey,
-    },
   });
 
   zohoInstance.open({

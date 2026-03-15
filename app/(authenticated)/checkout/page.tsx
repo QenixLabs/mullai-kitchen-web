@@ -108,7 +108,6 @@ export default function CheckoutPage() {
 
       openZohoCheckout({
         accountId: result.providerAccountId,
-        apiKey: process.env.NEXT_PUBLIC_ZOHO_API_KEY || '',
         paymentSessionId: result.paymentSessionId,
         customer: {
           name: user?.name ?? "",
