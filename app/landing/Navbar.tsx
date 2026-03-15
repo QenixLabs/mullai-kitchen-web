@@ -179,7 +179,7 @@ export function LandingNavbar() {
               </div>
               
               <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
-                <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 w-full rounded-xl h-12">
+                <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
                   Login to Account
                 </Button>
                 <Button className="bg-[#D4A574] hover:bg-[#C39463] text-[#1a0509] w-full font-bold rounded-xl h-12 shadow-lg shadow-[#D4A574]/20">
