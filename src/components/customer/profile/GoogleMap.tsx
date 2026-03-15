@@ -67,7 +67,7 @@ export function GoogleMap({
   if (loadError) {
     return (
       <div
-        className={`bg-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg flex items-center justify-center ${height} ${className}`}
+        className={`bg-slate-100 border border-slate-200 rounded-lg flex items-center justify-center ${height} ${className}`}
       >
         <div className="text-center p-4">
           <FaMapMarkerAlt className="h-8 w-8 text-slate-400 mx-auto mb-2" />
@@ -81,7 +81,7 @@ export function GoogleMap({
   if (!isLoaded) {
     return (
       <div
-        className={`bg-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg flex items-center justify-center ${height} ${className}`}
+        className={`bg-slate-100 border border-slate-200 rounded-lg flex items-center justify-center ${height} ${className}`}
       >
         <div className="animate-pulse flex items-center gap-2">
           <div className="w-3 h-3 bg-primary/60 rounded-full animate-bounce" />
@@ -93,7 +93,7 @@ export function GoogleMap({
   }
 
   return (
-    <div className={`relative ${height} rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 ${className}`}>
+    <div className={`relative ${height} rounded-lg overflow-hidden border border-slate-200 ${className}`}>
       <GoogleMapComponent
         mapContainerStyle={containerStyle}
         center={mapCenter}

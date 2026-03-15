@@ -266,7 +266,7 @@ export function AddressSelectionModal({
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-[520px] max-h-[90vh] overflow-y-auto rounded-xl p-0">
-        <DialogHeader className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+        <DialogHeader className="px-6 py-4 border-b border-slate-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-sm bg-primary/10 text-primary">
@@ -289,7 +289,7 @@ export function AddressSelectionModal({
               placeholder="Search for area, street name or pincode..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-lg"
+              className="pl-10 py-3 bg-slate-50 border-none rounded-lg"
             />
           </div>
 
@@ -335,23 +335,23 @@ export function AddressSelectionModal({
             <div
               className={`rounded-lg p-3 flex items-start gap-3 ${
                 serviceabilityInfo.isServiceable
-                  ? "bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800"
-                  : "bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800"
+                  ? "bg-green-50 border border-green-100"
+                  : "bg-amber-50 border border-amber-100"
               }`}
             >
               <FaCheckCircle
                 className={`text-xl ${
                   serviceabilityInfo.isServiceable
-                    ? "text-green-600 dark:text-green-400"
-                    : "text-amber-600 dark:text-amber-400"
+                    ? "text-green-600"
+                    : "text-amber-600"
                 }`}
               />
               <div>
                 <p
                   className={`text-sm font-semibold ${
                     serviceabilityInfo.isServiceable
-                      ? "text-green-800 dark:text-green-300"
-                      : "text-amber-800 dark:text-amber-300"
+                      ? "text-green-800"
+                      : "text-amber-800"
                   }`}
                 >
                   {serviceabilityInfo.isServiceable ? "Serviceable Area" : "Limited Service"}
@@ -359,8 +359,8 @@ export function AddressSelectionModal({
                 <p
                   className={`text-xs ${
                     serviceabilityInfo.isServiceable
-                      ? "text-green-700 dark:text-green-400"
-                      : "text-amber-700 dark:text-amber-400"
+                      ? "text-green-700"
+                      : "text-amber-700"
                   }`}
                 >
                   {serviceabilityInfo.message}
@@ -371,7 +371,7 @@ export function AddressSelectionModal({
 
           {/* Form Section */}
           <div className="space-y-4">
-            <h3 className="font-bold text-slate-800 dark:text-slate-200">
+            <h3 className="font-bold text-slate-800">
               Address Details
             </h3>
 
@@ -544,7 +544,7 @@ export function AddressSelectionModal({
                           className={`flex items-center justify-center gap-2 p-3 rounded-lg border transition-all ${
                             form.watch("type") === type
                               ? "border-primary bg-primary/5 text-primary"
-                              : "border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                              : "border-slate-200 hover:border-slate-300"
                           }`}
                         >
                           {type === "Home" && <FaHome className="h-4 w-4" />}
@@ -562,7 +562,7 @@ export function AddressSelectionModal({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+        <div className="p-6 border-t border-slate-100 bg-slate-50">
           <Button
             type="button"
             onClick={handleSubmit}
