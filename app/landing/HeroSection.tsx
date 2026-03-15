@@ -50,21 +50,21 @@ function StatPill({
       initial={{ opacity: 0, scale: 0.9 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
-      className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20"
+      className="inline-flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20"
     >
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-[#D4A574] to-[#c49a6a]">
-        <Icon className="h-4 w-4 text-[#39070F]" />
+      <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#D4A574] to-[#c49a6a] flex-shrink-0">
+        <Icon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-[#39070F]" />
       </div>
-      <div>
-        <div className="flex items-baseline gap-1">
-          <span className="text-lg font-bold text-white">
+      <div className="flex flex-col justify-center">
+        <div className="flex items-baseline gap-0.5 sm:gap-1 leading-none">
+          <span className="text-base sm:text-lg font-bold text-white">
             {displayValue}
           </span>
           {suffix && (
-            <span className="text-sm font-semibold text-[#D4A574]">{suffix}</span>
+            <span className="text-xs sm:text-sm font-semibold text-[#D4A574]">{suffix}</span>
           )}
         </div>
-        <p className="text-xs text-white/60">{label}</p>
+        <p className="text-[10px] sm:text-xs text-white/60 mt-0.5 leading-none">{label}</p>
       </div>
     </motion.div>
   );
@@ -149,8 +149,8 @@ export function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 pt-32 pb-20">
-        <div className="grid lg:grid-cols-[1.3fr_1fr] gap-8 lg:gap-16 items-center min-h-[70vh]">
+      <div className="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 pt-24 sm:pt-32 pb-16 sm:pb-20">
+        <div className="grid lg:grid-cols-[1.3fr_1fr] gap-8 lg:gap-16 items-center min-h-[60vh] sm:min-h-[70vh]">
           {/* Left Content */}
           <motion.div
             initial="initial"
@@ -201,7 +201,7 @@ export function HeroSection() {
                 <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-[#39070F] via-[#D4A574] to-[#39070F] rounded-t-2xl" />
 
                 <p className="text-sm text-gray-600 mb-3 font-medium">Enter your pincode to check availability</p>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <div className="relative flex-1">
                     <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#39070F]" />
                     <Input
@@ -210,13 +210,13 @@ export function HeroSection() {
                       maxLength={6}
                       value={pincode}
                       onChange={(e) => setPincode(e.target.value.replace(/\D/g, ""))}
-                      className="h-14 pl-12 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 text-lg font-medium rounded-xl focus:ring-2 focus:ring-[#D4A574] focus:border-transparent"
+                      className="h-12 sm:h-14 pl-12 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 text-base sm:text-lg font-medium rounded-xl focus:ring-2 focus:ring-[#D4A574] focus:border-transparent"
                     />
                   </div>
                   <Button
                     onClick={handleCheckPincode}
                     disabled={pincode.length !== 6 || isChecking}
-                    className="h-14 px-8 bg-gradient-to-r from-[#39070F] to-[#5a0f1a] hover:from-[#4a0a15] hover:to-[#6b1020] text-white font-semibold rounded-xl shadow-lg shadow-[#39070F]/30 disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    className="h-12 sm:h-14 px-6 sm:px-8 bg-gradient-to-r from-[#39070F] to-[#5a0f1a] hover:from-[#4a0a15] hover:to-[#6b1020] text-white font-semibold rounded-xl shadow-lg shadow-[#39070F]/30 disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-[0.98]"
                   >
                     {isChecking ? (
                       <motion.div
@@ -227,7 +227,8 @@ export function HeroSection() {
                     ) : (
                       <>
                         <Search className="h-5 w-5 mr-2" />
-                        Check
+                        <span className="sm:hidden">Check</span>
+                        <span className="hidden sm:inline">Check</span>
                       </>
                     )}
                   </Button>
@@ -238,7 +239,7 @@ export function HeroSection() {
             {/* Premium Stats Pills */}
             <motion.div
               variants={fadeInUp}
-              className="flex flex-wrap gap-3"
+              className="flex flex-wrap items-center gap-2 sm:gap-3"
             >
               <StatPill
                 value={2000}

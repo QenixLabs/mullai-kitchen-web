@@ -120,7 +120,18 @@ export function LandingNavbar() {
         </div>
 
         {/* Mobile menu button */}
-        <div className="flex md:hidden items-center gap-4">
+        <div className="flex md:hidden items-center gap-3">
+          {/* Login Button - Visible on mobile */}
+          <Link href="/auth/signin">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="text-white/80 hover:text-white hover:bg-white/10 rounded-full px-4"
+            >
+              Login
+            </Button>
+          </Link>
+          
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="p-2 text-white hover:bg-white/10 rounded-xl transition-colors"

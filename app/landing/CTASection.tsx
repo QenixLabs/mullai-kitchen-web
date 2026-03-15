@@ -125,7 +125,7 @@ export function CTASection() {
           {/* Premium Headline */}
           <motion.h2
             variants={fadeInUp}
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight leading-[1.1]"
+            className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white mb-6 tracking-tight leading-[1.1] px-2 sm:px-0"
           >
             Ready to Transform
             <br />

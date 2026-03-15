@@ -196,7 +196,7 @@ export function TestimonialsSection() {
 
           <motion.h2
             variants={fadeInUp}
-            className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight px-2 sm:px-0"
           >
             What Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#e8c4a0]">Customers Say</span>
           </motion.h2>
@@ -209,85 +209,85 @@ export function TestimonialsSection() {
           </motion.p>
         </motion.div>
 
-        {/* Premium Testimonials Carousel */}
-        <motion.div
-          initial="initial"
-          animate={isInView ? "animate" : "initial"}
-          variants={scaleIn}
-          className="relative max-w-[1000px] mx-auto"
-        >
-          {/* Glow Effect */}
-          <div className="absolute -inset-4 bg-gradient-to-r from-[#D4A574]/10 to-[#39070F]/10 rounded-[2rem] blur-2xl" />
+          {/* Premium Testimonials Carousel */}
+          <motion.div
+            initial="initial"
+            animate={isInView ? "animate" : "initial"}
+            variants={scaleIn}
+            className="relative max-w-[1000px] mx-auto px-2 sm:px-0"
+          >
+            {/* Glow Effect */}
+            <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-[#D4A574]/10 to-[#39070F]/10 rounded-[1.5rem] sm:rounded-[2rem] blur-2xl" />
 
-          {/* Main Card */}
-          <div className="relative h-[420px] overflow-hidden">
-            <AnimatePresence initial={false} custom={direction}>
-              <motion.div
-                key={currentIndex}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: "spring", stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 }
-                }}
-                className="absolute inset-0"
-              >
-                <div className="relative h-full bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl">
-                  {/* Gradient Top Border */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#39070F] via-[#D4A574] to-[#39070F] rounded-t-3xl" />
+            {/* Main Card */}
+            <div className="relative min-h-[480px] sm:min-h-[400px] lg:h-[420px] overflow-hidden">
+              <AnimatePresence initial={false} custom={direction}>
+                <motion.div
+                  key={currentIndex}
+                  custom={direction}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{
+                    x: { type: "spring", stiffness: 300, damping: 30 },
+                    opacity: { duration: 0.2 }
+                  }}
+                  className="absolute inset-0"
+                >
+                  <div className="relative h-full bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-white/10 shadow-2xl">
+                    {/* Gradient Top Border */}
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#39070F] via-[#D4A574] to-[#39070F] rounded-t-2xl sm:rounded-t-3xl" />
 
-                  <div className="flex flex-col h-full">
-                    {/* Premium Quote Icon */}
-                    <div className="mb-6">
-                      <Quote className="h-12 w-12 text-[#D4A574]" />
-                    </div>
-
-                    {/* Content */}
-                    <p className="text-xl text-white/90 leading-relaxed flex-grow font-medium">
-                      "{testimonials[currentIndex].content}"
-                    </p>
-
-                    {/* Footer */}
-                    <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
-                      <div className="flex items-center gap-4">
-                        <div className="relative w-16 h-16 rounded-full overflow-hidden ring-2 ring-[#D4A574]/30">
-                          <Image
-                            src={testimonials[currentIndex].image}
-                            alt={testimonials[currentIndex].name}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-bold text-white text-lg">
-                              {testimonials[currentIndex].name}
-                            </h4>
-                            {testimonials[currentIndex].verified && (
-                              <BadgeCheck className="h-5 w-5 text-[#D4A574]" />
-                            )}
-                          </div>
-                          <p className="text-sm text-white/50">
-                            {testimonials[currentIndex].role} • {testimonials[currentIndex].location}
-                          </p>
-                          <p className="text-xs text-[#D4A574] mt-1 font-medium">
-                            {testimonials[currentIndex].ordered}
-                          </p>
-                        </div>
+                    <div className="flex flex-col h-full">
+                      {/* Premium Quote Icon */}
+                      <div className="mb-4 sm:mb-6">
+                        <Quote className="h-8 w-8 sm:h-12 sm:w-12 text-[#D4A574]" />
                       </div>
 
-                      {/* Premium Rating */}
-                      <div className="flex items-center gap-1 bg-gradient-to-r from-[#39070F] to-[#5a0f1a] px-4 py-2 rounded-full">
-                        {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
-                          <Star key={i} className="h-5 w-5 fill-[#D4A574] text-[#D4A574]" />
-                        ))}
+                      {/* Content */}
+                      <p className="text-base sm:text-xl text-white/90 leading-relaxed flex-grow font-medium">
+                        "{testimonials[currentIndex].content}"
+                      </p>
+
+                      {/* Footer */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-white/10 gap-4">
+                        <div className="flex items-center gap-3 sm:gap-4">
+                          <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden ring-2 ring-[#D4A574]/30 flex-shrink-0">
+                            <Image
+                              src={testimonials[currentIndex].image}
+                              alt={testimonials[currentIndex].name}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-bold text-white text-base sm:text-lg truncate">
+                                {testimonials[currentIndex].name}
+                              </h4>
+                              {testimonials[currentIndex].verified && (
+                                <BadgeCheck className="h-4 w-4 sm:h-5 sm:w-5 text-[#D4A574] flex-shrink-0" />
+                              )}
+                            </div>
+                            <p className="text-xs sm:text-sm text-white/50">
+                              {testimonials[currentIndex].role} • {testimonials[currentIndex].location}
+                            </p>
+                            <p className="text-xs text-[#D4A574] mt-1 font-medium">
+                              {testimonials[currentIndex].ordered}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Premium Rating */}
+                        <div className="flex items-center gap-1 bg-gradient-to-r from-[#39070F] to-[#5a0f1a] px-3 sm:px-4 py-2 rounded-full self-start sm:self-auto">
+                          {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
+                            <Star key={i} className="h-4 w-4 sm:h-5 sm:w-5 fill-[#D4A574] text-[#D4A574]" />
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
               </motion.div>
             </AnimatePresence>
           </div>

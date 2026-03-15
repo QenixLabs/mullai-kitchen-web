@@ -51,11 +51,11 @@ export function HowItWorksSection() {
           initial="initial"
           animate={isInView ? "animate" : "initial"}
           variants={staggerContainer}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
           <motion.div
             variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#39070F] to-[#5a0f1a] border border-[#D4A574]/20 mb-6"
+            className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-[#39070F] to-[#5a0f1a] border border-[#D4A574]/20 mb-4 sm:mb-6"
           >
             <Sparkles className="h-4 w-4 text-[#D4A574]" />
             <span className="text-sm font-semibold text-white tracking-wide">Simple Process</span>
@@ -63,14 +63,14 @@ export function HowItWorksSection() {
 
           <motion.h2
             variants={fadeInUp}
-            className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 tracking-tight"
           >
             How <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#e8c4a0]">Mullai Kitchen</span> Works
           </motion.h2>
 
           <motion.p
             variants={fadeInUp}
-            className="text-lg text-white/60"
+            className="text-base sm:text-lg text-white/60 px-2 sm:px-0"
           >
             Getting started takes just 2 minutes. Here&apos;s how we bring home-style meals to your door.
           </motion.p>
@@ -81,7 +81,7 @@ export function HowItWorksSection() {
           initial="initial"
           animate={isInView ? "animate" : "initial"}
           variants={staggerContainer}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
         >
           {steps.map((step, index) => (
             <motion.div

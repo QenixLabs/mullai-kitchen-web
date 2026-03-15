@@ -74,10 +74,10 @@ export function PromoBanner() {
         />
       </div>
 
-      <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 py-4">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 py-3 sm:py-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           {/* Left: Offer */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <motion.div
               animate={{ rotate: [0, 15, -15, 0] }}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
@@ -87,23 +87,23 @@ export function PromoBanner() {
             </motion.div>
 
             <div className="text-center sm:text-left">
-              <div className="flex items-center gap-2 justify-center sm:justify-start">
-                <span className="text-2xl font-bold text-white">First Meal FREE</span>
-                <span className="text-sm text-white/80">on your first subscription!</span>
+              <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                <span className="text-xl sm:text-2xl font-bold text-white">First Meal FREE</span>
+                <span className="text-xs sm:text-sm text-white/80">on your first subscription!</span>
               </div>
-              <p className="text-sm text-white/60">
+              <p className="text-xs sm:text-sm text-white/60">
                 Use code: <span className="font-mono font-bold text-[#D4A574]">MULLAI50</span>
               </p>
             </div>
           </div>
 
           {/* Center: Countdown */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
               <Clock className="h-5 w-5 text-[#D4A574]" />
             </div>
-            <span className="text-white/70 text-sm font-medium">Offer ends in:</span>
-            <div className="flex gap-1.5">
+            <span className="text-white/70 text-xs sm:text-sm font-medium">Ends in:</span>
+            <div className="flex gap-1 sm:gap-1.5">
               {[
                 timeLeft.hours.toString().padStart(2, '0'),
                 timeLeft.minutes.toString().padStart(2, '0'),
@@ -117,12 +117,12 @@ export function PromoBanner() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.15 }}
-                      className="bg-white/20 backdrop-blur-sm rounded-lg px-2.5 py-1.5 text-white font-mono font-bold min-w-[2.5rem] text-center text-sm"
+                      className="bg-white/20 backdrop-blur-sm rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 text-white font-mono font-bold min-w-[2rem] sm:min-w-[2.5rem] text-center text-xs sm:text-sm"
                     >
                       {time}
                     </motion.span>
                   </AnimatePresence>
-                  {i < 2 && <span className="text-white/40 mx-1 font-bold">:</span>}
+                  {i < 2 && <span className="text-white/40 mx-0.5 sm:mx-1 font-bold">:</span>}
                 </span>
               ))}
             </div>
@@ -130,9 +130,9 @@ export function PromoBanner() {
 
           {/* Right: CTA */}
           <Link href="/plans">
-            <Button className="bg-gradient-to-r from-[#D4A574] to-[#c49a6a] hover:from-[#e8c4a0] hover:to-[#D4A574] text-[#39070F] font-semibold rounded-full px-6 shadow-lg shadow-[#D4A574]/30 transition-all hover:scale-[1.02] active:scale-[0.98] group">
+            <Button className="bg-gradient-to-r from-[#D4A574] to-[#c49a6a] hover:from-[#e8c4a0] hover:to-[#D4A574] text-[#39070F] font-semibold rounded-full px-4 sm:px-6 py-2 h-auto text-sm sm:text-base shadow-lg shadow-[#D4A574]/30 transition-all hover:scale-[1.02] active:scale-[0.98] group">
               <Gift className="h-4 w-4 mr-2" />
-              Claim Offer
+              Claim
               <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>
@@ -140,7 +140,7 @@ export function PromoBanner() {
           {/* Close Button */}
           <button
             onClick={() => setIsVisible(false)}
-            className="absolute top-2 right-2 sm:static p-1.5 text-white/40 hover:text-white transition-colors rounded-full hover:bg-white/10"
+            className="absolute top-1 right-1 sm:static p-1.5 text-white/40 hover:text-white transition-colors rounded-full hover:bg-white/10"
           >
             <X className="h-4 w-4" />
           </button>

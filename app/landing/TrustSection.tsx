@@ -125,7 +125,7 @@ export function TrustSection() {
 
           <motion.h2
             variants={fadeInUp}
-            className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight"
           >
             Why Chennai Chooses <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4A574] to-[#e8c4a0]">Mullai Kitchen</span>
           </motion.h2>
@@ -203,11 +203,11 @@ export function TrustSection() {
                   Enter your pincode to check availability in your area.
                 </p>
 
-                <div className="flex flex-wrap gap-2 mb-6">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6">
                   {chennaiAreas.map((area) => (
                     <span
                       key={area}
-                      className="px-4 py-2 rounded-full bg-white/10 text-white/80 text-sm border border-white/10 hover:bg-white/20 hover:border-[#D4A574]/30 transition-all cursor-pointer"
+                      className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/10 text-white/80 text-xs sm:text-sm border border-white/10 hover:bg-white/20 hover:border-[#D4A574]/30 transition-all cursor-pointer"
                     >
                       {area}
                     </span>

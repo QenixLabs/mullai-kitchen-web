@@ -112,7 +112,7 @@ export function FAQSection() {
 
           <motion.h2
             variants={fadeInUp}
-            className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight px-2 sm:px-0"
           >
             Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#e8c4a0]">Questions</span>
           </motion.h2>
@@ -188,9 +188,9 @@ export function FAQSection() {
               )}>
                 <button
                   onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  className="w-full flex items-center justify-between p-6 text-left transition-colors"
+                  className="w-full flex items-center justify-between p-4 sm:p-6 text-left transition-colors"
                 >
-                  <span className="text-lg font-semibold text-white pr-4">{faq.question}</span>
+                  <span className="text-base sm:text-lg font-semibold text-white pr-3 sm:pr-4">{faq.question}</span>
                   <div className={cn(
                     "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300",
                     openIndex === index

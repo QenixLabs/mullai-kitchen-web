@@ -89,43 +89,43 @@ function StatCard({
   const { ref, displayValue } = useCounter(value);
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-5 transition-all duration-300"
-    >
-      {/* Subtle Top Border */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#D4A574]/50 to-transparent opacity-80" />
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay }}
+        whileHover={{ y: -4, transition: { duration: 0.2 } }}
+        className="group relative overflow-hidden rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-3 sm:p-5 transition-all duration-300"
+      >
+        {/* Subtle Top Border */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#D4A574]/50 to-transparent opacity-80" />
 
-      {/* Live Badge - Absolute positioned top-right */}
-      {trend && (
-        <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-          <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Live</span>
-        </div>
-      )}
-
-      <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#D4A574]/10 border border-[#D4A574]/20">
-          <Icon className="h-6 w-6 text-[#D4A574]" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-3xl font-bold text-white tracking-tight">
-              {displayValue}
-            </span>
-            {suffix && (
-              <span className="text-lg font-semibold text-[#D4A574]">{suffix}</span>
-            )}
+        {/* Live Badge - Absolute positioned top-right */}
+        {trend && (
+          <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
+            <span className="text-[9px] sm:text-[10px] font-bold text-emerald-500 uppercase tracking-wider hidden sm:inline">Live</span>
           </div>
-          <p className="text-sm text-white/60 mt-0.5">{label}</p>
+        )}
+
+        <div className="flex items-start gap-2 sm:gap-4">
+          <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-[#D4A574]/10 border border-[#D4A574]/20 flex-shrink-0">
+            <Icon className="h-4 w-4 sm:h-6 sm:w-6 text-[#D4A574]" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-baseline gap-1 sm:gap-1.5">
+              <span className="text-xl sm:text-3xl font-bold text-white tracking-tight">
+                {displayValue}
+              </span>
+              {suffix && (
+                <span className="text-sm sm:text-lg font-semibold text-[#D4A574]">{suffix}</span>
+              )}
+            </div>
+            <p className="text-xs sm:text-sm text-white/60 mt-0.5">{label}</p>
+          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
   );
 }
 
@@ -247,7 +247,7 @@ export function LiveKitchenStatus() {
   const totalOrdersInProgress = activeZones.reduce((acc, z) => acc + z.orders, 0);
 
   return (
-    <section ref={ref} className="relative min-h-[900px] overflow-hidden">
+    <section ref={ref} className="relative min-h-[700px] sm:min-h-[900px] overflow-hidden">
       {/* Map Background - Full Width */}
       <div className="absolute inset-0 z-0">
         {mounted && (
@@ -330,8 +330,8 @@ export function LiveKitchenStatus() {
       <div className="absolute inset-0 bg-linear-to-r from-black/80 via-transparent to-transparent z-10" />
 
       {/* Content */}
-      <div className="relative z-20 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 py-16 lg:py-24">
-        <div className="grid lg:grid-cols-[1.3fr_1fr] gap-8 lg:gap-12">
+      <div className="relative z-20 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 py-12 sm:py-16 lg:py-24">
+        <div className="grid lg:grid-cols-[1.3fr_1fr] gap-6 sm:gap-8 lg:gap-12">
           {/* Left Content */}
           <motion.div
             initial="initial"
@@ -343,7 +343,7 @@ export function LiveKitchenStatus() {
             <motion.div variants={fadeInUp} className="space-y-6">
               <LiveBadge />
 
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1]">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-[1.1]">
                 Live from Our
                 <br />
                 <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4A574] to-[#e8c4a0]">
@@ -360,7 +360,7 @@ export function LiveKitchenStatus() {
             {/* Stats Grid */}
             <motion.div
               variants={fadeInUp}
-              className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+              className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
             >
               <StatCard
                 value={activeOrders}
@@ -395,7 +395,7 @@ export function LiveKitchenStatus() {
             {/* CTA Buttons */}
             <motion.div
               variants={fadeInUp}
-              className="flex flex-wrap gap-4"
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4"
             >
               <Button
                 size="lg"
