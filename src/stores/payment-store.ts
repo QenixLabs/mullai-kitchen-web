@@ -4,7 +4,7 @@ import { createJSONStorage, persist, StateStorage } from "zustand/middleware";
 import type {
   PaymentOrderResponse,
   PaymentStatus,
-  RazorpayPaymentResponse,
+  PaymentSuccessResponse,
 } from "@/api/types/payment.types";
 
 export interface PaymentState {
@@ -15,13 +15,17 @@ export interface PaymentState {
   currency: string | null;
   razorpayPaymentId: string | null;
   razorpaySignature: string | null;
+  paymentId: string | null;
+  paymentSessionId: string | null;
   errorMessage: string | null;
   walletReservationAmount: number | null;
+  providerAccountId: string | null;
+  provider: 'razorpay' | 'zoho' | null;
 }
 
 export interface PaymentActions {
   setPaymentProcessing: (order: PaymentOrderResponse) => void;
-  setPaymentSuccess: (response: RazorpayPaymentResponse) => void;
+  setPaymentSuccess: (response: PaymentSuccessResponse) => void;
   setPaymentFailed: (message: string) => void;
   setPaymentCancelled: () => void;
   resetPayment: () => void;
@@ -38,8 +42,12 @@ const defaultPaymentState: PaymentState = {
   currency: null,
   razorpayPaymentId: null,
   razorpaySignature: null,
+  paymentId: null,
+  paymentSessionId: null,
   errorMessage: null,
   walletReservationAmount: null,
+  providerAccountId: null,
+  provider: null,
 };
 
 const noopStorage: StateStorage = {
@@ -72,16 +80,33 @@ export const createPaymentStore = (
             amount: order.amount,
             currency: order.currency,
             walletReservationAmount: order.walletReservationAmount,
+            providerAccountId: order.providerAccountId || null,
+            provider: order.provider || null,
             errorMessage: null,
           });
         },
-        setPaymentSuccess: (response: RazorpayPaymentResponse) => {
-          set({
-            status: "success",
-            razorpayPaymentId: response.razorpay_payment_id,
-            razorpaySignature: response.razorpay_signature,
-            errorMessage: null,
-          });
+        setPaymentSuccess: (response: PaymentSuccessResponse) => {
+          // Handle Zoho response
+          if ('payment_id' in response) {
+            set({
+              status: "success",
+              paymentId: response.payment_id,
+              paymentSessionId: response.payment_session_id,
+              razorpayPaymentId: null,
+              razorpaySignature: null,
+              errorMessage: null,
+            });
+          } else {
+            // Handle Razorpay response
+            set({
+              status: "success",
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              paymentId: null,
+              paymentSessionId: null,
+              errorMessage: null,
+            });
+          }
         },
         setPaymentFailed: (message: string) => {
           set({
@@ -115,7 +140,11 @@ export const createPaymentStore = (
           currency: state.currency,
           razorpayPaymentId: state.razorpayPaymentId,
           razorpaySignature: state.razorpaySignature,
+          paymentId: state.paymentId,
+          paymentSessionId: state.paymentSessionId,
           walletReservationAmount: state.walletReservationAmount,
+          providerAccountId: state.providerAccountId,
+          provider: state.provider,
         }),
       },
     ),

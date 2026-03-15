@@ -12,8 +12,8 @@ import {
 import { motion } from "motion/react";
 import type {
   TopupWalletResponse,
-  RazorpayPaymentResponse,
 } from "@/api/types/payment.types";
+import type { ZohoPaymentResponse, ZohoPaymentError } from "@/lib/zoho-payments";
 
 import { WalletBalanceCard } from "@/components/customer/wallet";
 import { TransactionHistory } from "@/components/customer/wallet";
@@ -42,7 +42,7 @@ import {
   useWalletBalance,
   useWalletTransactions,
 } from "@/api/hooks/usePayment";
-import { loadRazorpayScript, openRazorpayCheckout } from "@/lib/razorpay";
+import { loadZohoPaymentsScript, openZohoCheckout } from "@/lib/zoho-payments";
 import { useCurrentUser } from "@/hooks/useUserStore";
 import React from "react";
 
@@ -83,47 +83,47 @@ export default function WalletPage() {
 
     setIsTopupProcessing(true);
     try {
-      // Step 1: Load Razorpay script first
-      await loadRazorpayScript();
-
-      // Step 2: Create Razorpay order
+      // Step 1: Create Zoho payment session
       const order: TopupWalletResponse = await topupMutation.mutateAsync({
         amount,
       });
 
       console.log("=== Top-up Debug ====");
-      console.log("Razorpay Order created:", order.razorpayOrderId);
+      console.log("Zoho Payment Session created:", order.paymentSessionId);
 
-      // Step 3: Open Razorpay checkout using the shared utility
-      // Close the modal FIRST so the overlay doesn't block the Razorpay popup
+      // Step 2: Load Zoho Payments script
+      await loadZohoPaymentsScript();
+
+      // Step 3: Close the modal FIRST so the overlay doesn't block the Zoho popup
       setIsAddFundsOpen(false);
 
-      openRazorpayCheckout({
-        keyId: order.keyId,
-        amount: order.amount,
-        currency: order.currency,
-        name: order.name,
-        description: order.description,
-        orderId: order.razorpayOrderId,
-        prefill: {
+      // Step 4: Open Zoho checkout
+      openZohoCheckout({
+        accountId: order.providerAccountId,
+        apiKey: process.env.NEXT_PUBLIC_ZOHO_API_KEY || '',
+        paymentSessionId: order.paymentSessionId,
+        customer: {
           name: user?.name,
           email: user?.email,
-          contact: user?.phone,
+          phone: user?.phone,
         },
-        onSuccess: (response: RazorpayPaymentResponse) => {
+        theme: {
+          color: "#39070F",
+        },
+        onSuccess: (response: ZohoPaymentResponse) => {
           console.log("Payment successful:", response);
           setIsTopupProcessing(false);
           setTopupAmount("");
-          refetchBalance(); // Refresh wallet balance
-          refetchTransactions(); // Refresh transactions
+          refetchBalance();
+          refetchTransactions();
+        },
+        onFailure: (error: ZohoPaymentError) => {
+          console.error("Payment failed:", error);
+          alert(`Payment failed: ${error.description}`);
+          setIsTopupProcessing(false);
         },
         onDismiss: () => {
           console.log("Payment modal dismissed");
-          setIsTopupProcessing(false);
-        },
-        onFailure: (error) => {
-          console.error("Payment failed:", error);
-          alert(`Payment failed: ${error.description}`);
           setIsTopupProcessing(false);
         },
       });

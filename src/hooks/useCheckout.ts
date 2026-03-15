@@ -26,6 +26,7 @@ import {
   type PricingBreakdown,
 } from "@/lib/checkout-config";
 import type { PaymentStore } from "@/stores/payment-store";
+import type { PaymentSuccessResponse } from "@/api/types/payment.types";
 import type { AppliedCoupon } from "@/components/customer/checkout/CouponSelector";
 
 export interface CheckoutState {
@@ -86,11 +87,7 @@ export interface UseCheckoutReturn {
   toggleOptOutDialog: (show?: boolean) => void;
   setAppliedCoupon: (coupon: AppliedCoupon | null) => void;
   handleStartDateChange: (date: Date | undefined) => void;
-  handlePaymentSuccess: (response: {
-    razorpay_payment_id: string;
-    razorpay_order_id: string;
-    razorpay_signature: string;
-  }) => void;
+  handlePaymentSuccess: (response: PaymentSuccessResponse) => void;
   handlePaymentFailure: (error: { code: string; description: string }) => void;
   handlePaymentDismissed: () => void;
 }
@@ -315,11 +312,7 @@ export function useCheckout(): UseCheckoutReturn {
   }, []);
 
   const handlePaymentSuccess = useCallback(
-    (response: {
-      razorpay_payment_id: string;
-      razorpay_order_id: string;
-      razorpay_signature: string;
-    }) => {
+    (response: PaymentSuccessResponse) => {
       paymentStore.setPaymentSuccess(response);
       router.push(
         `/checkout/success?planName=${encodeURIComponent(plan?.name || "Subscription")}`,
