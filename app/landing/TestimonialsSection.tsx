@@ -16,7 +16,7 @@ const testimonials = [
     location: "Anna Nagar",
     image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop",
     rating: 5,
-    content: "Mullai Kitchen has been a lifesaver! After long work days, I don't have to worry about cooking. The food tastes just like home - fresh, flavorful, and perfectly spiced.",
+    content: "Mullai has been a lifesaver! After long work days, I don't have to worry about cooking. The food tastes just like home - fresh, flavorful, and perfectly spiced.",
     ordered: "Daily Meals - Monthly Plan",
     verified: true
   },
@@ -38,7 +38,7 @@ const testimonials = [
     location: "Adyar",
     image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop",
     rating: 5,
-    content: "Even though I cook, sometimes I need a break. Mullai Kitchen's meals are so authentic and delicious. My family loves the variety and the portions are generous. Highly recommend!",
+    content: "Even though I cook, sometimes I need a break. Mullai's meals are so authentic and delicious. My family loves the variety and the portions are generous. Highly recommend!",
     ordered: "Basic Tiffin - Weekly Plan",
     verified: true
   },
@@ -235,9 +235,9 @@ export function TestimonialsSection() {
                   }}
                   className="absolute inset-0"
                 >
-                  <div className="relative h-full bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-white/10 shadow-2xl">
+                  <div className="relative h-full bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-white/10 shadow-2xl overflow-hidden">
                     {/* Gradient Top Border */}
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#39070F] via-[#D4A574] to-[#39070F] rounded-t-2xl sm:rounded-t-3xl" />
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#39070F] via-[#D4A574] to-[#39070F]" />
 
                     <div className="flex flex-col h-full">
                       {/* Premium Quote Icon */}

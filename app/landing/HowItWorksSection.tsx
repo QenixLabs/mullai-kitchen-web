@@ -65,7 +65,7 @@ export function HowItWorksSection() {
             variants={fadeInUp}
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 tracking-tight"
           >
-            How <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#e8c4a0]">Mullai Kitchen</span> Works
+            How <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#e8c4a0]">Mullai</span> Works
           </motion.h2>
 
           <motion.p

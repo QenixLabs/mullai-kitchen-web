@@ -9,4 +9,5 @@ export { TrustSection } from "./TrustSection";
 export { TestimonialsSection } from "./TestimonialsSection";
 export { FAQSection } from "./FAQSection";
 export { CTASection } from "./CTASection";
+export { BulkOrdersSection } from "./BulkOrdersSection";
 export { LandingFooter } from "./Footer";
