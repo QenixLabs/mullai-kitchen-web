@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
-import { MapPin, Menu, X, ChevronDown, UtensilsCrossed } from "lucide-react";
+import { MapPin, Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fadeInDown } from "./animations";
 import { cn } from "@/lib/utils";
@@ -42,13 +43,22 @@ export function LandingNavbar() {
     >
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 flex items-center justify-between h-20">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#39070F] to-[#5a0f1a] shadow-lg shadow-[#39070F]/30">
-            <UtensilsCrossed className="h-5 w-5 text-white" />
-          </div>
-          <span className="text-xl font-bold text-white tracking-tight">
-            Mullai Kitchen
-          </span>
+        <Link href="/" className="flex items-center gap-3 group">
+          <Image
+            src="/logo.png"
+            alt="Mullai Kitchen Logo"
+            width={150}
+            height={150}
+            className="object-contain"
+          />
+          {/* <div className="flex flex-col">
+            <span className="text-xl font-bold text-white tracking-tight leading-tight">
+              Mullai
+            </span>
+            <span className="text-xs text-[#D4A574]/80 tracking-wide">
+              your everyday meal partner
+            </span>
+          </div> */}
         </Link>
 
         {/* Desktop Location Pill & Nav Items */}

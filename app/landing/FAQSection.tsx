@@ -121,7 +121,7 @@ export function FAQSection() {
             variants={fadeInUp}
             className="text-lg text-white/60"
           >
-            Everything you need to know about Mullai Kitchen.
+            Everything you need to know about Mullai.
           </motion.p>
         </motion.div>
 

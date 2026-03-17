@@ -10,7 +10,7 @@ import { PricingSection } from "./landing/PricingSection";
 import { TrustSection } from "./landing/TrustSection";
 import { TestimonialsSection } from "./landing/TestimonialsSection";
 import { FAQSection } from "./landing/FAQSection";
-import { CTASection } from "./landing/CTASection";
+import { CTASection, BulkOrdersSection } from "./landing";
 import { LandingFooter } from "./landing/Footer";
 
 export default function LandingPage() {
@@ -25,6 +25,7 @@ export default function LandingPage() {
         <HowItWorksSection />
         <TodaysMenuSection />
         <PricingSection />
+        <BulkOrdersSection />
         <TrustSection />
         <TestimonialsSection />
         <FAQSection />

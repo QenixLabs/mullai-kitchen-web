@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mullai Kitchen",
-  description: "Kitchen operations frontend",
+  title: "Mullai - Your Everyday Meal Partner",
+  description: "Authentic South Indian meals delivered daily to your doorstep in Chennai.",
 };
 
 import Script from "next/script";

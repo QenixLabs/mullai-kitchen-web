@@ -176,7 +176,7 @@ export function HeroSection() {
             >
               Authentic South Indian
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] via-[#e8c4a0] to-[#D4A574]">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4A574] via-[#e8c4a0] to-[#D4A574]">
                 Meals Delivered Daily
               </span>
             </motion.h1>

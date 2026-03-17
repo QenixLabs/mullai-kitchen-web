@@ -274,7 +274,7 @@ export function LiveKitchenStatus() {
                         <ChefHat className="w-4 h-4 text-white" />
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900">Mullai Kitchen</p>
+                        <p className="font-bold text-gray-900">Mullai</p>
                         <p className="text-xs text-gray-500">Cloud Kitchen HQ</p>
                       </div>
                     </div>

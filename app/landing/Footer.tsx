@@ -31,7 +31,7 @@ const footerLinks = {
   support: [
     { name: "Help Center", href: "#" },
     { name: "FAQs", href: "#faq" },
-    { name: "Contact Us", href: "tel:+919876543210" },
+    { name: "Contact Us", href: "tel:+918428129262" },
     { name: "Track Order", href: "#" }
   ],
   legal: [
@@ -78,7 +78,7 @@ export function LandingFooter() {
                 <UtensilsCrossed className="h-5 w-5 text-[#39070F]" />
               </div>
               <span className="text-xl font-bold text-white">
-                Mullai Kitchen
+                Mullai
               </span>
             </Link>
 
@@ -168,14 +168,14 @@ export function LandingFooter() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-[#D4A574] flex-shrink-0" />
-                <a href="tel:+919876543210" className="text-white/50 hover:text-[#D4A574] transition-colors">
-                  +91 98765 43210
+                <a href="tel:+918428129262" className="text-white/50 hover:text-[#D4A574] transition-colors">
+                  +91 84281 29262
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-[#D4A574] flex-shrink-0" />
-                <a href="mailto:hello@mullaikitchen.com" className="text-white/50 hover:text-[#D4A574] transition-colors">
-                  hello@mullaikitchen.com
+                <a href="mailto:founder@mullai.net" className="text-white/50 hover:text-[#D4A574] transition-colors">
+                  founder@mullai.net
                 </a>
               </li>
             </ul>
@@ -203,7 +203,7 @@ export function LandingFooter() {
         <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-white/40 text-sm text-center md:text-left">
-              © {new Date().getFullYear()} Mullai Kitchen. All rights reserved.
+              © {new Date().getFullYear()} Mullai. All rights reserved.
             </p>
 
             <p className="text-white/40 text-sm flex items-center gap-1">

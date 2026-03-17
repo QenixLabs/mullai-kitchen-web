@@ -127,7 +127,7 @@ export function TrustSection() {
             variants={fadeInUp}
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight"
           >
-            Why Chennai Chooses <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4A574] to-[#e8c4a0]">Mullai Kitchen</span>
+            Why Chennai Chooses <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4A574] to-[#e8c4a0]">Mullai</span>
           </motion.h2>
 
           <motion.p
