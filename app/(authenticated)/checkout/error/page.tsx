@@ -132,7 +132,7 @@ export default function CheckoutErrorPage() {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-red-50 to-stone-100">
-      <div className="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-4 py-12">
+      <div className="mx-auto flex min-h-screen flex-col items-center justify-center px-4 py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

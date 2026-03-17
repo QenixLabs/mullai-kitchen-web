@@ -50,7 +50,6 @@ export default function CheckoutPage() {
     handleStartDateChange,
     handlePaymentSuccess,
     handlePaymentFailure,
-    handlePaymentDismissed,
     setSelectedPayment,
     setApplyWallet,
     setSelectedAddressId,
@@ -98,7 +97,7 @@ export default function CheckoutPage() {
       if (result.amount === 0) {
         handlePaymentSuccess({
           payment_id: "WALLET_PAYMENT",
-          payment_session_id: result.paymentSessionId,
+          payments_session_id: result.paymentSessionId,
           status: "paid",
         });
         return;
@@ -109,17 +108,17 @@ export default function CheckoutPage() {
       openZohoCheckout({
         accountId: result.providerAccountId,
         paymentSessionId: result.paymentSessionId,
+        amount: result.amount,
+        currency: result.currency,
         customer: {
           name: user?.name ?? "",
           email: user?.email ?? "",
           phone: user?.phone ?? "",
         },
-        theme: {
-          color: "#39070F",
-        },
+        description: result.description,
+        invoiceNumber: result.order_id,
         onSuccess: handlePaymentSuccess,
         onFailure: handlePaymentFailure,
-        onDismiss: handlePaymentDismissed,
       });
     } catch (err) {
       const errorMessage =
@@ -141,7 +140,6 @@ export default function CheckoutPage() {
     createOrderMutation,
     handlePaymentSuccess,
     handlePaymentFailure,
-    handlePaymentDismissed,
     state.appliedCoupon?.couponId,
   ]);
 

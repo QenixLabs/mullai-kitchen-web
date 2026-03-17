@@ -152,13 +152,13 @@ export interface RazorpayPaymentResponse {
 
 export interface ZohoPaymentResponse {
   payment_id: string;
-  payment_session_id: string;
+  payments_session_id: string; // Note: Zoho API uses payments_session_id (with 's')
   status: string;
 }
 
 export interface ZohoPaymentError {
   code: string;
-  description: string;
+  message: string; // Note: Zoho SDK returns 'message' not 'description'
 }
 
 // ===========================================

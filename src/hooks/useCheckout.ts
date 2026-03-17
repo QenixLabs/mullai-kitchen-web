@@ -88,7 +88,7 @@ export interface UseCheckoutReturn {
   setAppliedCoupon: (coupon: AppliedCoupon | null) => void;
   handleStartDateChange: (date: Date | undefined) => void;
   handlePaymentSuccess: (response: PaymentSuccessResponse) => void;
-  handlePaymentFailure: (error: { code: string; description: string }) => void;
+  handlePaymentFailure: (error: { code: string; message: string }) => void;
   handlePaymentDismissed: () => void;
 }
 
@@ -322,8 +322,8 @@ export function useCheckout(): UseCheckoutReturn {
   );
 
   const handlePaymentFailure = useCallback(
-    (error: { code: string; description: string }) => {
-      toast.error("Payment Failed", { description: error.description });
+    (error: { code: string; message: string }) => {
+      toast.error("Payment Failed", { description: error.message });
       router.push("/checkout/error");
     },
     [router],
