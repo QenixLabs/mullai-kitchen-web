@@ -60,7 +60,7 @@ function CheckoutSuccessContent() {
   const [countdown, setCountdown] = useState(5);
 
   const paymentStore = usePaymentStore();
-  const { orderId, razorpayPaymentId, amount, errorMessage } = paymentStore;
+  const { orderId, razorpayPaymentId, paymentId, amount, errorMessage } = paymentStore;
 
   const { data: orderStatus } = useOrderStatus(orderId || "");
 
@@ -71,7 +71,10 @@ function CheckoutSuccessContent() {
     let computedStatus: ConfirmationStatus = "loading";
     let computedError: string | null = null;
 
-    if (razorpayPaymentId && orderId) {
+    // Check for successful payment (Razorpay or Zoho)
+    const hasPaymentId = razorpayPaymentId || paymentId;
+
+    if (hasPaymentId && orderId) {
       if (orderStatus) {
         if (orderStatus.status === "paid") {
           computedStatus = "confirmed";
@@ -283,7 +286,7 @@ function CheckoutSuccessContent() {
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Transaction ID</span>
                         <span className="font-mono text-foreground">
-                          {razorpayPaymentId || searchParams.get("razorpay_payment_id") || "N/A"}
+                          {razorpayPaymentId || paymentId || searchParams.get("razorpay_payment_id") || "N/A"}
                         </span>
                       </div>
                       
