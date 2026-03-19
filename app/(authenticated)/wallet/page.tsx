@@ -102,13 +102,12 @@ export default function WalletPage() {
       openZohoCheckout({
         accountId: order.providerAccountId,
         paymentSessionId: order.paymentSessionId,
+        amount: order.amount,
+        currency: order.currency,
         customer: {
           name: user?.name,
           email: user?.email,
           phone: user?.phone,
-        },
-        theme: {
-          color: "#39070F",
         },
         onSuccess: (response: ZohoPaymentResponse) => {
           console.log("Payment successful:", response);
@@ -119,11 +118,7 @@ export default function WalletPage() {
         },
         onFailure: (error: ZohoPaymentError) => {
           console.error("Payment failed:", error);
-          toast.error("Payment Failed", { description: error.description });
-          setIsTopupProcessing(false);
-        },
-        onDismiss: () => {
-          console.log("Payment modal dismissed");
+          toast.error("Payment Failed", { description: error.message });
           setIsTopupProcessing(false);
         },
       });
