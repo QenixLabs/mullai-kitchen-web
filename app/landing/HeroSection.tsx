@@ -11,24 +11,7 @@ import { fadeInUp, staggerContainer, slideInRight, floatAnimation } from "./anim
 import { cn } from "@/lib/utils";
 
 // Counter animation hook
-function useCounter(target: number, duration: number = 2) {
-  const [displayValue, setDisplayValue] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (isInView) {
-      const controls = animate(0, target, {
-        duration,
-        ease: "easeOut",
-        onUpdate: (latest) => setDisplayValue(Math.round(latest))
-      });
-      return controls.stop;
-    }
-  }, [isInView, target, duration]);
-
-  return { ref, displayValue };
-}
+import { useCounter } from "@/hooks/use-counter";
 
 // Stat Pill Component
 function StatPill({
@@ -94,18 +77,20 @@ export function HeroSection() {
       {/* Background Image with Premium Overlay */}
       <div className="absolute inset-0">
         <Image
-          src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=1920&q=80"
+          src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80"
           alt="South Indian Thali"
           fill
           className="object-cover"
           priority
+          sizes="100vw"
+          quality={80}
         />
         {/* Premium Gradient Overlays */}
         <div className="absolute inset-0 bg-linear-to-b from-[#39070F]/90 via-[#39070F]/70 to-[#39070F]" />
         <div className="absolute inset-0 bg-linear-to-r from-[#39070F] via-[#39070F]/60 to-transparent" />
         <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
 
-        {/* Noise Texture Overlay */}
+        {/* Noise Texture Overlay - Optimized SVG path */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
         }} />
@@ -296,10 +281,11 @@ export function HeroSection() {
                 {/* Card Image */}
                 <div className="relative h-72">
                   <Image
-                    src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800&q=80"
+                    src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&q=80"
                     alt="Grand South Indian Thali"
                     fill
                     className="object-cover"
+                    sizes="(max-width: 1024px) 0vw, 400px"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
                 </div>

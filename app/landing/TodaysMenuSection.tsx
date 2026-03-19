@@ -98,24 +98,7 @@ const menuItems = [
 ];
 
 // Counter animation hook
-function useCounter(target: number, duration: number = 1.5) {
-  const [displayValue, setDisplayValue] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (isInView) {
-      const controls = animate(0, target, {
-        duration,
-        ease: "easeOut",
-        onUpdate: (latest) => setDisplayValue(Math.round(latest))
-      });
-      return controls.stop;
-    }
-  }, [isInView, target, duration]);
-
-  return { ref, displayValue };
-}
+import { useCounter } from "@/hooks/use-counter";
 
 export function TodaysMenuSection() {
   const ref = useRef(null);
@@ -200,7 +183,7 @@ export function TodaysMenuSection() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className={cn(
-                "relative px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 whitespace-nowrap flex-shrink-0",
+                "relative px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 whitespace-nowrap shrink-0",
                 activeCategory === category
                   ? "text-white"
                   : "text-white/60 hover:text-white hover:bg-white/5"
@@ -256,6 +239,7 @@ export function TodaysMenuSection() {
                         alt={item.name}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0d0205] via-transparent to-transparent" />
 

@@ -69,24 +69,7 @@ const plans = [
 ];
 
 // Counter animation hook
-function useCounter(target: number, duration: number = 1.5) {
-  const [displayValue, setDisplayValue] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (isInView) {
-      const controls = animate(0, target, {
-        duration,
-        ease: "easeOut",
-        onUpdate: (latest) => setDisplayValue(Math.round(latest))
-      });
-      return controls.stop;
-    }
-  }, [isInView, target, duration]);
-
-  return { ref, displayValue };
-}
+import { useCounter } from "@/hooks/use-counter";
 
 // Tilt Card Component
 function TiltCard({ children, className, popular }: { children: React.ReactNode; className?: string; popular?: boolean }) {

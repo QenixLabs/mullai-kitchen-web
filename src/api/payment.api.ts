@@ -41,7 +41,7 @@ export const paymentApi = {
   },
 
   /**
-   * Checks the status of a Razorpay order
+   * Checks the status of a payment order
    */
   getOrderStatus: async (orderId: string): Promise<OrderStatusResponse> => {
     const response = await apiClient.get<OrderStatusResponse>(
@@ -87,7 +87,7 @@ export const paymentApi = {
   },
 
   /**
-   * Creates a Razorpay order for wallet top-up
+   * Creates a payment session for wallet top-up
    */
   topupWallet: async (
     payload: TopupWalletRequest,

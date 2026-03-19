@@ -23,24 +23,7 @@ const chennaiAreas = [
 ];
 
 // Counter animation hook
-function useCounter(target: number, duration: number = 2) {
-  const [displayValue, setDisplayValue] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (isInView) {
-      const controls = animate(0, target, {
-        duration,
-        ease: "easeOut",
-        onUpdate: (latest) => setDisplayValue(Math.round(latest))
-      });
-      return controls.stop;
-    }
-  }, [isInView, target, duration]);
-
-  return { ref, displayValue };
-}
+import { useCounter } from "@/hooks/use-counter";
 
 // Animated Stat Component
 function AnimatedStat({ value, suffix = "", label, icon: Icon }: {
@@ -225,10 +208,11 @@ export function TrustSection() {
               {/* Right: Premium Image */}
               <div className="relative h-72 rounded-2xl overflow-hidden">
                 <Image
-                  src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800&q=80"
+                  src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&q=80"
                   alt="Chef preparing meal"
                   fill
                   className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 600px"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-[#39070F]/80 to-transparent" />
                 <div className="absolute bottom-5 left-5 right-5">
