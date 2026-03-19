@@ -18,7 +18,6 @@ import {
   useWalletBalance,
   useCreateOrder,
 } from "@/api/hooks/usePayment";
-import { loadRazorpayScript } from "@/lib/razorpay";
 import {
   CHECKOUT_CONFIG,
   PAYMENT_METHODS,
@@ -239,12 +238,11 @@ export function useCheckout(): UseCheckoutReturn {
     }
   }, [addresses, state.selectedAddressId]);
 
+  // Pre-load Zoho Payments script for faster checkout
   useEffect(() => {
-    loadRazorpayScript().catch((err) => {
-      console.error("Failed to load Razorpay script:", err);
-      toast.error("System Error", {
-        description:
-          "Failed to load payment system. Please refresh and try again.",
+    import("@/lib/zoho-payments").then(({ loadZohoPaymentsScript }) => {
+      loadZohoPaymentsScript().catch((err) => {
+        console.error("Failed to load Zoho Payments script:", err);
       });
     });
   }, []);

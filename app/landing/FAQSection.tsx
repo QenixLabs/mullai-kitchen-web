@@ -41,7 +41,7 @@ const faqs = [
   },
   {
     question: "How does the payment work?",
-    answer: "We offer secure payment through Razorpay. You can pay via UPI, credit/debit cards, or net banking. For subscriptions, we use a wallet system where we reserve the amount and only charge after successful delivery confirmation.",
+    answer: "We offer secure payment through Zoho Payments. You can pay via UPI, credit/debit cards, or net banking. For subscriptions, we use a wallet system where we reserve the amount and only charge after successful delivery confirmation.",
     category: "payment"
   },
   {

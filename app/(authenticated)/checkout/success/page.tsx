@@ -388,7 +388,7 @@ function CheckoutSuccessContent() {
             </p>
             <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground/50">
               <ShieldCheck className="h-3 w-3" />
-              <span>Secured by Razorpay</span>
+              <span>Secured by Zoho Payments</span>
             </div>
           </div>
         </motion.div>

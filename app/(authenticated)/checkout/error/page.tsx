@@ -100,7 +100,7 @@ export default function CheckoutErrorPage() {
   const planId = searchParams.get("planId");
   const addressId = searchParams.get("addressId");
   const startDate = searchParams.get("startDate");
-  const paymentId = paymentStore.razorpayPaymentId;
+  const paymentId = paymentStore.paymentId || paymentStore.razorpayPaymentId;
   const orderId = paymentStore.orderId;
   const errorMessage = paymentStore.errorMessage || searchParams.get("message");
 

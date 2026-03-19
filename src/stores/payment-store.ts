@@ -91,7 +91,7 @@ export const createPaymentStore = (
             set({
               status: "success",
               paymentId: response.payment_id,
-              paymentSessionId: response.payment_session_id,
+              paymentSessionId: response.payments_session_id,
               razorpayPaymentId: null,
               razorpaySignature: null,
               errorMessage: null,
