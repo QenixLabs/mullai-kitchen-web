@@ -16,11 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mullai Kitchen",
-  description: "Kitchen operations frontend",
+  title: "Mullai - Your Everyday Meal Partner",
+  description: "Authentic South Indian meals delivered daily to your doorstep in Chennai.",
 };
-
-import Script from "next/script";
 
 export default function RootLayout({
   children,
@@ -29,12 +27,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <Script
-          src="https://checkout.razorpay.com/v1/checkout.js"
-          strategy="beforeInteractive"
-        />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

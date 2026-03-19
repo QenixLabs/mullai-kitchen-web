@@ -19,7 +19,6 @@ import {
   useWalletBalance,
   useCreateOrder,
 } from "@/api/hooks/usePayment";
-import { loadRazorpayScript } from "@/lib/razorpay";
 import {
   CHECKOUT_CONFIG,
   PAYMENT_METHODS,
@@ -27,6 +26,7 @@ import {
   type PricingBreakdown,
 } from "@/lib/checkout-config";
 import type { PaymentStore } from "@/stores/payment-store";
+import type { PaymentSuccessResponse } from "@/api/types/payment.types";
 import type { AppliedCoupon } from "@/components/customer/checkout/CouponSelector";
 import type { MealType } from "@/stores/plan-intent-store";
 import type { AddressType } from "@/api/types/customer.types";
@@ -285,12 +285,11 @@ export function useCheckout(): UseCheckoutReturn {
     }
   }, [addresses, state.selectedAddressId, preSelectedAddressId]);
 
+  // Pre-load Zoho Payments script for faster checkout
   useEffect(() => {
-    loadRazorpayScript().catch((err) => {
-      console.error("Failed to load Razorpay script:", err);
-      toast.error("System Error", {
-        description:
-          "Failed to load payment system. Please refresh and try again.",
+    import("@/lib/zoho-payments").then(({ loadZohoPaymentsScript }) => {
+      loadZohoPaymentsScript().catch((err) => {
+        console.error("Failed to load Zoho Payments script:", err);
       });
     });
   }, []);
@@ -386,11 +385,7 @@ export function useCheckout(): UseCheckoutReturn {
   }, []);
 
   const handlePaymentSuccess = useCallback(
-    (response: {
-      razorpay_payment_id: string;
-      razorpay_order_id: string;
-      razorpay_signature: string;
-    }) => {
+    (response: PaymentSuccessResponse) => {
       paymentStore.setPaymentSuccess(response);
       router.push(
         `/checkout/success?planName=${encodeURIComponent(plan?.name || "Subscription")}`,
@@ -400,8 +395,8 @@ export function useCheckout(): UseCheckoutReturn {
   );
 
   const handlePaymentFailure = useCallback(
-    (error: { code: string; description: string }) => {
-      toast.error("Payment Failed", { description: error.description });
+    (error: { code: string; message: string }) => {
+      toast.error("Payment Failed", { description: error.message });
       router.push("/checkout/error");
     },
     [router],

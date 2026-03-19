@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { format } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,6 @@ import {
   MoreVertical,
   RotateCcw,
   Pause,
-  Play,
   XCircle,
   CheckCircle2,
   Clock,
@@ -42,6 +42,7 @@ import { cn } from "@/lib/utils";
 
 interface SubscriptionCardProps {
   subscription: Subscription;
+  pausedDates?: Date[];
   onPause?: (id: string) => void;
   onResume?: (id: string) => void;
   onCancel?: (id: string) => void;
@@ -53,6 +54,7 @@ interface SubscriptionCardProps {
 
 export function SubscriptionCard({
   subscription,
+  pausedDates = [],
   onPause,
   onResume,
   onCancel,
@@ -140,7 +142,6 @@ export function SubscriptionCard({
   };
 
   const isActive = subscription.status === STATUS.ACTIVE;
-  const isPaused = subscription.status === STATUS.PAUSED;
   const isInactive = subscription.status === STATUS.EXPIRED || subscription.status === STATUS.CANCELLED;
 
   return (
@@ -267,6 +268,29 @@ export function SubscriptionCard({
           </div>
         </div>
 
+        {/* Paused Dates Display */}
+        {pausedDates.length > 0 && (
+          <div className="pt-2 pb-1">
+            <div className="flex items-start gap-2.5 text-sm">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-amber-100 text-amber-600">
+                <Pause className="h-3.5 w-3.5" />
+              </div>
+              <div className="flex-1">
+                <span className="text-amber-700 font-medium">
+                  {pausedDates.length} date{pausedDates.length !== 1 ? "s" : ""} paused
+                </span>
+                <p className="text-amber-600/80 text-xs mt-0.5">
+                  {pausedDates.slice(0, 3).map(d => format(new Date(d), "MMM d")).join(", ")}
+                  {pausedDates.length > 3 && ` +${pausedDates.length - 3} more`}
+                </p>
+                <p className="text-amber-600/60 text-xs mt-1 italic">
+                  Pause is permanent
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Actions */}
         <div className="pt-2 flex items-center gap-3">
           {/* Auto-renew Toggle */}
@@ -297,17 +321,6 @@ export function SubscriptionCard({
             >
               <Pause className="mr-1.5 h-3.5 w-3.5" />
               Pause
-            </Button>
-          )}
-
-          {isPaused && (
-            <Button
-              size="sm"
-              className="h-8 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
-              onClick={() => onResume?.(subscription._id)}
-            >
-              <Play className="mr-1.5 h-3.5 w-3.5" />
-              Resume
             </Button>
           )}
 

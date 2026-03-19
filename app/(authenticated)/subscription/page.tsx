@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SubscriptionList } from "@/components/customer/subscription/SubscriptionList";
@@ -11,7 +12,6 @@ import { OptOutSubscriptionDialog } from "@/components/customer/subscription/Opt
 import {
   useSubscriptions,
   usePauseSubscription,
-  useResumeSubscription,
   useCancelSubscription,
   useRenewSubscription,
   useToggleAutoRenew,
@@ -38,7 +38,6 @@ export default function SubscriptionPage() {
 
   // Mutations
   const pauseMutation = usePauseSubscription();
-  const resumeMutation = useResumeSubscription();
   const cancelMutation = useCancelSubscription();
   const renewMutation = useRenewSubscription();
   const toggleAutoRenewMutation = useToggleAutoRenew();
@@ -56,20 +55,6 @@ export default function SubscriptionPage() {
       setSelectedSubscription(subscription);
       setPauseDialogOpen(true);
     }
-  };
-
-  const handleResume = (id: string) => {
-    resumeMutation.mutate(
-      { id, pause_period_id: "" },
-      {
-        onSuccess: (data) => {
-          // TODO: Show success toast
-        },
-        onError: (error) => {
-          // TODO: Show error toast
-        },
-      },
-    );
   };
 
   const handleCancel = (id: string) => {
@@ -134,8 +119,7 @@ export default function SubscriptionPage() {
   };
 
   const handlePauseSubmit = (data: {
-    start_date: string;
-    end_date: string;
+    paused_dates: string[];
     reason?: string;
   }) => {
     if (selectedSubscription) {
@@ -143,8 +127,16 @@ export default function SubscriptionPage() {
         { id: selectedSubscription._id, ...data },
         {
           onSuccess: (responseData) => {
+            toast.success("Subscription paused successfully", {
+              description: `₹${responseData.total_credit} credited to your wallet. This action is permanent and cannot be undone.`,
+            });
             setPauseDialogOpen(false);
             setSelectedSubscription(null);
+          },
+          onError: (error: Error) => {
+            toast.error("Failed to pause subscription", {
+              description: error.message || "Please try again later.",
+            });
           },
         },
       );
@@ -199,7 +191,7 @@ export default function SubscriptionPage() {
           <FaExclamationCircle className="h-10 w-10" />
         </div>
         <h2 className="text-2xl font-bold mb-2">Error Loading Subscriptions</h2>
-        <p className="text-muted-foreground mb-8 text-center max-w-md">
+        <p className="text-muted-foreground mb-8 text-center ">
           {error instanceof Error
             ? error.message
             : "Failed to load subscriptions. Please check your connection and try again."}
@@ -271,7 +263,6 @@ export default function SubscriptionPage() {
             <SubscriptionList
               subscriptions={subscriptions}
               onPause={handlePause}
-              onResume={handleResume}
               onCancel={handleCancel}
               onRenew={handleRenew}
               onToggleAutoRenew={handleToggleAutoRenew}
@@ -294,17 +285,23 @@ export default function SubscriptionPage() {
           setPauseDialogOpen(false);
           setSelectedSubscription(null);
         }}
-        minDate={new Date()}
-        maxDate={
+        subscriptionStartDate={
+          selectedSubscription
+            ? new Date(selectedSubscription.start_date)
+            : new Date()
+        }
+        subscriptionEndDate={
           selectedSubscription
             ? new Date(selectedSubscription.end_date)
-            : undefined
+            : new Date()
         }
-        warningMessage={
-          selectedSubscription?.is_cancellable
-            ? "Pausing your subscription will stop deliveries for the selected period."
-            : "This subscription is past the cancellation window and cannot be paused."
+        perDayPrice={
+          selectedSubscription?.total_amount && selectedSubscription?.total_deliveries
+            ? selectedSubscription.total_amount / selectedSubscription.total_deliveries
+            : 0
         }
+        existingPausedDates={selectedSubscription?.paused_dates || []}
+        warningMessage="IMPORTANT: Pause is permanent and cannot be undone. Once you pause dates, you cannot resume deliveries for those dates."
       />
 
       <CancelSubscriptionDialog

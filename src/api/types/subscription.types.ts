@@ -178,6 +178,10 @@ export interface Subscription {
   cancellation_option?: CancellationOption;
   cancelled_at?: Date;
   meal_address_mappings?: MealAddressMapping[];
+  paused_dates?: Date[];  // Dates that have been paused
+  dates_already_credited?: Date[];  // Track dates already credited for pause
+  pause_operations_this_month?: number;
+  last_pause_operation_date?: Date;
   created_at: Date;
   updated_at: Date;
 }
@@ -310,13 +314,25 @@ export interface OptOutPeriodsResponse {
 
 /**
  * Pause Subscription Request
- * Request to pause a subscription
+ * Request to pause a subscription with array of dates
  */
 export interface PauseSubscriptionRequest {
-  start_date: string; // ISO date string
-  end_date: string; // ISO date string
+  paused_dates: string[]; // ISO date strings
   reason?: string;
-  credit_to_wallet?: boolean; // Default: false (shifts dates)
+}
+
+/**
+ * Pause Subscription Response
+ * Response from pausing a subscription
+ */
+export interface PauseSubscriptionResponse {
+  success: boolean;
+  message: string;
+  pause_period_id: string;
+  credit_amount: number;
+  addon_refund_amount: number;
+  total_credit: number;
+  warning: string;
 }
 
 /**

@@ -622,6 +622,65 @@ className={cn(
 
 ---
 
+## Layout Width Guidelines
+
+### Container Width Standards
+
+**IMPORTANT**: Use appropriate container widths to prevent layout issues on large screens.
+
+| Context | Container Class | Max Width | Usage |
+|---------|----------------|-----------|-------|
+| Standard sections | `max-w-[1400px]` | 1400px | Most landing page sections |
+| Narrow content (FAQ, CTA) | `max-w-[1000px]` | 1000px | Focused content areas |
+| Text content | No `max-w-*` on paragraphs | Full container | Let text flow naturally |
+
+**Common Mistake - Width Constraints on Text:**
+```tsx
+// ❌ BAD - Constraining text to narrow widths causes ugly line breaks
+<p className="max-w-2xl mx-auto">
+  This long text will break into very narrow lines on large screens
+</p>
+
+// ❌ BAD - Using max-w-7xl (1280px) is too narrow for modern displays
+<div className="max-w-7xl">
+```
+
+**Correct Approach:**
+```tsx
+// ✅ GOOD - Use wider container for modern displays
+<div className="max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+
+// ✅ GOOD - Let text flow naturally within container
+<p className="text-lg text-gray-600">
+  Text flows properly and uses full available width
+</p>
+
+// ✅ GOOD - For two-column layouts, use asymmetric grid
+<div className="grid lg:grid-cols-[1.3fr_1fr] gap-8">
+  {/* Left column gets 57% width */}
+</div>
+```
+
+**Section Container Pattern:**
+```tsx
+<section className="py-20">
+  <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+    {/* Content here */}
+  </div>
+</section>
+```
+
+**Hero Section Layout:**
+```tsx
+// Use asymmetric grid for hero with floating card
+<div className="grid lg:grid-cols-[1.3fr_1fr] gap-8 lg:gap-16 items-center">
+  {/* Left: 57% width for content */}
+  {/* Right: 43% width for card/image */}
+</div>
+```
+
+---
+
 ## Important Design Rules
 
 ### DO NOT Use Hardcoded Values

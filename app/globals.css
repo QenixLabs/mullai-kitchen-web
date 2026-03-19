@@ -1,8 +1,7 @@
 @import "../node_modules/tailwindcss/index.css";
 @import "timepicker-ui/main.css";
 
-@custom-variant dark (&:is(.dark *));
-
+@variant dark (&:not(*));
 :root {
   --background: 30 50% 96%;
   --foreground: 30 20% 15%;
@@ -189,60 +188,6 @@
   }
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: 30 30% 12%;
-    --foreground: 30 15% 92%;
-    --card: 30 25% 16%;
-    --card-foreground: 30 15% 92%;
-    --popover: 30 25% 16%;
-    --popover-foreground: 30 15% 92%;
-    --primary: 350 78% 13%;
-    --primary-foreground: 30 20% 98%;
-    --secondary: 30 20% 20%;
-    --secondary-foreground: 30 15% 92%;
-    --muted: 30 20% 22%;
-    --muted-foreground: 30 10% 65%;
-    --accent: 30 25% 24%;
-    --accent-foreground: 30 15% 92%;
-    --destructive: 0 70% 44%;
-    --destructive-foreground: 30 20% 98%;
-    --border: 30 20% 24%;
-    --input: 30 18% 22%;
-    --ring: 350 78% 13%;
-
-    /* Dark mode semantic color tokens */
-    --success: 142 76% 36%;
-    --success-foreground: 355 100% 97%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 48 96% 89%;
-    --info: 199 89% 48%;
-    --info-foreground: 210 40% 98%;
-
-    /* Dark mode spacing, radius, and shadow tokens (same as light) */
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
-    --spacing-2xl: 2.5rem;
-    --spacing-3xl: 3rem;
-
-    --radius-sm: 0.5rem;
-    --radius-md: 0.75rem;
-    --radius-lg: 1rem;
-    --radius-xl: 1.5rem;
-    --radius-2xl: 2rem;
-    --radius-3xl: 2.5rem;
-    --radius-full: 9999px;
-
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-    --shadow-primary: 0 4px 20px rgba(57, 7, 15, 0.15);
-  }
-}
 
 body {
   background: hsl(var(--background));
@@ -272,16 +217,6 @@ body {
   box-shadow: 0 10px 30px -15px rgba(234, 88, 12, 0.15);
 }
 
-.dark {
-  --sidebar: hsl(240 5.9% 10%);
-  --sidebar-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-primary: hsl(224.3 76.3% 48%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-border: hsl(240 3.7% 15.9%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
-}
 
 /* Magic UI Animations */
 @keyframes aurora {

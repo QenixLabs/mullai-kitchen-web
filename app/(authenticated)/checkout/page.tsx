@@ -10,7 +10,7 @@ import { useCurrentUser } from "@/hooks/useUserStore";
 import { usePaymentStore } from "@/hooks/usePaymentStore";
 import { useCheckout } from "@/hooks/useCheckout";
 import { useCreateAddress } from "@/api/hooks/useCreateAddress";
-import { openRazorpayCheckout } from "@/lib/razorpay";
+import { loadZohoPaymentsScript, openZohoCheckout } from "@/lib/zoho-payments";
 import { CHECKOUT_CONFIG, PAYMENT_METHODS } from "@/lib/checkout-config";
 import { DatePicker } from "@/components/ui/date-picker";
 
@@ -50,7 +50,6 @@ export default function CheckoutPage() {
     handleStartDateChange,
     handlePaymentSuccess,
     handlePaymentFailure,
-    handlePaymentDismissed,
     setSelectedPayment,
     setApplyWallet,
     setOptOutDates,
@@ -97,6 +96,9 @@ export default function CheckoutPage() {
       description: `${plan?.name || "Subscription"} Payment`,
       order_id: "",
       walletReservationAmount: 0,
+      paymentSessionId: "",
+      providerAccountId: "",
+      provider: "zoho",
     });
 
     // Format dates as YYYY-MM-DD to avoid timezone issues
@@ -122,28 +124,29 @@ export default function CheckoutPage() {
 
       if (result.amount === 0) {
         handlePaymentSuccess({
-          razorpay_payment_id: "WALLET_PAYMENT",
-          razorpay_order_id: result.order_id,
-          razorpay_signature: "WALLET_SUCCESS",
+          payment_id: "WALLET_PAYMENT",
+          payments_session_id: result.paymentSessionId,
+          status: "paid",
         });
         return;
       }
 
-      openRazorpayCheckout({
-        keyId: result.keyId,
+      await loadZohoPaymentsScript();
+
+      openZohoCheckout({
+        accountId: result.providerAccountId,
+        paymentSessionId: result.paymentSessionId,
         amount: result.amount,
         currency: result.currency,
-        name: CHECKOUT_CONFIG.companyName,
-        description: `${plan?.name || "Subscription"} - ${plan?.duration || ""}`,
-        orderId: result.razorpayOrderId,
-        onSuccess: handlePaymentSuccess,
-        onFailure: handlePaymentFailure,
-        onDismiss: handlePaymentDismissed,
-        prefill: {
+        customer: {
           name: user?.name ?? "",
           email: user?.email ?? "",
-          contact: user?.phone ?? "",
+          phone: user?.phone ?? "",
         },
+        description: result.description,
+        invoiceNumber: result.order_id,
+        onSuccess: handlePaymentSuccess,
+        onFailure: handlePaymentFailure,
       });
     } catch (err) {
       const errorMessage =
@@ -166,7 +169,6 @@ export default function CheckoutPage() {
     createOrderMutation,
     handlePaymentSuccess,
     handlePaymentFailure,
-    handlePaymentDismissed,
     state.appliedCoupon?.couponId,
   ]);
 

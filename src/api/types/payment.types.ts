@@ -49,6 +49,9 @@ export interface TopupWalletResponse {
   description: string;
   order_id: string;
   expiresAt: string;
+  paymentSessionId: string;
+  providerAccountId: string;
+  provider: 'razorpay' | 'zoho';
 }
 
 export type WalletReservationStatus =
@@ -90,6 +93,9 @@ export interface PaymentOrderResponse {
   optOutDiscount?: number;
   deliveryCharge?: number;
   tax?: number;
+  paymentSessionId: string;
+  providerAccountId: string;
+  provider: 'razorpay' | 'zoho';
 }
 
 // ===========================================
@@ -145,6 +151,27 @@ export interface RazorpayPaymentResponse {
   razorpay_order_id: string;
   razorpay_signature: string;
 }
+
+// ===========================================
+// Zoho Payment Types
+// ===========================================
+
+export interface ZohoPaymentResponse {
+  payment_id: string;
+  payments_session_id: string; // Note: Zoho API uses payments_session_id (with 's')
+  status: string;
+}
+
+export interface ZohoPaymentError {
+  code: string;
+  message: string; // Note: Zoho SDK returns 'message' not 'description'
+}
+
+// ===========================================
+// Unified Payment Success Response
+// ===========================================
+
+export type PaymentSuccessResponse = RazorpayPaymentResponse | ZohoPaymentResponse;
 
 // ===========================================
 // Order Status Types
