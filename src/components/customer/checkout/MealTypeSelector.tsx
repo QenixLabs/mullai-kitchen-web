@@ -1,6 +1,6 @@
 "use client";
 
-import { FaCoffee, FaDrumstickBite, FaUtensils, FaCheck, FaMapMarkerAlt, FaHome, FaPlus } from "react-icons/fa";
+import { FaCoffee, FaDrumstickBite, FaUtensils, FaCheck, FaMapMarkerAlt, FaHome, FaBuilding, FaPlus, FaMapPin } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import type { MealType } from "@/stores/plan-intent-store";
 import type { Address, AddressType } from "@/api/types/customer.types";
@@ -11,14 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
-const ADDRESS_CHAR_LIMIT = 40;
+const ADDRESS_CHAR_LIMIT = 35;
 
 interface MealTypeConfig {
   label: string;
@@ -62,13 +56,61 @@ interface MealTypeSelectorProps {
   selectedMealType: MealType | null;
   onMealTypeChange: (mealType: MealType) => void;
   disabled?: boolean;
-  // Address-related props
   addresses: Address[];
   addressesLoading?: boolean;
   defaultAddressId: string | null;
   mealAddressMappings: MealAddressMapping[];
   onAddressChange: (mealType: string, addressId: string) => void;
   onAddNewAddress: () => void;
+}
+
+function truncateText(text: string, limit: number): string {
+  if (text.length <= limit) return text;
+  return text.slice(0, limit) + "...";
+}
+
+function AddressTypeIcon({ type }: { type: string }) {
+  if (type === "Office") return <FaBuilding className="h-3 w-3" />;
+  return <FaHome className="h-3 w-3" />;
+}
+
+function AddressTypeBadge({ type }: { type: string }) {
+  return (
+    <span className={cn(
+      "inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+      type === "Home" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+        : type === "Office" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+          : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+    )}>
+      <AddressTypeIcon type={type} />
+      {type}
+    </span>
+  );
+}
+
+function AddressPreviewCard({ address }: { address: Address }) {
+  return (
+    <div className="mt-3 rounded-lg border border-primary/20 bg-primary/5 p-3">
+      <div className="flex items-start gap-2.5">
+        <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10">
+          <FaMapPin className="h-3.5 w-3.5 text-primary" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 flex items-center gap-2">
+            <AddressTypeBadge type={address.type} />
+            {address.landmark && (
+              <span className="text-xs font-medium text-muted-foreground truncate">
+                {address.landmark}
+              </span>
+            )}
+          </div>
+          <p className="text-xs leading-relaxed text-muted-foreground break-words">
+            {address.full_address}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function MealTypeSelector({
@@ -83,27 +125,13 @@ export function MealTypeSelector({
   onAddressChange,
   onAddNewAddress,
 }: MealTypeSelectorProps) {
-  // Get the display address ID for a meal type (mapped or default)
   function getMealAddressId(mealType: string): string {
     const mapping = mealAddressMappings.find(m => m.meal_type === mealType);
     return mapping?.address_id || defaultAddressId || '';
   }
 
-  // Get the address object for display
   function getAddressById(addressId: string): Address | undefined {
     return addresses.find(a => a._id === addressId);
-  }
-
-  // Truncate address text with ellipsis
-  function truncateAddress(text: string): string {
-    if (text.length <= ADDRESS_CHAR_LIMIT) return text;
-    return text.slice(0, ADDRESS_CHAR_LIMIT) + "...";
-  }
-
-  // Format address label: "Type: address"
-  function formatAddressLabel(type: string, address: string): string {
-    const label = type === "Home" ? "Home" : type === "Office" ? "Office" : "Other";
-    return `${label}: ${address}`;
   }
 
   return (
@@ -190,92 +218,76 @@ export function MealTypeSelector({
                   </div>
                 </button>
 
-                {/* Address Selection Dropdown - Only show when meal is selected */}
+                {/* Address Selection - Only show when meal is selected */}
                 {isSelected && (
-                  <div className="border-t border-border bg-muted/30 px-4 pb-4 pt-3">
+                  <div className="border-t border-border bg-muted/20 px-4 pb-4 pt-3">
                     <label className="mb-2 block text-xs font-medium text-muted-foreground">
                       Delivery Address for {config.label}
                     </label>
-                    <TooltipProvider delayDuration={300}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className="max-w-full">
-                            <Select
-                              value={selectedAddressId}
-                              onValueChange={(value) => {
-                                if (value === "__add_new__") {
-                                  onAddNewAddress();
-                                } else {
-                                  onAddressChange(mealType, value);
-                                }
-                              }}
-                              disabled={disabled}
+                    <Select
+                      value={selectedAddressId}
+                      onValueChange={(value) => {
+                        if (value === "__add_new__") {
+                          onAddNewAddress();
+                        } else {
+                          onAddressChange(mealType, value);
+                        }
+                      }}
+                      disabled={disabled}
+                    >
+                      <SelectTrigger className="w-full bg-card border-border text-foreground focus:ring-primary focus:ring-1 [&>span]:truncate">
+                        <SelectValue placeholder="Select delivery address" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-card border-border max-w-[min(var(--radix-select-trigger-width),28rem)]">
+                        {/* Default address option */}
+                        {defaultAddressId && (() => {
+                          const defAddr = addresses.find(a => a._id === defaultAddressId);
+                          if (!defAddr) return null;
+                          return (
+                            <SelectItem
+                              value={defaultAddressId}
+                              className="text-foreground focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5"
                             >
-                              <SelectTrigger className="w-full bg-card border-border text-foreground focus:ring-primary focus:ring-1 [&>span]:truncate">
-                                <SelectValue placeholder="Select delivery address" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-card border-border max-w-[min(var(--radix-select-trigger-width),28rem)]">
-                                {/* Default/Home option */}
-                                {defaultAddressId && (() => {
-                                  const defAddr = addresses.find(a => a._id === defaultAddressId);
-                                  if (!defAddr) return null;
-                                  const fullLabel = formatAddressLabel(defAddr.type, defAddr.full_address || "Default Address");
-                                  return (
-                                    <SelectItem
-                                      value={defaultAddressId}
-                                      className="text-foreground focus:bg-primary focus:text-primary-foreground cursor-pointer"
-                                    >
-                                      {fullLabel.length > ADDRESS_CHAR_LIMIT ? truncateAddress(fullLabel) : fullLabel}
-                                    </SelectItem>
-                                  );
-                                })()}
+                              <div className="flex items-center gap-2">
+                                <AddressTypeBadge type={defAddr.type} />
+                                <span className="truncate text-sm">{truncateText(defAddr.full_address || "Default Address", ADDRESS_CHAR_LIMIT)}</span>
+                              </div>
+                            </SelectItem>
+                          );
+                        })()}
 
-                                {/* Other addresses */}
-                                {addresses
-                                  .filter(a => a._id !== defaultAddressId)
-                                  .map((addr) => {
-                                    const fullLabel = formatAddressLabel(addr.type, addr.full_address);
-                                    return (
-                                      <SelectItem
-                                        key={addr._id}
-                                        value={addr._id}
-                                        className="text-foreground focus:bg-primary focus:text-primary-foreground cursor-pointer"
-                                      >
-                                        {fullLabel.length > ADDRESS_CHAR_LIMIT ? truncateAddress(fullLabel) : fullLabel}
-                                      </SelectItem>
-                                    );
-                                  })}
+                        {/* Other addresses */}
+                        {addresses
+                          .filter(a => a._id !== defaultAddressId)
+                          .map((addr) => (
+                            <SelectItem
+                              key={addr._id}
+                              value={addr._id}
+                              className="text-foreground focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5"
+                            >
+                              <div className="flex items-center gap-2">
+                                <AddressTypeBadge type={addr.type} />
+                                <span className="truncate text-sm">{truncateText(addr.full_address, ADDRESS_CHAR_LIMIT)}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
 
-                                {/* Add new address option */}
-                                <SelectItem
-                                  value="__add_new__"
-                                  className="text-primary font-medium focus:bg-primary focus:text-primary-foreground cursor-pointer border-t border-border mt-1 pt-1"
-                                >
-                                  <span className="flex items-center gap-2">
-                                    <FaPlus className="h-3 w-3" />
-                                    Add New Address
-                                  </span>
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </TooltipTrigger>
-                        {selectedAddress && selectedAddress.full_address.length > ADDRESS_CHAR_LIMIT && (
-                          <TooltipContent side="bottom" className="max-w-[200px]  whitespace-normal text-xs leading-relaxed">
-                            {formatAddressLabel(selectedAddress.type, selectedAddress.full_address)}
-                          </TooltipContent>
-                        )}
-                      </Tooltip>
-                    </TooltipProvider>
+                        {/* Add new address option */}
+                        <SelectItem
+                          value="__add_new__"
+                          className="text-primary font-medium focus:bg-primary focus:text-primary-foreground cursor-pointer border-t border-border mt-1 pt-2"
+                        >
+                          <span className="flex items-center gap-2">
+                            <FaPlus className="h-3 w-3" />
+                            Add New Address
+                          </span>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
 
-                    {/* Show selected address badge */}
+                    {/* Selected address preview card */}
                     {selectedAddress && (
-                      <div className="mt-2 flex items-center gap-2">
-                        <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                          <FaHome className="mr-1 h-3 w-3" />
-                          {selectedAddress.type} Address Selected
-                        </span>
-                      </div>
+                      <AddressPreviewCard address={selectedAddress} />
                     )}
                   </div>
                 )}
