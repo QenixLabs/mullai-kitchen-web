@@ -61,7 +61,13 @@ export function usePreviewPricing() {
   return useMutation<PreviewPricingResponse, Error, PreviewPricingRequest>({
     mutationFn: paymentApi.previewPricing,
     onError: (error) => {
-      console.error("Pricing preview failed:", error);
+      // Handle both ApiError from client and standard Error
+      const errorMessage =
+        typeof error === 'object' && error !== null && 'message' in error
+          ? (error as { message: string }).message
+          : String(error) || "Unknown error occurred";
+      console.error("[usePreviewPricing] Error:", error);
+      console.error("[usePreviewPricing] Error message:", errorMessage);
     },
   });
 }

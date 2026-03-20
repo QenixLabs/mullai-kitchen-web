@@ -118,6 +118,7 @@ export interface SubscriptionResponse {
   outlet_name?: string;
   is_cancellable: boolean;
   cancellation_cutoff_time?: string;
+  meal_address_mappings?: MealAddressMapping[];
   created_at: string;
   updated_at: string;
 }
@@ -140,6 +141,12 @@ export interface SubscriptionDetailResponse extends SubscriptionResponse {
  * Subscription Interface
  * Full subscription model
  */
+export interface MealAddressMapping {
+  meal_type: MealType;
+  address_id: string;
+  full_address: string;
+}
+
 export interface Subscription {
   _id: string;
   plan_id: string;
@@ -170,6 +177,7 @@ export interface Subscription {
   cancellation_reason?: string;
   cancellation_option?: CancellationOption;
   cancelled_at?: Date;
+  meal_address_mappings?: MealAddressMapping[];
   paused_dates?: Date[];  // Dates that have been paused
   dates_already_credited?: Date[];  // Track dates already credited for pause
   pause_operations_this_month?: number;

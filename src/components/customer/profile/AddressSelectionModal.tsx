@@ -280,20 +280,7 @@ export function AddressSelectionModal({
         </DialogHeader>
 
         <div className="p-6 space-y-6">
-          {/* Search Section */}
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <FaSearch className="h-4 w-4 text-slate-400" />
-            </div>
-            <Input
-              placeholder="Search for area, street name or pincode..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 py-3 bg-slate-50 border-none rounded-lg"
-            />
-          </div>
-
-          {/* Map Section */}
+          {/* Map Section - Moved to top */}
           <div className="space-y-2">
             <GoogleMap
               center={mapCenter}
@@ -328,6 +315,19 @@ export function AddressSelectionModal({
               <FaMapMarkerAlt className="h-5 w-5" />
               {isGettingLocation ? "Getting location..." : "Use Current Location"}
             </Button>
+          </div>
+
+          {/* Search Section */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FaSearch className="h-4 w-4 text-slate-400" />
+            </div>
+            <Input
+              placeholder="Search for area, street name or pincode..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-lg"
+            />
           </div>
 
           {/* Serviceability Info */}

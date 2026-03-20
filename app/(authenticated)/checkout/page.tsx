@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback } from "react";
-import { FaMapMarkerAlt, FaCreditCard, FaCalendar } from "react-icons/fa";
+import { useCallback, useEffect } from "react";
+import { FaCreditCard, FaCalendar } from "react-icons/fa";
 import { CreditCard, QrCode, MapPin } from "lucide-react";
 import { addDays } from "date-fns";
 import { toast } from "sonner";
@@ -15,8 +15,6 @@ import { CHECKOUT_CONFIG, PAYMENT_METHODS } from "@/lib/checkout-config";
 import { DatePicker } from "@/components/ui/date-picker";
 
 import { StepIndicator } from "@/components/customer/checkout/StepIndicator";
-import { AddressCard } from "@/components/customer/checkout/AddressCard";
-import { AddNewAddressCard } from "@/components/customer/checkout/AddNewAddressCard";
 import { PaymentOption } from "@/components/customer/checkout/PaymentOption";
 import { OptOutSummary } from "@/components/customer/checkout/OptOutSummary";
 import { OrderSummary } from "@/components/customer/checkout/OrderSummary";
@@ -25,6 +23,8 @@ import { WalletDisplay } from "@/components/customer/checkout/WalletDisplay";
 import { HelpChat } from "@/components/customer/checkout/HelpChat";
 import { CheckoutDialogs } from "@/components/customer/checkout/CheckoutDialogs";
 import { CouponSelector } from "@/components/customer/checkout/CouponSelector";
+import { MealTypeSelector } from "@/components/customer/checkout/MealTypeSelector";
+import type { MealType } from "@/stores/plan-intent-store";
 
 export default function CheckoutPage() {
   const user = useCurrentUser();
@@ -52,14 +52,33 @@ export default function CheckoutPage() {
     handlePaymentFailure,
     setSelectedPayment,
     setApplyWallet,
-    setSelectedAddressId,
     setOptOutDates,
     toggleAddressDialog,
     toggleWalletInfo,
     toggleOptOutDialog,
     setAppliedCoupon,
+    previewPricingMutation,
+    setSelectedMealType,
+    setMealAddressMapping,
+    getMealAddressMapping,
   } = useCheckout();
 
+  // Show toast when pricing preview fails
+  useEffect(() => {
+    if (previewPricingMutation.error) {
+      const errorMessage =
+        typeof previewPricingMutation.error === 'object' &&
+        previewPricingMutation.error !== null &&
+        'message' in previewPricingMutation.error
+          ? (previewPricingMutation.error as { message: string }).message
+          : 'Failed to load pricing information';
+      toast.error('Pricing Error', {
+        description: errorMessage,
+      });
+    }
+  }, [previewPricingMutation.error]);
+
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const handlePay = useCallback(async () => {
     if (!planId || !state.selectedAddressId) {
       toast.error("Incomplete Checkout", {
@@ -82,14 +101,23 @@ export default function CheckoutPage() {
       provider: "zoho",
     });
 
+    // Format dates as YYYY-MM-DD to avoid timezone issues
+    const formatDate = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     try {
       const result = await createOrderMutation.mutateAsync({
         plan_id: planId,
         address_id: state.selectedAddressId,
-        start_date: state.startDate.toISOString().split("T")[0],
+        start_date: formatDate(state.startDate),
         apply_wallet: state.applyWallet,
-        opt_out_dates: state.optOutDates.map((d) => d.toISOString().split("T")[0]),
+        opt_out_dates: state.optOutDates.map((d) => formatDate(d)),
         coupon_id: state.appliedCoupon?.couponId,
+        meal_address_mappings: state.mealAddressMappings.length > 0 ? state.mealAddressMappings : undefined,
       });
 
       paymentStore.setPaymentProcessing(result);
@@ -131,6 +159,7 @@ export default function CheckoutPage() {
     state.startDate,
     state.applyWallet,
     state.optOutDates,
+    state.mealAddressMappings,
     plan?.name,
     plan?.duration,
     user?.name,
@@ -174,6 +203,20 @@ export default function CheckoutPage() {
     walletBalance >= pricing.total
   );
 
+  // Extract available meal types from plan
+  const availableMealTypes: MealType[] = plan?.meals_included
+    ? plan.meals_included
+        .map((meal) => {
+          const normalized = meal.toLowerCase();
+          if (normalized.includes("breakfast")) return "Breakfast";
+          if (normalized.includes("lunch")) return "Lunch";
+          if (normalized.includes("dinner")) return "Dinner";
+          return null;
+        })
+        .filter((m): m is MealType => m !== null)
+    : [];
+
+
   return (
     <div className="min-h-screen bg-muted/30">
       <div className="mx-auto max-w-5xl px-4 pb-2 pt-8 sm:px-6 lg:px-8">
@@ -186,59 +229,63 @@ export default function CheckoutPage() {
 
       <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-          <div className="flex-1 space-y-5">
+          <div className="min-w-0 flex-1 space-y-5">
+            {/* Meal Type Selection with Integrated Address Selection */}
+            <section className="rounded-sm border border-border bg-card p-5 shadow-md sm:p-6">
+              <MealTypeSelector
+                availableMealTypes={availableMealTypes}
+                selectedMealType={state.selectedMealType}
+                onMealTypeChange={(mealType) => {
+                  setSelectedMealType(mealType);
+                  // If this meal type doesn't have an address mapping yet, set it to default
+                  const existingMapping = getMealAddressMapping(mealType);
+                  if (!existingMapping && state.selectedAddressId) {
+                    setMealAddressMapping(mealType, state.selectedAddressId);
+                  }
+                }}
+                disabled={isProcessing}
+                addresses={addresses || []}
+                addressesLoading={addressesLoading}
+                defaultAddressId={state.selectedAddressId}
+                mealAddressMappings={state.mealAddressMappings}
+                onAddressChange={setMealAddressMapping}
+                onAddNewAddress={() => toggleAddressDialog(true)}
+              />
+            </section>
+
+            {/* Subscription Details */}
             <section className="rounded-sm border border-border bg-card p-5 shadow-md sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-foreground sm:text-lg">
-                <FaMapMarkerAlt className="h-5 w-5 text-primary" />
-                1. Select Delivery Address
+                <FaCalendar className="h-5 w-5 text-primary" />
+                Subscription Details
               </h2>
 
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {addressesLoading ? (
-                  <div className="col-span-2 flex items-center gap-2 rounded-sm border border-border bg-muted p-4">
-                    <span className="text-sm text-muted-foreground">Loading addresses...</span>
-                  </div>
-                ) : !addresses?.length ? (
-                    <div className="col-span-2 rounded-sm border border-dashed border-border bg-muted p-4 text-center">
-                    <p className="text-sm text-muted-foreground">No saved addresses. Please add one to continue.</p>
-                  </div>
-                ) : (
-                  addresses.map((addr) => (
-                    <AddressCard
-                      key={addr._id}
-                      address={addr}
-                      selected={state.selectedAddressId === addr._id}
-                      onClick={() => setSelectedAddressId(addr._id)}
-                    />
-                  ))
-                )}
-                <AddNewAddressCard onClick={() => toggleAddressDialog(true)} />
-              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <FaCalendar className="h-4 w-4 text-primary" />
+                    Subscription Start Date
+                  </label>
+                  <DatePicker
+                    date={state.startDate}
+                    onDateChange={handleStartDateChange}
+                    placeholder="Select start date"
+                    minDate={addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday)}
+                  />
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Subscriptions start at least {CHECKOUT_CONFIG.minDaysFromToday} day(s) from today
+                  </p>
+                </div>
 
-              <div className="mt-4 border-t border-border pt-4">
-                <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
-                  <FaCalendar className="h-4 w-4 text-primary" />
-                  Subscription Start Date
-                </label>
-                <DatePicker
-                  date={state.startDate}
-                  onDateChange={handleStartDateChange}
-                  placeholder="Select start date"
-                  minDate={addDays(new Date(), CHECKOUT_CONFIG.minDaysFromToday)}
+                <OptOutSummary
+                  optOutDates={state.optOutDates}
+                  optOutDiscount={pricing.optOutDiscount}
+                  perDayPrice={pricing.perDayPrice}
+                  maxOptOutDays={pricing.maxOptOutDays}
+                  onClear={() => setOptOutDates([])}
+                  onModify={() => toggleOptOutDialog(true)}
                 />
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Subscriptions start at least {CHECKOUT_CONFIG.minDaysFromToday} day(s) from today
-                </p>
               </div>
-
-              <OptOutSummary
-                optOutDates={state.optOutDates}
-                optOutDiscount={pricing.optOutDiscount}
-                perDayPrice={pricing.perDayPrice}
-                maxOptOutDays={pricing.maxOptOutDays}
-                onClear={() => setOptOutDates([])}
-                onModify={() => toggleOptOutDialog(true)}
-              />
             </section>
 
             {/* Coupon Selector */}
@@ -255,7 +302,7 @@ export default function CheckoutPage() {
             <section className="rounded-sm border border-border bg-card p-5 shadow-md sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-foreground sm:text-lg">
                 <FaCreditCard className="h-5 w-5 text-primary" />
-                2. Payment Selection
+                Payment Selection
               </h2>
 
               <WalletDisplay

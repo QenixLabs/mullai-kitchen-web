@@ -22,6 +22,7 @@ import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
 import { Sparkles, ChevronRight, PenLine, ArrowRight } from "lucide-react";
 import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import { cn } from "@/lib/utils";
+import { AddressSelectionModal } from "@/components/customer/profile/AddressSelectionModal";
 
 const normalizePincode = (value: string | null): string | null => {
   if (!value) {
@@ -55,6 +56,8 @@ export function PlansContent({
   const setPlanIntent = usePlanIntentStore((store) => store.setPlanIntent);
   const setSourceRoute = usePlanIntentStore((store) => store.setSourceRoute);
   const setCheckedPincode = usePlanIntentStore((store) => store.setCheckedPincode);
+  const setSelectedMealType = usePlanIntentStore((store) => store.setSelectedMealType);
+  const setSelectedAddressId = usePlanIntentStore((store) => store.setSelectedAddressId);
 
   const [checkedPincodeState, setCheckedPincodeState] = useState<string | null>(
     () => {
@@ -168,6 +171,10 @@ export function PlansContent({
   const handleSelectPlan = (plan: PlanBrowseItem) => {
     setPlanIntent(plan._id, plan);
     setCheckedPincode(checkedPincodeState);
+    // Meal type and address selection now happens in checkout
+    // Clear any previous selections
+    setSelectedMealType(null);
+    setSelectedAddressId(null);
 
     const currentSearch = searchParams.toString();
     setSourceRoute(
@@ -405,6 +412,13 @@ export function PlansContent({
         onRetry={() => {
           void menuPreviewQuery.refetch();
         }}
+      />
+
+      {/* Address Selection Modal - Now only used for custom plans */}
+      <AddressSelectionModal
+        open={false}
+        onOpenChange={() => {}}
+        onSuccess={() => {}}
       />
     </div>
   );

@@ -131,6 +131,12 @@ export interface MenuPreviewResponse {
 // Checkout Types
 // ===========================================
 
+export interface MealAddressMapping {
+  meal_type: string;
+  address_id: string;
+  full_address: string;
+}
+
 export interface CheckoutPreviewResponse {
   plan: {
     _id: string;
@@ -151,18 +157,27 @@ export interface CheckoutPreviewResponse {
     mapped_outlet_name?: string;
   };
   start_date: string;
+  meal_address_mappings?: MealAddressMapping[];
 }
 
 export interface PrepareCheckoutRequest {
   plan_id: string;
   address_id: string;
   start_date: string;
+  meal_address_mappings?: {
+    meal_type: string;
+    address_id: string;
+  }[];
 }
 
 export interface CreateCheckoutOrderRequest {
   plan_id: string;
   address_id: string;
   start_date: string;
+  meal_address_mappings?: {
+    meal_type: string;
+    address_id: string;
+  }[];
 }
 
 // ===========================================
