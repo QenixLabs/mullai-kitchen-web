@@ -13,6 +13,7 @@ import type {
   IRefreshTokenRequest,
   IRegisterRequest,
   IResetPasswordRequest,
+  IVerifyResetOtpRequest,
 } from "@/api/types/auth.types";
 import type { IUser } from "@/api/types/user.types";
 import { useUserStore } from "@/providers/user-store-provider";
@@ -86,6 +87,12 @@ export function useLogout() {
 export function useForgotPassword() {
   return useMutation({
     mutationFn: (payload: IForgotPasswordRequest) => authApi.forgotPassword(payload),
+  });
+}
+
+export function useVerifyResetOtp() {
+  return useMutation({
+    mutationFn: (payload: IVerifyResetOtpRequest) => authApi.verifyResetOtp(payload),
   });
 }
 

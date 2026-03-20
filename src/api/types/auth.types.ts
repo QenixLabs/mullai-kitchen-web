@@ -17,7 +17,16 @@ export interface IRefreshTokenRequest {
 }
 
 export interface IForgotPasswordRequest {
-  email: string;
+  phone: string;
+}
+
+export interface IVerifyResetOtpRequest {
+  phone: string;
+  otp: string;
+}
+
+export interface IVerifyResetOtpResponse {
+  reset_token: string;
 }
 
 export interface IResetPasswordRequest {

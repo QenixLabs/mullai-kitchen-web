@@ -4,6 +4,7 @@ export const AUTH_ROUTES = {
   LOGOUT: "/auth/logout",
   REFRESH: "/auth/refresh",
   FORGOT_PASSWORD: "/auth/forgot-password",
+  VERIFY_RESET_OTP: "/auth/verify-reset-otp",
   RESET_PASSWORD: "/auth/reset-password",
 } as const;
 

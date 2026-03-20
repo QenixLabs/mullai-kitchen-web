@@ -7,6 +7,8 @@ import type {
   IRefreshTokenRequest,
   IRegisterRequest,
   IResetPasswordRequest,
+  IVerifyResetOtpRequest,
+  IVerifyResetOtpResponse,
 } from "@/api/types/auth.types";
 
 export const authApi = {
@@ -27,6 +29,10 @@ export const authApi = {
   },
   forgotPassword: async (payload: IForgotPasswordRequest): Promise<void> => {
     await apiClient.post(AUTH_ROUTES.FORGOT_PASSWORD, payload);
+  },
+  verifyResetOtp: async (payload: IVerifyResetOtpRequest): Promise<IVerifyResetOtpResponse> => {
+    const response = await apiClient.post<IVerifyResetOtpResponse>(AUTH_ROUTES.VERIFY_RESET_OTP, payload);
+    return response.data;
   },
   resetPassword: async (payload: IResetPasswordRequest): Promise<void> => {
     await apiClient.post(AUTH_ROUTES.RESET_PASSWORD, payload);
