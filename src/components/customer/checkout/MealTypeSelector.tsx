@@ -11,6 +11,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+const ADDRESS_CHAR_LIMIT = 40;
 
 interface MealTypeConfig {
   label: string;
@@ -84,6 +92,18 @@ export function MealTypeSelector({
   // Get the address object for display
   function getAddressById(addressId: string): Address | undefined {
     return addresses.find(a => a._id === addressId);
+  }
+
+  // Truncate address text with ellipsis
+  function truncateAddress(text: string): string {
+    if (text.length <= ADDRESS_CHAR_LIMIT) return text;
+    return text.slice(0, ADDRESS_CHAR_LIMIT) + "...";
+  }
+
+  // Format address label: "Type: address"
+  function formatAddressLabel(type: string, address: string): string {
+    const label = type === "Home" ? "Home" : type === "Office" ? "Office" : "Other";
+    return `${label}: ${address}`;
   }
 
   return (
@@ -176,56 +196,77 @@ export function MealTypeSelector({
                     <label className="mb-2 block text-xs font-medium text-muted-foreground">
                       Delivery Address for {config.label}
                     </label>
-                    <Select
-                      value={selectedAddressId}
-                      onValueChange={(value) => {
-                        if (value === "__add_new__") {
-                          onAddNewAddress();
-                        } else {
-                          onAddressChange(mealType, value);
-                        }
-                      }}
-                      disabled={disabled}
-                    >
-                      <SelectTrigger className="w-full bg-card border-border text-foreground focus:ring-primary focus:ring-1">
-                        <SelectValue placeholder="Select delivery address" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-card border-border">
-                        {/* Default/Home option */}
-                        {defaultAddressId && (
-                          <SelectItem
-                            value={defaultAddressId}
-                            className="text-foreground focus:bg-primary focus:text-primary-foreground cursor-pointer"
-                          >
-                            {addresses.find(a => a._id === defaultAddressId)?.type === "Home" ? "Home" : "Office"}: {addresses.find(a => a._id === defaultAddressId)?.full_address || "Default Address"}
-                          </SelectItem>
-                        )}
-
-                        {/* Other addresses */}
-                        {addresses
-                          .filter(a => a._id !== defaultAddressId)
-                          .map((addr) => (
-                            <SelectItem
-                              key={addr._id}
-                              value={addr._id}
-                              className="text-foreground focus:bg-primary focus:text-primary-foreground cursor-pointer"
+                    <TooltipProvider delayDuration={300}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="max-w-full">
+                            <Select
+                              value={selectedAddressId}
+                              onValueChange={(value) => {
+                                if (value === "__add_new__") {
+                                  onAddNewAddress();
+                                } else {
+                                  onAddressChange(mealType, value);
+                                }
+                              }}
+                              disabled={disabled}
                             >
-                              {addr.type === "Home" ? "Home" : addr.type === "Office" ? "Office" : "Other"}: {addr.full_address}
-                            </SelectItem>
-                          ))}
+                              <SelectTrigger className="w-full bg-card border-border text-foreground focus:ring-primary focus:ring-1 [&>span]:truncate">
+                                <SelectValue placeholder="Select delivery address" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-card border-border max-w-[min(var(--radix-select-trigger-width),28rem)]">
+                                {/* Default/Home option */}
+                                {defaultAddressId && (() => {
+                                  const defAddr = addresses.find(a => a._id === defaultAddressId);
+                                  if (!defAddr) return null;
+                                  const fullLabel = formatAddressLabel(defAddr.type, defAddr.full_address || "Default Address");
+                                  return (
+                                    <SelectItem
+                                      value={defaultAddressId}
+                                      className="text-foreground focus:bg-primary focus:text-primary-foreground cursor-pointer"
+                                    >
+                                      {fullLabel.length > ADDRESS_CHAR_LIMIT ? truncateAddress(fullLabel) : fullLabel}
+                                    </SelectItem>
+                                  );
+                                })()}
 
-                        {/* Add new address option */}
-                        <SelectItem
-                          value="__add_new__"
-                          className="text-primary font-medium focus:bg-primary focus:text-primary-foreground cursor-pointer border-t border-border mt-1 pt-1"
-                        >
-                          <span className="flex items-center gap-2">
-                            <FaPlus className="h-3 w-3" />
-                            Add New Address
-                          </span>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                                {/* Other addresses */}
+                                {addresses
+                                  .filter(a => a._id !== defaultAddressId)
+                                  .map((addr) => {
+                                    const fullLabel = formatAddressLabel(addr.type, addr.full_address);
+                                    return (
+                                      <SelectItem
+                                        key={addr._id}
+                                        value={addr._id}
+                                        className="text-foreground focus:bg-primary focus:text-primary-foreground cursor-pointer"
+                                      >
+                                        {fullLabel.length > ADDRESS_CHAR_LIMIT ? truncateAddress(fullLabel) : fullLabel}
+                                      </SelectItem>
+                                    );
+                                  })}
+
+                                {/* Add new address option */}
+                                <SelectItem
+                                  value="__add_new__"
+                                  className="text-primary font-medium focus:bg-primary focus:text-primary-foreground cursor-pointer border-t border-border mt-1 pt-1"
+                                >
+                                  <span className="flex items-center gap-2">
+                                    <FaPlus className="h-3 w-3" />
+                                    Add New Address
+                                  </span>
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TooltipTrigger>
+                        {selectedAddress && selectedAddress.full_address.length > ADDRESS_CHAR_LIMIT && (
+                          <TooltipContent side="bottom" className="max-w-[200px]  whitespace-normal text-xs leading-relaxed">
+                            {formatAddressLabel(selectedAddress.type, selectedAddress.full_address)}
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    </TooltipProvider>
 
                     {/* Show selected address badge */}
                     {selectedAddress && (

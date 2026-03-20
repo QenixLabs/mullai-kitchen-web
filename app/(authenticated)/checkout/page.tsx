@@ -229,7 +229,7 @@ export default function CheckoutPage() {
 
       <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-          <div className="flex-1 space-y-5">
+          <div className="min-w-0 flex-1 space-y-5">
             {/* Meal Type Selection with Integrated Address Selection */}
             <section className="rounded-sm border border-border bg-card p-5 shadow-md sm:p-6">
               <MealTypeSelector
