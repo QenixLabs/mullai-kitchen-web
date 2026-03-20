@@ -103,12 +103,8 @@ export interface UseCheckoutReturn {
   getMealAddressMapping: (mealType: string) => string | null;
   // Helper to get suggested address type based on selected meal
   getSuggestedAddressType: () => AddressType | null;
-  handlePaymentSuccess: (response: {
-    razorpay_payment_id: string;
-    razorpay_order_id: string;
-    razorpay_signature: string;
-  }) => void;
-  handlePaymentFailure: (error: { code: string; description: string }) => void;
+  handlePaymentSuccess: (response: PaymentSuccessResponse) => void;
+  handlePaymentFailure: (error: { code: string; message: string }) => void;
   handlePaymentDismissed: () => void;
 }
 
