@@ -6,6 +6,8 @@ export const AUTH_ROUTES = {
   FORGOT_PASSWORD: "/auth/forgot-password",
   VERIFY_RESET_OTP: "/auth/verify-reset-otp",
   RESET_PASSWORD: "/auth/reset-password",
+  SEND_SIGNUP_OTP: "/auth/send-signup-otp",
+  VERIFY_SIGNUP_OTP: "/auth/verify-signup-otp",
 } as const;
 
 export const USER_ROUTES = {

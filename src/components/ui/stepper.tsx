@@ -144,7 +144,7 @@ export function Stepper({
  
       {/* Stepper Steps */}
       <ol
-        className="mx-auto flex w-fit items-center justify-center"
+        className="mx-auto flex w-full items-center justify-center"
         aria-label="Sign up steps"
       >
         {items.map((item, index) => {
@@ -152,10 +152,16 @@ export function Stepper({
           const isCurrent = index === currentStep;
 
           return (
-            <li key={item.id} className="flex items-center">
+            <li
+              key={item.id}
+              className={cn(
+                "flex items-center",
+                index < items.length - 1 && "flex-1",
+              )}
+            >
               <motion.div
                 className={cn(
-                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-all",
+                  "flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full text-xs sm:text-sm font-bold transition-all",
                   isCurrent &&
                     "bg-primary text-white shadow-md shadow-primary/20",
                   isComplete && "bg-primary text-white",
@@ -175,7 +181,7 @@ export function Stepper({
                 )}
               </motion.div>
               {index < items.length - 1 && (
-                <div className="mx-3 h-0.5 w-12 bg-gray-200">
+                <div className="mx-1.5 sm:mx-2 h-0.5 flex-1 bg-gray-200">
                   <div
                     className={cn(
                       "h-full",

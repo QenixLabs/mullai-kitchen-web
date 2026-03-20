@@ -26,7 +26,7 @@ export function AuthShell({ children, side, className }: AuthShellProps) {
         )}
       >
         {/* Form Side - Left */}
-        <main className="flex flex-col justify-center p-8 sm:p-12 lg:p-16">
+        <main className="flex flex-col justify-center p-5 sm:p-10 lg:p-16">
           {children}
         </main>
 
