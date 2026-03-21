@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { MapPin, Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fadeInDown } from "./animations";
 import { cn } from "@/lib/utils";
+import { useIsAuthenticated, useAuthHydrated } from "@/hooks/useUserStore";
 
 const chennaiAreas = [
   "Anna Nagar", "T. Nagar", "Adyar", "Mylapore", "Velachery",
@@ -20,6 +22,15 @@ export function LandingNavbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedArea, setSelectedArea] = useState("Anna Nagar");
   const [showAreaDropdown, setShowAreaDropdown] = useState(false);
+
+  const router = useRouter();
+  const isAuthenticated = useIsAuthenticated();
+  const hasHydrated = useAuthHydrated();
+
+  const handleGetStarted = () => {
+    if (!hasHydrated) return;
+    router.push(isAuthenticated ? "/plans" : "/auth/signup");
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -120,28 +131,32 @@ export function LandingNavbar() {
             </AnimatePresence>
           </motion.div>
 
-          <Link href="/auth/signin" className="text-sm font-medium text-white/80 hover:text-white transition-all hover:translate-y-[-1px]">
-            Login
-          </Link>
-          
-          <Button className="bg-[#D4A574] hover:bg-[#C39463] text-[#1a0509] font-bold rounded-full px-8 shadow-lg shadow-[#D4A574]/20 hover:shadow-[#D4A574]/30 transition-all active:scale-95">
-            Get Started
+          {!isAuthenticated && (
+            <Link href="/auth/signin" className="text-sm font-medium text-white/80 hover:text-white transition-all hover:translate-y-[-1px]">
+              Login
+            </Link>
+          )}
+
+          <Button onClick={handleGetStarted} className="bg-[#D4A574] hover:bg-[#C39463] text-[#1a0509] font-bold rounded-full px-8 shadow-lg shadow-[#D4A574]/20 hover:shadow-[#D4A574]/30 transition-all active:scale-95">
+            {isAuthenticated ? "Dashboard" : "Get Started"}
           </Button>
         </div>
 
         {/* Mobile menu button */}
         <div className="flex md:hidden items-center gap-3">
-          {/* Login Button - Visible on mobile */}
-          <Link href="/auth/signin">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="text-white/80 hover:text-white hover:bg-white/10 rounded-full px-4"
-            >
-              Login
-            </Button>
-          </Link>
-          
+          {/* Login Button - Visible on mobile when not authenticated */}
+          {!isAuthenticated && (
+            <Link href="/auth/signin">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white/80 hover:text-white hover:bg-white/10 rounded-full px-4"
+              >
+                Login
+              </Button>
+            </Link>
+          )}
+
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="p-2 text-white hover:bg-white/10 rounded-xl transition-colors"
@@ -189,11 +204,15 @@ export function LandingNavbar() {
               </div>
               
               <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
-                <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
-                  Login to Account
-                </Button>
-                <Button className="bg-[#D4A574] hover:bg-[#C39463] text-[#1a0509] w-full font-bold rounded-xl h-12 shadow-lg shadow-[#D4A574]/20">
-                  Get Started Now
+                {!isAuthenticated && (
+                  <Link href="/auth/signin">
+                    <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
+                      Login to Account
+                    </Button>
+                  </Link>
+                )}
+                <Button onClick={handleGetStarted} className="bg-[#D4A574] hover:bg-[#C39463] text-[#1a0509] w-full font-bold rounded-xl h-12 shadow-lg shadow-[#D4A574]/20">
+                  {isAuthenticated ? "Dashboard" : "Get Started Now"}
                 </Button>
               </div>
             </div>
