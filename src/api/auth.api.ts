@@ -7,6 +7,11 @@ import type {
   IRefreshTokenRequest,
   IRegisterRequest,
   IResetPasswordRequest,
+  ISendSignupOtpRequest,
+  IVerifyResetOtpRequest,
+  IVerifyResetOtpResponse,
+  IVerifySignupOtpRequest,
+  IVerifySignupOtpResponse,
 } from "@/api/types/auth.types";
 
 export const authApi = {
@@ -28,7 +33,19 @@ export const authApi = {
   forgotPassword: async (payload: IForgotPasswordRequest): Promise<void> => {
     await apiClient.post(AUTH_ROUTES.FORGOT_PASSWORD, payload);
   },
+  verifyResetOtp: async (payload: IVerifyResetOtpRequest): Promise<IVerifyResetOtpResponse> => {
+    const response = await apiClient.post<IVerifyResetOtpResponse>(AUTH_ROUTES.VERIFY_RESET_OTP, payload);
+    return response.data;
+  },
   resetPassword: async (payload: IResetPasswordRequest): Promise<void> => {
     await apiClient.post(AUTH_ROUTES.RESET_PASSWORD, payload);
+  },
+  sendSignupOtp: async (payload: ISendSignupOtpRequest): Promise<{ message: string }> => {
+    const response = await apiClient.post<{ message: string }>(AUTH_ROUTES.SEND_SIGNUP_OTP, payload);
+    return response.data;
+  },
+  verifySignupOtp: async (payload: IVerifySignupOtpRequest): Promise<IVerifySignupOtpResponse> => {
+    const response = await apiClient.post<IVerifySignupOtpResponse>(AUTH_ROUTES.VERIFY_SIGNUP_OTP, payload);
+    return response.data;
   },
 };

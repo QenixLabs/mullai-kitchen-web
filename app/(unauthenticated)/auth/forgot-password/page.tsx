@@ -1,102 +1,251 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
-import { useForgotPassword } from "@/api/hooks/useAuth";
+import { useForgotPassword, useResetPassword, useVerifyResetOtp } from "@/api/hooks/useAuth";
 import { AuthFooterLinks, AuthFormCard, AuthHeader, AuthHighlights, AuthShell } from "@/components/Auth";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import { PasswordInput } from "@/components/ui/password-input";
 import { formatAuthError, getAuthErrorTitle } from "@/lib/auth-errors";
+import { cn } from "@/lib/utils";
+
+type Step = "phone" | "otp" | "password";
 
 export default function ForgotPasswordPage() {
-  const forgotMutation = useForgotPassword();
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
+  const router = useRouter();
+  const [step, setStep] = useState<Step>("phone");
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    await forgotMutation.mutateAsync({ email });
-    setSent(true);
+  // Shared state across steps
+  const [phone, setPhone] = useState(""); // stores the 10-digit number (without +91)
+  const [otp, setOtp] = useState("");
+  const [resetToken, setResetToken] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+
+  // Resend timer
+  const [countdown, setCountdown] = useState(60);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const forgotMutation = useForgotPassword();
+  const verifyOtpMutation = useVerifyResetOtp();
+  const resetMutation = useResetPassword();
+
+  // Start countdown when entering OTP step
+  useEffect(() => {
+    if (step === "otp") {
+      setCountdown(60);
+      timerRef.current = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current!);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [step]);
+
+  // Step 1: Send OTP
+  const handlePhoneSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    forgotMutation.reset();
+    await forgotMutation.mutateAsync({ phone: `+91${phone}` });
+    setStep("otp");
   };
+
+  // Resend OTP
+  const handleResend = async () => {
+    try {
+      await forgotMutation.mutateAsync({ phone: `+91${phone}` });
+      if (timerRef.current) clearInterval(timerRef.current);
+      setCountdown(60);
+      timerRef.current = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current!);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch {
+      // error is shown via forgotMutation.isError
+    }
+  };
+
+  // Step 2: Verify OTP
+  const handleOtpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    verifyOtpMutation.reset();
+    const result = await verifyOtpMutation.mutateAsync({ phone: `+91${phone}`, otp });
+    setResetToken(result.reset_token);
+    setStep("password");
+  };
+
+  // Step 3: Reset password
+  const handlePasswordSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    resetMutation.reset();
+    await resetMutation.mutateAsync({ token: resetToken, new_password: newPassword });
+    router.push("/auth/signin");
+  };
+
+  const inputClass = cn(
+    "h-11 rounded-xl border-gray-200 bg-gray-50 text-gray-900",
+    "placeholder:text-gray-400",
+    "focus:border-primary focus:bg-white focus:ring-primary/20"
+  );
+
+  const buttonClass = cn(
+    "h-11 w-full rounded-xl font-semibold text-white shadow-md transition-all duration-300",
+    "bg-primary",
+    "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
+    "active:scale-[0.98]",
+    "disabled:opacity-70 disabled:cursor-not-allowed"
+  );
 
   return (
     <AuthShell side={<AuthHighlights />}>
-      {/* Back to sign in link at top */}
       <div className="mb-6 text-center">
         <span className="text-sm text-gray-500">
           Remembered your password?{" "}
-          <Link
-            className="font-semibold text-primary hover:text-primary/90 transition-colors"
-            href="/auth/signin"
-          >
+          <Link className="font-semibold text-primary hover:text-primary/90 transition-colors" href="/auth/signin">
             Go back to sign in
           </Link>
         </span>
       </div>
 
-      <AuthHeader
-        title="Forgot your password?"
-        subtitle="No worries. We'll send you a link to reset it."
-      />
+      {/* Step 1: Phone */}
+      {step === "phone" && (
+        <>
+          <AuthHeader title="Forgot your password?" subtitle="Enter your registered mobile number. We'll send an OTP via WhatsApp." />
+          <AuthFormCard footer={<AuthFooterLinks prompt="Need an account?" actionLabel="Create one" actionHref="/auth/signup" />}>
+            <form className="space-y-5" onSubmit={handlePhoneSubmit}>
+              <div className="grid gap-2">
+                <Label htmlFor="phone" className="text-sm font-medium text-gray-700">Mobile Number</Label>
+                <div className="flex">
+                  <span className="inline-flex items-center rounded-l-xl border border-r-0 border-gray-200 bg-gray-100 px-3 text-sm text-gray-500">+91</span>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="9876543210"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                    required
+                    maxLength={10}
+                    pattern="\d{10}"
+                    className="rounded-l-none rounded-r-xl border-gray-200 bg-gray-50 h-11 text-gray-900 placeholder:text-gray-400 focus:border-primary focus:bg-white focus:ring-primary/20"
+                  />
+                </div>
+              </div>
 
-      <AuthFormCard footer={<AuthFooterLinks prompt="Need an account?" actionLabel="Create one" actionHref="/auth/signup" />}>
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          <div className="grid gap-2">
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-              Email address
-            </Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              placeholder="your@email.com"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-              className={cn(
-                "h-11 rounded-xl border-gray-200 bg-gray-50 text-gray-900",
-                "placeholder:text-gray-400",
-                "focus:border-primary focus:bg-white focus:ring-primary/20"
+              {forgotMutation.isError && (
+                <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800">
+                  <AlertTitle>{getAuthErrorTitle("forgot-password")}</AlertTitle>
+                  <AlertDescription>{formatAuthError(forgotMutation.error, "forgot-password")}</AlertDescription>
+                </Alert>
               )}
-            />
-          </div>
 
-          {forgotMutation.isError ? (
-            <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800">
-              <AlertTitle>{getAuthErrorTitle("forgot-password")}</AlertTitle>
-              <AlertDescription>
-                {formatAuthError(forgotMutation.error, "forgot-password")}
-              </AlertDescription>
-            </Alert>
-          ) : null}
+              <Button type="submit" className={buttonClass} disabled={forgotMutation.isPending}>
+                {forgotMutation.isPending ? "Sending OTP..." : "Send OTP"}
+              </Button>
+            </form>
+          </AuthFormCard>
+        </>
+      )}
 
-          {sent && !forgotMutation.isError ? (
-            <Alert className="border-green-200 bg-green-50 text-green-800">
-              <AlertTitle>Check your inbox</AlertTitle>
-              <AlertDescription>We sent a reset link if the email is registered.</AlertDescription>
-            </Alert>
-          ) : null}
+      {/* Step 2: OTP */}
+      {step === "otp" && (
+        <>
+          <AuthHeader title="Enter the OTP" subtitle={`We sent a 6-digit OTP to +91${phone} via WhatsApp.`} />
+          <AuthFormCard footer={<AuthFooterLinks prompt="Wrong number?" actionLabel="Go back" actionHref="/auth/forgot-password" />}>
+            <form className="space-y-5" onSubmit={handleOtpSubmit}>
+              <div className="grid gap-2">
+                <Label htmlFor="otp" className="text-sm font-medium text-gray-700">One-Time Password</Label>
+                <Input
+                  id="otp"
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="123456"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  required
+                  maxLength={6}
+                  className={inputClass}
+                />
+              </div>
 
-          <Button
-            className={cn(
-              "h-11 w-full rounded-xl font-semibold text-white shadow-md transition-all duration-300",
-              "bg-primary",
-              "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
-              "active:scale-[0.98]",
-              "disabled:opacity-70 disabled:cursor-not-allowed"
-            )}
-            type="submit"
-            disabled={forgotMutation.isPending}
-          >
-            {forgotMutation.isPending ? "Sending reset link..." : "Send reset link"}
-          </Button>
-        </form>
-      </AuthFormCard>
+              <div className="text-center text-sm text-gray-500">
+                {countdown > 0 ? (
+                  <span>Resend OTP in {countdown}s</span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={forgotMutation.isPending}
+                    className="font-semibold text-primary hover:text-primary/90 transition-colors disabled:opacity-50"
+                  >
+                    {forgotMutation.isPending ? "Resending..." : "Resend OTP"}
+                  </button>
+                )}
+              </div>
+
+              {verifyOtpMutation.isError && (
+                <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800">
+                  <AlertTitle>Invalid OTP</AlertTitle>
+                  <AlertDescription>{formatAuthError(verifyOtpMutation.error, "forgot-password")}</AlertDescription>
+                </Alert>
+              )}
+
+              <Button type="submit" className={buttonClass} disabled={verifyOtpMutation.isPending}>
+                {verifyOtpMutation.isPending ? "Verifying..." : "Verify OTP"}
+              </Button>
+            </form>
+          </AuthFormCard>
+        </>
+      )}
+
+      {/* Step 3: New password */}
+      {step === "password" && (
+        <>
+          <AuthHeader title="Create a new password" subtitle="Choose something secure that you'll remember." />
+          <AuthFormCard footer={<AuthFooterLinks prompt="Ready to sign in?" actionLabel="Return to sign in" actionHref="/auth/signin" />}>
+            <form className="space-y-5" onSubmit={handlePasswordSubmit}>
+              <div className="grid gap-2">
+                <Label htmlFor="new_password" className="text-sm font-medium text-gray-700">New Password</Label>
+                <PasswordInput
+                  id="new_password"
+                  autoComplete="new-password"
+                  placeholder="Enter a new password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  className="h-11 rounded-xl border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:border-primary focus:bg-white focus:ring-primary/20"
+                />
+              </div>
+
+              {resetMutation.isError && (
+                <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800">
+                  <AlertTitle>{getAuthErrorTitle("reset-password")}</AlertTitle>
+                  <AlertDescription>{formatAuthError(resetMutation.error, "reset-password")}</AlertDescription>
+                </Alert>
+              )}
+
+              <Button type="submit" className={buttonClass} disabled={resetMutation.isPending}>
+                {resetMutation.isPending ? "Updating password..." : "Update password"}
+              </Button>
+            </form>
+          </AuthFormCard>
+        </>
+      )}
     </AuthShell>
   );
 }

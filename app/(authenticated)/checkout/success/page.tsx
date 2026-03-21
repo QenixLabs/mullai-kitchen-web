@@ -154,8 +154,8 @@ function CheckoutSuccessContent() {
             <div
               className={cn(
                 "px-6 sm:px-10 pt-12 pb-8 text-center",
-                status === "confirmed" && "bg-gradient-to-b from-success/5 to-transparent",
-                status === "failed" && "bg-gradient-to-b from-destructive/5 to-transparent"
+                status === "confirmed" && "bg-linear-to-b from-success/5 to-transparent",
+                status === "failed" && "bg-linear-to-b from-destructive/5 to-transparent"
               )}
             >
               {/* Icon */}
@@ -352,7 +352,7 @@ function CheckoutSuccessContent() {
                 >
                   <div className="bg-destructive/5 border border-destructive/10 rounded-xl p-5">
                     <p className="text-sm text-destructive/90 leading-relaxed">
-                      If funds were deducted from your account, don't worry. 
+                      If funds were deducted from your account, don&apos;t worry. 
                       Verification can take up to 2 minutes. Please wait or try again.
                     </p>
                   </div>

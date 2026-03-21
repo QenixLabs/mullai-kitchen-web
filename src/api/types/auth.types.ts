@@ -7,9 +7,11 @@ export interface ILoginRequest {
 
 export interface IRegisterRequest {
   name: string;
-  email: string;
+  email?: string;
   phone: string;
   password: string;
+  signup_token: string;
+  acceptTerms: boolean;
 }
 
 export interface IRefreshTokenRequest {
@@ -17,12 +19,34 @@ export interface IRefreshTokenRequest {
 }
 
 export interface IForgotPasswordRequest {
-  email: string;
+  phone: string;
+}
+
+export interface IVerifyResetOtpRequest {
+  phone: string;
+  otp: string;
+}
+
+export interface IVerifyResetOtpResponse {
+  reset_token: string;
 }
 
 export interface IResetPasswordRequest {
   token: string;
   new_password: string;
+}
+
+export interface ISendSignupOtpRequest {
+  phone: string;
+}
+
+export interface IVerifySignupOtpRequest {
+  phone: string;
+  otp: string;
+}
+
+export interface IVerifySignupOtpResponse {
+  signup_token: string;
 }
 
 export interface IAuthSession {

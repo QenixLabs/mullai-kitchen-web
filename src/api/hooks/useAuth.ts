@@ -13,6 +13,9 @@ import type {
   IRefreshTokenRequest,
   IRegisterRequest,
   IResetPasswordRequest,
+  ISendSignupOtpRequest,
+  IVerifyResetOtpRequest,
+  IVerifySignupOtpRequest,
 } from "@/api/types/auth.types";
 import type { IUser } from "@/api/types/user.types";
 import { useUserStore } from "@/providers/user-store-provider";
@@ -89,9 +92,27 @@ export function useForgotPassword() {
   });
 }
 
+export function useVerifyResetOtp() {
+  return useMutation({
+    mutationFn: (payload: IVerifyResetOtpRequest) => authApi.verifyResetOtp(payload),
+  });
+}
+
 export function useResetPassword() {
   return useMutation({
     mutationFn: (payload: IResetPasswordRequest) => authApi.resetPassword(payload),
+  });
+}
+
+export function useSendSignupOtp() {
+  return useMutation({
+    mutationFn: authApi.sendSignupOtp,
+  });
+}
+
+export function useVerifySignupOtp() {
+  return useMutation({
+    mutationFn: authApi.verifySignupOtp,
   });
 }
 
