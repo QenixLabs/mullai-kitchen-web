@@ -19,7 +19,7 @@ import {
   useCancelOptOutPeriod,
 } from "@/api/hooks/use-subscription";
 import type { Subscription, OptOutPeriod } from "@/api/types/subscription.types";
-import { FaPlus, FaExclamationCircle, FaStar, FaChartLine, FaCalendarTimes } from "react-icons/fa";
+import { FaPlus, FaExclamationCircle, FaStar, FaCalendarTimes } from "react-icons/fa";
 import { Badge } from "@/components/ui/badge";
 import { X, CalendarX } from "lucide-react";
 
@@ -101,6 +101,10 @@ export default function SubscriptionPage() {
     );
   };
 
+  const handleAddOn = (id: string) => {
+    router.push("/add-ons");
+  };
+
   const handleToggleAutoRenew = (id: string) => {
     const subscription = subscriptions.find((s) => s._id === id);
     if (subscription) {
@@ -163,15 +167,15 @@ export default function SubscriptionPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="container mx-auto p-6 max-w-7xl">
-        <div className="mb-8">
-          <Skeleton className="h-10 w-64 mb-4" />
-          <Skeleton className="h-4 w-96" />
+      <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
+        <div className="mb-6 sm:mb-8">
+          <Skeleton className="h-8 sm:h-10 w-48 sm:w-64 mb-4" />
+          <Skeleton className="h-4 w-64 sm:w-96" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
           {[1, 2, 3].map((i) => (
             <div key={i} className="space-y-4">
-              <Skeleton className="h-48 w-full rounded-sm" />
+              <Skeleton className="h-40 sm:h-48 w-full rounded-sm" />
               <div className="space-y-2">
                 <Skeleton className="h-4 w-3/4" />
                 <Skeleton className="h-4 w-1/2" />
@@ -186,12 +190,12 @@ export default function SubscriptionPage() {
   // Error state
   if (error) {
     return (
-      <div className="container mx-auto p-6 max-w-7xl flex flex-col items-center justify-center min-h-[400px]">
+      <div className="container mx-auto p-4 sm:p-6 max-w-7xl flex flex-col items-center justify-center min-h-[300px] sm:min-h-[400px]">
         <div className="p-4 rounded-full bg-destructive/10 text-destructive mb-6">
-          <FaExclamationCircle className="h-10 w-10" />
+          <FaExclamationCircle className="h-8 w-8 sm:h-10 sm:w-10" />
         </div>
-        <h2 className="text-2xl font-bold mb-2">Error Loading Subscriptions</h2>
-        <p className="text-muted-foreground mb-8 text-center ">
+        <h2 className="text-xl sm:text-2xl font-bold mb-2 text-center">Error Loading Subscriptions</h2>
+        <p className="text-muted-foreground mb-8 text-center text-sm sm:text-base px-4">
           {error instanceof Error
             ? error.message
             : "Failed to load subscriptions. Please check your connection and try again."}
@@ -204,48 +208,53 @@ export default function SubscriptionPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-7xl">
+    <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
       {/* Page Header */}
-      <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+      <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 rounded-sm bg-primary/10 text-primary">
-              <FaChartLine className="h-5 w-5" />
-            </div>
-            <span className="text-sm font-bold uppercase tracking-widest text-primary/80">
-              Manage
-            </span>
-          </div>
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-3">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-foreground mb-2">
             Subscriptions
           </h1>
-          <p className="text-lg text-muted-foreground ">
-            Control your active meal plans, track deliveries, and manage
-            renewals in one place.
+          <p className="text-sm sm:text-base text-muted-foreground">
+            Control your active meal plans, track deliveries, and manage renewals in one place.
           </p>
+          {/* Status count badges */}
+          {subscriptions.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 mt-3">
+              {subscriptions.filter(s => s.status === 'active').length > 0 && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-2.5 sm:px-3 py-1 text-xs font-semibold text-white">
+                  {subscriptions.filter(s => s.status === 'active').length} Active
+                </span>
+              )}
+              {subscriptions.filter(s => s.status === 'paused').length > 0 && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400 px-2.5 sm:px-3 py-1 text-xs font-semibold text-white">
+                  {subscriptions.filter(s => s.status === 'paused').length} Paused
+                </span>
+              )}
+            </div>
+          )}
         </div>
-
         <Button
           onClick={() => router.push("/plans")}
           size="lg"
-          className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all active:scale-95"
+          className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-sm shrink-0 w-full sm:w-auto"
         >
-          <FaPlus className="h-5 w-5" />
+          <FaPlus className="h-4 w-4" />
           New Subscription
         </Button>
       </div>
 
       <div className="relative">
-        <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent -z-10 h-64 pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent -z-10 h-48 sm:h-64 pointer-events-none" />
 
         {/* Subscription List */}
         {subscriptions.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 px-6 border-2 border-dashed border-gray-200 rounded-sm bg-gray-50/50">
-            <div className="p-5 rounded-full bg-white shadow-sm mb-6 text-gray-400">
-              <FaStar className="h-10 w-10" />
+          <div className="flex flex-col items-center justify-center py-16 sm:py-24 px-4 sm:px-6 border-2 border-dashed border-gray-200 rounded-sm bg-gray-50/50">
+            <div className="p-4 sm:p-5 rounded-full bg-white shadow-sm mb-6 text-gray-400">
+              <FaStar className="h-8 w-8 sm:h-10 sm:w-10" />
             </div>
-            <h3 className="text-2xl font-bold mb-2">No Active Subscriptions</h3>
-            <p className="text-muted-foreground mb-8 text-center ">
+            <h3 className="text-xl sm:text-2xl font-bold mb-2 text-center">No Active Subscriptions</h3>
+            <p className="text-muted-foreground mb-8 text-center text-sm sm:text-base max-w-md px-4">
               Discover delicious, chef-curated meals delivered right to your
               doorstep. Start your journey today!
             </p>
@@ -254,12 +263,13 @@ export default function SubscriptionPage() {
               size="lg"
               className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
             >
-          <FaPlus className="h-5 w-5" />
+          <FaPlus className="h-4 w-4 sm:h-5 sm:w-5" />
               Explore All Plans
             </Button>
           </div>
         ) : (
-          <div className="pb-12">
+          <div className="pb-8 sm:pb-12">
+            <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4">Active Subscriptions</h2>
             <SubscriptionList
               subscriptions={subscriptions}
               onPause={handlePause}
@@ -271,6 +281,7 @@ export default function SubscriptionPage() {
                 // TODO: Implement subscription details page
                 console.log("Subscription details coming soon for:", id);
               }}
+              onAddOn={handleAddOn}
             />
           </div>
         )}

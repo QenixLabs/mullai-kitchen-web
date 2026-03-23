@@ -1,20 +1,9 @@
-import { useState } from "react";
-import { format } from "date-fns";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import {
-  Subscription,
-  SubscriptionStatus,
-} from "@/api/types/subscription.types";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Switch } from "@/components/ui/switch";
+import { Card, CardContent } from "@/components/ui/card";
+import { Subscription, SubscriptionStatus, MealType } from "@/api/types/subscription.types";
+import { Utensils, CalendarDays, RotateCcw } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const STATUS = {
   ACTIVE: 'active' as SubscriptionStatus,
@@ -24,25 +13,8 @@ const STATUS = {
   PENDING_RENEWAL: 'pending_renewal' as SubscriptionStatus,
 } as const;
 
-import {
-  CalendarDays,
-  MapPin,
-  MoreVertical,
-  RotateCcw,
-  Pause,
-  XCircle,
-  CheckCircle2,
-  Clock,
-  Utensils,
-  CalendarX2,
-  ChevronRight,
-  Settings2,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-
 interface SubscriptionCardProps {
   subscription: Subscription;
-  pausedDates?: Date[];
   onPause?: (id: string) => void;
   onResume?: (id: string) => void;
   onCancel?: (id: string) => void;
@@ -50,328 +22,183 @@ interface SubscriptionCardProps {
   onToggleAutoRenew?: (id: string) => void;
   onOptOut?: (id: string) => void;
   onViewDetails?: (id: string) => void;
+  onAddOn?: (id: string) => void;
 }
 
 export function SubscriptionCard({
   subscription,
-  pausedDates = [],
   onPause,
   onResume,
-  onCancel,
+  onCancel: _onCancel,
   onRenew,
-  onToggleAutoRenew,
-  onOptOut,
+  onToggleAutoRenew: _onToggleAutoRenew,
+  onOptOut: _onOptOut,
   onViewDetails,
+  onAddOn,
 }: SubscriptionCardProps) {
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const getFallbackImage = () => {
+    const meals = subscription.meals_included ?? [];
+    if (meals.length >= 3) return "/images/plans/thali.png";
+    if (meals.includes("dinner" as MealType) || meals.includes("DINNER" as MealType)) return "/images/plans/thali.png";
+    if (meals.includes("lunch" as MealType) || meals.includes("LUNCH" as MealType)) return "/images/plans/office-lunch-monthly.jpg";
+    if (meals.includes("breakfast" as MealType) || meals.includes("BREAKFAST" as MealType)) return "/images/plans/idli.jpg";
+    return "/images/plans/thali.png";
+  };
 
   const getStatusConfig = (status: SubscriptionStatus) => {
     switch (status) {
       case STATUS.ACTIVE:
-        return {
-          bg: "bg-emerald-500",
-          light: "bg-emerald-50 text-emerald-700 border-emerald-200",
-          icon: CheckCircle2,
-        };
+        return { bg: "bg-emerald-500", label: "Active" };
       case STATUS.PAUSED:
-        return {
-          bg: "bg-amber-500",
-          light: "bg-amber-50 text-amber-700 border-amber-200",
-          icon: Pause,
-        };
+        return { bg: "bg-amber-400", label: "Paused" };
       case STATUS.EXPIRED:
-        return {
-          bg: "bg-slate-500",
-          light: "bg-slate-50 text-slate-700 border-slate-200",
-          icon: Clock,
-        };
+        return { bg: "bg-slate-400", label: "Expired" };
       case STATUS.CANCELLED:
-        return {
-          bg: "bg-rose-500",
-          light: "bg-rose-50 text-rose-700 border-rose-200",
-          icon: XCircle,
-        };
+        return { bg: "bg-rose-500", label: "Cancelled" };
       case STATUS.PENDING_RENEWAL:
-        return {
-          bg: "bg-blue-500",
-          light: "bg-blue-50 text-blue-700 border-blue-200",
-          icon: RotateCcw,
-        };
+        return { bg: "bg-blue-500", label: "Pending Renewal" };
       default:
-        return {
-          bg: "bg-slate-500",
-          light: "bg-slate-50 text-slate-700 border-slate-200",
-          icon: Clock,
-        };
+        return { bg: "bg-slate-400", label: status };
     }
   };
 
-  const progress =
-    subscription.total_deliveries && subscription.total_deliveries > 0
-      ? Math.round((subscription.completed_deliveries / subscription.total_deliveries) * 100)
-      : 0;
-
   const statusConfig = getStatusConfig(subscription.status);
-  const StatusIcon = statusConfig.icon;
-
-  // Fallback images based on meal types or plan name
-  const getFallbackImage = () => {
-    const name = subscription.plan_name.toLowerCase();
-    if (name.includes("breakfast")) return "/images/plans/idli.jpg";
-    if (name.includes("lunch")) return "/images/plans/office-lunch-monthly.jpg";
-    if (name.includes("dinner") || name.includes("feast"))
-      return "/images/plans/family-feast.jpg";
-    return "/images/plans/why-choose.jpg";
-  };
-
-  const formatDate = (date: string | Date) => {
-    const d = typeof date === 'string' ? new Date(date) : date;
-    return d.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
-  const formatDateWithYear = (date: string | Date) => {
-    const d = typeof date === 'string' ? new Date(date) : date;
-    return d.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
   const isActive = subscription.status === STATUS.ACTIVE;
+  const isPaused = subscription.status === STATUS.PAUSED;
   const isInactive = subscription.status === STATUS.EXPIRED || subscription.status === STATUS.CANCELLED;
 
-  return (
-    <Card className="group overflow-hidden border-border/60 bg-card transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
-      {/* Image Header */}
-      <div className="relative h-36 overflow-hidden">
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10" />
+  const total = subscription.total_deliveries ?? 0;
+  const completed = subscription.completed_deliveries ?? 0;
 
-        {/* Image */}
-        <img
+  // Progress dots — max 30 dots, scale completed proportionally
+  const DOT_COUNT = Math.min(total, 30);
+  const filledDots = total > 0 ? Math.round((completed / total) * DOT_COUNT) : 0;
+  const dotColor = isPaused ? "bg-amber-400" : "bg-primary";
+
+  const mealsLabel = subscription.meals_included
+    .map((m) => m.charAt(0).toUpperCase() + m.slice(1).toLowerCase())
+    .join(" + ");
+
+  const formatDate = (date: string | Date) => {
+    const d = typeof date === "string" ? new Date(date) : date;
+    return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+  };
+
+  return (
+    <div className="relative">
+      {/* Thali image — floats outside the card, overflows top and bottom - hidden on mobile */}
+      <div className="hidden md:block absolute right-0 -top-6 -bottom-6 w-48 lg:w-64 pointer-events-none select-none z-10">
+        <Image
           src={getFallbackImage()}
           alt={subscription.plan_name}
-          className={cn(
-            "h-full w-full object-cover transition-all duration-700",
-            "group-hover:scale-105",
-            !imageLoaded && "blur-sm"
-          )}
-          onLoad={() => setImageLoaded(true)}
+          fill
+          className="object-contain object-center"
         />
-
-        {/* Status Badge */}
-        <div className="absolute top-3 left-3 z-20">
-          <Badge
-            className={cn(
-              "gap-1.5 px-2.5 py-1 text-xs font-semibold border-0 shadow-lg",
-              statusConfig.bg,
-              "text-white"
-            )}
-          >
-            <StatusIcon className="h-3.5 w-3.5" />
-            <span className="capitalize">{subscription.status.replace(/_/g, " ")}</span>
-          </Badge>
-        </div>
-
-        {/* Auto-renew Badge */}
-        {subscription.auto_renew && (
-          <div className="absolute top-3 right-3 z-20">
-            <Badge
-              variant="secondary"
-              className="gap-1.5 px-2 py-1 text-[10px] font-medium bg-white/90 text-slate-700 backdrop-blur-sm border-0 shadow-md"
-            >
-              <RotateCcw className="h-3 w-3" />
-              Auto
-            </Badge>
-          </div>
-        )}
-
-        {/* Plan Info */}
-        <div className="absolute bottom-0 left-0 right-0 z-20 p-4">
-          <h3 className="text-lg font-bold text-white leading-tight drop-shadow-md">
-            {subscription.plan_name}
-          </h3>
-          <p className="text-sm text-white/80 font-medium">
-            {subscription.outlet_name || "Mullai Kitchen"}
-          </p>
-        </div>
       </div>
 
-      <CardContent className="p-4 space-y-4">
-        {/* Info Grid */}
-        <div className="space-y-2.5">
-          {/* Date Range */}
-          <div className="flex items-center gap-2.5 text-sm">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600">
-              <CalendarDays className="h-3.5 w-3.5" />
-            </div>
-            <span className="text-slate-700 font-medium">
-              {formatDate(subscription.start_date)}
-              <span className="text-slate-400 mx-1.5">→</span>
-              {formatDateWithYear(subscription.end_date)}
+      <Card className="overflow-hidden border-border bg-card shadow-sm hover:shadow-md transition-shadow duration-200">
+        <CardContent className="p-4 sm:p-6 pb-4 sm:pb-5 space-y-3 pr-0 md:pr-48 lg:pr-60">
+
+          {/* Status badge */}
+          <div>
+            <span className={cn("inline-flex items-center rounded-full px-2.5 sm:px-3 py-1 text-white text-xs sm:text-sm font-semibold", statusConfig.bg)}>
+              {statusConfig.label}
             </span>
           </div>
 
-          {/* Address */}
-          <div className="flex items-start gap-2.5 text-sm">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600 mt-0.5">
-              <MapPin className="h-3.5 w-3.5" />
-            </div>
-            <span className="text-slate-600 line-clamp-2 leading-relaxed">
-              {subscription.full_address}
+          {/* Plan name — Inter Bold 32 */}
+          <h3 className="text-xl sm:text-[32px] font-bold text-foreground leading-tight">
+            {subscription.plan_name}
+          </h3>
+
+          {/* Info row: Meals + Date */}
+          <div className="flex flex-wrap gap-x-4 sm:gap-x-6 gap-y-1 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <Utensils className="h-3.5 w-3.5 shrink-0" />
+              <span>Meals : <span className="font-semibold text-foreground">{mealsLabel}</span></span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CalendarDays className="h-3.5 w-3.5 shrink-0" />
+              <span>Ends : <span className="font-semibold text-foreground">{formatDate(subscription.end_date)}</span></span>
             </span>
           </div>
 
-          {/* Meals */}
-          <div className="flex items-center gap-2.5 text-sm">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600">
-              <Utensils className="h-3.5 w-3.5" />
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {subscription.meals_included.map((meal) => (
-                <Badge
-                  key={meal}
-                  variant="secondary"
-                  className="text-[10px] font-semibold uppercase tracking-wide bg-slate-100 text-slate-700 hover:bg-slate-100 px-1.5 py-0.5"
-                >
-                  {meal}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Progress Section */}
-        <div className="space-y-2 pt-1">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-slate-500 font-medium">Progress</span>
-            <span className="text-slate-900 font-semibold">
-              {subscription.completed_deliveries}{" "}
-              <span className="text-slate-400 font-normal">
-                / {subscription.total_deliveries ?? "-"}
+          {/* Progress dots — inline with Day label */}
+          {total > 0 && (
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <span className="text-sm font-semibold text-foreground shrink-0">
+                Day {completed}/{total}
               </span>
-              <span className="ml-1 text-slate-500">({progress}%)</span>
-            </span>
-          </div>
-          <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div
-              className={cn(
-                "h-full rounded-full transition-all duration-700 ease-out",
-                progress >= 100 ? "bg-emerald-500" : "bg-primary"
-              )}
-              style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Paused Dates Display */}
-        {pausedDates.length > 0 && (
-          <div className="pt-2 pb-1">
-            <div className="flex items-start gap-2.5 text-sm">
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-amber-100 text-amber-600">
-                <Pause className="h-3.5 w-3.5" />
-              </div>
-              <div className="flex-1">
-                <span className="text-amber-700 font-medium">
-                  {pausedDates.length} date{pausedDates.length !== 1 ? "s" : ""} paused
-                </span>
-                <p className="text-amber-600/80 text-xs mt-0.5">
-                  {pausedDates.slice(0, 3).map(d => format(new Date(d), "MMM d")).join(", ")}
-                  {pausedDates.length > 3 && ` +${pausedDates.length - 3} more`}
-                </p>
-                <p className="text-amber-600/60 text-xs mt-1 italic">
-                  Pause is permanent
-                </p>
+              <div className="flex flex-wrap gap-1">
+                {Array.from({ length: DOT_COUNT }).map((_, i) => (
+                  <span
+                    key={i}
+                    className={cn(
+                      "h-2 w-4 sm:h-2.5 sm:w-6 rounded-full",
+                      i < filledDots ? dotColor : "bg-muted"
+                    )}
+                  />
+                ))}
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Actions */}
-        <div className="pt-2 flex items-center gap-3">
-          {/* Auto-renew Toggle */}
-          <div className="flex items-center gap-2">
-            <Switch
-              id={`auto-renew-${subscription._id}`}
-              checked={subscription.auto_renew}
-              onCheckedChange={() => onToggleAutoRenew?.(subscription._id)}
-              className="data-[state=checked]:bg-primary"
-            />
-            <label
-              htmlFor={`auto-renew-${subscription._id}`}
-              className="text-xs font-medium text-slate-600 cursor-pointer"
-            >
-              Auto-renew
-            </label>
-          </div>
+          {/* Action buttons */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 pt-2">
+            {isActive && (
+              <Button
+                variant="outline"
+                className="h-10 sm:h-12 px-4 sm:px-6 gap-2 rounded-lg text-base sm:text-[20px] font-semibold text-[#44151C] bg-secondary/20 border-secondary/40 hover:bg-secondary/40"
+                onClick={() => onPause?.(subscription._id)}
+              >
+                <Image src="/images/subscriptions/pause.png" width={16} height={16} alt="pause" className="shrink-0 sm:w-[18px] sm:h-[18px]" />
+                Pause
+              </Button>
+            )}
+            {isPaused && (
+              <Button
+                variant="outline"
+                className="h-10 sm:h-12 px-4 sm:px-6 gap-2 rounded-lg text-base sm:text-[20px] font-semibold text-[#44151C] bg-secondary/20 border-secondary/40 hover:bg-secondary/40"
+                onClick={() => onResume?.(subscription._id)}
+              >
+                <Image src="/images/subscriptions/play.png" width={16} height={16} alt="play" className="shrink-0 sm:w-[18px] sm:h-[18px]" />
+                Paused
+              </Button>
+            )}
+            {isInactive && (
+              <Button
+                className="h-10 sm:h-12 px-4 sm:px-6 gap-2 rounded-lg text-base sm:text-[20px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
+                onClick={() => onRenew?.(subscription._id)}
+              >
+                <RotateCcw className="h-4 w-4 sm:h-5 sm:w-5" />
+                Renew
+              </Button>
+            )}
 
-          <div className="flex-1" />
-
-          {/* Primary Action */}
-          {isActive && (
+            {/* View Details */}
             <Button
               variant="outline"
-              size="sm"
-              className="h-8 text-xs font-semibold border-amber-200 text-amber-700 hover:bg-amber-50 hover:text-amber-800"
-              onClick={() => onPause?.(subscription._id)}
+              className="h-10 sm:h-12 px-4 sm:px-6 rounded-lg text-base sm:text-[20px] font-normal bg-secondary/20 text-[#44151C] border-secondary/40 hover:bg-secondary/40"
+              onClick={() => onViewDetails?.(subscription._id)}
             >
-              <Pause className="mr-1.5 h-3.5 w-3.5" />
-              Pause
+              View Details
             </Button>
-          )}
 
-          {isInactive && (
             <Button
-              size="sm"
-              className="h-8 text-xs font-semibold bg-primary hover:bg-primary/90 text-white"
-              onClick={() => onRenew?.(subscription._id)}
-            >
-              <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
-              Renew
-            </Button>
-          )}
-
-          {/* More Actions Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-slate-500 hover:text-slate-700 hover:bg-slate-100"
-              >
-                <Settings2 className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem onClick={() => onViewDetails?.(subscription._id)}>
-                <ChevronRight className="mr-2 h-4 w-4" />
-                View Details
-              </DropdownMenuItem>
-
-              {isActive && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => onOptOut?.(subscription._id)}>
-                    <CalendarX2 className="mr-2 h-4 w-4" />
-                    Opt Out Dates
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => onCancel?.(subscription._id)}
-                    className="text-rose-600 focus:text-rose-600"
-                  >
-                    <XCircle className="mr-2 h-4 w-4" />
-                    Cancel Plan
-                  </DropdownMenuItem>
-                </>
+              className={cn(
+                "h-10 sm:h-12 px-6 sm:px-8 gap-2 rounded-lg text-base sm:text-[20px] font-semibold text-[#FBFBFB]",
+                isPaused ? "bg-primary/50 cursor-not-allowed" : "bg-primary hover:bg-primary/90"
               )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </CardContent>
-    </Card>
+              disabled={isPaused}
+              onClick={() => !isPaused && onAddOn?.(subscription._id)}
+            >
+              <Image src="/images/plans/white-bell.png" width={18} height={18} alt="" className="shrink-0 sm:w-5 sm:h-5" style={{ filter: "brightness(0) invert(1) opacity(0.98)" }} />
+              Add on
+            </Button>
+          </div>
+
+        </CardContent>
+      </Card>
+    </div>
   );
 }

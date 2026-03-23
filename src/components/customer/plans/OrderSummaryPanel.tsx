@@ -1,6 +1,7 @@
 "use client";
 
 import { FaArrowRight, FaCheck, FaSpinner, FaShieldAlt } from "react-icons/fa";
+import { BadgePercent } from "lucide-react";
 
 import { useCustomPlanPricing } from "@/api/hooks/useCustomPlans";
 import type { CustomPlanMenuPreviewParams } from "@/api/types/customer.types";
@@ -32,58 +33,77 @@ export function OrderSummaryPanel({
 }: OrderSummaryPanelProps) {
   const { data: pricing, isLoading, error } = useCustomPlanPricing(params);
 
-  const mealTypeLetters = params?.meal_types.map((m) => m[0]).join(", ") || "-";
+  const mealTypeLetters = params?.meal_types.map((m) => m[0]).join("") || "-";
 
   return (
-    <div className="space-y-4">
-      <div
-        className={cn(
-          "sticky top-6 rounded-sm bg-white border border-gray-100 shadow-xl p-8 transition-all duration-300",
-        )}
-      >
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
+    <div className="rounded-2xl bg-white border border-gray-200 shadow-lg overflow-hidden">
+      {/* Header */}
+      <div className="p-5 border-b border-gray-200">
+        <h2
+          className="text-xl font-bold text-[#39070F]"
+          style={{ fontFamily: "var(--font-inter), sans-serif" }}
+        >
+          Order Summary
+        </h2>
+      </div>
 
+      <div className="p-5">
         {/* Selection Summary */}
-        <div className="space-y-4 pb-6 mb-6 border-b border-slate-50">
+        <div className="space-y-3 pb-5 mb-5 border-b border-gray-200">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-400 font-medium">Duration</span>
-            <span className="font-bold text-[#0F172A]">
+            <span className="text-gray-500">Duration</span>
+            <span className="font-semibold text-[#39070F]">
               {params?.days || "-"} Days
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-400 font-medium">Meals per day</span>
-            <span className="font-bold text-[#0F172A]">
-              {params?.meal_types.length || 0} ({mealTypeLetters})
+            <span className="text-gray-500">Meals per day</span>
+            <span className="font-semibold text-[#39070F]">
+              {params?.meal_types.length || 0}({mealTypeLetters})
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-400 font-medium">Preference</span>
+            <span className="text-gray-500">Preference</span>
             <span
               className={cn(
-                "font-bold",
+                "font-semibold flex items-center gap-1.5",
                 params?.preference === "VEG"
-                  ? "text-[#22C55E]"
-                  : "text-[#EF4444]",
+                  ? "text-emerald-600"
+                  : "text-red-600",
               )}
             >
+              {params?.preference && (
+                <span
+                  className={cn(
+                    "w-4 h-4 rounded flex items-center justify-center border-2",
+                    params?.preference === "VEG"
+                      ? "border-emerald-500 bg-white"
+                      : "border-red-500 bg-white",
+                  )}
+                >
+                  <span className={cn(
+                    "w-2 h-2 rounded-full",
+                    params?.preference === "VEG" ? "bg-emerald-500" : "bg-red-500"
+                  )} />
+                </span>
+              )}
               {params?.preference === "VEG"
-                ? "Pure Veg"
+                ? "Veg"
                 : params?.preference === "NON_VEG"
-                  ? "Non-Veg"
+                  ? "Non-veg"
                   : "-"}
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
             <div className="flex flex-col">
-              <span className="text-slate-400 font-medium">Price per meal</span>
+              <span className="text-gray-500">Price per meal</span>
               {pricing && pricing.subtotal > 0 && (
-                <span className="text-[10px] text-slate-300 font-bold">
+                <span className="text-xs text-gray-400">
                   Standard rate ₹100
                 </span>
               )}
             </div>
-            <span className="font-black text-primary">
+            <span className="font-semibold text-[#39070F]">
               ₹{pricing?.price_per_meal || 0}
             </span>
           </div>
@@ -94,36 +114,43 @@ export function OrderSummaryPanel({
           <PricingSkeleton />
         ) : error ? (
           <div className="py-4">
-            <p className="text-xs text-destructive text-center">
+            <p className="text-xs text-red-500 text-center">
               Failed to load pricing
             </p>
           </div>
         ) : pricing ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-400 font-medium">
+              <span className="text-gray-500">
                 Subtotal ({pricing.total_meals} meals)
               </span>
-              <span className="font-bold text-[#0F172A]">
+              <span className="font-semibold text-[#39070F]">
                 ₹{pricing.subtotal.toLocaleString()}
               </span>
             </div>
             {pricing.bulk_discount.amount > 0 && (
               <div className="flex items-center justify-between text-sm">
-                <span className="text-[#22C55E] font-medium">
+                <span className="text-emerald-600 font-medium flex items-center gap-1">
+                  <BadgePercent className="w-4 h-4" />
                   Bulk Discount ({pricing.bulk_discount.percentage}%)
                 </span>
-                <span className="font-bold text-[#22C55E]">
+                <span className="font-semibold text-emerald-600">
                   - ₹{pricing.bulk_discount.amount.toLocaleString()}
                 </span>
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-4 border-t border-border mt-2">
-              <span className="text-lg font-black text-foreground">
+            <div className="flex items-center justify-between pt-4 border-t border-gray-200 mt-4">
+              <span
+                className="text-lg font-bold text-[#39070F]"
+                style={{ fontFamily: "var(--font-inter), sans-serif" }}
+              >
                 Total Pay
               </span>
-              <span className="text-3xl font-black text-primary">
+              <span
+                className="text-3xl font-bold text-[#39070F]"
+                style={{ fontFamily: "var(--font-inter), sans-serif" }}
+              >
                 ₹{pricing.total.toLocaleString()}
               </span>
             </div>
@@ -133,8 +160,8 @@ export function OrderSummaryPanel({
               onClick={onContinue}
               disabled={isContinueDisabled || isLoading}
               className={cn(
-                "w-full h-14 rounded-sm font-black text-primary-foreground shadow-lg mt-6 text-base group transition-all",
-                "bg-primary hover:bg-primary/90 active:scale-[0.98]",
+                "w-full h-12 rounded-lg font-semibold text-white mt-5 text-sm group transition-all",
+                "bg-[#39070F] hover:bg-[#5a1c28] active:scale-[0.98]",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
               )}
             >
@@ -142,40 +169,23 @@ export function OrderSummaryPanel({
                 <FaSpinner className="w-5 h-5 animate-spin" />
               ) : (
                 <>
-                  {isAuthenticated
-                    ? "Continue to Checkout"
-                    : "Sign in to Continue"}
-                  <FaArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
+                  Proceed to Checkout
+                  <FaArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                 </>
               )}
             </Button>
 
-            <p className="text-[10px] text-slate-400 text-center mt-4 font-medium italic">
-              * Free delivery included. Pause or skip anytime.
+            <p className="text-xs text-gray-400 text-center mt-3">
+              *Free delivery included. Pause or skip anytime.
             </p>
           </div>
         ) : (
           <div className="py-6 text-center">
-            <p className="text-sm text-slate-400 font-medium">
+            <p className="text-sm text-gray-400">
               Complete your selections to see pricing
             </p>
           </div>
         )}
-      </div>
-
-      {/* Trust Promise */}
-      <div className="rounded-sm bg-destructive/10 p-4 flex items-start gap-4">
-        <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm text-primary flex-shrink-0 mt-0.5">
-          <FaCheck className="w-4 h-4" />
-        </div>
-        <div>
-          <p className="text-sm font-black text-foreground tracking-tight mb-0.5">
-            Mullai Trust Promise
-          </p>
-          <p className="text-[11px] text-muted-foreground font-medium leading-tight">
-            Farm-fresh ingredients & zero MSG.
-          </p>
-        </div>
       </div>
     </div>
   );

@@ -1,25 +1,22 @@
 "use client";
 
-import { FaCoffee, FaDrumstickBite, FaUtensils, FaCheck } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 
 import { cn } from "@/lib/utils";
 
 export type MealType = "Breakfast" | "Lunch" | "Dinner";
-
-const MEAL_TYPES_CONFIG: Record<
-  MealType,
-  { label: string; icon: typeof FaCoffee; time: string }
-> = {
-  Breakfast: { label: "Breakfast", icon: FaCoffee, time: "8:00 AM - 9:30 AM" },
-  Lunch: { label: "Lunch", icon: FaDrumstickBite, time: "12:30 PM - 2:00 PM" },
-  Dinner: { label: "Dinner", icon: FaUtensils, time: "7:30 PM - 9:00 PM" },
-};
 
 interface MealTypeSelectorProps {
   selectedTypes: Set<MealType>;
   onChange: (types: Set<MealType>) => void;
   disabled?: boolean;
 }
+
+const MEAL_CONFIG: Record<MealType, { time: string }> = {
+  Breakfast: { time: "8:00 AM - 9:30 AM" },
+  Lunch: { time: "12:30 PM - 2:00 PM" },
+  Dinner: { time: "7:30 PM - 9:00 PM" },
+};
 
 export function MealTypeSelector({
   selectedTypes,
@@ -37,11 +34,10 @@ export function MealTypeSelector({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {Object.entries(MEAL_TYPES_CONFIG).map(([key, config]) => {
-        const meal = key as MealType;
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {(Object.keys(MEAL_CONFIG) as MealType[]).map((meal) => {
         const isSelected = selectedTypes.has(meal);
-        const Icon = config.icon;
+        const config = MEAL_CONFIG[meal];
 
         return (
           <button
@@ -50,48 +46,34 @@ export function MealTypeSelector({
             onClick={() => toggleMeal(meal)}
             disabled={disabled}
             className={cn(
-              "flex items-center p-4 rounded-sm transition-all duration-300 border-2 text-left bg-background",
+              "relative flex items-center gap-4 p-4 rounded-xl transition-all duration-200 text-left",
               isSelected
-                ? "border-primary shadow-sm"
-                : "border-border hover:border-border",
-              disabled &&
-                "opacity-50 cursor-not-allowed hover:border-border",
+                ? "border-2 border-[#39070F] bg-[#39070F]/5 shadow-lg"
+                : "border border-gray-200 bg-white hover:border-gray-300 shadow-sm",
+              disabled && "opacity-50 cursor-not-allowed hover:border-gray-200",
             )}
           >
-            <div className="flex items-center gap-3 w-full">
-              {/* Checkbox */}
-              <div
-                className={cn(
-                  "w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all",
-                  isSelected
-                    ? "bg-primary border-primary"
-                    : "border-border",
-                )}
-              >
-                {isSelected && (
-                  <FaCheck className="w-3.5 h-3.5 text-primary-foreground" />
-                )}
-              </div>
+            {/* Radio circle */}
+            <div
+              className={cn(
+                "w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all",
+                isSelected
+                  ? "border-[#39070F] bg-[#39070F]"
+                  : "border-gray-400 bg-white",
+              )}
+            >
+              {isSelected && <FaCheck className="w-3.5 h-3.5 text-white" />}
+            </div>
 
-              {/* Label & Time */}
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-foreground text-sm leading-tight">
-                  {config.label}
-                </p>
-                <p className="text-[11px] text-muted-foreground font-medium">
-                  {config.time}
-                </p>
-              </div>
-
-              {/* Icon */}
-              <div
-                className={cn(
-                  "text-muted-foreground transition-colors",
-                  isSelected && "text-primary",
-                )}
+            {/* Label & Time */}
+            <div className="flex-1 min-w-0">
+              <p
+                className="font-bold text-[#39070F] text-lg leading-tight"
+                style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
-                <Icon className="w-5 h-5" />
-              </div>
+                {meal}
+              </p>
+              <p className="text-sm text-gray-500 mt-0.5">{config.time}</p>
             </div>
           </button>
         );
