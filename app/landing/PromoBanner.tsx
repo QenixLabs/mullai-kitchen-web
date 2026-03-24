@@ -15,12 +15,12 @@ export function PromoBanner() {
   const [timeLeft, setTimeLeft] = useState({
     hours: 23,
     minutes: 59,
-    seconds: 59
+    seconds: 59,
   });
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft(prev => {
+      setTimeLeft((prev) => {
         if (prev.seconds > 0) {
           return { ...prev, seconds: prev.seconds - 1 };
         } else if (prev.minutes > 0) {
@@ -45,22 +45,25 @@ export function PromoBanner() {
       className="relative overflow-hidden"
     >
       {/* Premium Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#39070F] via-[#5a1120] to-[#39070F]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary via-[#5a1120] to-primary" />
 
       {/* Animated Background Pattern */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Animated Dots */}
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-          backgroundSize: '40px 40px'
-        }} />
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+            backgroundSize: "40px 40px",
+          }}
+        />
 
         {/* Glow Orbs */}
         <motion.div
           animate={{
             x: [0, 50, 0],
             opacity: [0.3, 0.6, 0.3],
-            transition: { duration: 10, repeat: Infinity, ease: "easeInOut" }
+            transition: { duration: 10, repeat: Infinity, ease: "easeInOut" },
           }}
           className="absolute top-0 left-1/4 w-32 h-32 bg-[#D4A574]/30 rounded-full blur-[60px]"
         />
@@ -68,7 +71,12 @@ export function PromoBanner() {
           animate={{
             x: [0, -50, 0],
             opacity: [0.3, 0.6, 0.3],
-            transition: { duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }
+            transition: {
+              duration: 12,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2,
+            },
           }}
           className="absolute bottom-0 right-1/4 w-24 h-24 bg-[#D4A574]/20 rounded-full blur-[40px]"
         />
@@ -83,16 +91,23 @@ export function PromoBanner() {
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
               className="hidden sm:flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#D4A574] to-[#c49a6a] shadow-lg shadow-[#D4A574]/30"
             >
-              <Sparkles className="h-6 w-6 text-[#39070F]" />
+              <Sparkles className="h-6 w-6 text-primary" />
             </motion.div>
 
             <div className="text-center sm:text-left">
               <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
-                <span className="text-xl sm:text-2xl font-bold text-white">First Meal FREE</span>
-                <span className="text-xs sm:text-sm text-white/80">on your first subscription!</span>
+                <span className="text-xl sm:text-2xl font-bold text-white">
+                  First Meal FREE
+                </span>
+                <span className="text-xs sm:text-sm text-white/80">
+                  on your first subscription!
+                </span>
               </div>
               <p className="text-xs sm:text-sm text-white/60">
-                Use code: <span className="font-mono font-bold text-[#D4A574]">MULLAI50</span>
+                Use code:{" "}
+                <span className="font-mono font-bold text-[#D4A574]">
+                  MULLAI50
+                </span>
               </p>
             </div>
           </div>
@@ -102,12 +117,14 @@ export function PromoBanner() {
             <div className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
               <Clock className="h-5 w-5 text-[#D4A574]" />
             </div>
-            <span className="text-white/70 text-xs sm:text-sm font-medium">Ends in:</span>
+            <span className="text-white/70 text-xs sm:text-sm font-medium">
+              Ends in:
+            </span>
             <div className="flex gap-1 sm:gap-1.5">
               {[
-                timeLeft.hours.toString().padStart(2, '0'),
-                timeLeft.minutes.toString().padStart(2, '0'),
-                timeLeft.seconds.toString().padStart(2, '0')
+                timeLeft.hours.toString().padStart(2, "0"),
+                timeLeft.minutes.toString().padStart(2, "0"),
+                timeLeft.seconds.toString().padStart(2, "0"),
               ].map((time, i) => (
                 <span key={i} className="flex items-center">
                   <AnimatePresence mode="popLayout">
@@ -122,7 +139,11 @@ export function PromoBanner() {
                       {time}
                     </motion.span>
                   </AnimatePresence>
-                  {i < 2 && <span className="text-white/40 mx-0.5 sm:mx-1 font-bold">:</span>}
+                  {i < 2 && (
+                    <span className="text-white/40 mx-0.5 sm:mx-1 font-bold">
+                      :
+                    </span>
+                  )}
                 </span>
               ))}
             </div>
@@ -130,7 +151,7 @@ export function PromoBanner() {
 
           {/* Right: CTA */}
           <Link href="/plans">
-            <Button className="bg-gradient-to-r from-[#D4A574] to-[#c49a6a] hover:from-[#e8c4a0] hover:to-[#D4A574] text-[#39070F] font-semibold rounded-full px-4 sm:px-6 py-2 h-auto text-sm sm:text-base shadow-lg shadow-[#D4A574]/30 transition-all hover:scale-[1.02] active:scale-[0.98] group">
+            <Button className="bg-gradient-to-r from-[#D4A574] to-[#c49a6a] hover:from-[#e8c4a0] hover:to-[#D4A574] text-primary font-semibold rounded-full px-4 sm:px-6 py-2 h-auto text-sm sm:text-base shadow-lg shadow-[#D4A574]/30 transition-all hover:scale-[1.02] active:scale-[0.98] group">
               <Gift className="h-4 w-4 mr-2" />
               Claim
               <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
