@@ -89,7 +89,7 @@ export function HeroSection({
     >
       {/* Decorative blurs */}
       <div className="pointer-events-none absolute -left-12 top-8 h-32 w-32 rounded-full bg-primary/10 blur-3xl sm:h-44 sm:w-44" />
-      <div className="pointer-events-none absolute -right-12 bottom-8 h-40 w-40 rounded-full bg-amber-200/20 blur-3xl sm:h-52 sm:w-52" />
+      <div className="pointer-events-none absolute -right-12 bottom-8 h-40 w-40 rounded-full bg-warning/20 blur-3xl sm:h-52 sm:w-52" />
 
       <div className="relative z-10 grid gap-5 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-8">
         {/* Left Column - Text Content */}
@@ -108,7 +108,7 @@ export function HeroSection({
           </div>
 
           {/* Pincode Check Form */}
-          <div className="rounded-sm border border-primary/10 bg-white/90 p-4 shadow-sm backdrop-blur sm:rounded-sm sm:p-5">
+          <div className="rounded-sm border border-primary/10 bg-card/90 p-4 shadow-sm backdrop-blur sm:rounded-sm sm:p-5">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleCheck)} className="space-y-3">
                 <FormField
@@ -136,7 +136,7 @@ export function HeroSection({
                               }}
                               placeholder="Enter pincode to check delivery"
                               className={cn(
-                                "h-11 w-full rounded-sm border-gray-200 bg-white pl-10 text-sm sm:h-12 sm:pl-12 sm:text-base",
+                                "h-11 w-full rounded-sm border-border bg-card pl-10 text-sm sm:h-12 sm:pl-12 sm:text-base",
                                 "focus:border-primary focus:ring-primary/20"
                               )}
                               aria-label="Pincode"
@@ -181,7 +181,7 @@ export function HeroSection({
 
             {result ? (
               result.isServiceable ? (
-                <Alert className="mt-3 border-emerald-200 bg-emerald-50 text-emerald-800">
+                <Alert className="mt-3 border-success/20 bg-success/10 text-success">
                   <AlertTitle className="text-sm">Service available in your area</AlertTitle>
                   <AlertDescription className="text-xs">
                     {outletName
@@ -190,7 +190,7 @@ export function HeroSection({
                   </AlertDescription>
                 </Alert>
               ) : (
-                <Alert variant="destructive" className="mt-3 border-amber-200 bg-amber-50 text-amber-800">
+                <Alert variant="destructive" className="mt-3 border-warning/20 bg-warning/10 text-warning">
                   <AlertTitle className="text-sm">Service not available yet</AlertTitle>
                   <AlertDescription className="text-xs">
                     We are not delivering to this pincode at this moment.

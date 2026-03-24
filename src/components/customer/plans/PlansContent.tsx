@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 
 import {
   useCustomerPlans,
@@ -19,7 +20,8 @@ import { LocalFavoritesSection } from "@/components/customer/plans/LocalFavorite
 import { MenuPreviewSheet } from "@/components/customer/plans/MenuPreviewSheet";
 import { PlanGrid } from "@/components/customer/plans/PlanGrid";
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
-import { Sparkles, ChevronRight, PenLine, ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
+import { FaCheck } from "react-icons/fa";
 import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import { cn } from "@/lib/utils";
 import { AddressSelectionModal } from "@/components/customer/profile/AddressSelectionModal";
@@ -76,6 +78,11 @@ export function PlansContent({
   const [mealTypeFilters, setMealTypeFilters] = useState<Set<MealTypeFilter>>(
     new Set(),
   );
+  const [mealTypeOpen, setMealTypeOpen] = useState(false);
+  const [durationOpen, setDurationOpen] = useState(false);
+  const [durationFilter, setDurationFilter] = useState<string[]>([]);
+  const mealTypeRef = useRef<HTMLDivElement>(null);
+  const durationRef = useRef<HTMLDivElement>(null);
 
   const syncUrlState = useCallback(
     (nextState: { pincode?: string | null }) => {
@@ -123,6 +130,25 @@ export function PlansContent({
     });
   };
 
+  const toggleDuration = (d: string) => {
+    setDurationFilter((prev) =>
+      prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d],
+    );
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (mealTypeRef.current && !mealTypeRef.current.contains(e.target as Node)) {
+        setMealTypeOpen(false);
+      }
+      if (durationRef.current && !durationRef.current.contains(e.target as Node)) {
+        setDurationOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const filteredPlans = useMemo(() => {
     let result = plans;
 
@@ -137,8 +163,17 @@ export function PlansContent({
       );
     }
 
+    // Duration filter
+    if (durationFilter.length > 0) {
+      result = result.filter((p) =>
+        durationFilter.some((d) =>
+          p.duration.toLowerCase().includes(d.toLowerCase()),
+        ),
+      );
+    }
+
     return result;
-  }, [plans, mealTypeFilters]);
+  }, [plans, mealTypeFilters, durationFilter]);
   const selectedPlanId = usePlanIntentStore((store) => store.planId);
 
   const handlePincodeCheck = async (
@@ -221,161 +256,188 @@ export function PlansContent({
 
       {/* Plans Section */}
       <section className={isAuthenticated ? "mb-8 sm:mb-12" : "mb-8 sm:mb-12"}>
-        {/* Section Header */}
-        <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
-          <div>
-            <p className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary sm:text-xs">
-              <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-              {showHero ? "Curated Plans" : "Our Subscription Plans"}
-            </p>
-            <h2 className="mt-1 text-2xl font-black tracking-tight text-foreground sm:text-3xl lg:text-4xl">
-              {showHero
-                ? "Select Your Subscription"
-                : "Choose Your Perfect Plan"}
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground sm:mt-2 sm:text-base">
-              {showHero
-                ? "Flexible plans for every appetite and lifestyle."
-                : "Select a plan that fits your routine. You can pause or cancel anytime."}
-            </p>
-          </div>
-        </div>
-
-        {/* Plans count badge - Show for all users */}
-        <div className="mb-5 flex items-center gap-3 sm:mb-6 sm:justify-end">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-accent px-3 py-1.5 text-xs font-medium text-foreground sm:px-4 sm:py-2 sm:text-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            {filteredPlans.length} plan
-            {filteredPlans.length !== 1 ? "s" : ""} available
-          </span>
-          {/* Swipe hint for mobile */}
-          <span className="flex items-center gap-1 text-xs text-muted-foreground/70 sm:hidden">
-            Swipe to browse
-            <ChevronRight className="h-3 w-3" />
-          </span>
-        </div>
-
-        {/* ── Filter Bar ── */}
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          {/* Diet & Meal Filters */}
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Veg / Non-Veg cards */}
-            <div className="flex items-center gap-2">
-              <button
-                id="filter-diet-all"
-                onClick={() => setDietFilter("all")}
-                className={cn(
-                  "rounded-full px-5 py-2 text-sm font-medium transition-all duration-200",
-                  dietFilter === "all"
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border",
-                )}
-              >
-                All Meals
-              </button>
-              <button
-                id="filter-diet-veg"
-                onClick={() => setDietFilter("veg")}
-                className={cn(
-                  "rounded-full px-5 py-2 text-sm font-medium transition-all duration-200",
-                  dietFilter === "veg"
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border",
-                )}
-              >
-                Veg
-              </button>
-              <button
-                id="filter-diet-nonveg"
-                onClick={() => setDietFilter("non-veg")}
-                className={cn(
-                  "rounded-full px-5 py-2 text-sm font-medium transition-all duration-200",
-                  dietFilter === "non-veg"
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border",
-                )}
-              >
-                Non-Veg
-              </button>
-            </div>
-
-            {/* Meal Type cards */}
-            <div className="flex items-center gap-2 ml-2 pl-4 border-l border-border">
-              {MEAL_TYPES.map((type) => {
-                const isActive = mealTypeFilters.has(type);
-                return (
-                  <button
-                    key={type}
-                    id={`filter-meal-${type.toLowerCase()}`}
-                    onClick={() => toggleMealType(type)}
-                    className={cn(
-                      "rounded-full px-5 py-2 text-sm font-medium border transition-all duration-200 flex items-center gap-2",
-                      isActive
-                        ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                        : "bg-background text-muted-foreground border-border hover:bg-accent hover:text-accent-foreground",
-                    )}
-                  >
-                    <span>{type}</span>
-                    {isActive && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Clear filters button */}
-          {(dietFilter !== "all" || mealTypeFilters.size > 0) && (
-            <button
-              id="filter-clear"
-              onClick={() => {
-                setDietFilter("all");
-                setMealTypeFilters(new Set());
-              }}
-              className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-400 transition-all duration-300 hover:border-gray-900 hover:text-gray-900 hover:bg-white active:scale-95"
-            >
-              Reset Filters
-            </button>
-          )}
+        {/* Page heading */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
+            Choose Your Perfect Plan
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+            Select a plan that fits your routine. You can pause or cancel anytime.
+          </p>
         </div>
 
         {/* ── Build Your Own Plan Banner ── */}
         {showBuildYourOwnBanner && (
-          <div className="mb-8 overflow-hidden rounded-sm border border-border bg-accent shadow-md shadow-primary/10">
-            <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:gap-6 sm:p-6">
-              {/* Icon */}
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sm bg-primary shadow-md shadow-primary/20">
-                <PenLine className="h-5 w-5 text-white" />
+          <div className="mb-8 rounded-xl bg-card border border-border shadow-sm overflow-visible relative">
+            <div className="flex items-center gap-6 pl-6 pr-0 py-6">
+              {/* Left content */}
+              <div className="flex items-start gap-4 flex-1 py-2">
+                {/* Bell icon */}
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-muted">
+                  <Image src="/images/plans/bell.png" alt="" width={32} height={32} className="object-contain" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-foreground">Build Your Own Plan</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Choose your meals, duration, and diet — we&apos;ll price it just for you.
+                  </p>
+                  <button
+                    id="custom-plan-cta"
+                    onClick={handleCustomPlanClick}
+                    className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+                  >
+                    Start Customizing
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
-
-              {/* Text */}
-              <div className="flex-1">
-                <p className="text-xs font-semibold uppercase tracking-widest text-primary">
-                  Fully Customisable
-                </p>
-                <h3 className="mt-0.5 text-base font-black text-foreground sm:text-lg">
-                  Build Your Own Plan
-                </h3>
-                <p className="mt-0.5 text-sm text-muted-foreground">
-                  Choose your meals, duration, and diet — we&apos;ll price it
-                  just for you.
-                </p>
+              {/* Right decorative image — overflows card vertically */}
+              <div className="hidden lg:block shrink-0 w-72 self-stretch relative overflow-visible">
+                <Image
+                  src="/images/plans/ownplan.png"
+                  alt="Build your own meal plan"
+                  fill
+                  className="h-[160%]! top-auto! bottom-0 left-1/2 -translate-x-1/2 object-contain object-bottom"
+                />
               </div>
-
-              {/* CTA */}
-              <button
-                id="custom-plan-cta"
-                onClick={handleCustomPlanClick}
-                className="group inline-flex shrink-0 items-center gap-2 rounded-sm bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-md shadow-primary/20 transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 active:scale-[0.97]"
-              >
-                <Sparkles className="h-3.5 w-3.5" />
-                Get Started
-                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
-              </button>
             </div>
           </div>
         )}
+
+        {/* Popular Plans heading */}
+        <div className="mb-5">
+          <h2 className="text-2xl font-bold text-foreground sm:text-3xl">Popular Plans</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Pause anytime | Tailored for you | 5000+ meal delivered weekly
+          </p>
+        </div>
+
+        {/* ── Filter Bar ── */}
+        <div className="mb-6 flex flex-wrap items-center gap-3">
+
+          {/* "All" pill — standalone, dark when active */}
+          <button
+            onClick={() => setDietFilter("all")}
+            className={cn(
+              "rounded-full px-5 py-2 text-sm font-semibold transition-all",
+              dietFilter === "all"
+                ? "bg-primary text-primary-foreground"
+                : "bg-card text-foreground border border-border hover:bg-primary/10",
+            )}
+          >
+            All
+          </button>
+
+          {/* Veg + Non-Veg grouped in one white pill */}
+          <div className="flex items-center overflow-hidden rounded-full border border-border bg-card">
+            <button
+              onClick={() => setDietFilter(dietFilter === "veg" ? "all" : "veg")}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-all",
+                dietFilter === "veg"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-foreground hover:bg-muted",
+              )}
+            >
+              {/* outlined circle with green dot */}
+              <span className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-success">
+                <span className="h-2 w-2 rounded-full bg-success" />
+              </span>
+              Veg
+            </button>
+            {/* vertical divider */}
+            <span className="h-5 w-px bg-border" />
+            <button
+              onClick={() => setDietFilter(dietFilter === "non-veg" ? "all" : "non-veg")}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-all",
+                dietFilter === "non-veg"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-foreground hover:bg-muted",
+              )}
+            >
+              {/* outlined circle with red dot */}
+              <span className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-destructive">
+                <span className="h-2 w-2 rounded-full bg-destructive" />
+              </span>
+              Non-Veg
+            </button>
+          </div>
+
+          {/* Meal Type dropdown — always dark primary */}
+          <div className="relative" ref={mealTypeRef}>
+            <button
+              onClick={() => setMealTypeOpen(!mealTypeOpen)}
+              className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90"
+            >
+              Meal Type
+              <ChevronDown className="h-3.5 w-3.5" />
+            </button>
+            {mealTypeOpen && (
+              <div className="absolute top-full left-0 mt-1 z-20 w-40 rounded-lg bg-card border border-border shadow-md p-2">
+                {MEAL_TYPES.map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => toggleMealType(type)}
+                    className={cn(
+                      "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-left transition-colors",
+                      mealTypeFilters.has(type)
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : "text-foreground hover:bg-muted",
+                    )}
+                  >
+                    {mealTypeFilters.has(type) && <FaCheck className="h-3 w-3" />}
+                    {type}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Duration dropdown — always dark primary */}
+          <div className="relative" ref={durationRef}>
+            <button
+              onClick={() => setDurationOpen(!durationOpen)}
+              className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90"
+            >
+              Duration
+              <ChevronDown className="h-3.5 w-3.5" />
+            </button>
+            {durationOpen && (
+              <div className="absolute top-full left-0 mt-1 z-20 w-36 rounded-lg bg-card border border-border shadow-md p-2">
+                {["Weekly", "Monthly"].map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => toggleDuration(d)}
+                    className={cn(
+                      "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-left transition-colors",
+                      durationFilter.includes(d)
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : "text-foreground hover:bg-muted",
+                    )}
+                  >
+                    {durationFilter.includes(d) && <FaCheck className="h-3 w-3" />}
+                    {d}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Clear filters */}
+          {(dietFilter !== "all" || mealTypeFilters.size > 0 || durationFilter.length > 0) && (
+            <button
+              onClick={() => {
+                setDietFilter("all");
+                setMealTypeFilters(new Set());
+                setDurationFilter([]);
+              }}
+              className="rounded-full border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:border-primary hover:text-primary"
+            >
+              Reset
+            </button>
+          )}
+        </div>
 
         <PlanGrid
           plans={filteredPlans}

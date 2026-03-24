@@ -12,32 +12,32 @@ const trustBadges = [
     icon: FaCheckCircle,
     title: "FSSAI Certified",
     description: "Food safety certified kitchens",
-    color: "bg-emerald-500",
+    color: "bg-success",
   },
   {
     icon: FaLeaf,
     title: "Eco-friendly Packaging",
     description: "Sustainable & biodegradable materials",
-    color: "bg-green-500",
+    color: "bg-success",
   },
   {
     icon: FaRocket,
     title: "Always On-time",
     description: "Reliable delivery you can count on",
-    color: "bg-amber-500",
+    color: "bg-warning",
   },
   {
     icon: FaStar,
     title: "24/7 Local Support",
     description: "Help whenever you need it",
-    color: "bg-yellow-500",
+    color: "bg-warning",
   },
 ];
 
 // Server Component - no interactivity, renders on server for better SEO and initial load
 export function LocalFavoritesSection({ className }: LocalFavoritesSectionProps) {
   return (
-    <section className={cn("bg-white py-14 sm:py-16", className)}>
+    <section className={cn("bg-card py-14 sm:py-16", className)}>
       <div className="mx-auto max-w-7xl px-4">
         {/* Section Header */}
         <div className="mb-12 text-center">

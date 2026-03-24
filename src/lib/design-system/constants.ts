@@ -39,3 +39,17 @@ export const FONT_SIZES = {
   '3xl': '1.875rem', // 30px
   '4xl': '2.25rem',  // 36px
 } as const;
+
+// Brand colors
+export const BRAND_COLORS = {
+  primary: '#44151C',
+  primaryDark: '#210309',
+  primaryLight: '#58111F',
+  primaryHover: '#3D0C12',
+  primaryHoverLight: '#4D1A20',
+  gold: '#D4A574',
+  goldLight: '#ECD1B4',
+  secondary: '#797778',
+  secondaryLight: '#E6E7E7',
+  background: '#FBFBFB',
+} as const;
