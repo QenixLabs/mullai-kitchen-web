@@ -72,7 +72,7 @@ export function Sidebar() {
                       className={cn(
                         "h-12 w-full transition-all duration-200 rounded-full px-4 flex items-center gap-4",
                         isActive
-                          ? "bg-[#E6E7E7]! text-primary! shadow-sm font-bold"
+                          ? "bg-secondary! text-primary! shadow-sm font-bold"
                           : "text-sidebar-foreground/70 hover:bg-white/10 hover:text-sidebar-foreground",
                       )}
                     >
