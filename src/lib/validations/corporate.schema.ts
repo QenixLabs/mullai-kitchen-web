@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 export const createCorporateOrderSchema = z
   .object({
-    outlet_id: z.string().min(1, 'Please select an outlet'),
     delivery_address: z.object({
       address_line: z.string().min(5, 'Address line is required'),
       area: z.string().min(2, 'Area is required'),
@@ -10,6 +9,8 @@ export const createCorporateOrderSchema = z
       pincode: z.string().regex(/^\d{6}$/, 'Enter a valid 6-digit pincode'),
       city: z.string().min(2, 'City is required'),
       state: z.string().min(2, 'State is required'),
+      latitude: z.number().optional(),
+      longitude: z.number().optional(),
     }),
     selected_days: z
       .array(z.string())

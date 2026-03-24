@@ -107,7 +107,7 @@ const paymentStatusVariant: Record<CorporatePaymentStatus, "default" | "secondar
   overdue: "destructive",
 };
 
-const DAY_NAMES = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 function generateDeliveryDates(
   startDate: string,

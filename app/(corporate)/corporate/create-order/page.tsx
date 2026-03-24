@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,7 +15,11 @@ import {
   IndianRupee,
   CheckCircle2,
   Loader2,
+  Store,
+  LocateIcon as MyLocation,
 } from "lucide-react";
+import { FaMapMarkerAlt, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
+import { Marker } from "@react-google-maps/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -33,24 +37,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DatePicker } from "@/components/ui/date-picker";
+import { GoogleMap } from "@/components/customer/profile/GoogleMap";
 import { useCreateCorporateOrder } from "@/api/hooks/useCorporate";
+import { useServiceability } from "@/api/hooks/useCustomer";
 import { createCorporateOrderSchema, type CreateCorporateOrderFormData } from "@/lib/validations/corporate.schema";
 import { addWeeks, addDays, format, isAfter, startOfDay } from "date-fns";
 
 const DAYS_OF_WEEK = [
-  { value: "monday", label: "Mon" },
-  { value: "tuesday", label: "Tue" },
-  { value: "wednesday", label: "Wed" },
-  { value: "thursday", label: "Thu" },
-  { value: "friday", label: "Fri" },
-  { value: "saturday", label: "Sat" },
-  { value: "sunday", label: "Sun" },
+  { value: "Monday", label: "Mon" },
+  { value: "Tuesday", label: "Tue" },
+  { value: "Wednesday", label: "Wed" },
+  { value: "Thursday", label: "Thu" },
+  { value: "Friday", label: "Fri" },
+  { value: "Saturday", label: "Sat" },
+  { value: "Sunday", label: "Sun" },
 ] as const;
 
 const MEAL_TYPES = [
-  { value: "breakfast", label: "Breakfast" },
-  { value: "lunch", label: "Lunch" },
-  { value: "dinner", label: "Dinner" },
+  { value: "Breakfast", label: "Breakfast" },
+  { value: "Lunch", label: "Lunch" },
+  { value: "Dinner", label: "Dinner" },
 ] as const;
 
 // Default pricing placeholders (server will return actual values in response)
@@ -58,6 +64,9 @@ const DEFAULT_VEG_PRICE = 120;
 const DEFAULT_NONVEG_PRICE = 150;
 const DEFAULT_DELIVERY_CHARGE = 50;
 const DEFAULT_TAX_RATE = 0.05; // 5%
+
+// Chennai default coordinates
+const DEFAULT_COORDS = { lat: 13.0827, lng: 80.2707 };
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -81,7 +90,7 @@ function computeDeliveryDays(
 
   const current = new Date(start);
   while (current < end) {
-    const dayName = current.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
+    const dayName = current.toLocaleDateString("en-US", { weekday: "long" });
     if (selectedDays.includes(dayName)) {
       count++;
     }
@@ -100,13 +109,102 @@ function computeEndDate(startDate: string, durationWeeks: number): string | null
 export default function CreateOrderPage() {
   const router = useRouter();
   const createOrderMutation = useCreateCorporateOrder();
+  const { mutateAsync: checkServiceability, isPending: isCheckingServiceability } = useServiceability();
   const [currentStep, setCurrentStep] = useState<Step>(1);
+
+  const [serviceabilityInfo, setServiceabilityInfo] = useState<{
+    isServiceable: boolean;
+    outletName?: string;
+    message: string;
+  } | null>(null);
+  const serviceabilityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Coordinate state for geo-fencing
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapCenter, setMapCenter] = useState(DEFAULT_COORDS);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+
+  // Reverse geocoding to auto-fill address fields from coordinates
+  const reverseGeocode = async (lat: number, lng: number) => {
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+      );
+      const data = await response.json();
+
+      if (data.status === "OK" && data.results?.[0]) {
+        const addressComponents = data.results[0].address_components || [];
+
+        const findComponent = (types: string[]) =>
+          addressComponents.find((comp: google.maps.GeocoderAddressComponent | undefined) =>
+            comp?.types?.some((type: string) => types.includes(type))
+          );
+
+        const streetNumber = findComponent(["street_number"])?.long_name || "";
+        const route = findComponent(["route"])?.long_name || "";
+        const sublocality = findComponent(["sublocality"])?.long_name || "";
+        const locality = findComponent(["locality"])?.long_name || "";
+        const administrativeAreaLevel1 = findComponent(["administrative_area_level_1"])?.long_name || "";
+        const postalCode = findComponent(["postal_code"])?.long_name || "";
+
+        const areaParts = [streetNumber, route, sublocality].filter(Boolean);
+        const area = areaParts.join(" ") || locality;
+
+        setValue("delivery_address.area", area, { shouldValidate: false });
+        setValue("delivery_address.city", locality, { shouldValidate: false });
+        setValue("delivery_address.state", administrativeAreaLevel1, { shouldValidate: false });
+        setValue("delivery_address.pincode", postalCode, { shouldValidate: false });
+      }
+    } catch (error) {
+      console.error("Reverse geocoding error:", error);
+      toast.error("Unable to get address details from location");
+    }
+  };
+
+  // Handle map click to capture coordinates
+  const handleMapClick = (e: google.maps.MapMouseEvent) => {
+    if (e.latLng) {
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+      setCoordinates({ lat, lng });
+      setMapCenter({ lat, lng });
+      reverseGeocode(lat, lng);
+    }
+  };
+
+  // Handle getting current location
+  const handleGetCurrentLocation = () => {
+    setIsGettingLocation(true);
+
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser");
+      setIsGettingLocation(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const newCoords = { lat: latitude, lng: longitude };
+        setCoordinates(newCoords);
+        setMapCenter(newCoords);
+        reverseGeocode(latitude, longitude);
+        setIsGettingLocation(false);
+        toast.success("Location updated and address filled");
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        toast.error("Unable to get your location. Please enable location permissions.");
+        setIsGettingLocation(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   const form = useForm<CreateCorporateOrderFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(createCorporateOrderSchema) as any,
     defaultValues: {
-      outlet_id: "",
       delivery_address: {
         address_line: "",
         area: "",
@@ -134,6 +232,7 @@ export default function CreateOrderPage() {
     watch,
     setValue,
     trigger,
+    clearErrors,
     formState: { errors },
   } = form;
 
@@ -145,6 +244,82 @@ export default function CreateOrderPage() {
   const vegCount = watch("veg_count");
   const nonvegCount = watch("nonveg_count");
   const deliveryAddress = watch("delivery_address");
+  const pincodeValue = watch("delivery_address.pincode");
+
+  // Clear stale refine error when veg + nonveg matches headcount
+  useEffect(() => {
+    const hc = Number(headcount) || 0;
+    const vc = Number(vegCount) || 0;
+    const nvc = Number(nonvegCount) || 0;
+    if (hc > 0 && vc + nvc === hc) {
+      clearErrors("veg_count");
+    }
+  }, [vegCount, nonvegCount, headcount, clearErrors]);
+
+  // Serviceability check on pincode change or coordinates update
+  useEffect(() => {
+    if (serviceabilityTimerRef.current) {
+      clearTimeout(serviceabilityTimerRef.current);
+    }
+
+    const hasValidPincode = pincodeValue.length === 6;
+    const hasCoordinates = coordinates !== null;
+
+    if (!hasValidPincode && !hasCoordinates) {
+      setServiceabilityInfo(null);
+      return;
+    }
+
+    const pincodeToCheck = pincodeValue;
+    const coordsToCheck = coordinates;
+    serviceabilityTimerRef.current = setTimeout(async () => {
+      // Prefer coordinates for more accurate check, fall back to pincode
+      const payload = coordsToCheck
+        ? { lat: coordsToCheck.lat, lng: coordsToCheck.lng }
+        : { pincode: pincodeToCheck };
+
+      try {
+        const result = await checkServiceability(payload);
+
+        // Validate response is still relevant
+        if (!coordsToCheck) {
+          const currentPincode = form.getValues("delivery_address.pincode");
+          if (currentPincode !== pincodeToCheck) return;
+        }
+
+        if (result.isServiceable) {
+          const outletName = (result.outlet?.name as string) || undefined;
+          setServiceabilityInfo({
+            isServiceable: true,
+            outletName,
+            message: coordsToCheck
+              ? "We are currently delivering to this location."
+              : `We deliver to this area via ${outletName || "our kitchen"}.`,
+          });
+        } else {
+          setServiceabilityInfo({
+            isServiceable: false,
+            message: "We do not serve this location yet. Please try a different pincode or location.",
+          });
+        }
+      } catch {
+        if (!coordsToCheck) {
+          const currentPincode = form.getValues("delivery_address.pincode");
+          if (currentPincode !== pincodeToCheck) return;
+        }
+        setServiceabilityInfo({
+          isServiceable: false,
+          message: "Unable to verify serviceability. Please try again.",
+        });
+      }
+    }, 400);
+
+    return () => {
+      if (serviceabilityTimerRef.current) {
+        clearTimeout(serviceabilityTimerRef.current);
+      }
+    };
+  }, [pincodeValue, coordinates, checkServiceability, form]);
 
   // Computed values
   const totalDeliveryDays = useMemo(
@@ -183,15 +358,21 @@ export default function CreateOrderPage() {
   const validateStep = async (step: Step): Promise<boolean> => {
     switch (step) {
       case 1: {
-        const result = await trigger([
+        const fieldsValid = await trigger([
           "delivery_address.address_line",
           "delivery_address.area",
           "delivery_address.pincode",
           "delivery_address.city",
           "delivery_address.state",
-          "outlet_id",
         ]);
-        return result;
+        if (!fieldsValid) return false;
+        if (!serviceabilityInfo?.isServiceable) {
+          toast.error("Location not serviceable", {
+            description: "Please select a location on the map or enter a serviceable pincode.",
+          });
+          return false;
+        }
+        return true;
       }
       case 2: {
         const result = await trigger([
@@ -223,7 +404,14 @@ export default function CreateOrderPage() {
   };
 
   const onSubmit = (data: CreateCorporateOrderFormData) => {
-    createOrderMutation.mutate(data, {
+    const payload = {
+      ...data,
+      delivery_address: {
+        ...data.delivery_address,
+        ...(coordinates ? { latitude: coordinates.lat, longitude: coordinates.lng } : {}),
+      },
+    };
+    createOrderMutation.mutate(payload, {
       onSuccess: (response) => {
         toast.success("Order created successfully!", {
           description: `Order ${response.order_id} has been created.`,
@@ -345,52 +533,113 @@ export default function CreateOrderPage() {
                 Delivery Details
               </CardTitle>
               <CardDescription>
-                Enter the delivery address for your corporate order.
+                Select your delivery location on the map or enter the pincode. The kitchen outlet will be auto-assigned.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Outlet ID */}
-              <div className="space-y-2">
-                <Label htmlFor="outlet_id">Outlet</Label>
-                <Controller
-                  control={control}
-                  name="outlet_id"
-                  render={({ field }) => (
-                    <Select
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select an outlet" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="outlet-1">Main Kitchen</SelectItem>
-                        <SelectItem value="outlet-2">City Center</SelectItem>
-                      </SelectContent>
-                    </Select>
+              {/* Map Section */}
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <h3 className="text-sm font-semibold text-gray-700">
+                    Pin your delivery location
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Click on the map to mark your exact delivery location, or use your current location.
+                  </p>
+                </div>
+
+                <GoogleMap
+                  center={mapCenter}
+                  height="h-48"
+                  onClick={handleMapClick}
+                >
+                  {coordinates && (
+                    <Marker position={coordinates} />
                   )}
-                />
-                {errors.outlet_id && (
-                  <p className="text-sm text-destructive">{errors.outlet_id.message}</p>
+                </GoogleMap>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full py-3 px-4 bg-primary/10 hover:bg-primary/20 text-primary font-bold rounded-sm gap-2"
+                  onClick={handleGetCurrentLocation}
+                  disabled={isGettingLocation}
+                >
+                  <MyLocation className="h-4 w-4" />
+                  {isGettingLocation
+                    ? "Getting location..."
+                    : "Use Current Location"}
+                </Button>
+
+                {/* Selected coordinates display */}
+                {coordinates && (
+                  <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-sm px-3 py-2">
+                    <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
+                    <span>
+                      Location pinned: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
+                    </span>
+                  </div>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="pincode">Pincode</Label>
-                  <Input
-                    id="pincode"
-                    placeholder="Enter 6-digit pincode"
-                    maxLength={6}
-                    {...register("delivery_address.pincode")}
-                  />
-                  {errors.delivery_address?.pincode && (
-                    <p className="text-sm text-destructive">
-                      {errors.delivery_address.pincode.message}
-                    </p>
+              {/* Serviceability Status */}
+              {serviceabilityInfo && (
+                <div
+                  className={`rounded-lg p-3 flex items-start gap-3 ${
+                    serviceabilityInfo.isServiceable
+                      ? "bg-green-50 border border-green-200"
+                      : "bg-amber-50 border border-amber-200"
+                  }`}
+                >
+                  {serviceabilityInfo.isServiceable ? (
+                    <FaCheckCircle className="text-xl text-green-600 mt-0.5 flex-shrink-0" />
+                  ) : (
+                    <FaExclamationTriangle className="text-xl text-amber-600 mt-0.5 flex-shrink-0" />
                   )}
+                  <div>
+                    <p
+                      className={`text-sm font-semibold ${
+                        serviceabilityInfo.isServiceable
+                          ? "text-green-800"
+                          : "text-amber-800"
+                      }`}
+                    >
+                      {serviceabilityInfo.isServiceable ? "Serviceable Area" : "Not Serviceable"}
+                    </p>
+                    <p
+                      className={`text-xs ${
+                        serviceabilityInfo.isServiceable
+                          ? "text-green-700"
+                          : "text-amber-700"
+                      }`}
+                    >
+                      {serviceabilityInfo.message}
+                    </p>
+                    {serviceabilityInfo.isServiceable && serviceabilityInfo.outletName && (
+                      <div className="flex items-center gap-1.5 mt-1.5">
+                        <Store className="h-3.5 w-3.5 text-green-600" />
+                        <span className="text-xs font-medium text-green-700">
+                          {serviceabilityInfo.outletName}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
+              )}
 
+              {/* Address form fields */}
+              <div className="space-y-1">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+                  Address Details
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  {coordinates
+                    ? "Fields below were auto-filled from the map. You can edit them if needed."
+                    : "Enter your delivery address manually or use the map above."}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="address_line">Address Line</Label>
                   <Input
@@ -401,6 +650,37 @@ export default function CreateOrderPage() {
                   {errors.delivery_address?.address_line && (
                     <p className="text-sm text-destructive">
                       {errors.delivery_address.address_line.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="pincode">Pincode</Label>
+                  <div className="relative">
+                    <FaMapMarkerAlt
+                      className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                    />
+                    <Input
+                      id="pincode"
+                      placeholder="6-digit pincode"
+                      maxLength={6}
+                      className="pl-9"
+                      {...register("delivery_address.pincode", {
+                        onChange: (e) => {
+                          const onlyDigits = e.target.value.replace(/\D/g, "").slice(0, 6);
+                          setValue("delivery_address.pincode", onlyDigits, { shouldValidate: true });
+                        },
+                      })}
+                    />
+                    {isCheckingServiceability && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                  {errors.delivery_address?.pincode && (
+                    <p className="text-sm text-destructive">
+                      {errors.delivery_address.pincode.message}
                     </p>
                   )}
                 </div>
@@ -651,7 +931,7 @@ export default function CreateOrderPage() {
                   type="number"
                   min={1}
                   placeholder="e.g., 10"
-                  {...register("headcount")}
+                  {...register("headcount", { valueAsNumber: true })}
                 />
                 {errors.headcount && (
                   <p className="text-sm text-destructive">{errors.headcount.message}</p>
@@ -667,7 +947,7 @@ export default function CreateOrderPage() {
                     min={0}
                     max={headcount || undefined}
                     placeholder="e.g., 6"
-                    {...register("veg_count")}
+                    {...register("veg_count", { valueAsNumber: true })}
                   />
                   {errors.veg_count && (
                     <p className="text-sm text-destructive">{errors.veg_count.message}</p>
@@ -682,7 +962,7 @@ export default function CreateOrderPage() {
                     min={0}
                     max={headcount || undefined}
                     placeholder="e.g., 4"
-                    {...register("nonveg_count")}
+                    {...register("nonveg_count", { valueAsNumber: true })}
                   />
                   {errors.nonveg_count && (
                     <p className="text-sm text-destructive">{errors.nonveg_count.message}</p>
@@ -810,7 +1090,7 @@ export default function CreateOrderPage() {
                     Delivery Details
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                    <div>
+                    <div className="md:col-span-2">
                       <span className="text-muted-foreground">Address: </span>
                       <span className="font-medium">{deliveryAddress.address_line}</span>
                     </div>
@@ -836,6 +1116,12 @@ export default function CreateOrderPage() {
                       <span className="text-muted-foreground">Pincode: </span>
                       <span className="font-medium">{deliveryAddress.pincode}</span>
                     </div>
+                    {serviceabilityInfo?.outletName && (
+                      <div className="md:col-span-2">
+                        <span className="text-muted-foreground">Outlet: </span>
+                        <Badge variant="secondary">{serviceabilityInfo.outletName}</Badge>
+                      </div>
+                    )}
                   </div>
                 </div>
 

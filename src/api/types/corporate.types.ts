@@ -44,7 +44,6 @@ export type CorporateInvoiceStatus = 'pending' | 'paid' | 'overdue' | 'cancelled
  * Request body for creating a new corporate bulk order
  */
 export interface ICreateCorporateOrderRequest {
-  outlet_id: string;
   delivery_address: {
     address_line: string;
     area: string;
