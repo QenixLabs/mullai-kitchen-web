@@ -2,6 +2,7 @@ import { apiClient } from "@/api/client";
 import { AUTH_ROUTES } from "@/api/routes";
 import type {
   IAuthSession,
+  ICorporateRegisterRequest,
   IForgotPasswordRequest,
   ILoginRequest,
   IRefreshTokenRequest,
@@ -21,6 +22,13 @@ export const authApi = {
   },
   register: async (payload: IRegisterRequest): Promise<IAuthSession> => {
     const response = await apiClient.post<IAuthSession>(AUTH_ROUTES.REGISTER, payload);
+    return response.data;
+  },
+  corporateRegister: async (payload: ICorporateRegisterRequest): Promise<IAuthSession> => {
+    const response = await apiClient.post<IAuthSession>(
+      AUTH_ROUTES.CORPORATE_REGISTER,
+      payload,
+    );
     return response.data;
   },
   refreshToken: async (payload: IRefreshTokenRequest): Promise<IAuthSession> => {

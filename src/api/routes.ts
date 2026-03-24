@@ -8,6 +8,7 @@ export const AUTH_ROUTES = {
   RESET_PASSWORD: "/auth/reset-password",
   SEND_SIGNUP_OTP: "/auth/send-signup-otp",
   VERIFY_SIGNUP_OTP: "/auth/verify-signup-otp",
+  CORPORATE_REGISTER: "/auth/corporate/register",
 } as const;
 
 export const USER_ROUTES = {
@@ -62,4 +63,15 @@ export const SUBSCRIPTION_ROUTES = {
 export const COUPON_ROUTES = {
   VALIDATE: "/coupons/validate",
   LIST: "/coupons",
+} as const;
+
+export const CORPORATE_ROUTES = {
+  ORDERS: "/corporate/orders",
+  ORDER: (id: string) => `/corporate/orders/${id}`,
+  MODIFY_ORDER: (id: string) => `/corporate/orders/${id}/modify`,
+  MODIFICATIONS: (id: string) => `/corporate/orders/${id}/modifications`,
+  INVOICE: (id: string, type: string) => `/corporate/orders/${id}/invoice/${type}`,
+  CANCEL_ORDER: (id: string) => `/corporate/orders/${id}/cancel`,
+  GENERATE_FINAL_INVOICE: (id: string) => `/corporate/orders/${id}/generate-final-invoice`,
+  UPDATE_PAYMENT: (id: string) => `/corporate/orders/${id}/payment`,
 } as const;

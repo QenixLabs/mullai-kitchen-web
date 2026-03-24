@@ -53,3 +53,11 @@ export const couponKeys = {
     ["coupon", "available", params] as const,
   validation: (code: string) => ["coupon", "validation", code] as const,
 };
+
+export const corporateKeys = {
+  all: ['corporate'] as const,
+  orders: () => [...corporateKeys.all, 'orders'] as const,
+  order: (id: string) => [...corporateKeys.all, 'order', id] as const,
+  modifications: (orderId: string) => [...corporateKeys.all, 'modifications', orderId] as const,
+  invoice: (orderId: string, type: string) => [...corporateKeys.all, 'invoice', orderId, type] as const,
+};
