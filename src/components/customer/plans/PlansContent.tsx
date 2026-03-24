@@ -257,7 +257,7 @@ export function PlansContent({
       <section className={isAuthenticated ? "mb-8 sm:mb-12" : "mb-8 sm:mb-12"}>
         {/* Page heading */}
         <div className="mb-6">
-          <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
+          <h1 className="text-3xl font-black tracking-tight text-[#44151C] sm:text-4xl">
             Choose Your Perfect Plan
           </h1>
           <p className="mt-2 text-sm text-muted-foreground sm:text-base">

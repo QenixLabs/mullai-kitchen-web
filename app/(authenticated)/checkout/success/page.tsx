@@ -208,7 +208,7 @@ function CheckoutSuccessContent() {
               </div>
 
               {/* Title */}
-              <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight mb-3">
+              <h1 className="text-2xl sm:text-3xl font-semibold text-[#44151C] tracking-tight mb-3">
                 {status === "loading" && "Verifying Payment"}
                 {status === "confirmed" && "Payment Successful"}
                 {status === "failed" && "Payment Failed"}

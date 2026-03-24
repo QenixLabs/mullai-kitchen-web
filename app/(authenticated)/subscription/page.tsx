@@ -212,7 +212,7 @@ export default function SubscriptionPage() {
       {/* Page Header */}
       <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-foreground mb-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-[#44151C] mb-2">
             Subscriptions
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground">
