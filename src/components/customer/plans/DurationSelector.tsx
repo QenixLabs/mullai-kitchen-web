@@ -49,7 +49,7 @@ export function DurationSelector({
           className={cn(
             "relative flex flex-col rounded-xl transition-all duration-200 text-left overflow-hidden",
             value === option.value
-              ? "border-2 border-[#39070F] shadow-lg"
+              ? "border-2 border-primary shadow-lg"
               : "border border-gray-200 bg-white hover:border-gray-300 shadow-sm",
             disabled && "opacity-50 cursor-not-allowed hover:border-gray-200",
           )}
@@ -57,7 +57,7 @@ export function DurationSelector({
           {/* Header with Label and Badge */}
           <div className="flex w-full items-center justify-between p-4 pb-3">
             <span
-              className="text-xl font-bold text-[#39070F]"
+              className="text-xl font-bold text-primary"
               style={{ fontFamily: "var(--font-inter), sans-serif" }}
             >
               {option.label}
@@ -77,16 +77,20 @@ export function DurationSelector({
           </div>
 
           {/* Divider Line */}
-          <div className={cn(
-            "w-full h-px",
-            value === option.value ? "bg-[#39070F]/20" : "bg-gray-200"
-          )} />
+          <div
+            className={cn(
+              "w-full h-px",
+              value === option.value ? "bg-primary/20" : "bg-gray-200",
+            )}
+          />
 
           {/* Description with background */}
-          <div className={cn(
-            "p-4 pt-3",
-            value === option.value ? "bg-[#39070F]/5" : "bg-white"
-          )}>
+          <div
+            className={cn(
+              "p-4 pt-3",
+              value === option.value ? "bg-primary/5" : "bg-white",
+            )}
+          >
             <p
               className="text-sm text-gray-500 leading-snug"
               style={{ fontFamily: "var(--font-inter), sans-serif" }}

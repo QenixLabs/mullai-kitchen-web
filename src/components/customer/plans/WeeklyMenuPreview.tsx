@@ -33,7 +33,10 @@ function LoadingSkeleton() {
   );
 }
 
-export function WeeklyMenuPreview({ params, preference }: WeeklyMenuPreviewProps) {
+export function WeeklyMenuPreview({
+  params,
+  preference,
+}: WeeklyMenuPreviewProps) {
   const { data, isLoading, error } = useCustomPlanMenuPreview(params);
 
   if (isLoading) {
@@ -67,7 +70,7 @@ export function WeeklyMenuPreview({ params, preference }: WeeklyMenuPreviewProps
     <div className="space-y-4">
       {preferenceLabel && (
         <h3
-          className="text-sm font-medium text-[#39070F]"
+          className="text-sm font-medium text-primary"
           style={{ fontFamily: "var(--font-inter), sans-serif" }}
         >
           {preferenceLabel} (weekly menu)
@@ -98,7 +101,7 @@ export function WeeklyMenuPreview({ params, preference }: WeeklyMenuPreviewProps
             </div>
             <div className="p-3 pt-1">
               <p
-                className="text-sm font-medium text-[#39070F] line-clamp-1"
+                className="text-sm font-medium text-primary line-clamp-1"
                 style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
                 {item.meal.recipe.recipe_name}

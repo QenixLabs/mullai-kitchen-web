@@ -61,7 +61,9 @@ export function ProfileContent() {
   const deleteAddress = useDeleteAddress();
 
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
-  const [editingAddress, setEditingAddress] = useState<Address | undefined>(undefined);
+  const [editingAddress, setEditingAddress] = useState<Address | undefined>(
+    undefined,
+  );
   const [mealTypes, setMealTypes] = useState<Record<string, MealType>>({});
   const [formData, setFormData] = useState({
     name: user?.name || "",
@@ -160,8 +162,18 @@ export function ProfileContent() {
                   </span>
                   <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-success">
                     <span className="flex h-4 w-4 items-center justify-center rounded-full bg-success shrink-0">
-                      <svg className="h-2.5 w-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      <svg
+                        className="h-2.5 w-2.5 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
                       </svg>
                     </span>
                     Verified
@@ -189,7 +201,9 @@ export function ProfileContent() {
         {/* Push Notification Card */}
         <Card className="bg-white border-border/50 w-full xl:w-[386px] xl:h-[116px] shrink-0">
           <CardContent className="p-4 sm:p-5 h-full flex flex-col justify-center">
-            <h3 className="text-base sm:text-[20px] font-semibold text-[#44151C] mb-3">Push Notification</h3>
+            <h3 className="text-base sm:text-[20px] font-semibold text-primary mb-3">
+              Push Notification
+            </h3>
             {/* 2-column grid: WhatsApp | Email, then SMS below */}
             <div className="grid grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-2">
               {/* WhatsApp */}
@@ -197,7 +211,9 @@ export function ProfileContent() {
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 shrink-0">
                   <FaWhatsapp className="h-3.5 w-3.5 text-white" />
                 </span>
-                <span className="text-xs sm:text-sm font-medium text-foreground truncate">WhatsApp</span>
+                <span className="text-xs sm:text-sm font-medium text-foreground truncate">
+                  WhatsApp
+                </span>
                 <Switch
                   checked={true}
                   className="ml-auto data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-gray-300"
@@ -208,7 +224,9 @@ export function ProfileContent() {
                 <span className="flex h-6 w-6 items-center justify-center rounded-md bg-violet-500 shrink-0">
                   <FaEnvelope className="h-3 w-3 text-white" />
                 </span>
-                <span className="text-xs sm:text-sm font-medium text-foreground truncate">Email</span>
+                <span className="text-xs sm:text-sm font-medium text-foreground truncate">
+                  Email
+                </span>
                 <Switch
                   checked={true}
                   className="ml-auto data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-gray-300"
@@ -219,7 +237,9 @@ export function ProfileContent() {
                 <span className="flex h-6 w-6 items-center justify-center rounded-md bg-teal-500 shrink-0">
                   <FaSms className="h-3.5 w-3.5 text-white" />
                 </span>
-                <span className="text-xs sm:text-sm font-medium text-foreground truncate">SMS</span>
+                <span className="text-xs sm:text-sm font-medium text-foreground truncate">
+                  SMS
+                </span>
                 <Switch
                   checked={false}
                   className="ml-auto data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-gray-300"
@@ -232,10 +252,13 @@ export function ProfileContent() {
 
       {/* Addresses Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-[#44151C]">Addresses</h2>
+        <h2 className="text-2xl font-bold text-primary">Addresses</h2>
         <button
           className="flex items-center gap-1.5 text-[18px] font-semibold text-gray-900 hover:text-primary transition-colors font-sans"
-          onClick={() => { setEditingAddress(undefined); setIsAddressModalOpen(true); }}
+          onClick={() => {
+            setEditingAddress(undefined);
+            setIsAddressModalOpen(true);
+          }}
         >
           <span className="text-lg">+</span> Add New
         </button>
@@ -266,24 +289,40 @@ export function ProfileContent() {
                   {/* Card Header Row - with Default on right */}
                   <div className="flex items-center justify-between px-4 sm:px-5 py-2 border-b border-gray-200">
                     <div className="flex items-center gap-2">
-                      <FaMapMarkerAlt className="h-4 w-4 sm:h-5 sm:w-5 text-[#44151C]" />
-                      <span className="text-base sm:text-lg font-semibold text-[#44151C]">{label}</span>
+                      <FaMapMarkerAlt className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                      <span className="text-base sm:text-lg font-semibold text-primary">
+                        {label}
+                      </span>
                     </div>
                     {/* Default indicator on right */}
                     <div className="flex items-center gap-2">
                       {address.is_default ? (
                         <>
                           <span className="flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-emerald-500">
-                            <svg className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            <svg
+                              className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-white"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={3}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
                             </svg>
                           </span>
-                          <span className="text-sm sm:text-base font-semibold text-gray-900">Default</span>
+                          <span className="text-sm sm:text-base font-semibold text-gray-900">
+                            Default
+                          </span>
                         </>
                       ) : (
                         <>
                           <span className="h-4 w-4 sm:h-5 sm:w-5 rounded-full border-2 border-gray-400" />
-                          <span className="text-sm sm:text-base font-semibold text-gray-500">Default</span>
+                          <span className="text-sm sm:text-base font-semibold text-gray-500">
+                            Default
+                          </span>
                         </>
                       )}
                     </div>
@@ -295,7 +334,8 @@ export function ProfileContent() {
                       {/* Left: address text + buttons */}
                       <div className="flex-1">
                         <p className="text-sm sm:text-[15px] text-gray-600 leading-snug mb-2 sm:mb-3">
-                          {address.full_address}, {address.area}, {address.city} - {address.pincode}
+                          {address.full_address}, {address.area}, {address.city}{" "}
+                          - {address.pincode}
                         </p>
 
                         {/* Buttons: Edit and Delete in one row */}
@@ -322,7 +362,7 @@ export function ProfileContent() {
                         {/* Meal dropdown - separate row */}
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <button className="flex items-center justify-center gap-2 w-[120px] sm:w-[141px] h-8 sm:h-9 rounded-lg bg-[#44151C] text-white text-sm font-bold hover:bg-[#5a1c28] transition-colors">
+                            <button className="flex items-center justify-center gap-2 w-[120px] sm:w-[141px] h-8 sm:h-9 rounded-lg bg-primary text-white text-sm font-bold hover:bg-[#5a1c28] transition-colors">
                               <FaUtensils className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                               <span>{selectedMeal}</span>
                               <FaChevronDown className="h-3 w-3 ml-1" />
@@ -334,10 +374,14 @@ export function ProfileContent() {
                                 key={meal}
                                 className={cn(
                                   "text-sm cursor-pointer",
-                                  selectedMeal === meal && "text-[#44151C] font-semibold"
+                                  selectedMeal === meal &&
+                                    "text-primary font-semibold",
                                 )}
                                 onClick={() =>
-                                  setMealTypes((prev) => ({ ...prev, [address._id]: meal }))
+                                  setMealTypes((prev) => ({
+                                    ...prev,
+                                    [address._id]: meal,
+                                  }))
                                 }
                               >
                                 {meal}
@@ -369,14 +413,19 @@ export function ProfileContent() {
               <div className="p-4 rounded-full bg-gray-100 text-gray-400 mb-4">
                 <FaExclamationCircle className="h-8 w-8" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900">No Addresses Found</h3>
+              <h3 className="text-lg font-bold text-gray-900">
+                No Addresses Found
+              </h3>
               <p className="text-sm text-gray-500 max-w-65 mt-1 mb-6">
                 Add an address to start ordering delicious home-cooked meals.
               </p>
               <Button
                 size="sm"
                 className="font-bold px-8"
-                onClick={() => { setEditingAddress(undefined); setIsAddressModalOpen(true); }}
+                onClick={() => {
+                  setEditingAddress(undefined);
+                  setIsAddressModalOpen(true);
+                }}
               >
                 Add Your First Address
               </Button>
@@ -390,19 +439,25 @@ export function ProfileContent() {
           <Card className="bg-white border border-gray-200 shadow-sm overflow-hidden w-full xl:w-[386px] min-h-[129px]">
             {/* Header */}
             <div className="flex items-center gap-2 px-4 py-2 border-b border-gray-200">
-              <FaShieldAlt className="h-4 w-4 text-[#44151C]" />
-              <span className="text-base font-semibold text-[#44151C]">Security and privacy</span>
+              <FaShieldAlt className="h-4 w-4 text-primary" />
+              <span className="text-base font-semibold text-primary">
+                Security and privacy
+              </span>
             </div>
 
             {/* Body */}
             <CardContent className="p-3">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-base font-semibold text-[#44151C]">Password</p>
-                  <p className="text-xs text-gray-500">Last changed 3 months ago</p>
+                  <p className="text-base font-semibold text-primary">
+                    Password
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Last changed 3 months ago
+                  </p>
                 </div>
                 <div className="flex flex-col items-end">
-                  <button className="px-3 py-1.5 rounded-lg bg-[#44151C] text-white text-xs font-semibold hover:bg-[#5a1c28] transition-colors whitespace-nowrap">
+                  <button className="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-[#5a1c28] transition-colors whitespace-nowrap">
                     Change Password
                   </button>
                   <button
@@ -420,16 +475,29 @@ export function ProfileContent() {
           <div className="relative overflow-hidden rounded-xl bg-linear-to-br from-rose-100 via-rose-50 to-white p-5 w-full xl:w-[386px] min-h-[203px]">
             {/* Decorative wave */}
             <div className="absolute bottom-0 right-0 w-40 h-24 opacity-40">
-              <svg viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M200 150V50C150 50 150 100 100 100C50 100 50 50 0 50V150H200Z" fill="#FDA4AF"/>
-                <path d="M200 150V80C160 80 160 120 120 120C80 120 80 80 40 80C40 80 40 110 0 110V150H200Z" fill="#FB7185"/>
+              <svg
+                viewBox="0 0 200 150"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M200 150V50C150 50 150 100 100 100C50 100 50 50 0 50V150H200Z"
+                  fill="#FDA4AF"
+                />
+                <path
+                  d="M200 150V80C160 80 160 120 120 120C80 120 80 80 40 80C40 80 40 110 0 110V150H200Z"
+                  fill="#FB7185"
+                />
               </svg>
             </div>
 
             <div className="relative z-10 flex flex-col h-full">
-              <h3 className="text-xl font-bold text-[#44151C] mb-2">Need help?</h3>
+              <h3 className="text-xl font-bold text-primary mb-2">
+                Need help?
+              </h3>
               <p className="text-sm text-gray-600 mb-4 leading-relaxed flex-1">
-                Our support team is available 24/7 to help you with your profile or orders.
+                Our support team is available 24/7 to help you with your profile
+                or orders.
               </p>
               <button className="px-6 py-2.5 rounded-full bg-white text-gray-900 text-sm font-semibold shadow-sm hover:shadow-md transition-shadow self-center">
                 Contact Support

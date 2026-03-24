@@ -40,7 +40,7 @@ export function OrderSummaryPanel({
       {/* Header */}
       <div className="p-5 border-b border-gray-200">
         <h2
-          className="text-xl font-bold text-[#39070F]"
+          className="text-xl font-bold text-primary"
           style={{ fontFamily: "var(--font-inter), sans-serif" }}
         >
           Order Summary
@@ -52,13 +52,13 @@ export function OrderSummaryPanel({
         <div className="space-y-3 pb-5 mb-5 border-b border-gray-200">
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-500">Duration</span>
-            <span className="font-semibold text-[#39070F]">
+            <span className="font-semibold text-primary">
               {params?.days || "-"} Days
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-500">Meals per day</span>
-            <span className="font-semibold text-[#39070F]">
+            <span className="font-semibold text-primary">
               {params?.meal_types.length || 0}({mealTypeLetters})
             </span>
           </div>
@@ -81,10 +81,14 @@ export function OrderSummaryPanel({
                       : "border-red-500 bg-white",
                   )}
                 >
-                  <span className={cn(
-                    "w-2 h-2 rounded-full",
-                    params?.preference === "VEG" ? "bg-emerald-500" : "bg-red-500"
-                  )} />
+                  <span
+                    className={cn(
+                      "w-2 h-2 rounded-full",
+                      params?.preference === "VEG"
+                        ? "bg-emerald-500"
+                        : "bg-red-500",
+                    )}
+                  />
                 </span>
               )}
               {params?.preference === "VEG"
@@ -103,7 +107,7 @@ export function OrderSummaryPanel({
                 </span>
               )}
             </div>
-            <span className="font-semibold text-[#39070F]">
+            <span className="font-semibold text-primary">
               ₹{pricing?.price_per_meal || 0}
             </span>
           </div>
@@ -124,7 +128,7 @@ export function OrderSummaryPanel({
               <span className="text-gray-500">
                 Subtotal ({pricing.total_meals} meals)
               </span>
-              <span className="font-semibold text-[#39070F]">
+              <span className="font-semibold text-primary">
                 ₹{pricing.subtotal.toLocaleString()}
               </span>
             </div>
@@ -142,13 +146,13 @@ export function OrderSummaryPanel({
 
             <div className="flex items-center justify-between pt-4 border-t border-gray-200 mt-4">
               <span
-                className="text-lg font-bold text-[#39070F]"
+                className="text-lg font-bold text-primary"
                 style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
                 Total Pay
               </span>
               <span
-                className="text-3xl font-bold text-[#39070F]"
+                className="text-3xl font-bold text-primary"
                 style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
                 ₹{pricing.total.toLocaleString()}
@@ -161,7 +165,7 @@ export function OrderSummaryPanel({
               disabled={isContinueDisabled || isLoading}
               className={cn(
                 "w-full h-12 rounded-lg font-semibold text-white mt-5 text-sm group transition-all",
-                "bg-[#39070F] hover:bg-[#5a1c28] active:scale-[0.98]",
+                "bg-primary hover:bg-[#5a1c28] active:scale-[0.98]",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
               )}
             >

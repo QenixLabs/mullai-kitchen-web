@@ -7,7 +7,12 @@ export default function ProfilePage() {
     <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
       {/* Page Header */}
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-3xl sm:text-[48px] font-bold text-[#44151C]" style={{ fontFamily: "var(--font-inter), sans-serif" }}>Profile</h1>
+        <h1
+          className="text-3xl sm:text-[48px] font-bold text-primary"
+          style={{ fontFamily: "var(--font-inter), sans-serif" }}
+        >
+          Profile
+        </h1>
         <p className="text-gray-500 mt-2 text-sm sm:text-base">
           Manage your personal information, addresses, and preferences
         </p>

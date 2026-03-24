@@ -54,7 +54,7 @@ export function Sidebar() {
     <ShadcnSidebar className="w-60 border-r border-border shadow-none">
       <SidebarHeader className="border-none px-6 pt-8 pb-4">
         <Link href="/subscription" className="flex items-center gap-3 active:opacity-90 transition-opacity">
-          <img src="/logo.png" alt="Mullai Kitchen" className="h-auto w-full rounded" />
+          <img src="/logo-tranparent.png" alt="Mullai Kitchen" className="h-auto w-full rounded" />
         </Link>
       </SidebarHeader>
       <SidebarContent className="flex flex-col h-full">

@@ -1,16 +1,20 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Subscription, SubscriptionStatus, MealType } from "@/api/types/subscription.types";
+import {
+  Subscription,
+  SubscriptionStatus,
+  MealType,
+} from "@/api/types/subscription.types";
 import { Utensils, CalendarDays, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STATUS = {
-  ACTIVE: 'active' as SubscriptionStatus,
-  PAUSED: 'paused' as SubscriptionStatus,
-  EXPIRED: 'expired' as SubscriptionStatus,
-  CANCELLED: 'cancelled' as SubscriptionStatus,
-  PENDING_RENEWAL: 'pending_renewal' as SubscriptionStatus,
+  ACTIVE: "active" as SubscriptionStatus,
+  PAUSED: "paused" as SubscriptionStatus,
+  EXPIRED: "expired" as SubscriptionStatus,
+  CANCELLED: "cancelled" as SubscriptionStatus,
+  PENDING_RENEWAL: "pending_renewal" as SubscriptionStatus,
 } as const;
 
 interface SubscriptionCardProps {
@@ -39,9 +43,21 @@ export function SubscriptionCard({
   const getFallbackImage = () => {
     const meals = subscription.meals_included ?? [];
     if (meals.length >= 3) return "/images/plans/thali.png";
-    if (meals.includes("dinner" as MealType) || meals.includes("DINNER" as MealType)) return "/images/plans/thali.png";
-    if (meals.includes("lunch" as MealType) || meals.includes("LUNCH" as MealType)) return "/images/plans/office-lunch-monthly.jpg";
-    if (meals.includes("breakfast" as MealType) || meals.includes("BREAKFAST" as MealType)) return "/images/plans/idli.jpg";
+    if (
+      meals.includes("dinner" as MealType) ||
+      meals.includes("DINNER" as MealType)
+    )
+      return "/images/plans/thali.png";
+    if (
+      meals.includes("lunch" as MealType) ||
+      meals.includes("LUNCH" as MealType)
+    )
+      return "/images/plans/office-lunch-monthly.jpg";
+    if (
+      meals.includes("breakfast" as MealType) ||
+      meals.includes("BREAKFAST" as MealType)
+    )
+      return "/images/plans/idli.jpg";
     return "/images/plans/thali.png";
   };
 
@@ -65,14 +81,17 @@ export function SubscriptionCard({
   const statusConfig = getStatusConfig(subscription.status);
   const isActive = subscription.status === STATUS.ACTIVE;
   const isPaused = subscription.status === STATUS.PAUSED;
-  const isInactive = subscription.status === STATUS.EXPIRED || subscription.status === STATUS.CANCELLED;
+  const isInactive =
+    subscription.status === STATUS.EXPIRED ||
+    subscription.status === STATUS.CANCELLED;
 
   const total = subscription.total_deliveries ?? 0;
   const completed = subscription.completed_deliveries ?? 0;
 
   // Progress dots — max 30 dots, scale completed proportionally
   const DOT_COUNT = Math.min(total, 30);
-  const filledDots = total > 0 ? Math.round((completed / total) * DOT_COUNT) : 0;
+  const filledDots =
+    total > 0 ? Math.round((completed / total) * DOT_COUNT) : 0;
   const dotColor = isPaused ? "bg-amber-400" : "bg-primary";
 
   const mealsLabel = subscription.meals_included
@@ -81,7 +100,11 @@ export function SubscriptionCard({
 
   const formatDate = (date: string | Date) => {
     const d = typeof date === "string" ? new Date(date) : date;
-    return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+    return d.toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
   };
 
   return (
@@ -98,10 +121,14 @@ export function SubscriptionCard({
 
       <Card className="overflow-hidden border-border bg-card shadow-sm hover:shadow-md transition-shadow duration-200">
         <CardContent className="p-4 sm:p-6 pb-4 sm:pb-5 space-y-3 pr-0 md:pr-48 lg:pr-60">
-
           {/* Status badge */}
           <div>
-            <span className={cn("inline-flex items-center rounded-full px-2.5 sm:px-3 py-1 text-white text-xs sm:text-sm font-semibold", statusConfig.bg)}>
+            <span
+              className={cn(
+                "inline-flex items-center rounded-full px-2.5 sm:px-3 py-1 text-white text-xs sm:text-sm font-semibold",
+                statusConfig.bg,
+              )}
+            >
               {statusConfig.label}
             </span>
           </div>
@@ -115,11 +142,21 @@ export function SubscriptionCard({
           <div className="flex flex-wrap gap-x-4 sm:gap-x-6 gap-y-1 text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <Utensils className="h-3.5 w-3.5 shrink-0" />
-              <span>Meals : <span className="font-semibold text-foreground">{mealsLabel}</span></span>
+              <span>
+                Meals :{" "}
+                <span className="font-semibold text-foreground">
+                  {mealsLabel}
+                </span>
+              </span>
             </span>
             <span className="flex items-center gap-1.5">
               <CalendarDays className="h-3.5 w-3.5 shrink-0" />
-              <span>Ends : <span className="font-semibold text-foreground">{formatDate(subscription.end_date)}</span></span>
+              <span>
+                Ends :{" "}
+                <span className="font-semibold text-foreground">
+                  {formatDate(subscription.end_date)}
+                </span>
+              </span>
             </span>
           </div>
 
@@ -135,7 +172,7 @@ export function SubscriptionCard({
                     key={i}
                     className={cn(
                       "h-2 w-4 sm:h-2.5 sm:w-6 rounded-full",
-                      i < filledDots ? dotColor : "bg-muted"
+                      i < filledDots ? dotColor : "bg-muted",
                     )}
                   />
                 ))}
@@ -148,20 +185,32 @@ export function SubscriptionCard({
             {isActive && (
               <Button
                 variant="outline"
-                className="h-10 sm:h-12 px-4 sm:px-6 gap-2 rounded-lg text-base sm:text-[20px] font-semibold text-[#44151C] bg-secondary/20 border-secondary/40 hover:bg-secondary/40"
+                className="h-10 sm:h-12 px-4 sm:px-6 gap-2 rounded-lg text-base sm:text-[20px] font-semibold text-primary bg-secondary/20 border-secondary/40 hover:bg-secondary/40"
                 onClick={() => onPause?.(subscription._id)}
               >
-                <Image src="/images/subscriptions/pause.png" width={16} height={16} alt="pause" className="shrink-0 sm:w-[18px] sm:h-[18px]" />
+                <Image
+                  src="/images/subscriptions/pause.png"
+                  width={16}
+                  height={16}
+                  alt="pause"
+                  className="shrink-0 sm:w-[18px] sm:h-[18px]"
+                />
                 Pause
               </Button>
             )}
             {isPaused && (
               <Button
                 variant="outline"
-                className="h-10 sm:h-12 px-4 sm:px-6 gap-2 rounded-lg text-base sm:text-[20px] font-semibold text-[#44151C] bg-secondary/20 border-secondary/40 hover:bg-secondary/40"
+                className="h-10 sm:h-12 px-4 sm:px-6 gap-2 rounded-lg text-base sm:text-[20px] font-semibold text-primary bg-secondary/20 border-secondary/40 hover:bg-secondary/40"
                 onClick={() => onResume?.(subscription._id)}
               >
-                <Image src="/images/subscriptions/play.png" width={16} height={16} alt="play" className="shrink-0 sm:w-[18px] sm:h-[18px]" />
+                <Image
+                  src="/images/subscriptions/play.png"
+                  width={16}
+                  height={16}
+                  alt="play"
+                  className="shrink-0 sm:w-[18px] sm:h-[18px]"
+                />
                 Paused
               </Button>
             )}
@@ -178,7 +227,7 @@ export function SubscriptionCard({
             {/* View Details */}
             <Button
               variant="outline"
-              className="h-10 sm:h-12 px-4 sm:px-6 rounded-lg text-base sm:text-[20px] font-normal bg-secondary/20 text-[#44151C] border-secondary/40 hover:bg-secondary/40"
+              className="h-10 sm:h-12 px-4 sm:px-6 rounded-lg text-base sm:text-[20px] font-normal bg-secondary/20 text-primary border-secondary/40 hover:bg-secondary/40"
               onClick={() => onViewDetails?.(subscription._id)}
             >
               View Details
@@ -187,16 +236,24 @@ export function SubscriptionCard({
             <Button
               className={cn(
                 "h-10 sm:h-12 px-6 sm:px-8 gap-2 rounded-lg text-base sm:text-[20px] font-semibold text-[#FBFBFB]",
-                isPaused ? "bg-primary/50 cursor-not-allowed" : "bg-primary hover:bg-primary/90"
+                isPaused
+                  ? "bg-primary/50 cursor-not-allowed"
+                  : "bg-primary hover:bg-primary/90",
               )}
               disabled={isPaused}
               onClick={() => !isPaused && onAddOn?.(subscription._id)}
             >
-              <Image src="/images/plans/white-bell.png" width={18} height={18} alt="" className="shrink-0 sm:w-5 sm:h-5" style={{ filter: "brightness(0) invert(1) opacity(0.98)" }} />
+              <Image
+                src="/images/plans/white-bell.png"
+                width={18}
+                height={18}
+                alt=""
+                className="shrink-0 sm:w-5 sm:h-5"
+                style={{ filter: "brightness(0) invert(1) opacity(0.98)" }}
+              />
               Add on
             </Button>
           </div>
-
         </CardContent>
       </Card>
     </div>

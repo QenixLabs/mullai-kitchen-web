@@ -38,7 +38,10 @@ export function CustomPlanBuilderContent({
 
   const createCustomPlan = useCreateCustomPlan();
   const addressesQuery = useAddresses();
-  const addresses = useMemo(() => addressesQuery.data ?? [], [addressesQuery.data]);
+  const addresses = useMemo(
+    () => addressesQuery.data ?? [],
+    [addressesQuery.data],
+  );
 
   const setPlanIntent = usePlanIntentStore((store) => store.setPlanIntent);
   const setSourceRoute = usePlanIntentStore((store) => store.setSourceRoute);
@@ -148,7 +151,7 @@ export function CustomPlanBuilderContent({
       setPlanIntent(result._id, {
         ...result,
         duration: `${result.custom_days} Days`,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
       setSourceRoute("/custom-plan-builder");
 
@@ -186,7 +189,7 @@ export function CustomPlanBuilderContent({
       {/* Back Button */}
       <button
         onClick={() => router.back()}
-        className="flex items-center gap-2 text-[#39070F] hover:opacity-70 transition-opacity mb-6"
+        className="flex items-center gap-2 text-primary hover:opacity-70 transition-opacity mb-6"
       >
         <FaArrowLeft className="w-5 h-5" />
       </button>
@@ -194,7 +197,7 @@ export function CustomPlanBuilderContent({
       {/* Header */}
       <div className="mb-8">
         <h1
-          className="text-3xl sm:text-4xl font-bold text-[#39070F] mb-2"
+          className="text-3xl sm:text-4xl font-bold text-primary mb-2"
           style={{ fontFamily: "var(--font-inter), sans-serif" }}
         >
           Build Your Perfect Plan
@@ -222,7 +225,7 @@ export function CustomPlanBuilderContent({
                 1
               </div>
               <h2
-                className="text-xl font-bold text-[#39070F]"
+                className="text-xl font-bold text-primary"
                 style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
                 Choose Duration
@@ -238,7 +241,7 @@ export function CustomPlanBuilderContent({
                 2
               </div>
               <h2
-                className="text-xl font-bold text-[#39070F]"
+                className="text-xl font-bold text-primary"
                 style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
                 Select Your Meals
@@ -258,7 +261,7 @@ export function CustomPlanBuilderContent({
                 3
               </div>
               <h2
-                className="text-xl font-bold text-[#39070F]"
+                className="text-xl font-bold text-primary"
                 style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
                 Food Preference

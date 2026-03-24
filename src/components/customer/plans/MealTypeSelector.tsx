@@ -48,7 +48,7 @@ export function MealTypeSelector({
             className={cn(
               "relative flex items-center gap-4 p-4 rounded-xl transition-all duration-200 text-left",
               isSelected
-                ? "border-2 border-[#39070F] bg-[#39070F]/5 shadow-lg"
+                ? "border-2 border-primary bg-primary/5 shadow-lg"
                 : "border border-gray-200 bg-white hover:border-gray-300 shadow-sm",
               disabled && "opacity-50 cursor-not-allowed hover:border-gray-200",
             )}
@@ -58,7 +58,7 @@ export function MealTypeSelector({
               className={cn(
                 "w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all",
                 isSelected
-                  ? "border-[#39070F] bg-[#39070F]"
+                  ? "border-primary bg-primary"
                   : "border-gray-400 bg-white",
               )}
             >
@@ -68,7 +68,7 @@ export function MealTypeSelector({
             {/* Label & Time */}
             <div className="flex-1 min-w-0">
               <p
-                className="font-bold text-[#39070F] text-lg leading-tight"
+                className="font-bold text-primary text-lg leading-tight"
                 style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
                 {meal}
