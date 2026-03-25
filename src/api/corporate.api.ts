@@ -25,7 +25,7 @@ export const corporateApi = {
     apiClient.get<{ modifications: ICorporateOrderModification[] }>(CORPORATE_ROUTES.MODIFICATIONS(id)).then((r) => r.data.modifications),
 
   getInvoice: (id: string, type: string) =>
-    apiClient.get<ICorporateInvoice>(CORPORATE_ROUTES.INVOICE(id, type)).then((r) => r.data),
+    apiClient.get<{ invoice: ICorporateInvoice }>(CORPORATE_ROUTES.INVOICE(id, type)).then((r) => r.data.invoice),
 
   cancelOrder: (id: string, payload: { reason?: string }) =>
     apiClient.post<ICorporateOrder>(CORPORATE_ROUTES.CANCEL_ORDER(id), payload).then((r) => r.data),

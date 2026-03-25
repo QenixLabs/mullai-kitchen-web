@@ -620,8 +620,9 @@ export default function OrderDetailPage() {
                       : "secondary"
                   }
                 >
-                  {selectedInvoice.status.charAt(0).toUpperCase() +
-                    selectedInvoice.status.slice(1)}
+                  {selectedInvoice.status
+                    ? selectedInvoice.status.charAt(0).toUpperCase() + selectedInvoice.status.slice(1)
+                    : "Pending"}
                 </Badge>
               </div>
               <Table>
