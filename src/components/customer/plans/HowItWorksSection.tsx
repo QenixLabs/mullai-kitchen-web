@@ -37,7 +37,7 @@ export function HowItWorksSection({ className = "" }: HowItWorksSectionProps) {
   return (
     <section className={cn("relative py-24 overflow-hidden", className)}>
       {/* Premium Dark Background */}
-      <div className="absolute inset-0 bg-linear-to-b from-[#0d0205] via-[#1a0509] to-[#0d0205]" />
+      <div className="absolute inset-0 bg-linear-to-b from-foreground via-foreground/85 to-foreground" />
       
       {/* Subtle Grid Pattern Overlay */}
       <div className="absolute inset-0 opacity-[0.03]" style={{
@@ -55,7 +55,7 @@ export function HowItWorksSection({ className = "" }: HowItWorksSectionProps) {
             viewport={{ once: true }}
             className="mb-4 text-3xl sm:text-4xl font-bold tracking-tight text-white"
           >
-            Simple, Healthy, & <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4A574] to-[#e8c4a0]">Consistent</span>
+            Simple, Healthy, & <span className="text-transparent bg-clip-text" style={{ backgroundImage: `linear-gradient(to right, var(--color-accent), var(--color-gold-light))` }}>Consistent</span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -82,15 +82,15 @@ export function HowItWorksSection({ className = "" }: HowItWorksSectionProps) {
               className="group relative flex flex-col h-full bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 transition-all duration-300"
             >
               {/* Subtle Top Border */}
-              <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#D4A574]/50 to-transparent opacity-80" />
+              <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-accent/50 to-transparent opacity-80" />
 
               {/* Icon Container */}
               <div className="mb-8 flex items-center justify-center">
-                <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-[#D4A574]/10 border border-[#D4A574]/20 group-hover:bg-[#D4A574]/20 transition-colors">
-                  <step.icon className="h-8 w-8 text-[#D4A574]" />
+                <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10 border border-accent/20 group-hover:bg-accent/20 transition-colors">
+                  <step.icon className="h-8 w-8 text-accent" />
                   
                   {/* Step Number Badge */}
-                  <div className="absolute -top-3 -right-3 flex h-8 w-8 items-center justify-center rounded-full bg-[#39070F] border border-[#D4A574]/30 text-[10px] font-bold text-[#D4A574] shadow-lg">
+                  <div className="absolute -top-3 -right-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary border border-accent/30 text-[10px] font-bold text-accent shadow-lg">
                     {step.number}
                   </div>
                 </div>

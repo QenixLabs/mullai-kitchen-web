@@ -4,6 +4,7 @@ import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { Sidebar } from "@/components/navigation/Sidebar";
+import { DashboardTopBar } from "@/components/navigation/DashboardTopBar";
 import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
@@ -43,7 +44,8 @@ export default function AuthenticatedLayout({
   return (
     <SidebarProvider>
       <Sidebar />
-      <SidebarInset className="flex flex-col min-h-svh bg-slate-50 pb-28 md:pb-0">
+      <SidebarInset className="flex flex-col min-h-svh bg-background pb-28 md:pb-0">
+        <DashboardTopBar className="sticky top-0 z-30 border-b border-border" />
         {children}
       </SidebarInset>
       <MobileBottomNav />
