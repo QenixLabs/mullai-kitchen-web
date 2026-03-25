@@ -32,7 +32,7 @@ import type { ICorporateOrderModification } from "@/api/types/corporate.types";
 
 function OrderDetailSkeleton() {
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
       <Skeleton className="h-8 w-32 mb-4 rounded-xl" />
       <Skeleton className="h-64 w-full rounded-2xl mb-6" />
       <Skeleton className="h-96 w-full rounded-2xl" />
@@ -271,7 +271,7 @@ function OrderDetailPage() {
         </p>
         <Button
           onClick={() => router.push("/corporate/orders")}
-          className="bg-primary hover:bg-primary/80 text-primary-foreground rounded-xl shadow-lg shadow-primary/20"
+          className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
         >
           Back to Orders
         </Button>
@@ -283,7 +283,7 @@ function OrderDetailPage() {
   const isCancelled = order.status === "cancelled";
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
       {/* Back button */}
       <Button
         variant="ghost"

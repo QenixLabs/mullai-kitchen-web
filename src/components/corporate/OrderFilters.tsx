@@ -3,8 +3,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Search, ArrowUpDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -13,6 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { ICorporateOrder } from "@/api/types/corporate.types";
+import { motion, AnimatePresence } from "motion/react";
+import { cn } from "@/lib/utils";
 
 interface OrderFiltersProps {
   searchQuery: string;
@@ -96,54 +96,90 @@ export function OrderFilters({
   }, [orders]);
 
   return (
-    <div className="flex flex-col gap-4 mb-8">
+    <div className="flex flex-col gap-6 mb-8">
       {/* Top row: Search + Sort */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        <div className="relative flex-1 ">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
+        <div className="relative flex-1 group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
           <Input
             type="text"
-            placeholder="Search by order ID..."
+            placeholder="Search by order ID, company or items..."
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
-            className="pl-9 rounded-xl h-10"
+            className="pl-12 pr-4 h-12 rounded-2xl border-border bg-card/50 backdrop-blur-sm focus-visible:ring-primary/20 focus-visible:border-primary transition-all shadow-sm"
           />
         </div>
 
-        <Select value={sortBy} onValueChange={onSortChange}>
-          <SelectTrigger className="w-full sm:w-[180px] h-10 rounded-xl">
-            <ArrowUpDown className="h-4 w-4 mr-1 text-muted-foreground" />
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent>
-            {SORT_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Select value={sortBy} onValueChange={onSortChange}>
+            <SelectTrigger className="w-full md:w-[200px] h-12 rounded-2xl bg-card border-border shadow-sm hover:border-primary/50 transition-colors">
+              <div className="flex items-center gap-2">
+                <ArrowUpDown className="h-4 w-4 text-primary" />
+                <SelectValue placeholder="Sort by" />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              {SORT_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value} className="rounded-lg my-0.5">
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Bottom row: Status filter tabs */}
-      <Tabs
-        value={activeStatus}
-        onValueChange={onStatusChange}
-      >
-        <TabsList className="h-10 overflow-x-auto">
-          {STATUS_TABS.map((tab) => (
-            <TabsTrigger key={tab.value} value={tab.value} className="gap-1.5 px-3 text-sm whitespace-nowrap">
-              {tab.label}
-              <Badge
-                variant="secondary"
-                className="h-5 min-w-5 px-1.5 text-[10px] font-semibold rounded-full"
+      <div className="relative">
+        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-secondary/50 backdrop-blur-sm w-fit max-w-full overflow-x-auto no-scrollbar border border-border/50">
+          {STATUS_TABS.map((tab) => {
+            const isActive = activeStatus === tab.value;
+            const count = statusCounts[tab.value] ?? 0;
+
+            return (
+              <button
+                key={tab.value}
+                onClick={() => onStatusChange(tab.value)}
+                className={cn(
+                  "relative flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-300 whitespace-nowrap outline-none",
+                  isActive 
+                    ? "text-primary-foreground" 
+                    : "text-muted-foreground hover:text-foreground active:scale-95"
+                )}
               >
-                {statusCounts[tab.value] ?? 0}
-              </Badge>
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+                {/* Active Background Indicator */}
+                <AnimatePresence>
+                  {isActive && (
+                    <motion.div
+                      layoutId="active-tab-indicator"
+                      className="absolute inset-0 bg-primary rounded-xl shadow-lg shadow-primary/20"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                </AnimatePresence>
+
+                {/* Content */}
+                <span className="relative z-10">{tab.label}</span>
+                {count > 0 && (
+                  <motion.span
+                    initial={false}
+                    animate={{ 
+                      backgroundColor: isActive ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.05)",
+                      color: isActive ? "white" : "inherit"
+                    }}
+                    className="relative z-10 flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[10px] font-bold rounded-full transition-colors"
+                  >
+                    {count}
+                  </motion.span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

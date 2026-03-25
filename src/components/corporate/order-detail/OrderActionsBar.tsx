@@ -41,8 +41,8 @@ export function OrderActionsBar({
   // Cancelled orders show minimal bar
   if (isCancelled) {
     return (
-      <div className="sticky bottom-0 z-40 mt-8 bg-white/95 backdrop-blur-xl border-t border-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div className="sticky bottom-0 z-40 mt-8 bg-background border-t border-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
             Order {order.order_id} &middot;{" "}
             <OrderStatusBadge status={order.status} />
@@ -53,8 +53,8 @@ export function OrderActionsBar({
   }
 
   return (
-    <div className="sticky bottom-0 z-40 mt-8 bg-white/95 backdrop-blur-xl border-t border-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+    <div className="sticky bottom-0 z-40 mt-8 bg-background border-t border-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
         {/* Left: order info (hidden on mobile to save space) */}
         <div className="text-sm text-muted-foreground hidden sm:flex items-center gap-2">
           Order {order.order_id} &middot;{" "}

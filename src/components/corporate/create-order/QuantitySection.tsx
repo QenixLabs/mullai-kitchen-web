@@ -37,9 +37,8 @@ export function QuantitySection({
   const isOver = total > headcount;
 
   return (
-    <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
-      <div className="p-6 pt-7 space-y-6">
+    <div className="relative rounded-2xl bg-card border border-border shadow-sm">
+      <div className="p-6 space-y-6">
         <div>
           <h2 className="flex items-center gap-2 text-lg font-bold">
             <Users className="h-5 w-5 text-primary" />

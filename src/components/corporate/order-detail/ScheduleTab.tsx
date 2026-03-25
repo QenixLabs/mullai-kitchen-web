@@ -25,9 +25,8 @@ export function ScheduleTab({
   if (order.status !== "active") {
     // Read-only summary for completed/cancelled orders
     return (
-      <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
-        <div className="p-6 pt-7">
+      <div className="relative rounded-2xl bg-card border border-border shadow-sm">
+        <div className="p-6">
           <h2 className="flex items-center gap-2 text-lg font-bold mb-4">
             <CalendarDays className="h-5 w-5 text-primary" />
             Delivery Summary
@@ -74,9 +73,8 @@ export function ScheduleTab({
   return (
     <div className="space-y-6">
       {/* Calendar */}
-      <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
-        <div className="p-6 pt-7">
+      <div className="relative rounded-2xl bg-card border border-border shadow-sm">
+        <div className="p-6">
           <div className="mb-4">
             <h2 className="flex items-center gap-2 text-lg font-bold">
               <CalendarDays className="h-5 w-5 text-primary" />
@@ -123,9 +121,8 @@ export function ScheduleTab({
 
       {/* Upcoming Deliveries List */}
       {upcomingDates.length > 0 && (
-        <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
-          <div className="p-6 pt-7">
+        <div className="relative rounded-2xl bg-card border border-border shadow-sm">
+          <div className="p-6">
             <h3 className="text-lg font-bold mb-4">Upcoming Deliveries</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">

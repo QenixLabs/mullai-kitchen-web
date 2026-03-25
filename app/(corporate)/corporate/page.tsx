@@ -58,22 +58,21 @@ function StatCard({
 }) {
   const content = (
     <div
-      className={`relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden transition-all hover:shadow-xl hover:-translate-y-0.5 ${
-        href ? "cursor-pointer" : ""
+      className={`relative flex flex-col overflow-hidden rounded-2xl bg-card border border-border shadow-sm transition-all duration-200 ${
+        href ? "cursor-pointer hover:shadow-md" : ""
       }`}
     >
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
-      <div className="p-6 pt-7">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-gold to-gold/80 shadow-md shadow-gold/20">
-            <Icon className="h-5 w-5 text-primary" />
+      <div className="flex flex-1 flex-col p-5">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+            <Icon className="h-4.5 w-4.5 text-primary" />
           </div>
           {href && (
-            <ArrowRight className="h-4 w-4 text-muted-foreground mt-2" />
+            <ArrowRight className="h-4 w-4 text-muted-foreground ml-auto" />
           )}
         </div>
-        <p className="text-sm font-medium text-muted-foreground mb-1">{title}</p>
-        <p className="text-3xl font-bold tracking-tight">{value}</p>
+        <p className="text-sm font-medium text-muted-foreground">{title}</p>
+        <p className="text-3xl font-black tracking-tight mt-0.5">{value}</p>
         <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
       </div>
     </div>
@@ -97,14 +96,13 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
   );
 
   return (
-    <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden transition-all hover:shadow-xl">
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
-      <div className="p-5 pt-6 space-y-4">
+    <div className="relative flex flex-col overflow-hidden rounded-2xl bg-card border border-border shadow-sm transition-all duration-200 hover:shadow-md">
+      <div className="flex flex-1 flex-col p-5">
         {/* Order ID and Status */}
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start justify-between gap-2 mb-3">
           <Link
             href={`/corporate/orders/${order._id}`}
-            className="font-semibold hover:text-primary transition-colors"
+            className="text-lg font-bold text-foreground hover:text-primary transition-colors"
           >
             {order.order_id}
           </Link>
@@ -112,26 +110,22 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
         </div>
 
         {/* Schedule: Days and Meal Types */}
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-1.5 mb-3">
           {order.selected_days.map((day) => (
-            <Badge
+            <span
               key={day}
-              variant="outline"
-              className="text-xs px-2 py-0 font-medium"
+              className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground"
             >
               {DAY_ABBREVIATIONS[day.toLowerCase()] || day.slice(0, 3)}
-            </Badge>
+            </span>
           ))}
-          <Badge
-            variant="secondary"
-            className="text-xs px-2 py-0 font-medium"
-          >
+          <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground">
             {order.meal_types.length} meal{order.meal_types.length !== 1 ? "s" : ""}
-          </Badge>
+          </span>
         </div>
 
         {/* Date Range */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
           <CalendarDays className="h-4 w-4 shrink-0" />
           <span>
             {formatDate(order.start_date)} - {formatDate(order.end_date)}
@@ -139,34 +133,32 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
         </div>
 
         {/* Progress Bar */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 mb-3">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>
-              Day {elapsed} of {order.total_delivery_days}
-            </span>
+            <span>Day {elapsed} of {order.total_delivery_days}</span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+          <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-primary to-gold transition-all duration-500"
+              className="h-full rounded-full bg-primary transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
 
         {/* Amount */}
-        <div className="flex items-center gap-1.5 font-semibold">
+        <div className="flex items-center gap-1.5 font-bold text-foreground mb-4">
           <IndianRupee className="h-4 w-4" />
           <span>{order.final_amount.toLocaleString("en-IN")}</span>
         </div>
 
         {/* Quick Actions */}
-        <div className="flex gap-2 pt-1">
+        <div className="mt-auto flex gap-2">
           <Link href={`/corporate/orders/${order._id}`} className="flex-1">
             <Button
               variant="outline"
               size="sm"
-              className="w-full rounded-lg text-sm"
+              className="w-full rounded-full text-sm"
             >
               View
             </Button>
@@ -177,7 +169,7 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
           >
             <Button
               size="sm"
-              className="w-full rounded-lg text-sm bg-primary hover:bg-primary/80 text-primary-foreground"
+              className="w-full rounded-full text-sm bg-primary text-primary-foreground hover:bg-primary/90"
             >
               Modify
             </Button>
@@ -200,7 +192,6 @@ export default function CorporateDashboardPage() {
     (o) => o.payment_status === "pending" || o.payment_status === "overdue",
   );
 
-  // Find the next upcoming delivery date from active orders
   const upcomingDelivery = activeOrders
     .filter((o) => new Date(o.start_date) > new Date())
     .sort(
@@ -208,7 +199,6 @@ export default function CorporateDashboardPage() {
         new Date(a.start_date).getTime() - new Date(b.start_date).getTime(),
     )[0];
 
-  // Recent orders: sorted by created_at descending, limited to 5
   const recentOrders = [...ordersList]
     .sort(
       (a, b) =>
@@ -216,18 +206,17 @@ export default function CorporateDashboardPage() {
     )
     .slice(0, 5);
 
-  // Active orders to show in spotlight (max 3)
   const spotlightOrders = activeOrders.slice(0, 3);
   const hasMoreActiveOrders = activeOrders.length > 3;
 
   if (isLoading) {
     return (
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
         <div className="mb-8">
-          <Skeleton className="h-10 w-64 mb-2 rounded-xl" />
+          <Skeleton className="h-10 w-64 mb-2 rounded-2xl" />
           <Skeleton className="h-4 w-40 rounded-lg" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           {[1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-36 w-full rounded-2xl" />
           ))}
@@ -239,7 +228,7 @@ export default function CorporateDashboardPage() {
 
   if (error) {
     return (
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center min-h-[400px]">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 sm:py-10 lg:px-8 lg:py-12 flex flex-col items-center justify-center min-h-[400px]">
         <div className="p-4 rounded-full bg-destructive/10 text-destructive mb-6">
           <LayoutDashboard className="h-10 w-10" />
         </div>
@@ -250,9 +239,8 @@ export default function CorporateDashboardPage() {
             : "Failed to load dashboard data. Please try again."}
         </p>
         <Button
-          size="lg"
           onClick={() => window.location.reload()}
-          className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-lg shadow-primary/20 rounded-xl"
+          className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
         >
           Try Again
         </Button>
@@ -261,8 +249,7 @@ export default function CorporateDashboardPage() {
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Page Header */}
+    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
       <CorporatePageHeader
         icon={LayoutDashboard}
         title="Dashboard"
@@ -275,7 +262,7 @@ export default function CorporateDashboardPage() {
       />
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <StatCard
           title="Active Orders"
           value={activeOrders.length}
@@ -308,64 +295,56 @@ export default function CorporateDashboardPage() {
 
       {/* Active Orders Spotlight */}
       {spotlightOrders.length > 0 && (
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-gold to-gold/80">
-                <ClipboardList className="h-4 w-4 text-primary" />
-              </div>
-              <h2 className="text-xl font-bold">Active Orders</h2>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {spotlightOrders.map((order) => (
-              <CompactOrderCard key={order._id} order={order} />
-            ))}
-          </div>
-          {hasMoreActiveOrders && (
-            <div className="mt-4 text-center">
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
+              Active Orders
+            </h2>
+            {hasMoreActiveOrders && (
               <Link
                 href="/corporate/orders?status=active"
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
               >
-                View All Orders
+                View All
                 <ArrowRight className="h-4 w-4" />
               </Link>
-            </div>
-          )}
+            )}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {spotlightOrders.map((order) => (
+              <CompactOrderCard key={order._id} order={order} />
+            ))}
+          </div>
         </div>
       )}
 
       {/* Recent Orders / Empty State */}
       {ordersList.length === 0 ? (
-        <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
-          <div className="flex flex-col items-center justify-center py-24 px-6">
-            <div className="p-5 rounded-2xl bg-muted/50 mb-6 text-muted-foreground">
-              <ClipboardList className="h-10 w-10" />
-            </div>
-            <h3 className="text-2xl font-bold mb-2">No Orders Yet</h3>
-            <p className="text-muted-foreground mb-8 text-center max-w-md">
-              Create your first bulk order to get started with corporate meal
-              delivery.
-            </p>
-            <Button
-              onClick={() => router.push("/corporate/create-order")}
-              size="lg"
-              className="gap-2 bg-primary hover:bg-primary/80 text-primary-foreground font-semibold rounded-xl shadow-lg shadow-primary/20"
-            >
-              <PlusCircle className="h-5 w-5" />
-              Create Your First Order
-            </Button>
+        <div className="relative flex flex-col items-center justify-center rounded-2xl bg-card border border-border shadow-sm py-24 px-6">
+          <div className="p-5 rounded-full bg-muted mb-6 text-muted-foreground">
+            <ClipboardList className="h-10 w-10" />
           </div>
+          <h3 className="text-2xl font-bold mb-2">No Orders Yet</h3>
+          <p className="text-muted-foreground mb-8 text-center max-w-md">
+            Create your first bulk order to get started with corporate meal
+            delivery.
+          </p>
+          <Button
+            onClick={() => router.push("/corporate/create-order")}
+            className="gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+          >
+            <PlusCircle className="h-4 w-4" />
+            Create Your First Order
+          </Button>
         </div>
       ) : (
-        <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
-          <div className="p-6 pt-7">
-            <div className="flex items-center justify-between mb-6">
+        <div className="relative rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
+          <div className="p-5 sm:p-6">
+            <div className="flex items-center justify-between mb-5">
               <div>
-                <h2 className="text-xl font-bold">Recent Orders</h2>
+                <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
+                  Recent Orders
+                </h2>
                 <p className="text-sm text-muted-foreground mt-1">
                   {ordersList.length} total{" "}
                   {ordersList.length === 1 ? "order" : "orders"}
@@ -373,7 +352,7 @@ export default function CorporateDashboardPage() {
               </div>
               <Link
                 href="/corporate/orders"
-                className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
               >
                 View All
                 <ArrowRight className="h-4 w-4" />

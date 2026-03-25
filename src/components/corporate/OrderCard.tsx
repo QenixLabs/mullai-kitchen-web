@@ -56,8 +56,7 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
 
   if (variant === "compact") {
     return (
-      <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden transition-all hover:shadow-xl hover:-translate-y-0.5">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
+      <div className="relative flex flex-col overflow-hidden rounded-2xl bg-card border border-border shadow-sm transition-all duration-200 hover:shadow-md">
         <div className="p-4 pt-5">
           <div className="flex items-center gap-4">
             {/* Order ID */}
@@ -87,7 +86,7 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
               <div className="hidden sm:flex flex-1 items-center gap-2 min-w-0">
                 <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-primary to-gold rounded-full transition-all duration-500"
+                    className="h-full bg-primary rounded-full transition-all duration-500"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
@@ -105,7 +104,7 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
 
             {/* View button */}
             <Link href={`/corporate/orders/${order._id}`}>
-              <Button variant="outline" size="sm" className="rounded-lg gap-1">
+              <Button variant="outline" size="sm" className="rounded-full gap-1">
                 <Eye className="h-3.5 w-3.5" />
                 View
               </Button>
@@ -118,12 +117,11 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
 
   // Full variant
   return (
-    <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden transition-all hover:shadow-xl hover:-translate-y-0.5">
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
-      <div className="p-6 pt-7">
+    <div className="relative flex flex-col overflow-hidden rounded-2xl bg-card border border-border shadow-sm transition-all duration-200 hover:shadow-md">
+      <div className="flex flex-1 flex-col p-5">
         {/* Top row: Order ID + badges */}
-        <div className="flex items-start justify-between gap-3 mb-4">
-          <h3 className="font-semibold text-lg truncate">{order.order_id}</h3>
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <h3 className="text-lg font-bold text-foreground truncate">{order.order_id}</h3>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <OrderStatusBadge status={order.status} />
             <PaymentStatusBadge status={order.payment_status} />
@@ -131,21 +129,27 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
         </div>
 
         {/* Schedule summary */}
-        <div className="flex flex-wrap gap-1.5 mb-4">
+        <div className="flex flex-wrap gap-1.5 mb-3">
           {order.selected_days.map((day) => (
-            <Badge key={day} variant="secondary" className="text-xs">
+            <span
+              key={day}
+              className="inline-flex items-center rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground"
+            >
               {DAY_ABBR[day] ?? day.slice(0, 3)}
-            </Badge>
+            </span>
           ))}
           {order.meal_types.map((meal) => (
-            <Badge key={meal} variant="outline" className="text-xs">
+            <span
+              key={meal}
+              className="inline-flex items-center rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground"
+            >
               {meal}
-            </Badge>
+            </span>
           ))}
         </div>
 
         {/* Date range */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
           <CalendarDays className="h-4 w-4 flex-shrink-0" />
           <span>
             {formatDate(order.start_date)} - {formatDate(order.end_date)}
@@ -154,16 +158,16 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
 
         {/* Progress bar for active orders */}
         {isActive && (
-          <div className="mb-4">
+          <div className="mb-3">
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
               <span>Progress</span>
               <span>
                 {elapsed} / {order.total_delivery_days} days
               </span>
             </div>
-            <div className="h-2.5 bg-muted rounded-full overflow-hidden">
+            <div className="h-1.5 bg-muted rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-primary to-gold rounded-full transition-all duration-500"
+                className="h-full bg-primary rounded-full transition-all duration-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -171,17 +175,17 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
         )}
 
         {/* Amount */}
-        <div className="flex items-center gap-1.5 text-xl font-bold text-primary mb-5">
+        <div className="flex items-center gap-1.5 text-xl font-black text-foreground mb-4">
           <IndianRupee className="h-5 w-5" />
           {order.final_amount.toLocaleString("en-IN")}
         </div>
 
         {/* Bottom actions */}
-        <div className="flex items-center justify-between pt-4 border-t border-border/50">
+        <div className="mt-auto flex items-center justify-between pt-4 border-t border-border">
           <Link href={`/corporate/orders/${order._id}`}>
             <Button
               variant="outline"
-              className="gap-2 rounded-xl hover:bg-primary/10 hover:text-primary hover:border-primary/30"
+              className="gap-2 rounded-full hover:bg-primary/10 hover:text-primary hover:border-primary/30"
             >
               <Eye className="h-4 w-4" />
               View Details
@@ -190,7 +194,7 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-lg">
+              <Button variant="ghost" size="icon" className="rounded-full">
                 <MoreVertical className="h-4 w-4" />
                 <span className="sr-only">Order actions</span>
               </Button>
@@ -235,11 +239,10 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
  */
 export function OrderCardSkeleton() {
   return (
-    <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-1 bg-muted" />
-      <div className="p-6 pt-7 space-y-4">
+    <div className="relative flex flex-col overflow-hidden rounded-2xl bg-card border border-border shadow-sm">
+      <div className="p-5 space-y-4">
         <div className="flex items-start justify-between gap-3">
-          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-6 w-32 rounded-lg" />
           <div className="flex gap-1.5">
             <Skeleton className="h-5 w-20 rounded-full" />
             <Skeleton className="h-5 w-16 rounded-full" />
@@ -251,12 +254,12 @@ export function OrderCardSkeleton() {
           <Skeleton className="h-5 w-12 rounded-full" />
           <Skeleton className="h-5 w-16 rounded-full" />
         </div>
-        <Skeleton className="h-4 w-52" />
-        <Skeleton className="h-2.5 w-full rounded-full" />
-        <Skeleton className="h-7 w-28" />
-        <div className="flex items-center justify-between pt-4 border-t border-border/50">
-          <Skeleton className="h-9 w-28 rounded-xl" />
-          <Skeleton className="h-9 w-9 rounded-lg" />
+        <Skeleton className="h-4 w-52 rounded-lg" />
+        <Skeleton className="h-1.5 w-full rounded-full" />
+        <Skeleton className="h-7 w-28 rounded-lg" />
+        <div className="flex items-center justify-between pt-4 border-t border-border">
+          <Skeleton className="h-9 w-28 rounded-full" />
+          <Skeleton className="h-9 w-9 rounded-full" />
         </div>
       </div>
     </div>

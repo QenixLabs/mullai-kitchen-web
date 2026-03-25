@@ -23,31 +23,26 @@ export function CorporatePageHeader({
   return (
     <div
       className={cn(
-        "mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6",
+        "mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4",
         className,
       )}
     >
       <div>
-        <div className="flex items-center gap-2 mb-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-gold to-gold/80">
-            <Icon className="h-4 w-4 text-primary" />
-          </div>
-          <span className="text-sm font-bold uppercase tracking-widest text-gold">
-            Corporate
-          </span>
-        </div>
-        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
+        <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
           {title}
         </h1>
-        {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
+        {subtitle && (
+          <p className="mt-1 text-sm text-muted-foreground sm:text-base">
+            {subtitle}
+          </p>
+        )}
       </div>
       {action && (
         <Button
           onClick={action.onClick}
-          size="lg"
-          className="gap-2 bg-primary hover:bg-primary/80 text-primary-foreground font-semibold rounded-xl shadow-lg shadow-primary/20 transition-all hover:shadow-xl active:scale-[0.98]"
+          className="gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-all"
         >
-          {action.icon && <action.icon className="h-5 w-5" />}
+          {action.icon && <action.icon className="h-4 w-4" />}
           {action.label}
         </Button>
       )}

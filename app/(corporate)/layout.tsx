@@ -56,7 +56,7 @@ export default function CorporateLayout({
   return (
     <SidebarProvider>
       <CorporateSidebar />
-      <SidebarInset className="flex flex-col min-h-svh bg-slate-50">
+      <SidebarInset className="flex flex-col min-h-svh bg-background pb-28 md:pb-0">
         {children}
       </SidebarInset>
     </SidebarProvider>

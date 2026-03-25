@@ -124,7 +124,7 @@ function OrdersPageContent() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
         <CorporatePageHeader
           icon={ClipboardList}
           title="Orders"
@@ -142,7 +142,7 @@ function OrdersPageContent() {
   // Error state
   if (error) {
     return (
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
         <CorporatePageHeader
           icon={ClipboardList}
           title="Orders"
@@ -161,7 +161,7 @@ function OrdersPageContent() {
           <Button
             onClick={() => refetch()}
             size="lg"
-            className="gap-2 bg-primary hover:bg-primary/80 text-primary-foreground font-semibold rounded-xl shadow-lg shadow-primary/20"
+            className="gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
           >
             <RefreshCw className="h-5 w-5" />
             Retry
@@ -207,7 +207,7 @@ function OrdersPageContent() {
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
       <CorporatePageHeader
         icon={ClipboardList}
         title="Orders"
@@ -233,7 +233,7 @@ function OrdersPageContent() {
       {/* Orders grid or empty state */}
       {paginatedOrders.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {paginatedOrders.map((order) => (
               <OrderCard key={order._id} order={order} variant="full" />
             ))}
@@ -298,14 +298,12 @@ function OrdersPageContent() {
         </>
       ) : (
         /* Empty state */
-        <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
-          <div className="flex flex-col items-center justify-center py-24 px-6">
-            <div className="p-5 rounded-2xl bg-muted/50 mb-6 text-muted-foreground">
-              <ClipboardList className="h-10 w-10" />
-            </div>
+        <div className="relative flex flex-col items-center justify-center rounded-2xl bg-card border border-border shadow-sm py-24 px-6">
+          <div className="p-5 rounded-full bg-muted mb-6 text-muted-foreground">
+            <ClipboardList className="h-10 w-10" />
+          </div>
             <h3 className="text-2xl font-bold mb-2">No Orders Found</h3>
-            <p className="text-muted-foreground mb-8 text-center max-w-md">
+            <p className="text-muted-foreground mb-8 text-center">
               {searchQuery
                 ? "No orders match your search."
                 : "Create your first bulk order to get started."}
@@ -314,14 +312,13 @@ function OrdersPageContent() {
               <Button
                 onClick={() => router.push("/corporate/create-order")}
                 size="lg"
-                className="gap-2 bg-primary hover:bg-primary/80 text-primary-foreground font-semibold rounded-xl shadow-lg shadow-primary/20"
+                className="gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
               >
                 <PlusCircle className="h-5 w-5" />
                 Create New Order
               </Button>
             )}
           </div>
-        </div>
       )}
     </div>
   );
@@ -331,10 +328,10 @@ export default function OrdersPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
           <Skeleton className="h-10 w-48 mb-4 rounded-xl" />
           <Skeleton className="h-20 w-full rounded-xl mb-6" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 3 }).map((_, i) => (
               <OrderCardSkeleton key={i} />
             ))}

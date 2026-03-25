@@ -69,11 +69,8 @@ export function ModifyMealDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg rounded-2xl overflow-hidden">
-        {/* Header accent bar */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
-
-        <DialogHeader className="pt-2">
+      <DialogContent className="sm:max-w-lg rounded-2xl">
+        <DialogHeader>
           <DialogTitle className="text-xl font-bold">
             Modify Meals
           </DialogTitle>

@@ -18,9 +18,8 @@ interface OverviewTabProps {
 
 export function OverviewTab({ order }: OverviewTabProps) {
   return (
-    <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
-      <div className="p-6 pt-7">
+    <div className="relative rounded-2xl bg-card border border-border shadow-sm">
+      <div className="p-6">
         <h2 className="text-lg font-bold mb-6">Order Overview</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
