@@ -16,13 +16,13 @@ export const corporateApi = {
     apiClient.get<ICorporateOrder[]>(CORPORATE_ROUTES.ORDERS).then((r) => r.data),
 
   getOrderById: (id: string) =>
-    apiClient.get<ICorporateOrder>(CORPORATE_ROUTES.ORDER(id)).then((r) => r.data),
+    apiClient.get<{ order: ICorporateOrder; modifications: unknown[] }>(CORPORATE_ROUTES.ORDER(id)).then((r) => r.data.order),
 
   modifyOrder: (id: string, payload: IModifyCorporateOrderRequest) =>
     apiClient.post<ICorporateOrder>(CORPORATE_ROUTES.MODIFY_ORDER(id), payload).then((r) => r.data),
 
   getModifications: (id: string) =>
-    apiClient.get<ICorporateOrderModification[]>(CORPORATE_ROUTES.MODIFICATIONS(id)).then((r) => r.data),
+    apiClient.get<{ modifications: ICorporateOrderModification[] }>(CORPORATE_ROUTES.MODIFICATIONS(id)).then((r) => r.data.modifications),
 
   getInvoice: (id: string, type: string) =>
     apiClient.get<ICorporateInvoice>(CORPORATE_ROUTES.INVOICE(id, type)).then((r) => r.data),
