@@ -38,8 +38,8 @@ export function CorporateSidebar() {
   if (!hasHydrated || !isAuthenticated) return null;
 
   return (
-    <ShadcnSidebar className="w-60 border-r border-border bg-muted/30 shadow-none">
-      <SidebarHeader className="bg-muted/30 border-none px-6 pt-8 pb-4">
+    <ShadcnSidebar className="w-60 border-r border-border shadow-none">
+      <SidebarHeader className="border-none px-6 pt-8 pb-4">
         <Link
           href="/corporate"
           className="flex items-center gap-3 active:opacity-90 transition-opacity"
@@ -51,7 +51,7 @@ export function CorporateSidebar() {
           />
         </Link>
       </SidebarHeader>
-      <SidebarContent className="flex flex-col h-full bg-muted/30">
+      <SidebarContent className="flex flex-col h-full">
         <SidebarGroup className="mt-2 px-3">
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">
@@ -64,10 +64,10 @@ export function CorporateSidebar() {
                       asChild
                       isActive={isActive}
                       className={cn(
-                        "h-12 w-full transition-all duration-200 rounded-sm px-4 flex items-center gap-4",
+                        "h-12 w-full transition-all duration-200 rounded-full px-4 flex items-center gap-4",
                         isActive
-                          ? "bg-primary! text-primary-foreground! shadow-sm font-bold"
-                          : "text-muted-foreground hover:bg-accent hover:text-primary",
+                          ? "bg-secondary! text-primary! shadow-sm font-bold"
+                          : "text-sidebar-foreground/70 hover:bg-white/10 hover:text-sidebar-foreground",
                       )}
                     >
                       <Link
@@ -78,8 +78,8 @@ export function CorporateSidebar() {
                           className={cn(
                             "h-5 w-5 shrink-0 transition-colors",
                             isActive
-                              ? "text-primary-foreground!"
-                              : "text-muted-foreground group-hover/menu-item:text-primary",
+                              ? "text-primary!"
+                              : "text-sidebar-foreground/70",
                           )}
                         />
                         <span className="font-semibold text-base whitespace-nowrap">
@@ -101,12 +101,12 @@ export function CorporateSidebar() {
             disabled={logoutMutation.isPending}
             className={cn(
               "mt-4 w-full h-11 justify-start gap-4 px-4 rounded-sm",
-              "text-muted-foreground hover:text-destructive hover:bg-destructive/10",
-              "transition-all duration-200 font-semibold text-base",
+              "text-sidebar-foreground/60 hover:text-destructive hover:bg-destructive/10",
+              "transition-all duration-200 font-semibold text-base"
             )}
           >
             <LogOut className="h-5 w-5 shrink-0" />
-            {logoutMutation.isPending ? "Logging out..." : "Sign out"}
+            {logoutMutation.isPending ? "Logging out..." : "Log out"}
           </Button>
         </div>
       </SidebarContent>
