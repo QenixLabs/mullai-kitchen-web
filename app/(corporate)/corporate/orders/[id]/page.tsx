@@ -20,14 +20,8 @@ import {
   CreditCard,
   Truck,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -326,17 +320,17 @@ export default function OrderDetailPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="container mx-auto p-6 max-w-5xl">
-        <Skeleton className="h-8 w-32 mb-4" />
-        <Skeleton className="h-64 w-full rounded-sm mb-6" />
-        <Skeleton className="h-96 w-full rounded-sm" />
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Skeleton className="h-8 w-32 mb-4 rounded-xl" />
+        <Skeleton className="h-64 w-full rounded-2xl mb-6" />
+        <Skeleton className="h-96 w-full rounded-2xl" />
       </div>
     );
   }
 
   if (error || !order) {
     return (
-      <div className="container mx-auto p-6 max-w-5xl flex flex-col items-center justify-center min-h-[400px]">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center min-h-[400px]">
         <div className="p-4 rounded-full bg-destructive/10 text-destructive mb-6">
           <AlertTriangle className="h-10 w-10" />
         </div>
@@ -346,7 +340,12 @@ export default function OrderDetailPage() {
             ? error.message
             : "The requested order could not be loaded."}
         </p>
-        <Button onClick={() => router.push("/corporate")}>Back to Dashboard</Button>
+        <Button
+          onClick={() => router.push("/corporate")}
+          className="bg-primary hover:bg-primary/80 text-primary-foreground rounded-xl shadow-lg shadow-primary/20"
+        >
+          Back to Dashboard
+        </Button>
       </div>
     );
   }
@@ -360,11 +359,11 @@ export default function OrderDetailPage() {
   const selectedInvoice = showInvoice === "final" ? finalInvoice : showInvoice === "proforma" ? proformaInvoice : null;
 
   return (
-    <div className="container mx-auto p-6 max-w-5xl">
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Back button */}
       <Button
         variant="ghost"
-        className="gap-2 mb-6"
+        className="gap-2 mb-6 -ml-2 hover:bg-primary/10 hover:text-primary"
         onClick={() => router.push("/corporate")}
       >
         <ArrowLeft className="h-4 w-4" />
@@ -382,21 +381,20 @@ export default function OrderDetailPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant={statusVariant[order.status]} className="text-sm">
+          <Badge variant={statusVariant[order.status]} className="text-sm px-3 py-1">
             {statusLabel[order.status]}
           </Badge>
-          <Badge variant={paymentStatusVariant[order.payment_status]} className="text-sm">
+          <Badge variant={paymentStatusVariant[order.payment_status]} className="text-sm px-3 py-1">
             {paymentStatusLabel[order.payment_status]}
           </Badge>
         </div>
       </div>
 
       {/* Order Overview */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-lg">Order Overview</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden mb-6">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
+        <div className="p-6 pt-7">
+          <h2 className="text-lg font-bold mb-6">Order Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Date Range */}
             <div className="space-y-2">
@@ -446,11 +444,11 @@ export default function OrderDetailPage() {
                   <div className="text-xs text-muted-foreground">Total</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">{order.veg_count}</div>
+                  <div className="text-2xl font-bold text-success">{order.veg_count}</div>
                   <div className="text-xs text-muted-foreground">Veg</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-600">{order.nonveg_count}</div>
+                  <div className="text-2xl font-bold text-warning">{order.nonveg_count}</div>
                   <div className="text-xs text-muted-foreground">Non-veg</div>
                 </div>
               </div>
@@ -476,21 +474,21 @@ export default function OrderDetailPage() {
                 Pricing
               </div>
               <div className="grid grid-cols-3 gap-4">
-                <div className="bg-muted/50 rounded-md p-3 text-center">
+                <div className="bg-muted/50 rounded-xl p-3 text-center">
                   <div className="text-sm text-muted-foreground">Proforma</div>
                   <div className="text-lg font-bold flex items-center justify-center gap-0.5">
                     <IndianRupee className="h-3 w-3" />
                     {order.proforma_amount.toLocaleString("en-IN")}
                   </div>
                 </div>
-                <div className="bg-green-50 rounded-md p-3 text-center">
-                  <div className="text-sm text-green-600">Reductions</div>
-                  <div className="text-lg font-bold text-green-700 flex items-center justify-center gap-0.5">
+                <div className="bg-success/5 rounded-xl p-3 text-center">
+                  <div className="text-sm text-success">Reductions</div>
+                  <div className="text-lg font-bold text-success flex items-center justify-center gap-0.5">
                     - <IndianRupee className="h-3 w-3" />
                     {order.total_reduction_amount.toLocaleString("en-IN")}
                   </div>
                 </div>
-                <div className="bg-primary/5 rounded-md p-3 text-center">
+                <div className="bg-primary/5 rounded-xl p-3 text-center">
                   <div className="text-sm text-primary/80">Final Amount</div>
                   <div className="text-lg font-bold text-primary flex items-center justify-center gap-0.5">
                     <IndianRupee className="h-3 w-3" />
@@ -500,22 +498,23 @@ export default function OrderDetailPage() {
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Calendar View */}
       {isActive && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CalendarDays className="h-5 w-5 text-primary" />
-              Delivery Calendar
-            </CardTitle>
-            <CardDescription>
-              Click on a future delivery date to modify meal quantities. Dates with modifications are highlighted in green.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+        <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden mb-6">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
+          <div className="p-6 pt-7">
+            <div className="mb-4">
+              <h2 className="flex items-center gap-2 text-lg font-bold">
+                <CalendarDays className="h-5 w-5 text-primary" />
+                Delivery Calendar
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Click on a future delivery date to modify meal quantities. Dates with modifications are highlighted.
+              </p>
+            </div>
             <Calendar
               numberOfMonths={2}
               defaultMonth={parseISO(order.start_date)}
@@ -532,7 +531,7 @@ export default function OrderDetailPage() {
                 deliveryDay:
                   "bg-primary/10 text-primary font-bold rounded-md",
                 modifiedDay:
-                  "bg-green-100 text-green-700 font-bold rounded-md ring-2 ring-green-400",
+                  "bg-success/10 text-success font-bold rounded-md ring-2 ring-success/30",
                 pastDay: "text-muted-foreground/50 line-through",
               }}
               onDayClick={(date) => {
@@ -545,23 +544,26 @@ export default function OrderDetailPage() {
                 }
               }}
             />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Invoices Section */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden mb-6">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
+        <div className="p-6 pt-7">
+          <h2 className="flex items-center gap-2 text-lg font-bold mb-4">
             <FileText className="h-5 w-5 text-primary" />
             Invoices
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-wrap gap-3">
+          </h2>
+          <div className="flex flex-wrap gap-3 mb-4">
             <Button
-              variant="outline"
-              className="gap-2"
+              variant={showInvoice === "proforma" ? "default" : "outline"}
+              className={cn(
+                "gap-2 rounded-xl",
+                showInvoice === "proforma" &&
+                  "bg-primary hover:bg-primary/80 text-primary-foreground shadow-md shadow-primary/20"
+              )}
               onClick={() => setShowInvoice(showInvoice === "proforma" ? null : "proforma")}
             >
               <FileText className="h-4 w-4" />
@@ -569,8 +571,12 @@ export default function OrderDetailPage() {
             </Button>
             {hasFinalInvoice && (
               <Button
-                variant="outline"
-                className="gap-2"
+                variant={showInvoice === "final" ? "default" : "outline"}
+                className={cn(
+                  "gap-2 rounded-xl",
+                  showInvoice === "final" &&
+                    "bg-primary hover:bg-primary/80 text-primary-foreground shadow-md shadow-primary/20"
+                )}
                 onClick={() => setShowInvoice(showInvoice === "final" ? null : "final")}
               >
                 <FileText className="h-4 w-4" />
@@ -579,8 +585,7 @@ export default function OrderDetailPage() {
             )}
             {(isCompleted || isCancelled) && !hasFinalInvoice && (
               <Button
-                variant="default"
-                className="gap-2"
+                className="gap-2 bg-primary hover:bg-primary/80 text-primary-foreground rounded-xl shadow-md shadow-primary/20"
                 onClick={handleGenerateFinalInvoice}
                 disabled={generateFinalMutation.isPending}
               >
@@ -596,7 +601,7 @@ export default function OrderDetailPage() {
 
           {/* Invoice Display */}
           {selectedInvoice && (
-            <div className="border rounded-md overflow-hidden">
+            <div className="border rounded-xl overflow-hidden">
               <div className="bg-muted/30 px-4 py-3 flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold">
@@ -654,7 +659,7 @@ export default function OrderDetailPage() {
                   </span>
                 </div>
                 {selectedInvoice.total_reduction > 0 && (
-                  <div className="flex justify-between text-sm text-green-600">
+                  <div className="flex justify-between text-sm text-success">
                     <span>Modifications Credit</span>
                     <span>
                       - <IndianRupee className="h-3 w-3 inline" />
@@ -680,25 +685,26 @@ export default function OrderDetailPage() {
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Modifications History */}
       {modsList.length > 0 && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <History className="h-5 w-5 text-primary" />
-              Modifications History
-            </CardTitle>
-            <CardDescription>
-              {modsList.length} modification{modsList.length !== 1 ? "s" : ""} recorded
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+        <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden mb-6">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
+          <div className="p-6 pt-7">
+            <div className="mb-4">
+              <h2 className="flex items-center gap-2 text-lg font-bold">
+                <History className="h-5 w-5 text-primary" />
+                Modifications History
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                {modsList.length} modification{modsList.length !== 1 ? "s" : ""} recorded
+              </p>
+            </div>
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className="hover:bg-transparent">
                   <TableHead>Date</TableHead>
                   <TableHead className="text-right">Veg Reduction</TableHead>
                   <TableHead className="text-right">Non-veg Reduction</TableHead>
@@ -713,10 +719,10 @@ export default function OrderDetailPage() {
                     <TableCell className="font-medium">
                       {formatDate(mod.modification_date)}
                     </TableCell>
-                    <TableCell className="text-right text-green-600">
+                    <TableCell className="text-right text-success">
                       -{mod.veg_reduction}
                     </TableCell>
-                    <TableCell className="text-right text-orange-600">
+                    <TableCell className="text-right text-warning">
                       -{mod.nonveg_reduction}
                     </TableCell>
                     <TableCell className="text-right font-medium">
@@ -743,8 +749,8 @@ export default function OrderDetailPage() {
                 ))}
               </TableBody>
             </Table>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Action Buttons */}
@@ -752,7 +758,7 @@ export default function OrderDetailPage() {
         <div className="flex items-center gap-4 mb-6">
           <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" className="gap-2">
+              <Button variant="destructive" className="gap-2 rounded-xl">
                 <X className="h-4 w-4" />
                 Cancel Entire Order
               </Button>
@@ -815,8 +821,8 @@ export default function OrderDetailPage() {
             <div className="bg-muted/50 rounded-md p-4">
               <p className="text-sm font-medium mb-2">Current Allocation</p>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-green-600">{order.veg_count} Veg meals</span>
-                <span className="text-orange-600">{order.nonveg_count} Non-veg meals</span>
+                <span className="text-success">{order.veg_count} Veg meals</span>
+                <span className="text-warning">{order.nonveg_count} Non-veg meals</span>
                 <span className="font-bold">{order.headcount} Total</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
@@ -871,8 +877,8 @@ export default function OrderDetailPage() {
 
             {/* Credit Display */}
             {modVegReduction + modNonvegReduction > 0 && (
-              <div className="bg-green-50 border border-green-200 rounded-md p-4">
-                <div className="flex items-center gap-2 text-green-700">
+              <div className="bg-success/5 border border-success/20 rounded-xl p-4">
+                <div className="flex items-center gap-2 text-success">
                   <CreditCard className="h-4 w-4" />
                   <span className="text-sm font-medium">
                     Estimated Credit:{" "}
@@ -912,7 +918,7 @@ export default function OrderDetailPage() {
                 modifyMutation.isPending ||
                 modVegReduction + modNonvegReduction === 0
               }
-              className="bg-primary hover:bg-primary/90"
+              className="bg-primary hover:bg-primary/80 text-primary-foreground rounded-xl shadow-md shadow-primary/20"
             >
               {modifyMutation.isPending ? (
                 <>

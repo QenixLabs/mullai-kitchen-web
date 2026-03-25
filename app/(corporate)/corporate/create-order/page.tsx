@@ -14,14 +14,14 @@ import {
   ArrowRight,
   IndianRupee,
   CheckCircle2,
+  AlertTriangle,
   Loader2,
   Store,
   LocateIcon as MyLocation,
 } from "lucide-react";
-import { FaMapMarkerAlt, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
+import { FaMapMarkerAlt } from "react-icons/fa";
 import { Marker } from "@react-google-maps/api";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -455,12 +455,12 @@ export default function CreateOrderPage() {
   const isSubmitting = createOrderMutation.isPending;
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Page Header */}
       <div className="mb-8">
         <Button
           variant="ghost"
-          className="gap-2 mb-4"
+          className="gap-2 mb-4 -ml-2 hover:bg-primary/10 hover:text-primary"
           onClick={() => router.push("/corporate")}
         >
           <ArrowLeft className="h-4 w-4" />
@@ -485,11 +485,11 @@ export default function CreateOrderPage() {
             <div key={step.number} className="flex items-center flex-1 last:flex-none">
               <div className="flex flex-col items-center">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                  className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
                     isCompleted
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
                       : isActive
-                      ? "bg-primary text-primary-foreground ring-4 ring-primary/20"
+                      ? "bg-gradient-to-br from-gold to-gold/80 text-primary shadow-lg shadow-gold/30 ring-4 ring-gold/20"
                       : "bg-muted text-muted-foreground"
                   }`}
                 >
@@ -500,9 +500,9 @@ export default function CreateOrderPage() {
                   )}
                 </div>
                 <span
-                  className={`text-xs mt-2 font-medium ${
+                  className={`text-xs mt-2 font-semibold ${
                     isActive
-                      ? "text-primary"
+                      ? "text-gold"
                       : isCompleted
                       ? "text-foreground"
                       : "text-muted-foreground"
@@ -513,8 +513,8 @@ export default function CreateOrderPage() {
               </div>
               {index < STEP_CONFIG.length - 1 && (
                 <div
-                  className={`flex-1 h-0.5 mx-4 mt-[-1.5rem] transition-colors ${
-                    currentStep > step.number ? "bg-primary" : "bg-muted"
+                  className={`flex-1 h-0.5 mx-4 mt-[-1.5rem] transition-colors rounded-full ${
+                    currentStep > step.number ? "bg-gradient-to-r from-primary to-gold" : "bg-muted"
                   }`}
                 />
               )}
@@ -526,21 +526,23 @@ export default function CreateOrderPage() {
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Step 1: Delivery Details */}
         {currentStep === 1 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" />
-                Delivery Details
-              </CardTitle>
-              <CardDescription>
-                Select your delivery location on the map or enter the pincode. The kitchen outlet will be auto-assigned.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
+            <div className="p-6 pt-7 space-y-6">
+              <div>
+                <h2 className="flex items-center gap-2 text-lg font-bold">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  Delivery Details
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Select your delivery location on the map or enter the pincode. The kitchen outlet will be auto-assigned.
+                </p>
+              </div>
+
               {/* Map Section */}
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <h3 className="text-sm font-semibold text-gray-700">
+                  <h3 className="text-sm font-semibold text-foreground">
                     Pin your delivery location
                   </h3>
                   <p className="text-xs text-muted-foreground">
@@ -561,7 +563,7 @@ export default function CreateOrderPage() {
                 <Button
                   type="button"
                   variant="ghost"
-                  className="w-full py-3 px-4 bg-primary/10 hover:bg-primary/20 text-primary font-bold rounded-sm gap-2"
+                  className="w-full py-3 px-4 bg-primary/10 hover:bg-primary/20 text-primary font-bold rounded-xl gap-2"
                   onClick={handleGetCurrentLocation}
                   disabled={isGettingLocation}
                 >
@@ -573,7 +575,7 @@ export default function CreateOrderPage() {
 
                 {/* Selected coordinates display */}
                 {coordinates && (
-                  <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-sm px-3 py-2">
+                  <div className="flex items-center gap-2 text-xs text-success bg-success/5 border border-success/20 rounded-xl px-3 py-2">
                     <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
                     <span>
                       Location pinned: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
@@ -585,23 +587,23 @@ export default function CreateOrderPage() {
               {/* Serviceability Status */}
               {serviceabilityInfo && (
                 <div
-                  className={`rounded-lg p-3 flex items-start gap-3 ${
+                  className={`rounded-xl p-3 flex items-start gap-3 ${
                     serviceabilityInfo.isServiceable
-                      ? "bg-green-50 border border-green-200"
-                      : "bg-amber-50 border border-amber-200"
+                      ? "bg-success/5 border border-success/20"
+                      : "bg-warning/5 border border-warning/20"
                   }`}
                 >
                   {serviceabilityInfo.isServiceable ? (
-                    <FaCheckCircle className="text-xl text-green-600 mt-0.5 flex-shrink-0" />
+                    <CheckCircle2 className="h-5 w-5 text-success mt-0.5 flex-shrink-0" />
                   ) : (
-                    <FaExclamationTriangle className="text-xl text-amber-600 mt-0.5 flex-shrink-0" />
+                    <AlertTriangle className="h-5 w-5 text-warning mt-0.5 flex-shrink-0" />
                   )}
                   <div>
                     <p
                       className={`text-sm font-semibold ${
                         serviceabilityInfo.isServiceable
-                          ? "text-green-800"
-                          : "text-amber-800"
+                          ? "text-success"
+                          : "text-warning"
                       }`}
                     >
                       {serviceabilityInfo.isServiceable ? "Serviceable Area" : "Not Serviceable"}
@@ -609,16 +611,16 @@ export default function CreateOrderPage() {
                     <p
                       className={`text-xs ${
                         serviceabilityInfo.isServiceable
-                          ? "text-green-700"
-                          : "text-amber-700"
+                          ? "text-success/80"
+                          : "text-warning/80"
                       }`}
                     >
                       {serviceabilityInfo.message}
                     </p>
                     {serviceabilityInfo.isServiceable && serviceabilityInfo.outletName && (
                       <div className="flex items-center gap-1.5 mt-1.5">
-                        <Store className="h-3.5 w-3.5 text-green-600" />
-                        <span className="text-xs font-medium text-green-700">
+                        <Store className="h-3.5 w-3.5 text-success" />
+                        <span className="text-xs font-medium text-success">
                           {serviceabilityInfo.outletName}
                         </span>
                       </div>
@@ -629,7 +631,7 @@ export default function CreateOrderPage() {
 
               {/* Address form fields */}
               <div className="space-y-1">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">
                   Address Details
                 </h3>
                 <p className="text-xs text-muted-foreground">
@@ -658,7 +660,7 @@ export default function CreateOrderPage() {
                   <Label htmlFor="pincode">Pincode</Label>
                   <div className="relative">
                     <FaMapMarkerAlt
-                      className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                      className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
                     />
                     <Input
                       id="pincode"
@@ -736,23 +738,24 @@ export default function CreateOrderPage() {
                   )}
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {/* Step 2: Schedule */}
         {currentStep === 2 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CalendarDays className="h-5 w-5 text-primary" />
-                Schedule
-              </CardTitle>
-              <CardDescription>
-                Choose delivery days, meal types, and the order duration.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-8">
+          <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
+            <div className="p-6 pt-7 space-y-8">
+              <div>
+                <h2 className="flex items-center gap-2 text-lg font-bold">
+                  <CalendarDays className="h-5 w-5 text-primary" />
+                  Schedule
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Choose delivery days, meal types, and the order duration.
+                </p>
+              </div>
               {/* Day Selector */}
               <div className="space-y-3">
                 <Label className="text-base font-semibold">Delivery Days</Label>
@@ -890,7 +893,7 @@ export default function CreateOrderPage() {
 
               {/* Computed Schedule Info */}
               {(totalDeliveryDays > 0 || endDate) && (
-                <div className="bg-muted/50 rounded-md p-4 space-y-2">
+                <div className="bg-muted/50 rounded-xl p-4 space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">End Date</span>
                     <span className="font-medium">
@@ -907,23 +910,24 @@ export default function CreateOrderPage() {
                   </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {/* Step 3: Quantity */}
         {currentStep === 3 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-primary" />
-                Quantity
-              </CardTitle>
-              <CardDescription>
-                Specify the number of people and the veg/non-veg meal split.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
+            <div className="p-6 pt-7 space-y-6">
+              <div>
+                <h2 className="flex items-center gap-2 text-lg font-bold">
+                  <Users className="h-5 w-5 text-primary" />
+                  Quantity
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Specify the number of people and the veg/non-veg meal split.
+                </p>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="headcount">Total Headcount</Label>
                 <Input
@@ -973,12 +977,12 @@ export default function CreateOrderPage() {
               {/* Headcount validation indicator */}
               {headcount > 0 && (
                 <div
-                  className={`rounded-md p-4 flex items-center justify-between text-sm ${
+                  className={`rounded-xl p-4 flex items-center justify-between text-sm ${
                     vegCount + nonvegCount === headcount
-                      ? "bg-green-50 text-green-700 border border-green-200"
+                      ? "bg-success/5 text-success border border-success/20"
                       : vegCount + nonvegCount > headcount
-                      ? "bg-red-50 text-red-700 border border-red-200"
-                      : "bg-amber-50 text-amber-700 border border-amber-200"
+                      ? "bg-destructive/5 text-destructive border border-destructive/20"
+                      : "bg-warning/5 text-warning border border-warning/20"
                   }`}
                 >
                   <span>
@@ -986,7 +990,7 @@ export default function CreateOrderPage() {
                     {headcount}
                   </span>
                   {vegCount + nonvegCount === headcount ? (
-                    <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0">
+                    <Badge className="bg-success/10 text-success hover:bg-success/10 border-success/20">
                       Match
                     </Badge>
                   ) : (
@@ -1068,22 +1072,19 @@ export default function CreateOrderPage() {
                   </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {/* Step 4: Review & Submit */}
         {currentStep === 4 && (
-          <div className="space-y-6">
-            {/* Order Summary */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ClipboardCheck className="h-5 w-5 text-primary" />
-                  Order Summary
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
+          <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
+            <div className="p-6 pt-7 space-y-6">
+              <h2 className="flex items-center gap-2 text-lg font-bold">
+                <ClipboardCheck className="h-5 w-5 text-primary" />
+                Order Summary
+              </h2>
                 {/* Delivery Details */}
                 <div>
                   <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3">
@@ -1172,17 +1173,17 @@ export default function CreateOrderPage() {
                     Quantity
                   </h3>
                   <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div className="bg-muted/50 rounded-md p-3 text-center">
+                    <div className="bg-muted/50 rounded-xl p-3 text-center">
                       <div className="text-2xl font-bold">{headcount}</div>
                       <div className="text-muted-foreground">Total Headcount</div>
                     </div>
-                    <div className="bg-green-50 rounded-md p-3 text-center">
-                      <div className="text-2xl font-bold text-green-700">{vegCount}</div>
-                      <div className="text-green-600">Veg Meals</div>
+                    <div className="bg-success/5 rounded-xl p-3 text-center">
+                      <div className="text-2xl font-bold text-success">{vegCount}</div>
+                      <div className="text-success">Veg Meals</div>
                     </div>
-                    <div className="bg-orange-50 rounded-md p-3 text-center">
-                      <div className="text-2xl font-bold text-orange-700">{nonvegCount}</div>
-                      <div className="text-orange-600">Non-veg Meals</div>
+                    <div className="bg-warning/5 rounded-xl p-3 text-center">
+                      <div className="text-2xl font-bold text-warning">{nonvegCount}</div>
+                      <div className="text-warning">Non-veg Meals</div>
                     </div>
                   </div>
                 </div>
@@ -1194,7 +1195,7 @@ export default function CreateOrderPage() {
                   <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3">
                     Pricing Breakdown
                   </h3>
-                  <div className="bg-muted/50 rounded-md p-4 space-y-3">
+                  <div className="bg-muted/50 rounded-xl p-4 space-y-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">
                         Veg meals ({vegCount} x {mealTypes.length} meals x {totalDeliveryDays} days x Rs.{DEFAULT_VEG_PRICE})
@@ -1265,8 +1266,7 @@ export default function CreateOrderPage() {
                     {...register("notes")}
                   />
                 </div>
-              </CardContent>
-            </Card>
+            </div>
           </div>
         )}
 
@@ -1277,7 +1277,7 @@ export default function CreateOrderPage() {
               type="button"
               variant="outline"
               onClick={handleBack}
-              className="gap-2"
+              className="gap-2 rounded-xl"
               disabled={isSubmitting}
             >
               <ArrowLeft className="h-4 w-4" />
@@ -1288,7 +1288,7 @@ export default function CreateOrderPage() {
               type="button"
               variant="ghost"
               onClick={() => router.push("/corporate")}
-              className="gap-2"
+              className="gap-2 rounded-xl"
               disabled={isSubmitting}
             >
               <ArrowLeft className="h-4 w-4" />
@@ -1300,7 +1300,7 @@ export default function CreateOrderPage() {
             <Button
               type="button"
               onClick={handleNext}
-              className="gap-2 bg-primary hover:bg-primary/90"
+              className="gap-2 bg-primary hover:bg-primary/80 text-primary-foreground font-semibold rounded-xl shadow-lg shadow-primary/20"
             >
               Next
               <ArrowRight className="h-4 w-4" />
@@ -1308,7 +1308,7 @@ export default function CreateOrderPage() {
           ) : (
             <Button
               type="submit"
-              className="gap-2 bg-primary hover:bg-primary/90"
+              className="gap-2 bg-primary hover:bg-primary/80 text-primary-foreground font-semibold rounded-xl shadow-lg shadow-primary/20"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
