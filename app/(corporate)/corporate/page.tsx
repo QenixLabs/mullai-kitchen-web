@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { format, differenceInDays, parseISO } from "date-fns";
 import {
   LayoutDashboard,
   ClipboardList,
@@ -25,35 +27,20 @@ import {
 } from "@/components/ui/table";
 import { useCorporateOrders } from "@/api/hooks/useCorporate";
 import { useCurrentUser } from "@/hooks/useUserStore";
-import { format } from "date-fns";
-import type { CorporateOrderStatus, CorporatePaymentStatus } from "@/api/types/corporate.types";
+import { OrderStatusBadge } from "@/components/corporate/OrderStatusBadge";
+import { PaymentStatusBadge } from "@/components/corporate/PaymentStatusBadge";
+import { CorporatePageHeader } from "@/components/corporate/CorporatePageHeader";
+import { formatDate } from "@/lib/corporate/format";
+import type { ICorporateOrder } from "@/api/types/corporate.types";
 
-const statusVariant: Record<CorporateOrderStatus, "default" | "secondary" | "destructive" | "outline"> = {
-  active: "default",
-  draft: "secondary",
-  pending_payment: "outline",
-  completed: "secondary",
-  cancelled: "destructive",
-};
-
-const statusLabel: Record<CorporateOrderStatus, string> = {
-  active: "Active",
-  draft: "Draft",
-  pending_payment: "Pending Payment",
-  completed: "Completed",
-  cancelled: "Cancelled",
-};
-
-const paymentStatusLabel: Record<CorporatePaymentStatus, string> = {
-  pending: "Pending",
-  paid: "Paid",
-  overdue: "Overdue",
-};
-
-const paymentStatusVariant: Record<CorporatePaymentStatus, "default" | "secondary" | "destructive"> = {
-  pending: "secondary",
-  paid: "default",
-  overdue: "destructive",
+const DAY_ABBREVIATIONS: Record<string, string> = {
+  monday: "Mon",
+  tuesday: "Tue",
+  wednesday: "Wed",
+  thursday: "Thu",
+  friday: "Fri",
+  saturday: "Sat",
+  sunday: "Sun",
 };
 
 function StatCard({
@@ -61,24 +48,141 @@ function StatCard({
   value,
   subtitle,
   icon: Icon,
+  href,
 }: {
   title: string;
   value: string | number;
   subtitle: string;
   icon: React.ElementType;
+  href?: string;
 }) {
-  return (
-    <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden transition-all hover:shadow-xl hover:-translate-y-0.5">
+  const content = (
+    <div
+      className={`relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden transition-all hover:shadow-xl hover:-translate-y-0.5 ${
+        href ? "cursor-pointer" : ""
+      }`}
+    >
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
       <div className="p-6 pt-7">
         <div className="flex items-start justify-between mb-4">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-gold to-gold/80 shadow-md shadow-gold/20">
             <Icon className="h-5 w-5 text-primary" />
           </div>
+          {href && (
+            <ArrowRight className="h-4 w-4 text-muted-foreground mt-2" />
+          )}
         </div>
         <p className="text-sm font-medium text-muted-foreground mb-1">{title}</p>
         <p className="text-3xl font-bold tracking-tight">{value}</p>
         <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
+      </div>
+    </div>
+  );
+
+  if (href) {
+    return <Link href={href}>{content}</Link>;
+  }
+
+  return content;
+}
+
+function CompactOrderCard({ order }: { order: ICorporateOrder }) {
+  const elapsed = Math.max(
+    0,
+    differenceInDays(new Date(), parseISO(order.start_date)),
+  );
+  const progress = Math.min(
+    100,
+    (elapsed / (order.total_delivery_days || 1)) * 100,
+  );
+
+  return (
+    <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden transition-all hover:shadow-xl">
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
+      <div className="p-5 pt-6 space-y-4">
+        {/* Order ID and Status */}
+        <div className="flex items-start justify-between gap-2">
+          <Link
+            href={`/corporate/orders/${order._id}`}
+            className="font-semibold hover:text-primary transition-colors"
+          >
+            {order.order_id}
+          </Link>
+          <OrderStatusBadge status={order.status} />
+        </div>
+
+        {/* Schedule: Days and Meal Types */}
+        <div className="flex flex-wrap gap-1.5">
+          {order.selected_days.map((day) => (
+            <Badge
+              key={day}
+              variant="outline"
+              className="text-xs px-2 py-0 font-medium"
+            >
+              {DAY_ABBREVIATIONS[day.toLowerCase()] || day.slice(0, 3)}
+            </Badge>
+          ))}
+          <Badge
+            variant="secondary"
+            className="text-xs px-2 py-0 font-medium"
+          >
+            {order.meal_types.length} meal{order.meal_types.length !== 1 ? "s" : ""}
+          </Badge>
+        </div>
+
+        {/* Date Range */}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <CalendarDays className="h-4 w-4 shrink-0" />
+          <span>
+            {formatDate(order.start_date)} - {formatDate(order.end_date)}
+          </span>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>
+              Day {elapsed} of {order.total_delivery_days}
+            </span>
+            <span>{Math.round(progress)}%</span>
+          </div>
+          <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-primary to-gold transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Amount */}
+        <div className="flex items-center gap-1.5 font-semibold">
+          <IndianRupee className="h-4 w-4" />
+          <span>{order.final_amount.toLocaleString("en-IN")}</span>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="flex gap-2 pt-1">
+          <Link href={`/corporate/orders/${order._id}`} className="flex-1">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full rounded-lg text-sm"
+            >
+              View
+            </Button>
+          </Link>
+          <Link
+            href={`/corporate/orders/${order._id}?tab=schedule`}
+            className="flex-1"
+          >
+            <Button
+              size="sm"
+              className="w-full rounded-lg text-sm bg-primary hover:bg-primary/80 text-primary-foreground"
+            >
+              Modify
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -93,13 +197,28 @@ export default function CorporateDashboardPage() {
 
   const activeOrders = ordersList.filter((o) => o.status === "active");
   const pendingInvoices = ordersList.filter(
-    (o) => o.payment_status === "pending" || o.payment_status === "overdue"
+    (o) => o.payment_status === "pending" || o.payment_status === "overdue",
   );
 
   // Find the next upcoming delivery date from active orders
   const upcomingDelivery = activeOrders
     .filter((o) => new Date(o.start_date) > new Date())
-    .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime())[0];
+    .sort(
+      (a, b) =>
+        new Date(a.start_date).getTime() - new Date(b.start_date).getTime(),
+    )[0];
+
+  // Recent orders: sorted by created_at descending, limited to 5
+  const recentOrders = [...ordersList]
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    )
+    .slice(0, 5);
+
+  // Active orders to show in spotlight (max 3)
+  const spotlightOrders = activeOrders.slice(0, 3);
+  const hasMoreActiveOrders = activeOrders.length > 3;
 
   if (isLoading) {
     return (
@@ -144,36 +263,16 @@ export default function CorporateDashboardPage() {
   return (
     <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Page Header */}
-      <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-gold to-gold/80">
-              <LayoutDashboard className="h-4 w-4 text-primary" />
-            </div>
-            <span className="text-sm font-bold uppercase tracking-widest text-gold">
-              Corporate
-            </span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
-            Dashboard
-          </h1>
-          <p className="text-muted-foreground">
-            Welcome back,{" "}
-            <span className="font-semibold text-foreground">
-              {user?.name || "Corporate"}
-            </span>
-          </p>
-        </div>
-
-        <Button
-          onClick={() => router.push("/corporate/create-order")}
-          size="lg"
-          className="gap-2 bg-primary hover:bg-primary/80 text-primary-foreground font-semibold rounded-xl shadow-lg shadow-primary/20 transition-all hover:shadow-xl active:scale-[0.98]"
-        >
-          <PlusCircle className="h-5 w-5" />
-          Create New Order
-        </Button>
-      </div>
+      <CorporatePageHeader
+        icon={LayoutDashboard}
+        title="Dashboard"
+        subtitle={`Welcome back, ${user?.name || "Corporate"}`}
+        action={{
+          label: "Create New Order",
+          onClick: () => router.push("/corporate/create-order"),
+          icon: PlusCircle,
+        }}
+      />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
@@ -182,12 +281,14 @@ export default function CorporateDashboardPage() {
           value={activeOrders.length}
           subtitle={`${activeOrders.length === 1 ? "order" : "orders"} in progress`}
           icon={ClipboardList}
+          href="/corporate/orders?status=active"
         />
         <StatCard
           title="Pending Invoices"
           value={pendingInvoices.length}
           subtitle="awaiting payment"
           icon={FileText}
+          href="/corporate/orders?payment=pending,overdue"
         />
         <StatCard
           title="Upcoming Delivery"
@@ -205,7 +306,37 @@ export default function CorporateDashboardPage() {
         />
       </div>
 
-      {/* Recent Orders */}
+      {/* Active Orders Spotlight */}
+      {spotlightOrders.length > 0 && (
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-gold to-gold/80">
+                <ClipboardList className="h-4 w-4 text-primary" />
+              </div>
+              <h2 className="text-xl font-bold">Active Orders</h2>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {spotlightOrders.map((order) => (
+              <CompactOrderCard key={order._id} order={order} />
+            ))}
+          </div>
+          {hasMoreActiveOrders && (
+            <div className="mt-4 text-center">
+              <Link
+                href="/corporate/orders?status=active"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                View All Orders
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Recent Orders / Empty State */}
       {ordersList.length === 0 ? (
         <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
@@ -240,6 +371,13 @@ export default function CorporateDashboardPage() {
                   {ordersList.length === 1 ? "order" : "orders"}
                 </p>
               </div>
+              <Link
+                href="/corporate/orders"
+                className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                View All
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
             <Table>
               <TableHeader>
@@ -254,11 +392,13 @@ export default function CorporateDashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {ordersList.map((order) => (
+                {recentOrders.map((order) => (
                   <TableRow
                     key={order._id}
                     className="cursor-pointer group"
-                    onClick={() => router.push(`/corporate/orders/${order._id}`)}
+                    onClick={() =>
+                      router.push(`/corporate/orders/${order._id}`)
+                    }
                   >
                     <TableCell className="font-semibold">
                       {order.order_id}
@@ -266,24 +406,20 @@ export default function CorporateDashboardPage() {
                     <TableCell>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <CalendarDays className="h-4 w-4" />
-                        {format(new Date(order.start_date), "MMM dd, yyyy")}
+                        {formatDate(order.start_date)}
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <CalendarDays className="h-4 w-4" />
-                        {format(new Date(order.end_date), "MMM dd, yyyy")}
+                        {formatDate(order.end_date)}
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={statusVariant[order.status]}>
-                        {statusLabel[order.status]}
-                      </Badge>
+                      <OrderStatusBadge status={order.status} />
                     </TableCell>
                     <TableCell>
-                      <Badge variant={paymentStatusVariant[order.payment_status]}>
-                        {paymentStatusLabel[order.payment_status]}
-                      </Badge>
+                      <PaymentStatusBadge status={order.payment_status} />
                     </TableCell>
                     <TableCell className="text-right font-semibold">
                       <div className="flex items-center justify-end gap-1">

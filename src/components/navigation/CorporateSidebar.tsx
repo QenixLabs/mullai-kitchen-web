@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, PlusCircle, User, LogOut } from "lucide-react";
+import { LayoutDashboard, ClipboardList, User, LogOut } from "lucide-react";
 import {
   useAuthHydrated,
   useIsAuthenticated,
@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 
 const SIDEBAR_ITEMS = [
   { href: "/corporate", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/corporate/create-order", icon: PlusCircle, label: "Create Order" },
+  { href: "/corporate/orders", icon: ClipboardList, label: "Orders" },
   { href: "/corporate/profile", icon: User, label: "Profile" },
 ] as const;
 
@@ -56,7 +56,9 @@ export function CorporateSidebar() {
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">
               {SIDEBAR_ITEMS.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive = item.href === "/corporate"
+                  ? pathname === "/corporate"
+                  : pathname.startsWith(item.href);
 
                 return (
                   <SidebarMenuItem key={item.href}>
