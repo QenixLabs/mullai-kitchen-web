@@ -30,18 +30,42 @@ import { generateDeliveryDates } from "@/lib/corporate/dates";
 import { formatDate } from "@/lib/corporate/format";
 import type { ICorporateOrderModification } from "@/api/types/corporate.types";
 
+import { motion, AnimatePresence } from "motion/react";
+import { cn } from "@/lib/utils";
+import { 
+  ChevronLeft, 
+  Building2, 
+  History, 
+  CalendarDays, 
+  FileCheck,
+  LayoutDashboard
+} from "lucide-react";
+
+
+
 function OrderDetailSkeleton() {
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
-      <Skeleton className="h-8 w-32 mb-4 rounded-xl" />
-      <Skeleton className="h-64 w-full rounded-2xl mb-6" />
-      <Skeleton className="h-96 w-full rounded-2xl" />
+      <Skeleton className="h-10 w-48 mb-6 rounded-full" />
+      <div className="flex flex-col md:flex-row gap-6 mb-10">
+        <Skeleton className="h-32 flex-1 rounded-[2.5rem]" />
+        <Skeleton className="h-32 w-48 rounded-[2.5rem]" />
+      </div>
+      <Skeleton className="h-12 w-full max-w-md rounded-2xl mb-8" />
+      <Skeleton className="h-[600px] w-full rounded-[2.5rem]" />
     </div>
   );
 }
 
+const TABS_CONFIG = [
+  { value: "overview", label: "Overview", icon: LayoutDashboard },
+  { value: "schedule", label: "Schedule", icon: CalendarDays },
+  { value: "invoices", label: "Invoices", icon: FileCheck },
+  { value: "modifications", label: "Modifications", icon: History },
+];
+
 function OrderDetailPage() {
-  const router = useRouter();
+    const router = useRouter();
   const params = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const orderId = params.id;
@@ -259,19 +283,24 @@ function OrderDetailPage() {
 
   if (error || !order) {
     return (
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center min-h-[400px]">
-        <div className="p-4 rounded-full bg-destructive/10 text-destructive mb-6">
-          <AlertTriangle className="h-10 w-10" />
-        </div>
-        <h2 className="text-2xl font-bold mb-2">Order Not Found</h2>
-        <p className="text-muted-foreground mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center min-h-[600px]">
+        <motion.div 
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="p-6 rounded-full bg-destructive/10 text-destructive mb-8"
+        >
+          <AlertTriangle className="h-12 w-12" />
+        </motion.div>
+        <h2 className="text-3xl font-black mb-3">Order Not Found</h2>
+        <p className="text-muted-foreground mb-10 text-center max-w-md">
           {error instanceof Error
             ? error.message
-            : "The requested order could not be loaded."}
+            : "The requested order could not be loaded. It might have been deleted or the ID is incorrect."}
         </p>
         <Button
           onClick={() => router.push("/corporate/orders")}
-          className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+          size="lg"
+          className="rounded-full bg-primary px-8 h-12 text-sm font-bold text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-95"
         >
           Back to Orders
         </Button>
@@ -283,76 +312,134 @@ function OrderDetailPage() {
   const isCancelled = order.status === "cancelled";
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+    <div className="mx-auto w-full max-w-7xl px-4 pt-8 pb-32 sm:px-6 sm:pt-10 sm:pb-36 lg:px-8 lg:pt-12 lg:pb-40">
+      {/* Dynamic Background Elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -mr-64 -mt-32" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[120px] -ml-64 -mb-32" />
+      </div>
+
       {/* Back button */}
-      <Button
-        variant="ghost"
-        className="gap-2 mb-6 -ml-2 hover:bg-primary/10 hover:text-primary"
-        onClick={() => router.push("/corporate/orders")}
+      <motion.div 
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
       >
-        <ArrowLeft className="h-4 w-4" />
-        Back to Orders
-      </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="group gap-2 mb-8 -ml-2 rounded-full hover:bg-primary/5 hover:text-primary transition-all pr-4"
+          onClick={() => router.push("/corporate/orders")}
+        >
+          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors">
+            <ChevronLeft className="h-4 w-4" />
+          </div>
+          <span className="font-bold text-sm">Back to Orders</span>
+        </Button>
+      </motion.div>
 
       {/* Order Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight mb-1">
-            Order {order.order_id}
-          </h1>
-          <p className="text-muted-foreground">
-            {order.outlet_name} &middot; Created {formatDate(order.created_at)}
-          </p>
+      <motion.div 
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-10 pb-8 border-b border-border/60"
+      >
+        <div className="flex items-start gap-6">
+          <div className="hidden sm:flex items-center justify-center p-5 rounded-4xl bg-linear-to-br from-primary to-primary/80 text-white shadow-xl shadow-primary/20">
+            <Building2 className="h-8 w-8" />
+          </div>
+          <div>
+            <div className="flex items-center gap-3 mb-2 flex-wrap">
+              <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground">
+                {order.company_name}
+              </h1>
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-muted/50 rounded-xl border border-border/50">
+                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">ID:</span>
+                <span className="text-xs font-mono font-bold">{order.order_id}</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 text-muted-foreground font-semibold">
+              <span className="flex items-center gap-1.5">
+                {order.outlet_name}
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-border" />
+              <span>Created {formatDate(order.created_at)}</span>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <OrderStatusBadge status={order.status} className="text-sm px-3 py-1" />
-          <PaymentStatusBadge status={order.payment_status} className="text-sm px-3 py-1" />
+        
+        <div className="flex items-center gap-3 p-2 bg-secondary/50 backdrop-blur-sm rounded-3xl border border-border/40">
+          <OrderStatusBadge status={order.status} className="h-10 px-5 text-sm" />
+          <PaymentStatusBadge status={order.payment_status} className="h-10 px-5 text-sm" />
+        </div>
+      </motion.div>
+
+      {/* Modern Custom Tab System */}
+      <div className="relative mb-10">
+        <div className="flex items-center gap-2 p-2 rounded-4xl bg-secondary/40 backdrop-blur-md border border-border/50 w-fit max-w-full overflow-x-auto no-scrollbar">
+          {TABS_CONFIG.map((tab) => {
+            if (tab.value === "schedule" && order.status !== "active") return null;
+            const isActive = activeTab === tab.value;
+            
+            return (
+              <button
+                key={tab.value}
+                onClick={() => handleTabChange(tab.value)}
+                className={cn(
+                  "relative flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold rounded-[1.5rem] transition-all duration-300 whitespace-nowrap outline-none",
+                  isActive ? "text-white" : "text-muted-foreground hover:text-foreground active:scale-95"
+                )}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="detail-tab-indicator"
+                    className="absolute inset-0 bg-primary rounded-[1.5rem] shadow-lg shadow-primary/20"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                <tab.icon className={cn("relative z-10 h-4 w-4", isActive ? "text-white" : "text-primary/60")} />
+                <span className="relative z-10">{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Tab bar */}
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          {order.status === "active" && (
-            <TabsTrigger value="schedule">Schedule & Calendar</TabsTrigger>
-          )}
-          <TabsTrigger value="invoices">Invoices</TabsTrigger>
-          <TabsTrigger value="modifications">Modifications</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview">
-          <OverviewTab order={order} />
-        </TabsContent>
-
-        {order.status === "active" && (
-          <TabsContent value="schedule">
+      {/* Tab Content with Animation */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -20, opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="min-h-[400px]"
+        >
+          {activeTab === "overview" && <OverviewTab order={order} />}
+          {activeTab === "schedule" && order.status === "active" && (
             <ScheduleTab
               order={order}
               deliveryDates={deliveryDates}
               modifiedDatesSet={modifiedDatesSet}
               onDateClick={handleDateClick}
             />
-          </TabsContent>
-        )}
+          )}
+          {activeTab === "invoices" && (
+            <InvoicesTab
+              order={order}
+              proformaInvoice={proformaInvoice}
+              finalInvoice={finalInvoice}
+              hasFinalInvoice={hasFinalInvoice}
+              isCompleted={isCompleted}
+              isCancelled={isCancelled}
+              onGenerateFinalInvoice={handleGenerateFinalInvoice}
+              isGeneratingFinal={generateFinalMutation.isPending}
+            />
+          )}
+          {activeTab === "modifications" && <ModificationsTab modifications={modsList} />}
+        </motion.div>
+      </AnimatePresence>
 
-        <TabsContent value="invoices">
-          <InvoicesTab
-            order={order}
-            proformaInvoice={proformaInvoice}
-            finalInvoice={finalInvoice}
-            hasFinalInvoice={hasFinalInvoice}
-            isCompleted={isCompleted}
-            isCancelled={isCancelled}
-            onGenerateFinalInvoice={handleGenerateFinalInvoice}
-            isGeneratingFinal={generateFinalMutation.isPending}
-          />
-        </TabsContent>
-
-        <TabsContent value="modifications">
-          <ModificationsTab modifications={modsList} />
-        </TabsContent>
-      </Tabs>
 
       {/* Sticky Actions Bar */}
       <OrderActionsBar

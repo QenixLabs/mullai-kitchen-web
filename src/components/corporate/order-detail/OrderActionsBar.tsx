@@ -1,13 +1,24 @@
 "use client";
 
-import { FileText, Pencil, X, Loader2, PlusCircle, MoreHorizontal } from "lucide-react";
+import { motion } from "motion/react";
+import { 
+  FileText, 
+  Pencil, 
+  X, 
+  Loader2, 
+  PlusCircle, 
+  MoreHorizontal,
+  ChevronRight,
+  ShieldCheck,
+  Building2,
+  Trash2
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { OrderStatusBadge } from "@/components/corporate/OrderStatusBadge";
@@ -38,176 +49,140 @@ export function OrderActionsBar({
   const isCompleted = status === "completed";
   const isCancelled = status === "cancelled";
 
-  // Cancelled orders show minimal bar
-  if (isCancelled) {
-    return (
-      <div className="sticky bottom-0 z-40 mt-8 bg-background border-t border-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            Order {order.order_id} &middot;{" "}
-            <OrderStatusBadge status={order.status} />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="sticky bottom-0 z-40 mt-8 bg-background border-t border-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
-        {/* Left: order info (hidden on mobile to save space) */}
-        <div className="text-sm text-muted-foreground hidden sm:flex items-center gap-2">
-          Order {order.order_id} &middot;{" "}
-          <OrderStatusBadge status={order.status} />
+    <div className="fixed bottom-8 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+      <motion.div 
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", damping: 20, stiffness: 100 }}
+        className="pointer-events-auto flex items-center gap-6 px-6 py-4 rounded-[2.5rem] bg-card/80 backdrop-blur-xl border border-white/20 shadow-2xl shadow-foreground/10 max-w-5xl w-full sm:w-auto"
+      >
+        {/* Order Identifier - Hidden on small mobile */}
+        <div className="hidden lg:flex items-center gap-3 pr-6 border-r border-border/40">
+           <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+              <Building2 className="w-5 h-5" />
+           </div>
+           <div className="flex flex-col">
+              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none mb-1">Current Order</span>
+              <span className="text-xs font-black text-foreground uppercase tracking-tight truncate max-w-[120px]">
+                 {order.order_id}
+              </span>
+           </div>
         </div>
 
-        {/* Right: actions */}
-        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
-          {/* Mobile: show order status + more menu */}
-          <div className="flex items-center gap-2 sm:hidden">
-            <OrderStatusBadge status={order.status} />
-          </div>
+        {/* Global Status - Responsive */}
+        <div className="flex items-center gap-4">
+           <OrderStatusBadge status={status} className="h-9 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm border-0" />
+           <div className="hidden sm:block h-3 w-px bg-border/40" />
+        </div>
 
-          {/* Active actions */}
+        {/* Action Group */}
+        <div className="flex items-center gap-2 sm:gap-4 flex-1 sm:flex-initial">
           {isActive && (
             <>
               <Button
-                size="sm"
-                className="gap-1.5 bg-primary hover:bg-primary/80 text-primary-foreground rounded-xl shadow-md shadow-primary/20 text-xs sm:text-sm"
                 onClick={onModifyClick}
+                className="h-11 px-6 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all gap-2"
               >
-                <Pencil className="h-3.5 w-3.5" />
+                <Pencil className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Modify Meals</span>
-                <span className="sm:hidden">Modify</span>
+                <span className="sm:hidden">Edit</span>
               </Button>
+
               <Button
-                size="sm"
                 variant="outline"
-                className="gap-1.5 rounded-xl text-xs sm:text-sm"
                 onClick={onViewInvoicesClick}
+                className="h-11 px-6 rounded-2xl border-border/60 font-black text-[10px] uppercase tracking-widest hover:bg-primary/5 hover:text-primary transition-all gap-2"
               >
-                <FileText className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">View Invoices</span>
-                <span className="sm:hidden">Invoices</span>
+                <FileText className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">View Records</span>
+                <span className="sm:hidden">Bills</span>
               </Button>
 
-              {/* Desktop: Cancel button inline */}
-              <div className="hidden sm:block">
-                <Separator orientation="vertical" className="h-6 inline-block mx-1 align-middle" />
-              </div>
-              <Button
-                size="sm"
-                variant="destructive"
-                className="gap-1.5 rounded-xl text-xs sm:text-sm hidden sm:inline-flex"
-                onClick={onCancelClick}
-              >
-                <X className="h-3.5 w-3.5" />
-                Cancel Order
-              </Button>
-
-              {/* Mobile: Cancel in dropdown */}
-              <div className="sm:hidden">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button size="sm" variant="ghost" className="rounded-xl h-9 w-9 p-0">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      onClick={onCancelClick}
-                      className="text-destructive focus:text-destructive gap-2"
-                    >
-                      <X className="h-4 w-4" />
-                      Cancel Order
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+              {/* Advanced Actions for Desktop */}
+              {!isCancelled && (
+                <div className="hidden sm:flex items-center pl-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-11 w-11 rounded-2xl hover:bg-destructive/5 hover:text-destructive group">
+                        <MoreHorizontal className="w-5 h-5 opacity-40 group-hover:opacity-100 transition-opacity" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="p-2 rounded-2xl border-border/50 shadow-2xl min-w-[200px]">
+                       <div className="px-3 py-2 text-[9px] font-black text-muted-foreground/40 uppercase tracking-widest">Advanced Operations</div>
+                       <DropdownMenuItem 
+                          onClick={onCancelClick}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-destructive focus:text-destructive focus:bg-destructive/5 cursor-pointer font-bold text-xs"
+                       >
+                          <Trash2 className="w-4 h-4" />
+                          Terminate Order
+                       </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              )}
             </>
           )}
 
-          {/* Pending Payment actions */}
           {isPendingPayment && (
-            <>
-              <Button
-                size="sm"
-                variant="outline"
-                className="gap-1.5 rounded-xl text-xs sm:text-sm"
-                onClick={onViewInvoicesClick}
-              >
-                <FileText className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">View Invoices</span>
-                <span className="sm:hidden">Invoices</span>
-              </Button>
-
-              <div className="hidden sm:block">
-                <Separator orientation="vertical" className="h-6 inline-block mx-1 align-middle" />
-              </div>
-              <Button
-                size="sm"
-                variant="destructive"
-                className="gap-1.5 rounded-xl text-xs sm:text-sm hidden sm:inline-flex"
-                onClick={onCancelClick}
-              >
-                <X className="h-3.5 w-3.5" />
-                Cancel Order
-              </Button>
-
-              <div className="sm:hidden">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button size="sm" variant="ghost" className="rounded-xl h-9 w-9 p-0">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      onClick={onCancelClick}
-                      className="text-destructive focus:text-destructive gap-2"
-                    >
-                      <X className="h-4 w-4" />
-                      Cancel Order
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </>
+             <>
+               <Button
+                  onClick={onViewInvoicesClick}
+                  className="h-11 px-8 bg-amber-500 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all gap-2"
+               >
+                  <FileText className="w-3.5 h-3.5" />
+                  Settle Invoice
+               </Button>
+               
+               <Button
+                  variant="ghost"
+                  onClick={onCancelClick}
+                  className="h-11 px-5 rounded-2xl text-destructive font-black text-[10px] uppercase tracking-widest hover:bg-destructive/5 whitespace-nowrap hidden sm:flex"
+               >
+                  Cancel
+               </Button>
+             </>
           )}
 
-          {/* Completed actions */}
           {isCompleted && (
             <>
-              {!hasFinalInvoice && (
-                <Button
-                  size="sm"
-                  className="gap-1.5 bg-primary hover:bg-primary/80 text-primary-foreground rounded-xl shadow-md shadow-primary/20 text-xs sm:text-sm"
-                  onClick={onGenerateFinalInvoice}
-                  disabled={isGeneratingFinal}
-                >
-                  {isGeneratingFinal ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <PlusCircle className="h-3.5 w-3.5" />
-                  )}
-                  <span className="hidden sm:inline">Generate Final Invoice</span>
-                  <span className="sm:hidden">Final Invoice</span>
-                </Button>
-              )}
-              <Button
-                size="sm"
-                variant="outline"
-                className="gap-1.5 rounded-xl text-xs sm:text-sm"
-                onClick={onViewInvoicesClick}
-              >
-                <FileText className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">View Invoices</span>
-                <span className="sm:hidden">Invoices</span>
-              </Button>
+               {!hasFinalInvoice ? (
+                 <Button
+                    onClick={onGenerateFinalInvoice}
+                    disabled={isGeneratingFinal}
+                    className="h-11 px-8 bg-black text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-black/10 hover:scale-105 active:scale-95 transition-all gap-2"
+                 >
+                    {isGeneratingFinal ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <PlusCircle className="w-4 h-4" />
+                    )}
+                    Final Settlement
+                 </Button>
+               ) : (
+                 <div className="flex items-center gap-2 px-6 h-11 rounded-2xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                    <ShieldCheck className="w-4 h-4" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Cycle Finalized</span>
+                 </div>
+               )}
+               
+               <Button
+                  variant="outline"
+                  onClick={onViewInvoicesClick}
+                  className="h-11 px-6 rounded-2xl border-border/60 font-black text-[10px] uppercase tracking-widest hover:bg-primary/5 hover:text-primary transition-all"
+               >
+                  Invoices
+               </Button>
             </>
           )}
+
+          {isCancelled && (
+            <div className="flex items-center gap-2 px-6 h-11 rounded-2xl bg-rose-500/5 text-rose-600 border border-rose-500/10 italic">
+               <span className="text-[10px] font-bold">This Order has been terminated. Reference history is locked.</span>
+            </div>
+          )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

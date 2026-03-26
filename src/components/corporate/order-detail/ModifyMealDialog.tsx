@@ -1,14 +1,25 @@
 "use client";
 
 import { format } from "date-fns";
-import { IndianRupee, CreditCard, Loader2, CalendarDays, UtensilsCrossed, Users } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { 
+  IndianRupee, 
+  CreditCard, 
+  Loader2, 
+  CalendarDays, 
+  UtensilsCrossed, 
+  Users,
+  AlertCircle,
+  TrendingDown,
+  Sparkles,
+  ArrowRight
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -69,196 +80,195 @@ export function ModifyMealDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg rounded-2xl">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold">
-            Modify Meals
-          </DialogTitle>
-          <DialogDescription className="text-sm">
-            Reduce meal quantities for this delivery date. Credits will reflect in the final invoice.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-xl p-0 overflow-hidden border-0 bg-transparent shadow-none">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className="relative bg-card rounded-4xl border border-border/50 shadow-2xl p-8 overflow-hidden"
+        >
+          {/* Decorative Background */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-gold/5 rounded-full -ml-16 -mb-16 blur-3xl pointer-events-none" />
 
-        {/* Date + allocation info strip */}
-        <div className="flex items-center gap-3 bg-muted/50 rounded-xl px-4 py-3">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <CalendarDays className="h-4 w-4 shrink-0" />
-            <span className="font-medium text-foreground">
-              {selectedDate && format(selectedDate, "EEE, MMM dd, yyyy")}
-            </span>
-          </div>
-          <Separator orientation="vertical" className="h-4" />
-          <div className="flex items-center gap-3 text-sm">
-            <span className="text-success font-medium">{order.veg_count}V</span>
-            <span className="text-muted-foreground/50">/</span>
-            <span className="text-warning font-medium">{order.nonveg_count}NV</span>
-            <Separator orientation="vertical" className="h-4" />
-            <span className="font-bold">{order.headcount} total</span>
-          </div>
-        </div>
-
-        <div className="space-y-5 py-2">
-          {/* Total reduction input */}
-          <div className="space-y-2">
-            <Label htmlFor="total-reduction" className="text-sm font-semibold">
-              Total meals to reduce
-            </Label>
-            <div className="relative">
-              <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="total-reduction"
-                type="number"
-                min={1}
-                max={order.headcount}
-                placeholder="e.g., 3"
-                className="pl-10 h-11 rounded-xl text-lg font-semibold"
-                onChange={(e) => {
-                  const val = parseInt(e.target.value) || 0;
-                  onTotalReductionChange(val);
-                }}
-              />
+          <DialogHeader className="mb-8 text-left relative z-10">
+            <div className="flex items-center gap-3 mb-4">
+               <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                  <Sparkles className="w-5 h-5" />
+               </div>
+               <DialogTitle className="text-xl font-black uppercase tracking-tight">Modify Daily Allotment</DialogTitle>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Auto-suggests proportional veg/non-veg split. Adjust manually below.
-            </p>
-          </div>
+            <DialogDescription className="text-xs font-bold text-muted-foreground leading-relaxed">
+              Adjusting the count for a single day cycle. Any reductions will be balanced and credited back to your account in the final settlement.
+            </DialogDescription>
+          </DialogHeader>
 
-          {/* Veg / Non-veg split */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="mod-veg" className="text-sm font-medium">
-                Veg reduction
-              </Label>
-              <Input
-                id="mod-veg"
-                type="number"
-                min={0}
-                max={order.veg_count}
-                value={vegReduction}
-                onChange={(e) =>
-                  onVegReductionChange(parseInt(e.target.value) || 0)
-                }
-                className="h-10 rounded-xl"
-              />
-              <p className="text-xs text-muted-foreground">
-                Max: {order.veg_count}
-              </p>
+          {/* Date & Core Info */}
+          <div className="p-5 rounded-3xl bg-secondary/40 border border-border/40 flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-white flex flex-col items-center justify-center border border-border/50 shadow-sm">
+                <span className="text-[8px] font-black uppercase text-muted-foreground leading-none mb-0.5">
+                  {selectedDate && format(selectedDate, "MMM")}
+                </span>
+                <span className="text-base font-black leading-none text-primary">
+                  {selectedDate && format(selectedDate, "dd")}
+                </span>
+              </div>
+              <div>
+                <p className="text-xs font-black uppercase tracking-widest text-primary/60">Selected Cycle</p>
+                <p className="text-sm font-black text-foreground">
+                  {selectedDate && format(selectedDate, "EEEE, yyyy")}
+                </p>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="mod-nonveg" className="text-sm font-medium">
-                Non-veg reduction
-              </Label>
-              <Input
-                id="mod-nonveg"
-                type="number"
-                min={0}
-                max={order.nonveg_count}
-                value={nonvegReduction}
-                onChange={(e) =>
-                  onNonvegReductionChange(parseInt(e.target.value) || 0)
-                }
-                className="h-10 rounded-xl"
-              />
-              <p className="text-xs text-muted-foreground">
-                Max: {order.nonveg_count}
-              </p>
+            
+            <div className="flex items-center gap-2">
+               <div className="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 text-[10px] font-black border border-emerald-500/20">
+                  {order.veg_count} VEG
+               </div>
+               <div className="px-3 py-1.5 rounded-xl bg-orange-500/10 text-orange-600 text-[10px] font-black border border-orange-500/20">
+                  {order.nonveg_count} NON-VEG
+               </div>
             </div>
           </div>
 
-          {/* After-modification preview */}
-          {totalReduction > 0 && (
-            <div className="bg-muted/30 rounded-xl p-3 space-y-1.5">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                After modification
-              </p>
-              <div className="flex items-center gap-4 text-sm">
-                <div className="flex items-center gap-1.5">
-                  <UtensilsCrossed className="h-3.5 w-3.5 text-success" />
-                  <span className="text-success font-semibold">
-                    {order.veg_count - vegReduction} Veg
-                  </span>
+          <div className="space-y-6 relative z-10">
+            {/* Main Reduction Input */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <div className="space-y-2">
+                  <Label htmlFor="total-reduction" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                     Collective Reduction Target
+                  </Label>
+                  <div className="relative group">
+                     <Users className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                     <Input
+                        id="total-reduction"
+                        type="number"
+                        min={1}
+                        max={order.headcount}
+                        placeholder="0"
+                        className="pl-12 h-14 rounded-2xl text-lg font-black bg-secondary/20 border-border/40 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all"
+                        onChange={(e) => {
+                           const val = parseInt(e.target.value) || 0;
+                           onTotalReductionChange(val);
+                        }}
+                     />
+                  </div>
+                  <p className="text-[9px] font-bold text-muted-foreground/60 italic ml-1">
+                     * Values will be split proportionally across Veg & Non-Veg.
+                  </p>
+               </div>
+
+               <div className="space-y-2">
+                  <Label htmlFor="mod-reason" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                     Reference Note (Optional)
+                  </Label>
+                  <Textarea
+                     id="mod-reason"
+                     placeholder="e.g., Regional Holiday, Team Outing..."
+                     rows={1}
+                     value={reason}
+                     onChange={(e) => onReasonChange(e.target.value)}
+                     className="h-14 rounded-2xl resize-none py-4 px-5 bg-secondary/20 border-border/40 focus:border-primary/50 font-bold text-xs"
+                  />
+               </div>
+            </div>
+
+            {/* Split Breakdown */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="mod-veg" className="text-[10px] font-black uppercase tracking-widest text-emerald-600 ml-1">Veg Offset</Label>
+                <div className="relative">
+                   <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-muted-foreground/30 uppercase">MAX {order.veg_count}</div>
+                   <Input
+                     id="mod-veg"
+                     type="number"
+                     min={0}
+                     max={order.veg_count}
+                     value={vegReduction}
+                     onChange={(e) => onVegReductionChange(parseInt(e.target.value) || 0)}
+                     className="h-12 rounded-2xl font-black text-emerald-600 bg-emerald-500/5 border-emerald-500/10 focus:ring-emerald-500/10"
+                   />
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <UtensilsCrossed className="h-3.5 w-3.5 text-warning" />
-                  <span className="text-warning font-semibold">
-                    {order.nonveg_count - nonvegReduction} Non-veg
-                  </span>
-                </div>
-                <div className="ml-auto flex items-center gap-1.5">
-                  <span className="font-bold">{order.headcount - totalReduction} total</span>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="mod-nonveg" className="text-[10px] font-black uppercase tracking-widest text-orange-600 ml-1">Non-Veg Offset</Label>
+                <div className="relative">
+                   <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-muted-foreground/30 uppercase">MAX {order.nonveg_count}</div>
+                   <Input
+                     id="mod-nonveg"
+                     type="number"
+                     min={0}
+                     max={order.nonveg_count}
+                     value={nonvegReduction}
+                     onChange={(e) => onNonvegReductionChange(parseInt(e.target.value) || 0)}
+                     className="h-12 rounded-2xl font-black text-orange-600 bg-orange-500/5 border-orange-500/10 focus:ring-orange-500/10"
+                   />
                 </div>
               </div>
             </div>
-          )}
 
-          {/* Credit display */}
-          {totalReduction > 0 && (
-            <div
-              className={cn(
-                "rounded-xl p-4 border transition-all",
-                "bg-success/5 border-success/20"
-              )}
+            <AnimatePresence>
+               {totalReduction > 0 && (
+                  <motion.div
+                     initial={{ opacity: 0, height: 0 }}
+                     animate={{ opacity: 1, height: "auto" }}
+                     exit={{ opacity: 0, height: 0 }}
+                     className="space-y-6 pt-4"
+                  >
+                     {/* Preview Stats */}
+                     <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 rounded-3xl bg-secondary/20 border border-border/40 flex items-center justify-between">
+                           <div>
+                              <p className="text-[9px] font-black uppercase text-muted-foreground/60 tracking-widest mb-1">Cycle New Total</p>
+                              <p className="text-xl font-black text-foreground">{order.headcount - totalReduction} Meals</p>
+                           </div>
+                           <ArrowRight className="w-5 h-5 text-muted-foreground/30" />
+                        </div>
+                        <div className="p-4 rounded-3xl bg-emerald-500/5 border border-emerald-500/20 flex flex-col items-end">
+                           <p className="text-[9px] font-black uppercase text-emerald-600/80 tracking-widest mb-1">Projected Credit</p>
+                           <p className="text-xl font-black text-emerald-600 flex items-baseline gap-0.5">
+                              <span className="text-xs">₹</span>
+                              {credit.toLocaleString("en-IN")}
+                           </p>
+                        </div>
+                     </div>
+
+                     <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20 flex items-start gap-3">
+                        <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                        <p className="text-[10px] font-bold text-amber-800 leading-relaxed italic">
+                           Note: Credits will be added to your virtual wallet and used for the final invoice generation. Modification is locked once the day cycle starts.
+                        </p>
+                     </div>
+                  </motion.div>
+               )}
+            </AnimatePresence>
+          </div>
+
+          <DialogFooter className="mt-10 sm:justify-between sm:gap-4 relative z-10 border-t border-border/40 pt-8">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={isPending}
+              className="rounded-2xl h-12 px-8 text-[10px] font-black uppercase tracking-widest border-border/60 hover:bg-secondary/80"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-success/10">
-                    <CreditCard className="h-4 w-4 text-success" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-success/80 font-medium">Estimated Credit</p>
-                    <p className="text-xl font-bold text-success flex items-center gap-0.5">
-                      <IndianRupee className="h-3.5 w-3.5" />
-                      {credit.toLocaleString("en-IN")}
-                    </p>
-                  </div>
-                </div>
-                <Badge className="bg-success/10 text-success hover:bg-success/10 border-success/20">
-                  {totalReduction} meal{totalReduction > 1 ? "s" : ""}
-                </Badge>
-              </div>
-            </div>
-          )}
-
-          {/* Reason */}
-          <div className="space-y-2">
-            <Label htmlFor="mod-reason" className="text-sm font-medium">
-              Reason <span className="text-muted-foreground font-normal">(optional)</span>
-            </Label>
-            <Textarea
-              id="mod-reason"
-              placeholder="e.g., Team offsite, holiday, etc."
-              rows={2}
-              value={reason}
-              onChange={(e) => onReasonChange(e.target.value)}
-              className="rounded-xl resize-none"
-            />
-          </div>
-        </div>
-
-        <DialogFooter className="gap-3 sm:gap-3">
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isPending}
-            className="rounded-xl h-10 px-5"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={onSubmit}
-            disabled={isPending || totalReduction === 0}
-            className="bg-primary hover:bg-primary/80 text-primary-foreground rounded-xl h-10 px-5 shadow-md shadow-primary/20 font-semibold"
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Submitting...
-              </>
-            ) : (
-              "Confirm Modification"
-            )}
-          </Button>
-        </DialogFooter>
+              Discard Changes
+            </Button>
+            <Button
+              onClick={onSubmit}
+              disabled={isPending || totalReduction === 0}
+              className="bg-primary hover:bg-primary/90 text-white rounded-2xl h-12 px-10 shadow-xl shadow-primary/20 font-black text-[10px] tracking-widest active:scale-95 transition-all"
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  PROCESSING...
+                </>
+              ) : (
+                "APPLY MODIFICATION"
+              )}
+            </Button>
+          </DialogFooter>
+        </motion.div>
       </DialogContent>
     </Dialog>
   );
