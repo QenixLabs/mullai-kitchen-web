@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   FaCamera,
   FaMapMarkerAlt,
@@ -8,9 +9,15 @@ import {
   FaTrash,
   FaEnvelope,
   FaPhone,
+  FaPencilAlt,
   FaCheckCircle,
   FaExclamationCircle,
+  FaWhatsapp,
+  FaSms,
+  FaUtensils,
+  FaChevronDown,
 } from "react-icons/fa";
+import { Marker } from "@react-google-maps/api";
 import { useCurrentUser } from "@/hooks/useUserStore";
 import { useUpdateProfile } from "@/api/hooks/useUpdateProfile";
 import { useAddressList } from "@/api/hooks/useAddress";
@@ -31,15 +38,33 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { GoogleMap } from "./GoogleMap";
 import { AddressSelectionModal } from "./AddressSelectionModal";
+import type { Address } from "@/api/types/customer.types";
+
+const DEFAULT_MAP_CENTER = { lat: 13.0827, lng: 80.2707 };
+
+const MEAL_OPTIONS = ["Breakfast", "Lunch", "Dinner"] as const;
+type MealType = (typeof MEAL_OPTIONS)[number];
 
 export function ProfileContent() {
+  const router = useRouter();
   const user = useCurrentUser();
   const updateProfile = useUpdateProfile();
   const { data: addresses, isLoading: isAddressesLoading } = useAddressList();
   const deleteAddress = useDeleteAddress();
 
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<Address | undefined>(
+    undefined,
+  );
+  const [mealTypes, setMealTypes] = useState<Record<string, MealType>>({});
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
@@ -51,7 +76,6 @@ export function ProfileContent() {
     updateProfile.mutate(
       {
         dietary_preferences: formData.dietary_preferences,
-        // Note: Full name and phone updates might need a different API if they are restricted
       },
       {
         onSuccess: () => toast.success("Profile updated successfully"),
@@ -63,352 +87,431 @@ export function ProfileContent() {
     deleteAddress.mutate(id);
   };
 
+  const handleEditAddress = (address: Address) => {
+    setEditingAddress(address);
+    setIsAddressModalOpen(true);
+  };
+
+  const handleModalClose = (open: boolean) => {
+    setIsAddressModalOpen(open);
+    if (!open) setEditingAddress(undefined);
+  };
+
+  const memberSince = user?.created_at
+    ? new Date(user.created_at).toLocaleDateString(undefined, {
+        month: "long",
+        year: "numeric",
+      })
+    : "N/A";
+
+  const initials = user?.name
+    ? user.name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "U";
+
   return (
     <div className="flex flex-col gap-8 pb-20">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
-          {/* Profile Basic Info */}
-          <Card className="overflow-hidden border-border/50 bg-white">
-            <CardHeader className="border-b bg-white">
-              <div className="flex flex-col sm:flex-row items-center gap-6">
-                <div className="relative group">
-                  <Avatar className="h-24 w-24 border-4 border-background shadow-xl">
-                    <AvatarImage src={user?.avatar_url} />
-                    <AvatarFallback className="bg-primary/10 text-primary text-2xl font-bold">
-                      {user?.name?.charAt(0) || "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <button className="absolute bottom-0 right-0 p-1.5 rounded-full bg-primary text-white shadow-lg transform transition-transform group-hover:scale-110">
-                    <FaCamera className="h-4 w-4" />
+      {/* Top Row: User Info + Push Notifications */}
+      <div className="flex flex-col xl:flex-row gap-4">
+        {/* User Info Card */}
+        <Card className="bg-white border-border/50 w-full xl:w-[703px] xl:h-[116px] shrink-0">
+          <CardContent className="p-4 sm:p-5 h-full flex items-center">
+            <div className="flex items-center gap-3 sm:gap-5 w-full">
+              {/* Avatar */}
+              <div className="relative group shrink-0">
+                <Avatar className="h-12 w-12 sm:h-16 sm:w-16 ring-2 ring-border shadow-md">
+                  <AvatarImage src={user?.avatar_url} />
+                  <AvatarFallback className="bg-primary/10 text-primary text-base sm:text-lg font-bold">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                <button className="absolute -bottom-1 -right-1 p-1 rounded-full bg-foreground text-background shadow-md transition-transform group-hover:scale-110">
+                  <FaCamera className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                </button>
+              </div>
+
+              {/* Name + Member since */}
+              <div className="min-w-0 shrink-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg sm:text-2xl font-semibold tracking-tight text-foreground truncate">
+                    {user?.name || "—"}
+                  </span>
+                  <button className="text-muted-foreground hover:text-primary transition-colors shrink-0">
+                    <FaPencilAlt className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                   </button>
                 </div>
-                <div className="text-center sm:text-left">
-                  <CardTitle className="text-2xl font-black tracking-tight">
-                    {user?.name}
-                  </CardTitle>
-                  <CardDescription className="text-base">
-                    Member since{" "}
-                    {user?.created_at
-                      ? new Date(user.created_at).toLocaleDateString(
-                          undefined,
-                          { month: "long", year: "numeric" },
-                        )
-                      : "N/A"}
-                  </CardDescription>
-                  {user?.status === "Active" && (
-                  <Badge className="mt-2 bg-success/10 text-success hover:bg-success/20 border-none">
-                    <FaCheckCircle className="h-3 w-3 mr-1" /> Premium Member
-                  </Badge>
+                <p className="text-sm sm:text-[15px] font-normal text-muted-foreground mt-0.5">
+                  Member since {memberSince}
+                </p>
+              </div>
+
+              {/* Vertical divider - hidden on small screens */}
+              <div className="hidden md:block w-px h-12 bg-[#797778] mx-2 shrink-0" />
+
+              {/* Phone + Email */}
+              <div className="hidden sm:flex flex-col gap-2 min-w-0">
+                {/* Phone row */}
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <FaPhone className="h-4 w-4 text-foreground shrink-0" />
+                  <span className="text-base font-normal text-foreground">
+                    {user?.phone || "—"}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-success">
+                    <span className="flex h-4 w-4 items-center justify-center rounded-full bg-success shrink-0">
+                      <svg
+                        className="h-2.5 w-2.5 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </span>
+                    Verified
+                  </span>
+                </div>
+                {/* Email row */}
+                <div className="flex items-center gap-2.5">
+                  <FaEnvelope className="h-4 w-4 text-foreground shrink-0" />
+                  {user?.email ? (
+                    <a
+                      href={`mailto:${user.email}`}
+                      className="text-base font-normal text-foreground underline underline-offset-2 hover:text-primary transition-colors truncate"
+                    >
+                      {user.email}
+                    </a>
+                  ) : (
+                    <span className="text-sm text-muted-foreground">—</span>
                   )}
                 </div>
               </div>
-            </CardHeader>
-            <CardContent className="p-4 sm:pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <Input
-                    id="fullName"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    placeholder="Enter your full name"
-                    className="h-11 bg-white border-border/50 focus:bg-background"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    disabled
-                    className="h-11 bg-white border-border/30 opacity-70"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <div className="relative">
-                    <Input
-                      id="phone"
-                      value={formData.phone}
-                      disabled
-                      className="h-11 pl-4 bg-white border-border/30 opacity-70"
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-xs font-bold text-success capitalize">
-                      <FaCheckCircle className="h-4 w-4" /> Verified
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Addresses Section Header */}
-          <div className="flex items-center justify-between mb-4 mt-2">
-            <div className="flex items-center gap-3">
-              <div className="text-primary">
-                <FaMapMarkerAlt className="h-5 w-5 fill-primary" />
-              </div>
-              <h2 className="text-xl font-bold tracking-tight text-foreground">
-                Addresses
-              </h2>
             </div>
-            <button
-              className="text-sm font-bold text-primary hover:text-primary/80 transition-colors"
-              onClick={() => setIsAddressModalOpen(true)}
-            >
-              + Add New
-            </button>
-          </div>
+          </CardContent>
+        </Card>
 
-          {/* Addresses Card */}
-          <Card className="border-none shadow-none bg-transparent p-0">
-            <CardContent className="px-0 pt-0">
-              {isAddressesLoading ? (
-                <div className="h-40 w-full animate-pulse bg-muted rounded-3xl" />
-              ) : addresses && addresses.length > 0 ? (
-                <div className="grid gap-4">
-                  {addresses.slice(0, 1).map((address) => (
-                    <div
-                      key={address._id}
-                      className="relative flex flex-col md:flex-row items-start md:items-center gap-4 sm:gap-6 p-5 sm:p-8 rounded-3xl sm:rounded-[32px] border border-orange-100 bg-white"
-                    >
-                      <div className="flex items-start gap-6 flex-1">
-                        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-[#FFE7D9] text-[#FF5630] shrink-0">
-                          <FaMapMarkerAlt className="h-6 w-6 fill-current" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-2 flex-wrap">
-                            <span className="font-bold text-lg text-foreground">
-                              {address.type === "Home"
-                                ? "Primary Delivery Address"
-                                : "Office Address"}
-                            </span>
-                            {address.is_default && (
-                              <Badge
-                                variant="default"
-                                className="text-[10px] h-5 px-2 bg-[#FF5630] text-white hover:bg-[#FF5630] border-none font-bold tracking-tight rounded-md"
-                              >
-                                DEFAULT
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-base text-muted-foreground leading-relaxed max-w-[400px]">
-                            {address.full_address}, {address.area},{" "}
-                            {address.city} - {address.pincode}
-                          </p>
-                          <div className="flex items-center gap-4 sm:gap-6 mt-4 sm:mt-6">
-                            <button className="text-sm font-bold text-foreground hover:text-primary transition-colors flex items-center gap-2 border-r pr-4 sm:pr-6 border-border">
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeleteAddress(address._id)}
-                              className="text-sm font-bold text-foreground hover:text-destructive transition-colors flex items-center gap-2"
+        {/* Push Notification Card */}
+        <Card className="bg-white border-border/50 w-full xl:w-[386px] xl:h-[116px] shrink-0">
+          <CardContent className="p-4 sm:p-5 h-full flex flex-col justify-center">
+            <h3 className="text-base sm:text-[20px] font-semibold text-primary mb-3">
+              Push Notification
+            </h3>
+            {/* 2-column grid: WhatsApp | Email, then SMS below */}
+            <div className="grid grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-2">
+              {/* WhatsApp */}
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 shrink-0">
+                  <FaWhatsapp className="h-3.5 w-3.5 text-white" />
+                </span>
+                <span className="text-xs sm:text-sm font-medium text-foreground truncate">
+                  WhatsApp
+                </span>
+                <Switch
+                  checked={true}
+                  className="ml-auto data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-gray-300"
+                />
+              </div>
+              {/* Email */}
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-md bg-violet-500 shrink-0">
+                  <FaEnvelope className="h-3 w-3 text-white" />
+                </span>
+                <span className="text-xs sm:text-sm font-medium text-foreground truncate">
+                  Email
+                </span>
+                <Switch
+                  checked={true}
+                  className="ml-auto data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-gray-300"
+                />
+              </div>
+              {/* SMS */}
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-md bg-teal-500 shrink-0">
+                  <FaSms className="h-3.5 w-3.5 text-white" />
+                </span>
+                <span className="text-xs sm:text-sm font-medium text-foreground truncate">
+                  SMS
+                </span>
+                <Switch
+                  checked={false}
+                  className="ml-auto data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-gray-300"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Addresses Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-primary">Addresses</h2>
+        <button
+          className="flex items-center gap-1.5 text-[18px] font-semibold text-gray-900 hover:text-primary transition-colors font-sans"
+          onClick={() => {
+            setEditingAddress(undefined);
+            setIsAddressModalOpen(true);
+          }}
+        >
+          <span className="text-lg">+</span> Add New
+        </button>
+      </div>
+
+      {/* Bottom Grid: Addresses (left) + Security/Help (right) */}
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-4 lg:gap-6">
+        {/* Left: Address Cards */}
+        <div className="space-y-4">
+          {isAddressesLoading ? (
+            <div className="h-40 w-full animate-pulse bg-gray-100 rounded-xl" />
+          ) : addresses && addresses.length > 0 ? (
+            addresses.map((address) => {
+              const mapCenter =
+                address.lat && address.lng
+                  ? { lat: address.lat, lng: address.lng }
+                  : DEFAULT_MAP_CENTER;
+              const label = address.is_default
+                ? "Primary Delivery Address"
+                : "Delivery Address";
+              const selectedMeal = mealTypes[address._id] || "Breakfast";
+
+              return (
+                <Card
+                  key={address._id}
+                  className="bg-white border border-gray-200 shadow-sm overflow-hidden w-full max-w-[703px]"
+                >
+                  {/* Card Header Row - with Default on right */}
+                  <div className="flex items-center justify-between px-4 sm:px-5 py-2 border-b border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <FaMapMarkerAlt className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                      <span className="text-base sm:text-lg font-semibold text-primary">
+                        {label}
+                      </span>
+                    </div>
+                    {/* Default indicator on right */}
+                    <div className="flex items-center gap-2">
+                      {address.is_default ? (
+                        <>
+                          <span className="flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-emerald-500">
+                            <svg
+                              className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-white"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={3}
                             >
-                              <FaTrash className="h-4 w-4" />
-                              Delete
-                            </button>
-                          </div>
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          </span>
+                          <span className="text-sm sm:text-base font-semibold text-gray-900">
+                            Default
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="h-4 w-4 sm:h-5 sm:w-5 rounded-full border-2 border-gray-400" />
+                          <span className="text-sm sm:text-base font-semibold text-gray-500">
+                            Default
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Card Body */}
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      {/* Left: address text + buttons */}
+                      <div className="flex-1">
+                        <p className="text-sm sm:text-[15px] text-gray-600 leading-snug mb-2 sm:mb-3">
+                          {address.full_address}, {address.area}, {address.city}{" "}
+                          - {address.pincode}
+                        </p>
+
+                        {/* Buttons: Edit and Delete in one row */}
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                          {/* Edit - white bg with shadow */}
+                          <button
+                            onClick={() => handleEditAddress(address)}
+                            className="flex items-center justify-center gap-2 w-[100px] sm:w-[115px] h-8 sm:h-9 rounded-lg bg-white border border-gray-200 text-sm font-bold text-gray-900 hover:bg-gray-50 transition-colors shadow-sm"
+                          >
+                            <FaPencilAlt className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                            Edit
+                          </button>
+
+                          {/* Delete - white bg with red text */}
+                          <button
+                            onClick={() => handleDeleteAddress(address._id)}
+                            className="flex items-center justify-center gap-2 w-[120px] sm:w-[141px] h-8 sm:h-9 rounded-lg bg-white border border-gray-200 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors shadow-sm"
+                          >
+                            <FaTrash className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                            Delete
+                          </button>
                         </div>
+
+                        {/* Meal dropdown - separate row */}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className="flex items-center justify-center gap-2 w-[120px] sm:w-[141px] h-8 sm:h-9 rounded-lg bg-primary text-white text-sm font-bold hover:bg-[#5a1c28] transition-colors">
+                              <FaUtensils className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                              <span>{selectedMeal}</span>
+                              <FaChevronDown className="h-3 w-3 ml-1" />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start" className="w-32">
+                            {MEAL_OPTIONS.map((meal) => (
+                              <DropdownMenuItem
+                                key={meal}
+                                className={cn(
+                                  "text-sm cursor-pointer",
+                                  selectedMeal === meal &&
+                                    "text-primary font-semibold",
+                                )}
+                                onClick={() =>
+                                  setMealTypes((prev) => ({
+                                    ...prev,
+                                    [address._id]: meal,
+                                  }))
+                                }
+                              >
+                                {meal}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
 
-                      {/* Interactive Map Placeholder Illustration */}
-                      <div className="hidden lg:block shrink-0 w-40 h-24 rounded-2xl bg-slate-50 border border-slate-100 relative overflow-hidden">
-                        <div
-                          className="absolute inset-0 opacity-10"
-                          style={{
-                            backgroundImage:
-                              "radial-gradient(#637381 0.5px, transparent 0.5px)",
-                            backgroundSize: "8px 8px",
-                          }}
-                        />
-                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-                            <div className="relative">
-                              <FaMapMarkerAlt className="h-6 w-6 text-primary fill-primary/20" />
-                              <div className="absolute -top-1 -right-1 size-3 bg-blue-500 rounded-full border-2 border-white shadow-sm ring-4 ring-blue-500/10" />
-                            </div>
-                          </div>
-                        <div className="absolute bottom-2 right-2 flex gap-1">
-                          <div className="h-1.5 w-4 bg-muted rounded-full" />
-                          <div className="h-1.5 w-1.5 bg-muted rounded-full" />
-                        </div>
+                      {/* Right: Google Map - hidden on small mobile */}
+                      <div className="hidden sm:block shrink-0 w-full sm:w-[200px] md:w-[280px] h-[115px] rounded-lg overflow-hidden border border-gray-200">
+                        <GoogleMap
+                          center={mapCenter}
+                          zoom={15}
+                          height="h-full"
+                          className="rounded-lg border-0"
+                          onClick={() => {}}
+                        >
+                          <Marker position={mapCenter} />
+                        </GoogleMap>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-12 px-6 text-center border border-border/50 rounded-[40px] bg-white">
-                  <div className="p-5 rounded-full bg-white shadow-sm text-muted-foreground mb-4">
-                    <FaExclamationCircle className="h-10 w-10" />
-                  </div>
-                  <h3 className="text-xl font-bold text-foreground">
-                    No Addresses Found
-                  </h3>
-                  <p className="text-muted-foreground max-w-[300px] mt-2 mb-8">
-                    Add an address to start ordering delicious home-cooked
-                    meals.
-                  </p>
-                  <Button
-                    size="lg"
-                    className="font-bold rounded-2xl px-10 shadow-lg shadow-primary/20"
-                    onClick={() => setIsAddressModalOpen(true)}
-                  >
-                    Add Your First Address
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Security */}
-          <Card className="border-border/50 bg-white">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                  <FaShieldAlt className="h-5 w-5" />
-                </div>
-                <CardTitle className="text-xl font-bold tracking-tight">
-                  Security & Privacy
-                </CardTitle>
+                  </CardContent>
+                </Card>
+              );
+            })
+          ) : (
+            <div className="flex flex-col items-center justify-center py-12 px-6 text-center border border-gray-200 rounded-xl bg-white">
+              <div className="p-4 rounded-full bg-gray-100 text-gray-400 mb-4">
+                <FaExclamationCircle className="h-8 w-8" />
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl border border-border/50 bg-white">
-                <div className="flex items-center gap-4">
-                  <div className="p-2.5 rounded-lg bg-background border border-border shadow-sm">
-                    <FaShieldAlt className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-foreground">Password</p>
-                    <p className="text-xs text-muted-foreground">
-                      Last changed 3 months ago
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full sm:w-auto font-bold rounded-xl h-10 px-6 border-border/50"
-                >
-                  Change Password
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              <h3 className="text-lg font-bold text-gray-900">
+                No Addresses Found
+              </h3>
+              <p className="text-sm text-gray-500 max-w-65 mt-1 mb-6">
+                Add an address to start ordering delicious home-cooked meals.
+              </p>
+              <Button
+                size="sm"
+                className="font-bold px-8"
+                onClick={() => {
+                  setEditingAddress(undefined);
+                  setIsAddressModalOpen(true);
+                }}
+              >
+                Add Your First Address
+              </Button>
+            </div>
+          )}
         </div>
 
-        {/* Sidebar Preferences */}
-        <div className="space-y-8">
-          <Card className="border-border/50 shadow-sm overflow-hidden bg-white">
-            <CardHeader className="bg-white border-b border-border/50">
-              <div className="flex items-center gap-2">
-                <FaShieldAlt className="h-4 w-4 text-primary" />
-                <CardTitle className="text-lg font-bold">Preferences</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-6 space-y-6">
-              <div className="space-y-4">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                  Dietary Choices
-                </Label>
-                <div className="space-y-3">
-                  <div
-                    className="flex items-center justify-between group cursor-pointer"
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        dietary_preferences: "Pure Vegetarian",
-                      })
-                    }
-                  >
-                    <span className="text-sm font-semibold group-hover:text-primary transition-colors">
-                      Pure Vegetarian
-                    </span>
-                    <Checkbox
-                      checked={
-                        formData.dietary_preferences === "Pure Vegetarian"
-                      }
-                    />
-                  </div>
-                  <div className="flex items-center justify-between group cursor-pointer">
-                    <span className="text-sm font-semibold group-hover:text-primary transition-colors">
-                      Gluten Free
-                    </span>
-                    <Checkbox />
-                  </div>
-                  <div className="flex items-center justify-between group cursor-pointer">
-                    <span className="text-sm font-semibold group-hover:text-primary transition-colors">
-                      No Onions/Garlic
-                    </span>
-                    <Checkbox />
-                  </div>
-                </div>
-              </div>
+        {/* Right: Security + Need Help */}
+        <div className="space-y-3 sm:space-y-4">
+          {/* Security Card */}
+          <Card className="bg-white border border-gray-200 shadow-sm overflow-hidden w-full xl:w-[386px] min-h-[129px]">
+            {/* Header */}
+            <div className="flex items-center gap-2 px-4 py-2 border-b border-gray-200">
+              <FaShieldAlt className="h-4 w-4 text-primary" />
+              <span className="text-base font-semibold text-primary">
+                Security and privacy
+              </span>
+            </div>
 
-              <div className="space-y-4 pt-4 border-t border-border/50">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                  Push Notifications
-                </Label>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <FaEnvelope className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-semibold">
-                        Email Updates
-                      </span>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <FaPhone className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-semibold">SMS Alerts</span>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 text-emerald-500">
-                      <FaPhone className="h-4 w-4" />
-                      <span className="text-sm font-semibold text-foreground">
-                        WhatsApp
-                      </span>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
+            {/* Body */}
+            <CardContent className="p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-base font-semibold text-primary">
+                    Password
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Last changed 3 months ago
+                  </p>
+                </div>
+                <div className="flex flex-col items-end">
+                  <button className="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-[#5a1c28] transition-colors whitespace-nowrap">
+                    Change Password
+                  </button>
+                  <button
+                    onClick={() => router.push("/auth/forgot-password")}
+                    className="mt-1 text-xs text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    Forgot Password?
+                  </button>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Help Center CTA */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-linear-to-br from-primary to-primaryDark text-white shadow-xl shadow-primary/20 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-8 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform duration-500">
-            <FaPhone className="h-24 w-24" />
-          </div>
-            <h3 className="text-xl font-black tracking-tight mb-2">
-              Need help?
-            </h3>
-            <p className="text-white/80 text-sm leading-relaxed mb-6">
-              {" "}
-              Our support team is available 24/7 to help you with your profile
-              or orders.
-            </p>
-            <Button
-              variant="secondary"
-              className="w-full font-bold bg-white text-primary hover:bg-white/95 rounded-xl h-11 border-none shadow-lg"
-            >
-              Contact Support
-            </Button>
+          {/* Need Help Card */}
+          <div className="relative overflow-hidden rounded-xl bg-linear-to-br from-rose-100 via-rose-50 to-white p-5 w-full xl:w-[386px] min-h-[203px]">
+            {/* Decorative wave */}
+            <div className="absolute bottom-0 right-0 w-40 h-24 opacity-40">
+              <svg
+                viewBox="0 0 200 150"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M200 150V50C150 50 150 100 100 100C50 100 50 50 0 50V150H200Z"
+                  fill="#FDA4AF"
+                />
+                <path
+                  d="M200 150V80C160 80 160 120 120 120C80 120 80 80 40 80C40 80 40 110 0 110V150H200Z"
+                  fill="#FB7185"
+                />
+              </svg>
+            </div>
+
+            <div className="relative z-10 flex flex-col h-full">
+              <h3 className="text-xl font-bold text-primary mb-2">
+                Need help?
+              </h3>
+              <p className="text-sm text-gray-600 mb-4 leading-relaxed flex-1">
+                Our support team is available 24/7 to help you with your profile
+                or orders.
+              </p>
+              <button className="px-6 py-2.5 rounded-full bg-white text-gray-900 text-sm font-semibold shadow-sm hover:shadow-md transition-shadow self-center">
+                Contact Support
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Address Selection Modal */}
+      {/* Address Modal (add + edit) */}
       <AddressSelectionModal
         open={isAddressModalOpen}
-        onOpenChange={setIsAddressModalOpen}
+        onOpenChange={handleModalClose}
+        editAddress={editingAddress}
       />
     </div>
   );

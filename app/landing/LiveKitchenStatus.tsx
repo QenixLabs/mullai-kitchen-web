@@ -1,9 +1,25 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { motion, useInView, useMotionValue, useTransform, animate } from "motion/react";
+import {
+  motion,
+  useInView,
+  useMotionValue,
+  useTransform,
+  animate,
+} from "motion/react";
 import dynamic from "next/dynamic";
-import { Truck, Users, Star, ChefHat, Clock, Flame, Phone, ArrowRight, Zap } from "lucide-react";
+import {
+  Truck,
+  Users,
+  Star,
+  ChefHat,
+  Clock,
+  Flame,
+  Phone,
+  ArrowRight,
+  Zap,
+} from "lucide-react";
 import { fadeInUp, staggerContainer } from "./animations";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -12,27 +28,26 @@ import type L from "leaflet";
 // Dynamic imports for map components to avoid SSR issues
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false }
+  { ssr: false },
 );
 const TileLayer = dynamic(
   () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false }
+  { ssr: false },
 );
 const Marker = dynamic(
   () => import("react-leaflet").then((mod) => mod.Marker),
-  { ssr: false }
+  { ssr: false },
 );
-const Popup = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Popup),
-  { ssr: false }
-);
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
+  ssr: false,
+});
 const Circle = dynamic(
   () => import("react-leaflet").then((mod) => mod.Circle),
-  { ssr: false }
+  { ssr: false },
 );
 const ZoomControl = dynamic(
   () => import("react-leaflet").then((mod) => mod.ZoomControl),
-  { ssr: false }
+  { ssr: false },
 );
 
 // Chennai coordinates
@@ -40,14 +55,78 @@ const CHENNAI_CENTER: [number, number] = [13.0827, 80.2707];
 
 // Delivery zones with real Chennai coordinates
 const deliveryZones = [
-  { id: 1, name: "Anna Nagar", lat: 13.0878, lng: 80.2087, active: true, time: "12:15", orders: 45 },
-  { id: 2, name: "T. Nagar", lat: 13.0416, lng: 80.2341, active: true, time: "12:30", orders: 38 },
-  { id: 3, name: "Adyar", lat: 13.0067, lng: 80.2206, active: false, time: "13:00", orders: 0 },
-  { id: 4, name: "Velachery", lat: 12.9816, lng: 80.2182, active: true, time: "12:45", orders: 52 },
-  { id: 5, name: "Mylapore", lat: 13.0337, lng: 80.2687, active: true, time: "12:20", orders: 31 },
-  { id: 6, name: "Nungambakkam", lat: 13.0674, lng: 80.2426, active: false, time: "13:15", orders: 0 },
-  { id: 7, name: "Porur", lat: 13.0358, lng: 80.1583, active: true, time: "12:50", orders: 28 },
-  { id: 8, name: "Guindy", lat: 13.0067, lng: 80.2206, active: true, time: "12:35", orders: 41 },
+  {
+    id: 1,
+    name: "Anna Nagar",
+    lat: 13.0878,
+    lng: 80.2087,
+    active: true,
+    time: "12:15",
+    orders: 45,
+  },
+  {
+    id: 2,
+    name: "T. Nagar",
+    lat: 13.0416,
+    lng: 80.2341,
+    active: true,
+    time: "12:30",
+    orders: 38,
+  },
+  {
+    id: 3,
+    name: "Adyar",
+    lat: 13.0067,
+    lng: 80.2206,
+    active: false,
+    time: "13:00",
+    orders: 0,
+  },
+  {
+    id: 4,
+    name: "Velachery",
+    lat: 12.9816,
+    lng: 80.2182,
+    active: true,
+    time: "12:45",
+    orders: 52,
+  },
+  {
+    id: 5,
+    name: "Mylapore",
+    lat: 13.0337,
+    lng: 80.2687,
+    active: true,
+    time: "12:20",
+    orders: 31,
+  },
+  {
+    id: 6,
+    name: "Nungambakkam",
+    lat: 13.0674,
+    lng: 80.2426,
+    active: false,
+    time: "13:15",
+    orders: 0,
+  },
+  {
+    id: 7,
+    name: "Porur",
+    lat: 13.0358,
+    lng: 80.1583,
+    active: true,
+    time: "12:50",
+    orders: 28,
+  },
+  {
+    id: 8,
+    name: "Guindy",
+    lat: 13.0067,
+    lng: 80.2206,
+    active: true,
+    time: "12:35",
+    orders: 41,
+  },
 ];
 
 // Counter animation hook
@@ -60,7 +139,7 @@ function StatCard({
   label,
   icon: Icon,
   trend,
-  delay = 0
+  delay = 0,
 }: {
   value: number;
   suffix?: string;
@@ -72,43 +151,47 @@ function StatCard({
   const { ref, displayValue } = useCounter(value);
 
   return (
-      <motion.div
-        ref={ref}
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay }}
-        whileHover={{ y: -4, transition: { duration: 0.2 } }}
-        className="group relative overflow-hidden rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-3 sm:p-5 transition-all duration-300"
-      >
-        {/* Subtle Top Border */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#D4A574]/50 to-transparent opacity-80" />
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay }}
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      className="group relative overflow-hidden rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-3 sm:p-5 transition-all duration-300"
+    >
+      {/* Subtle Top Border */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#D4A574]/50 to-transparent opacity-80" />
 
-        {/* Live Badge - Absolute positioned top-right */}
-        {trend && (
-          <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-            <span className="text-[9px] sm:text-[10px] font-bold text-emerald-500 uppercase tracking-wider hidden sm:inline">Live</span>
-          </div>
-        )}
-
-        <div className="flex items-start gap-2 sm:gap-4">
-          <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-[#D4A574]/10 border border-[#D4A574]/20 flex-shrink-0">
-            <Icon className="h-4 w-4 sm:h-6 sm:w-6 text-[#D4A574]" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-baseline gap-1 sm:gap-1.5">
-              <span className="text-xl sm:text-3xl font-bold text-white tracking-tight">
-                {displayValue}
-              </span>
-              {suffix && (
-                <span className="text-sm sm:text-lg font-semibold text-[#D4A574]">{suffix}</span>
-              )}
-            </div>
-            <p className="text-xs sm:text-sm text-white/60 mt-0.5">{label}</p>
-          </div>
+      {/* Live Badge - Absolute positioned top-right */}
+      {trend && (
+        <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
+          <span className="text-[9px] sm:text-[10px] font-bold text-emerald-500 uppercase tracking-wider hidden sm:inline">
+            Live
+          </span>
         </div>
-      </motion.div>
+      )}
+
+      <div className="flex items-start gap-2 sm:gap-4">
+        <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-[#D4A574]/10 border border-[#D4A574]/20 flex-shrink-0">
+          <Icon className="h-4 w-4 sm:h-6 sm:w-6 text-[#D4A574]" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-baseline gap-1 sm:gap-1.5">
+            <span className="text-xl sm:text-3xl font-bold text-white tracking-tight">
+              {displayValue}
+            </span>
+            {suffix && (
+              <span className="text-sm sm:text-lg font-semibold text-[#D4A574]">
+                {suffix}
+              </span>
+            )}
+          </div>
+          <p className="text-xs sm:text-sm text-white/60 mt-0.5">{label}</p>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -124,9 +207,9 @@ function MapSkeleton() {
 // Delivery Zone Card
 function DeliveryZoneCard({
   zone,
-  index
+  index,
 }: {
-  zone: typeof deliveryZones[0];
+  zone: (typeof deliveryZones)[0];
   index: number;
 }) {
   return (
@@ -140,28 +223,34 @@ function DeliveryZoneCard({
         "group flex items-center justify-between p-3.5 rounded-xl border transition-all duration-300 cursor-pointer",
         zone.active
           ? "bg-[#10B981]/10 border-[#10B981]/20 hover:border-[#10B981]/40"
-          : "bg-white/5 border-white/5 hover:border-white/10"
+          : "bg-white/5 border-white/5 hover:border-white/10",
       )}
     >
       <div className="flex items-center gap-3">
         <div className="relative">
-          <div className={cn(
-            "w-2 h-2 rounded-full",
-            zone.active ? "bg-emerald-500" : "bg-gray-600"
-          )} />
+          <div
+            className={cn(
+              "w-2 h-2 rounded-full",
+              zone.active ? "bg-emerald-500" : "bg-gray-600",
+            )}
+          />
           {zone.active && (
             <div className="absolute inset-0 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
           )}
         </div>
         <div>
-          <p className={cn(
-            "font-semibold text-sm",
-            zone.active ? "text-emerald-400" : "text-white/70"
-          )}>
+          <p
+            className={cn(
+              "font-semibold text-sm",
+              zone.active ? "text-emerald-400" : "text-white/70",
+            )}
+          >
             {zone.name}
           </p>
           <p className="text-[11px] text-white/40">
-            {zone.active ? `${zone.orders} orders in progress` : `Next delivery ${zone.time}`}
+            {zone.active
+              ? `${zone.orders} orders in progress`
+              : `Next delivery ${zone.time}`}
           </p>
         </div>
       </div>
@@ -174,7 +263,9 @@ function DeliveryZoneCard({
         >
           <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/30 rounded-full">
             <Truck className="h-3 w-3 text-emerald-400" />
-            <span className="text-[10px] font-bold text-emerald-400">{zone.time}</span>
+            <span className="text-[10px] font-bold text-emerald-400">
+              {zone.time}
+            </span>
           </div>
         </motion.div>
       )}
@@ -185,12 +276,14 @@ function DeliveryZoneCard({
 // Live Badge Component
 function LiveBadge() {
   return (
-    <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-linear-to-r from-[#39070F] to-[#5a0f1a] border border-[#D4A574]/20 shadow-lg shadow-[#39070F]/30">
+    <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-linear-to-r from-primary to-[#5a0f1a] border border-[#D4A574]/20 shadow-lg shadow-primary/30">
       <div className="relative flex h-2 w-2">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
       </div>
-      <span className="text-[11px] font-bold text-white uppercase tracking-[0.2em]">Live from Kitchen</span>
+      <span className="text-[11px] font-bold text-white uppercase tracking-[0.2em]">
+        Live from Kitchen
+      </span>
     </div>
   );
 }
@@ -221,16 +314,22 @@ export function LiveKitchenStatus() {
   // Simulate live order updates
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveOrders(prev => prev + Math.floor(Math.random() * 3));
+      setActiveOrders((prev) => prev + Math.floor(Math.random() * 3));
     }, 5000);
     return () => clearInterval(interval);
   }, []);
 
-  const activeZones = deliveryZones.filter(z => z.active);
-  const totalOrdersInProgress = activeZones.reduce((acc, z) => acc + z.orders, 0);
+  const activeZones = deliveryZones.filter((z) => z.active);
+  const totalOrdersInProgress = activeZones.reduce(
+    (acc, z) => acc + z.orders,
+    0,
+  );
 
   return (
-    <section ref={ref} className="relative min-h-[700px] sm:min-h-[900px] overflow-hidden">
+    <section
+      ref={ref}
+      className="relative min-h-[700px] sm:min-h-[900px] overflow-hidden"
+    >
       {/* Map Background - Full Width */}
       <div className="absolute inset-0 z-0">
         {mounted && (
@@ -253,12 +352,14 @@ export function LiveKitchenStatus() {
                 <Popup>
                   <div className="p-2">
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-full bg-[#39070F] flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
                         <ChefHat className="w-4 h-4 text-white" />
                       </div>
                       <div>
                         <p className="font-bold text-gray-900">Mullai</p>
-                        <p className="text-xs text-gray-500">Cloud Kitchen HQ</p>
+                        <p className="text-xs text-gray-500">
+                          Cloud Kitchen HQ
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -268,7 +369,9 @@ export function LiveKitchenStatus() {
 
             {/* Delivery Zone Markers */}
             {deliveryZones.map((zone) => {
-              const zoneIcon = zone.active ? icons.activeZone : icons.inactiveZone;
+              const zoneIcon = zone.active
+                ? icons.activeZone
+                : icons.inactiveZone;
               if (!zoneIcon) return null;
               return (
                 <Marker
@@ -280,7 +383,9 @@ export function LiveKitchenStatus() {
                     <div className="p-1">
                       <p className="font-semibold text-gray-900">{zone.name}</p>
                       <p className="text-xs text-gray-500">
-                        {zone.active ? `${zone.orders} orders in progress` : `Next delivery ${zone.time}`}
+                        {zone.active
+                          ? `${zone.orders} orders in progress`
+                          : `Next delivery ${zone.time}`}
                       </p>
                     </div>
                   </Popup>
@@ -335,8 +440,8 @@ export function LiveKitchenStatus() {
               </h2>
 
               <p className="text-lg text-white/70 leading-relaxed">
-                Watch your meals being prepared and delivered in real-time across Chennai.
-                Fresh, hot, and on time — every single time.
+                Watch your meals being prepared and delivered in real-time
+                across Chennai. Fresh, hot, and on time — every single time.
               </p>
             </motion.div>
 
@@ -382,7 +487,7 @@ export function LiveKitchenStatus() {
             >
               <Button
                 size="lg"
-                className="h-14 px-8 bg-linear-to-r from-[#39070F] to-[#5a0f1a] hover:from-[#4a0a15] hover:to-[#6b1020] text-white font-semibold rounded-full shadow-xl shadow-[#39070F]/30 transition-all hover:scale-[1.02] active:scale-[0.98] border border-[#D4A574]/20"
+                className="h-14 px-8 bg-linear-to-r from-primary to-[#5a0f1a] hover:from-[#4a0a15] hover:to-[#6b1020] text-white font-semibold rounded-full shadow-xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98] border border-[#D4A574]/20"
               >
                 <Zap className="w-5 h-5 mr-2" />
                 Order Now
@@ -409,7 +514,7 @@ export function LiveKitchenStatus() {
             <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10 relative overflow-hidden group">
               {/* Subtle Top Border */}
               <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#D4A574]/50 to-transparent opacity-80" />
-              
+
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold text-white">Delivery Zones</h3>
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
@@ -417,7 +522,9 @@ export function LiveKitchenStatus() {
                     <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping" />
                     <div className="relative w-2 h-2 bg-emerald-500 rounded-full" />
                   </div>
-                  <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">{activeZones.length} Active</span>
+                  <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">
+                    {activeZones.length} Active
+                  </span>
                 </div>
               </div>
 
@@ -444,15 +551,18 @@ export function LiveKitchenStatus() {
             </div>
 
             {/* Quick Info Card */}
-            <div className="bg-linear-to-br from-[#39070F] to-[#5a0f1a] rounded-2xl p-5 shadow-xl border border-[#D4A574]/20">
+            <div className="bg-linear-to-br from-primary to-[#5a0f1a] rounded-2xl p-5 shadow-xl border border-[#D4A574]/20">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0">
                   <Flame className="w-6 h-6 text-[#D4A574]" />
                 </div>
                 <div>
-                  <p className="font-semibold text-white mb-1">Fresh Daily Promise</p>
+                  <p className="font-semibold text-white mb-1">
+                    Fresh Daily Promise
+                  </p>
                   <p className="text-sm text-white/70 leading-relaxed">
-                    Every meal is prepared fresh each morning. Never frozen, always delicious.
+                    Every meal is prepared fresh each morning. Never frozen,
+                    always delicious.
                   </p>
                 </div>
               </div>
@@ -496,7 +606,7 @@ export function LiveKitchenStatus() {
         }
         .leaflet-control-zoom {
           border: none !important;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
         }
         .leaflet-control-zoom a {
           background-color: rgba(255, 255, 255, 0.05) !important;

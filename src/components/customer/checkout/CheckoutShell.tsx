@@ -54,7 +54,7 @@ export function CheckoutShell({
                 <FaLock className="h-3.5 w-3.5" aria-hidden="true" />
                 Protected Route
               </div>
-              <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">{title}</h1>
+              <h1 className="text-xl font-bold tracking-tight text-[#44151C] sm:text-2xl">{title}</h1>
               <p className="max-w-2xl text-sm text-muted-foreground">{subtitle}</p>
             </div>
             <div className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">

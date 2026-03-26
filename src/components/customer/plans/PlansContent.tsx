@@ -1,5 +1,4 @@
 "use client";
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -258,7 +257,7 @@ export function PlansContent({
       <section className={isAuthenticated ? "mb-8 sm:mb-12" : "mb-8 sm:mb-12"}>
         {/* Page heading */}
         <div className="mb-6">
-          <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
+          <h1 className="text-3xl font-black tracking-tight text-[#44151C] sm:text-4xl">
             Choose Your Perfect Plan
           </h1>
           <p className="mt-2 text-sm text-muted-foreground sm:text-base">
@@ -306,7 +305,7 @@ export function PlansContent({
 
         {/* Popular Plans heading */}
         <div className="mb-5">
-          <h2 className="text-2xl font-bold text-foreground sm:text-3xl">Popular Plans</h2>
+          <h2 className="text-2xl font-bold text-primary sm:text-3xl">Popular Plans</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Pause anytime | Tailored for you | 5000+ meal delivered weekly
           </p>

@@ -56,10 +56,10 @@ export function LandingNavbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
           <Image
-            src="/logo.png"
+            src="/logo-tranparent.png"
             alt="Mullai Kitchen Logo"
-            width={150}
-            height={150}
+            width={250}
+            height={250}
             className="object-contain"
           />
           {/* <div className="flex flex-col">
