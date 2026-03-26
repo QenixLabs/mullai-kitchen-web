@@ -4,10 +4,9 @@ import { useState, useMemo, Suspense } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { format, isBefore, startOfDay } from "date-fns";
-import { ArrowLeft, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   useCorporateOrder,
   useCorporateModifications,
@@ -23,7 +22,6 @@ import { OverviewTab } from "@/components/corporate/order-detail/OverviewTab";
 import { ScheduleTab } from "@/components/corporate/order-detail/ScheduleTab";
 import { InvoicesTab } from "@/components/corporate/order-detail/InvoicesTab";
 import { ModificationsTab } from "@/components/corporate/order-detail/ModificationsTab";
-import { OrderActionsBar } from "@/components/corporate/order-detail/OrderActionsBar";
 import { ModifyMealDialog, computeCredit } from "@/components/corporate/order-detail/ModifyMealDialog";
 import { CancelOrderDialog } from "@/components/corporate/order-detail/CancelOrderDialog";
 import { generateDeliveryDates } from "@/lib/corporate/dates";
@@ -264,18 +262,6 @@ function OrderDetailPage() {
     });
   };
 
-  // Navigate to invoices tab
-  const handleViewInvoices = () => {
-    setActiveTab("invoices");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  // Navigate to schedule tab
-  const handleModifyClick = () => {
-    setActiveTab("schedule");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   // Loading state
   if (isLoading) {
     return <OrderDetailSkeleton />;
@@ -312,7 +298,7 @@ function OrderDetailPage() {
   const isCancelled = order.status === "cancelled";
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 pt-8 pb-32 sm:px-6 sm:pt-10 sm:pb-36 lg:px-8 lg:pt-12 lg:pb-40">
+    <div className="mx-auto w-full max-w-7xl px-4 pt-8 pb-16 sm:px-6 sm:pt-10 sm:pb-20 lg:px-8 lg:pt-12 lg:pb-24">
       {/* Dynamic Background Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -mr-64 -mt-32" />
@@ -368,9 +354,20 @@ function OrderDetailPage() {
           </div>
         </div>
         
-        <div className="flex items-center gap-3 p-2 bg-secondary/50 backdrop-blur-sm rounded-3xl border border-border/40">
-          <OrderStatusBadge status={order.status} className="h-10 px-5 text-sm" />
-          <PaymentStatusBadge status={order.payment_status} className="h-10 px-5 text-sm" />
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 p-2 bg-secondary/50 backdrop-blur-sm rounded-3xl border border-border/40">
+            <OrderStatusBadge status={order.status} className="h-10 px-5 text-sm" />
+            <PaymentStatusBadge status={order.payment_status} className="h-10 px-5 text-sm" />
+          </div>
+          {!isCancelled && !isCompleted && (
+            <Button
+              variant="destructive"
+              onClick={() => setCancelDialogOpen(true)}
+              className="h-10 px-5 rounded-full border-destructive/30 text-white font-bold text-sm hover:bg-destructive/5 hover:text-destructive hover:border-destructive/50 transition-all"
+            >
+              Cancel Order
+            </Button>
+          )}
         </div>
       </motion.div>
 
@@ -440,17 +437,6 @@ function OrderDetailPage() {
         </motion.div>
       </AnimatePresence>
 
-
-      {/* Sticky Actions Bar */}
-      <OrderActionsBar
-        order={order}
-        hasFinalInvoice={hasFinalInvoice}
-        onCancelClick={() => setCancelDialogOpen(true)}
-        onModifyClick={handleModifyClick}
-        onViewInvoicesClick={handleViewInvoices}
-        onGenerateFinalInvoice={handleGenerateFinalInvoice}
-        isGeneratingFinal={generateFinalMutation.isPending}
-      />
 
       {/* Dialogs */}
       {order && (

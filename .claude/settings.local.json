@@ -8,7 +8,8 @@
       "Bash(wc:*)",
       "Bash(tail:*)",
       "Bash(cd \"C:/Users/jaisw/OneDrive/Desktop/Projects/QenixLabs/Projects/MullaiKitchen/client\" && npx tsc --noEmit --pretty 2>&1)",
-      "Bash(cd \"C:\\\\Users\\\\jaisw\\\\OneDrive\\\\Desktop\\\\Projects\\\\QenixLabs\\\\Projects\\\\MullaiKitchen\\\\client\" && npx tsc --noEmit 2>&1)"
+      "Bash(cd \"C:\\\\Users\\\\jaisw\\\\OneDrive\\\\Desktop\\\\Projects\\\\QenixLabs\\\\Projects\\\\MullaiKitchen\\\\client\" && npx tsc --noEmit 2>&1)",
+      "mcp__playwright__browser_navigate"
     ]
   }
 }

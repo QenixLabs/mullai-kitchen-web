@@ -181,14 +181,12 @@ export function Stepper({
                 )}
               </motion.div>
               {index < items.length - 1 && (
-                <div className="mx-1.5 sm:mx-2 h-0.5 flex-1 bg-gray-200">
-                  <div
-                    className={cn(
-                      "h-full",
-                      isComplete ? "bg-primary/30" : "bg-transparent",
-                    )}
-                  />
-                </div>
+                <div
+                  className={cn(
+                    "mx-1.5 sm:mx-2 h-0.5 flex-1 rounded-full",
+                    isComplete ? "bg-primary" : "bg-border",
+                  )}
+                />
               )}
             </li>
           );
