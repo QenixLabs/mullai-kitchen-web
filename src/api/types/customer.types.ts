@@ -17,6 +17,8 @@ export interface Address {
   mapped_outlet_id: string;
   mapped_outlet_name?: string;
   is_default: boolean;
+  lat?: number;
+  lng?: number;
   created_at: string;
   updated_at: string;
 }

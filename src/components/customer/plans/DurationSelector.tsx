@@ -1,7 +1,5 @@
 "use client";
 
-import { FaCheck } from "react-icons/fa";
-
 import { cn } from "@/lib/utils";
 
 interface DurationOption {
@@ -16,15 +14,15 @@ const DURATION_OPTIONS: DurationOption[] = [
   {
     value: 15,
     label: "15 Days",
-    description: "Perfect for a short commitment and trial.",
+    description: "Perfect for short commitment and trial",
     badge: "Standard",
     badgeType: "standard",
   },
   {
     value: 30,
     label: "30 Days",
-    description: "Our most popular plan for long-term health.",
-    badge: "SAVE 15%",
+    description: "Our most popular plan for long-term health",
+    badge: "Save 15%",
     badgeType: "discount",
   },
 ];
@@ -41,7 +39,7 @@ export function DurationSelector({
   disabled = false,
 }: DurationSelectorProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {DURATION_OPTIONS.map((option) => (
         <button
           key={option.value}
@@ -49,24 +47,28 @@ export function DurationSelector({
           onClick={() => onChange(option.value)}
           disabled={disabled}
           className={cn(
-            "relative flex flex-col items-start p-6 rounded-sm bg-background transition-all duration-300 border-2 text-left",
+            "relative flex flex-col rounded-xl transition-all duration-200 text-left overflow-hidden",
             value === option.value
-              ? "border-primary shadow-sm"
-              : "border-border hover:border-border",
-            disabled && "opacity-50 cursor-not-allowed hover:border-border",
+              ? "border-2 border-primary shadow-lg"
+              : "border border-gray-200 bg-white hover:border-gray-300 shadow-sm",
+            disabled && "opacity-50 cursor-not-allowed hover:border-gray-200",
           )}
         >
-          <div className="flex w-full items-center justify-between mb-2.5">
-            <span className="text-xl font-bold text-foreground">
+          {/* Header with Label and Badge */}
+          <div className="flex w-full items-center justify-between p-4 pb-3">
+            <span
+              className="text-xl font-bold text-primary"
+              style={{ fontFamily: "var(--font-inter), sans-serif" }}
+            >
               {option.label}
             </span>
             {option.badge && (
               <span
                 className={cn(
-                  "px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider",
+                  "px-3 py-1 rounded-full text-xs font-medium",
                   option.badgeType === "discount"
-                    ? "bg-success/20 text-success"
-                    : "bg-muted text-muted-foreground",
+                    ? "bg-emerald-100 text-emerald-600"
+                    : "bg-gray-100 text-gray-500",
                 )}
               >
                 {option.badge}
@@ -74,15 +76,28 @@ export function DurationSelector({
             )}
           </div>
 
-          <p className="text-sm text-muted-foreground font-medium leading-relaxed max-w-56">
-            {option.description}
-          </p>
+          {/* Divider Line */}
+          <div
+            className={cn(
+              "w-full h-px",
+              value === option.value ? "bg-primary/20" : "bg-gray-200",
+            )}
+          />
 
-          {value === option.value && (
-            <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-lg border-2 border-background">
-              <FaCheck className="h-3.5 w-3.5 text-primary-foreground" />
-            </div>
-          )}
+          {/* Description with background */}
+          <div
+            className={cn(
+              "p-4 pt-3",
+              value === option.value ? "bg-primary/5" : "bg-white",
+            )}
+          >
+            <p
+              className="text-sm text-gray-500 leading-snug"
+              style={{ fontFamily: "var(--font-inter), sans-serif" }}
+            >
+              {option.description}
+            </p>
+          </div>
         </button>
       ))}
     </div>
