@@ -20,8 +20,6 @@ import {
 } from "@/api/hooks/use-subscription";
 import type { Subscription, OptOutPeriod } from "@/api/types/subscription.types";
 import { FaPlus, FaExclamationCircle, FaStar, FaCalendarTimes } from "react-icons/fa";
-import { Badge } from "@/components/ui/badge";
-import { X, CalendarX } from "lucide-react";
 
 export default function SubscriptionPage() {
   const router = useRouter();

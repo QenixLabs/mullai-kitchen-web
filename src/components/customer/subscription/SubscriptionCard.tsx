@@ -185,7 +185,7 @@ export function SubscriptionCard({
             {isActive && (
               <Button
                 variant="outline"
-                className="h-10 sm:h-12 px-4 sm:px-6 gap-2 rounded-lg text-base sm:text-[20px] font-semibold text-primary bg-secondary/20 border-secondary/40 hover:bg-secondary/40"
+                className="gap-2 font-semibold text-primary bg-secondary/20 border-secondary/40 hover:bg-secondary/40"
                 onClick={() => onPause?.(subscription._id)}
               >
                 <Image
@@ -193,7 +193,7 @@ export function SubscriptionCard({
                   width={16}
                   height={16}
                   alt="pause"
-                  className="shrink-0 sm:w-[18px] sm:h-[18px]"
+                  className="shrink-0"
                 />
                 Pause
               </Button>
@@ -201,7 +201,7 @@ export function SubscriptionCard({
             {isPaused && (
               <Button
                 variant="outline"
-                className="h-10 sm:h-12 px-4 sm:px-6 gap-2 rounded-lg text-base sm:text-[20px] font-semibold text-primary bg-secondary/20 border-secondary/40 hover:bg-secondary/40"
+                className="gap-2 font-semibold text-primary bg-secondary/20 border-secondary/40 hover:bg-secondary/40"
                 onClick={() => onResume?.(subscription._id)}
               >
                 <Image
@@ -209,17 +209,17 @@ export function SubscriptionCard({
                   width={16}
                   height={16}
                   alt="play"
-                  className="shrink-0 sm:w-[18px] sm:h-[18px]"
+                  className="shrink-0"
                 />
                 Paused
               </Button>
             )}
             {isInactive && (
               <Button
-                className="h-10 sm:h-12 px-4 sm:px-6 gap-2 rounded-lg text-base sm:text-[20px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
+                className="gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
                 onClick={() => onRenew?.(subscription._id)}
               >
-                <RotateCcw className="h-4 w-4 sm:h-5 sm:w-5" />
+                <RotateCcw className="h-4 w-4" />
                 Renew
               </Button>
             )}
@@ -227,7 +227,7 @@ export function SubscriptionCard({
             {/* View Details */}
             <Button
               variant="outline"
-              className="h-10 sm:h-12 px-4 sm:px-6 rounded-lg text-base sm:text-[20px] font-normal bg-secondary/20 text-primary border-secondary/40 hover:bg-secondary/40"
+              className="bg-secondary/20 text-primary border-secondary/40 hover:bg-secondary/40"
               onClick={() => onViewDetails?.(subscription._id)}
             >
               View Details
@@ -235,7 +235,7 @@ export function SubscriptionCard({
 
             <Button
               className={cn(
-                "h-10 sm:h-12 px-6 sm:px-8 gap-2 rounded-lg text-base sm:text-[20px] font-semibold text-[#FBFBFB]",
+                "gap-2 font-semibold text-[#FBFBFB]",
                 isPaused
                   ? "bg-primary/50 cursor-not-allowed"
                   : "bg-primary hover:bg-primary/90",
@@ -245,10 +245,10 @@ export function SubscriptionCard({
             >
               <Image
                 src="/images/plans/white-bell.png"
-                width={18}
-                height={18}
+                width={16}
+                height={16}
                 alt=""
-                className="shrink-0 sm:w-5 sm:h-5"
+                className="shrink-0"
                 style={{ filter: "brightness(0) invert(1) opacity(0.98)" }}
               />
               Add on
