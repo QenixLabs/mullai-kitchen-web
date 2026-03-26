@@ -134,7 +134,7 @@ export function SubscriptionCard({
           </div>
 
           {/* Plan name — Inter Bold 32 */}
-          <h3 className="text-xl sm:text-[32px] font-bold text-foreground leading-tight">
+          <h3 className="text-xl sm:text-[32px] font-bold text-primary leading-tight">
             {subscription.plan_name}
           </h3>
 

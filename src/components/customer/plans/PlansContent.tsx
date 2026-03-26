@@ -305,7 +305,7 @@ export function PlansContent({
 
         {/* Popular Plans heading */}
         <div className="mb-5">
-          <h2 className="text-2xl font-bold text-foreground sm:text-3xl">Popular Plans</h2>
+          <h2 className="text-2xl font-bold text-primary sm:text-3xl">Popular Plans</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Pause anytime | Tailored for you | 5000+ meal delivered weekly
           </p>

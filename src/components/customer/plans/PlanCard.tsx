@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { FaCheck, FaStar, FaCalendarAlt, FaArrowRight, FaClock, FaFire } from "react-icons/fa";
 
 import type { PlanBrowseItem } from "@/api/types/customer.types";
@@ -80,15 +81,16 @@ export function PlanCard({
 
         {/* Image */}
         <div className="relative h-32 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-          <img
+          <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
+          <Image
             src={imageSrc}
             alt={plan.name}
+            fill
             className={cn(
-              "h-full w-full object-cover transition-transform duration-500",
+              "object-cover transition-transform duration-500",
               isFallback && "object-contain p-4"
             )}
-            loading="lazy"
+            sizes="(max-width: 768px) 288px, 288px"
             onError={() => setImageLoadFailed(true)}
           />
 
@@ -124,7 +126,7 @@ export function PlanCard({
               </span>
               <span className="text-[10px] text-muted-foreground">{mealsPerDay} meals/day</span>
             </div>
-            <h3 className="text-base font-bold text-foreground">{plan.name}</h3>
+            <h3 className="text-base font-bold text-primary">{plan.name}</h3>
           </div>
 
           {/* Meals - horizontal scroll */}
@@ -176,21 +178,22 @@ export function PlanCard({
       )}
 
       {/* Food image — natural display, centered, no clip */}
-      <div className="flex justify-center px-6 pt-10 pb-4">
-        <img
+      <div className="flex justify-center px-6 pt-10 pb-4 relative h-44 w-44 mx-auto">
+        <Image
           src={imageSrc}
           alt={plan.name}
-          className="h-44 w-44 object-contain drop-shadow-md"
-          loading="lazy"
+          fill
+          className="object-contain drop-shadow-md"
+          sizes="(max-width: 768px) 176px, 176px"
           onError={() => setImageLoadFailed(true)}
         />
       </div>
 
       {/* Content */}
       <div className="flex flex-1 flex-col px-5 pb-5">
-        <h3 className="text-xl font-black text-foreground">{plan.name}</h3>
+        <h3 className="text-xl font-black text-primary">{plan.name}</h3>
         {plan.description && (
-          <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{plan.description}</p>
+          <p className="mt-1 line-clamp-2 text-sm font-normal text-muted-foreground">{plan.description}</p>
         )}
 
         <hr className="my-4 border-border" />
@@ -209,12 +212,12 @@ export function PlanCard({
 
         {/* Price */}
         <div className="mt-4">
-          <span className="text-sm text-foreground">From</span>
+          <span className="text-sm text-primary">From</span>
           <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-black text-foreground">
+            <span className="text-4xl font-semibold text-primary">
               {currencyFormatter.format(plan.price)}
             </span>
-            <span className="text-sm font-medium text-foreground">/{periodLabel}</span>
+            <span className="text-sm font-medium text-primary">/{periodLabel}</span>
           </div>
         </div>
 

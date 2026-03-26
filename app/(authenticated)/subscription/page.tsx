@@ -253,7 +253,7 @@ export default function SubscriptionPage() {
             <div className="p-4 sm:p-5 rounded-full bg-white shadow-sm mb-6 text-gray-400">
               <FaStar className="h-8 w-8 sm:h-10 sm:w-10" />
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold mb-2 text-center">No Active Subscriptions</h3>
+            <h3 className="text-xl sm:text-2xl font-bold mb-2 text-center text-primary">No Active Subscriptions</h3>
             <p className="text-muted-foreground mb-8 text-center text-sm sm:text-base max-w-md px-4">
               Discover delicious, chef-curated meals delivered right to your
               doorstep. Start your journey today!
@@ -269,7 +269,7 @@ export default function SubscriptionPage() {
           </div>
         ) : (
           <div className="pb-8 sm:pb-12">
-            <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4">Active Subscriptions</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-primary mb-4">Active Subscriptions</h2>
             <SubscriptionList
               subscriptions={subscriptions}
               onPause={handlePause}
