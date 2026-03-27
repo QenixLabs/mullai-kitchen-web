@@ -37,7 +37,7 @@ export function CorporatePageHeader({
           <Icon className="h-7 w-7" />
         </motion.div>
         <div>
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-foreground mb-1">
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-[#44151C] mb-1">
             {title}
           </h1>
           {subtitle && (
