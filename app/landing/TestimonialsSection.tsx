@@ -1,109 +1,15 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import Image from "next/image";
-import {
-  motion,
-  useInView,
-  AnimatePresence,
-  useMotionValue,
-  useTransform,
-  animate,
-} from "motion/react";
-import {
-  Star,
-  Quote,
-  ChevronLeft,
-  ChevronRight,
-  BadgeCheck,
-  Sparkles,
-  Users,
-  ChefHat,
-  Heart,
-} from "lucide-react";
-import {
-  fadeInUp,
-  staggerContainer,
-  scaleIn,
-  floatAnimation,
-} from "./animations";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-
-const testimonials = [
-  {
-    id: 1,
-    name: "Priya Sharma",
-    role: "Working Professional",
-    location: "Anna Nagar",
-    image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop",
-    rating: 5,
-    content:
-      "Mullai has been a lifesaver! After long work days, I don't have to worry about cooking. The food tastes just like home - fresh, flavorful, and perfectly spiced.",
-    ordered: "Daily Meals - Monthly Plan",
-    verified: true,
-  },
-  {
-    id: 2,
-    name: "Rajesh Kumar",
-    role: "Business Owner",
-    location: "T. Nagar",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
-    rating: 5,
-    content:
-      "The quality and consistency are amazing. I've been subscribing for 6 months now and have never been disappointed. The biryani is outstanding and the thali options are perfect for family dinners.",
-    ordered: "Executive Plus - Family Plan",
-    verified: true,
-  },
-  {
-    id: 3,
-    name: "Anita Patel",
-    role: "Homemaker",
-    location: "Adyar",
-    image:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop",
-    rating: 5,
-    content:
-      "Even though I cook, sometimes I need a break. Mullai's meals are so authentic and delicious. My family loves the variety and the portions are generous. Highly recommend!",
-    ordered: "Basic Tiffin - Weekly Plan",
-    verified: true,
-  },
-  {
-    id: 4,
-    name: "Venkatesh Iyer",
-    role: "IT Professional",
-    location: "Velachery",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop",
-    rating: 5,
-    content:
-      "As someone who stays alone, this service has made my life so much easier. The app is intuitive, delivery is always on time, and the food quality never drops. Worth every rupee!",
-    ordered: "Daily Meals - Monthly Plan",
-    verified: true,
-  },
-];
-
-// Counter animation hook
-function useCounter(target: number, duration: number = 2) {
-  const [displayValue, setDisplayValue] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (isInView) {
-      const controls = animate(0, target, {
-        duration,
-        ease: "easeOut",
-        onUpdate: (latest) => setDisplayValue(Math.round(latest)),
-      });
-      return controls.stop;
-    }
-  }, [isInView, target, duration]);
-
-  return { ref, displayValue };
-}
+import { useRef, useState } from "react";
+import { motion, useInView } from "motion/react";
+import { Heart, Users, ChefHat, Star } from "lucide-react";
+import { fadeInUp, staggerContainer, floatAnimation } from "./animations";
+import { useCounter } from "@/hooks/use-counter";
+import { testimonials } from "./testimonials/data";
+import { TestimonialFilter } from "./testimonials/TestimonialFilter";
+import { TestimonialGrid } from "./testimonials/TestimonialGrid";
+import { VideoPlayerDialog } from "./testimonials/VideoPlayerDialog";
+import type { TestimonialFilter as FilterValue, VideoTestimonial } from "./testimonials/types";
 
 // Animated Stat Component
 function AnimatedStat({
@@ -144,45 +50,13 @@ function AnimatedStat({
 export function TestimonialsSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
+  const [activeFilter, setActiveFilter] = useState<FilterValue>("all");
+  const [selectedVideo, setSelectedVideo] = useState<VideoTestimonial | null>(null);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setDirection(1);
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-    }, 6000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  const handlePrev = () => {
-    setDirection(-1);
-    setCurrentIndex(
-      (prev) => (prev - 1 + testimonials.length) % testimonials.length,
-    );
-  };
-
-  const handleNext = () => {
-    setDirection(1);
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-  };
-
-  const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
-    }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      zIndex: 0,
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0,
-    }),
+  const counts = {
+    all: testimonials.length,
+    video: testimonials.filter((t) => t.type === "video").length,
+    text: testimonials.filter((t) => t.type === "text").length,
   };
 
   return (
@@ -211,209 +85,124 @@ export function TestimonialsSection() {
 
         {/* Decorative Quote Marks */}
         <div className="absolute top-20 left-10 text-[#D4A574]/5 text-[200px] font-serif leading-none select-none">
-          "
+          &ldquo;
         </div>
         <div className="absolute bottom-20 right-10 text-[#D4A574]/5 text-[200px] font-serif leading-none select-none rotate-180">
-          "
+          &ldquo;
         </div>
       </div>
 
-      <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
-        {/* Section Header */}
-        <motion.div
-          initial="initial"
-          animate={isInView ? "animate" : "initial"}
-          variants={staggerContainer}
-          className="text-center mb-16"
-        >
+      <div className="relative">
+        {/* Header + Filter + Stats: centered, constrained */}
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          {/* Section Header */}
           <motion.div
-            variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary to-[#5a0f1a] border border-[#D4A574]/20 mb-6"
+            initial="initial"
+            animate={isInView ? "animate" : "initial"}
+            variants={staggerContainer}
+            className="text-center mb-12"
           >
-            <Heart className="h-4 w-4 text-[#D4A574]" />
-            <span className="text-sm font-semibold text-white tracking-wide">
-              Customer Love
-            </span>
+            <motion.div
+              variants={fadeInUp}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary to-[#5a0f1a] border border-[#D4A574]/20 mb-6"
+            >
+              <Heart className="h-4 w-4 text-[#D4A574]" />
+              <span className="text-sm font-semibold text-white tracking-wide">
+                Customer Love
+              </span>
+            </motion.div>
+
+            <motion.h2
+              variants={fadeInUp}
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight px-2 sm:px-0"
+            >
+              What Our{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#e8c4a0]">
+                Customers Say
+              </span>
+            </motion.h2>
+
+            <motion.p variants={fadeInUp} className="text-lg text-white/60">
+              Join 2,000+ happy customers enjoying fresh, home-style meals every
+              day.
+            </motion.p>
           </motion.div>
 
-          <motion.h2
+          {/* Filter Bar */}
+          <motion.div
+            initial="initial"
+            animate={isInView ? "animate" : "initial"}
             variants={fadeInUp}
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight px-2 sm:px-0"
+            className="flex justify-center mb-10"
           >
-            What Our{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#e8c4a0]">
-              Customers Say
-            </span>
-          </motion.h2>
+            <TestimonialFilter
+              value={activeFilter}
+              onValueChange={setActiveFilter}
+              counts={counts}
+            />
+          </motion.div>
+        </div>
 
-          <motion.p variants={fadeInUp} className="text-lg text-white/60">
-            Join 2,000+ happy customers enjoying fresh, home-style meals every
-            day.
-          </motion.p>
-        </motion.div>
+        {/* Mosaic Scrolling Rows - full bleed with edge fades */}
+        <div className="relative">
+          {/* Left fade */}
+          <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-r from-[#0d0205] to-transparent z-10 pointer-events-none" />
+          {/* Right fade */}
+          <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-l from-[#0d0205] to-transparent z-10 pointer-events-none" />
 
-        {/* Premium Testimonials Carousel */}
-        <motion.div
-          initial="initial"
-          animate={isInView ? "animate" : "initial"}
-          variants={scaleIn}
-          className="relative max-w-[1000px] mx-auto px-2 sm:px-0"
-        >
-          {/* Glow Effect */}
-          <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-[#D4A574]/10 to-primary/10 rounded-[1.5rem] sm:rounded-[2rem] blur-2xl" />
-
-          {/* Main Card */}
-          <div className="relative min-h-[480px] sm:min-h-[400px] lg:h-[420px] overflow-hidden">
-            <AnimatePresence initial={false} custom={direction}>
-              <motion.div
-                key={currentIndex}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: "spring", stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 },
-                }}
-                className="absolute inset-0"
-              >
-                <div className="relative h-full bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-white/10 shadow-2xl overflow-hidden">
-                  {/* Gradient Top Border */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#D4A574] to-primary" />
-
-                  <div className="flex flex-col h-full">
-                    {/* Premium Quote Icon */}
-                    <div className="mb-4 sm:mb-6">
-                      <Quote className="h-8 w-8 sm:h-12 sm:w-12 text-[#D4A574]" />
-                    </div>
-
-                    {/* Content */}
-                    <p className="text-base sm:text-xl text-white/90 leading-relaxed flex-grow font-medium">
-                      "{testimonials[currentIndex].content}"
-                    </p>
-
-                    {/* Footer */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-white/10 gap-4">
-                      <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden ring-2 ring-[#D4A574]/30 flex-shrink-0">
-                          <Image
-                            src={testimonials[currentIndex].image}
-                            alt={testimonials[currentIndex].name}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-bold text-white text-base sm:text-lg truncate">
-                              {testimonials[currentIndex].name}
-                            </h4>
-                            {testimonials[currentIndex].verified && (
-                              <BadgeCheck className="h-4 w-4 sm:h-5 sm:w-5 text-[#D4A574] flex-shrink-0" />
-                            )}
-                          </div>
-                          <p className="text-xs sm:text-sm text-white/50">
-                            {testimonials[currentIndex].role} •{" "}
-                            {testimonials[currentIndex].location}
-                          </p>
-                          <p className="text-xs text-[#D4A574] mt-1 font-medium">
-                            {testimonials[currentIndex].ordered}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Premium Rating */}
-                      <div className="flex items-center gap-1 bg-gradient-to-r from-primary to-[#5a0f1a] px-3 sm:px-4 py-2 rounded-full self-start sm:self-auto">
-                        {[...Array(testimonials[currentIndex].rating)].map(
-                          (_, i) => (
-                            <Star
-                              key={i}
-                              className="h-4 w-4 sm:h-5 sm:w-5 fill-[#D4A574] text-[#D4A574]"
-                            />
-                          ),
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+          {/* Featured card - centered */}
+          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+            <TestimonialGrid
+              testimonials={testimonials}
+              activeFilter={activeFilter}
+              onPlayVideo={setSelectedVideo}
+            />
           </div>
+        </div>
 
-          {/* Premium Navigation */}
-          <div className="flex items-center justify-center gap-6 mt-8">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handlePrev}
-              className="rounded-full h-12 w-12 bg-white/5 border-white/20 hover:bg-primary hover:text-white hover:border-primary text-white transition-all"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-
-            {/* Premium Dots */}
-            <div className="flex items-center gap-3">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setDirection(index > currentIndex ? 1 : -1);
-                    setCurrentIndex(index);
-                  }}
-                  className={cn(
-                    "h-2.5 rounded-full transition-all duration-300",
-                    index === currentIndex
-                      ? "bg-gradient-to-r from-[#D4A574] to-primary w-10"
-                      : "bg-white/20 hover:bg-white/40 w-2.5",
-                  )}
-                />
-              ))}
-            </div>
-
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleNext}
-              className="rounded-full h-12 w-12 bg-white/5 border-white/20 hover:bg-primary hover:text-white hover:border-primary text-white transition-all"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
-        </motion.div>
+        {/* Video Player Dialog */}
+        <VideoPlayerDialog
+          testimonial={selectedVideo}
+          open={!!selectedVideo}
+          onOpenChange={(open) => {
+            if (!open) setSelectedVideo(null);
+          }}
+        />
 
         {/* Premium Trust Stats */}
-        <motion.div
-          initial="initial"
-          animate={isInView ? "animate" : "initial"}
-          variants={fadeInUp}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 pt-12 border-t border-white/10"
-        >
-          <AnimatedStat
-            value={4.9}
-            suffix="★"
-            label="Average Rating"
-            icon={Star}
-          />
-          <AnimatedStat
-            value={2000}
-            suffix="+"
-            label="Happy Customers"
-            icon={Users}
-          />
-          <AnimatedStat
-            value={50000}
-            suffix="+"
-            label="Meals Delivered"
-            icon={ChefHat}
-          />
-          <AnimatedStat
-            value={98}
-            suffix="%"
-            label="Would Recommend"
-            icon={Heart}
-          />
-        </motion.div>
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <motion.div
+            initial="initial"
+            animate={isInView ? "animate" : "initial"}
+            variants={fadeInUp}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 pt-12 border-t border-white/10"
+          >
+            <AnimatedStat
+              value={4.9}
+              suffix="★"
+              label="Average Rating"
+              icon={Star}
+            />
+            <AnimatedStat
+              value={2000}
+              suffix="+"
+              label="Happy Customers"
+              icon={Users}
+            />
+            <AnimatedStat
+              value={50000}
+              suffix="+"
+              label="Meals Delivered"
+              icon={ChefHat}
+            />
+            <AnimatedStat
+              value={98}
+              suffix="%"
+              label="Would Recommend"
+              icon={Heart}
+            />
+          </motion.div>
+        </div>
       </div>
     </section>
   );
