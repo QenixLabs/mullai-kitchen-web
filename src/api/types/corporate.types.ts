@@ -175,3 +175,12 @@ export interface ICorporateInvoice {
   due_date?: string;
   created_at: string;
 }
+
+/**
+ * Create Corporate Order Response
+ * Response structure when creating a new corporate order
+ */
+export interface ICreateCorporateOrderResponse {
+  order: ICorporateOrder;
+  invoice: ICorporateInvoice;
+}

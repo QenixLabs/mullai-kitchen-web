@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { corporateApi } from '@/api/corporate.api';
 import { corporateKeys } from '@/api/query-keys';
-import type { ICreateCorporateOrderRequest, IModifyCorporateOrderRequest } from '@/api/types/corporate.types';
+import type { ICreateCorporateOrderRequest, IModifyCorporateOrderRequest, ICreateCorporateOrderResponse } from '@/api/types/corporate.types';
 
 export function useCreateCorporateOrder() {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutation<ICreateCorporateOrderResponse, Error, ICreateCorporateOrderRequest>({
     mutationFn: (payload: ICreateCorporateOrderRequest) => corporateApi.createOrder(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: corporateKeys.orders() });

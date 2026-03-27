@@ -6,24 +6,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import {
-  MapPin,
-  Users,
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
   Loader2,
+  Save,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Stepper } from "@/components/ui/stepper";
-import { CorporatePageHeader } from "@/components/corporate/CorporatePageHeader";
-import { DeliverySection } from "@/components/corporate/create-order/DeliverySection";
-import { ScheduleSection } from "@/components/corporate/create-order/ScheduleSection";
-import { QuantitySection } from "@/components/corporate/create-order/QuantitySection";
-import { OrderSummary } from "@/components/corporate/create-order/OrderSummary";
+import { Step1Delivery } from "@/components/corporate/create-order/Step1Delivery";
+import { Step2Schedule } from "@/components/corporate/create-order/Step2Schedule";
+import { Step3Preferences } from "@/components/corporate/create-order/Step3Preferences";
+import { OrderSummarySidebar } from "@/components/corporate/create-order/OrderSummarySidebar";
 import { useCreateCorporateOrder } from "@/api/hooks/useCorporate";
 import { useServiceability } from "@/api/hooks/useCustomer";
+import { useOrderDraftStore } from "@/stores/orderDraftStore";
 import {
   createCorporateOrderSchema,
   type CreateCorporateOrderFormData,
@@ -37,11 +34,12 @@ import {
 // Chennai default coordinates
 const DEFAULT_COORDS = { lat: 13.0827, lng: 80.2707 };
 
-type Step = 1 | 2;
+type Step = 1 | 2 | 3;
 
 const STEPS = [
-  { id: "delivery-schedule", title: "Delivery & Schedule" },
-  { id: "quantity-preferences", title: "Headcount & Preferences" },
+  { id: "delivery", title: "Delivery Details" },
+  { id: "schedule", title: "Schedule" },
+  { id: "preferences", title: "Meal Preferences" },
 ];
 
 export default function CreateOrderPage() {
@@ -49,6 +47,8 @@ export default function CreateOrderPage() {
   const createOrderMutation = useCreateCorporateOrder();
   const { mutateAsync: checkServiceability, isPending: isCheckingServiceability } =
     useServiceability();
+  const draftStore = useOrderDraftStore();
+
   const [currentStep, setCurrentStep] = useState<Step>(1);
 
   const [serviceabilityInfo, setServiceabilityInfo] = useState<{
@@ -62,6 +62,13 @@ export default function CreateOrderPage() {
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
   const [mapCenter, setMapCenter] = useState(DEFAULT_COORDS);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
+
+  // Restore draft on mount
+  useEffect(() => {
+    if (draftStore.draft.step && draftStore.draft.step >= 1 && draftStore.draft.step <= 3) {
+      setCurrentStep(draftStore.draft.step as Step);
+    }
+  }, [draftStore.draft.step]);
 
   // Reverse geocoding to auto-fill address fields from coordinates
   const reverseGeocode = async (lat: number, lng: number) => {
@@ -149,21 +156,21 @@ export default function CreateOrderPage() {
     resolver: zodResolver(createCorporateOrderSchema) as never,
     defaultValues: {
       delivery_address: {
-        address_line: "",
-        area: "",
-        landmark: "",
-        pincode: "",
-        city: "",
-        state: "",
+        address_line: draftStore.draft.deliveryAddress.addressLine,
+        area: draftStore.draft.deliveryAddress.area,
+        landmark: draftStore.draft.deliveryAddress.landmark,
+        pincode: draftStore.draft.deliveryAddress.pincode,
+        city: draftStore.draft.deliveryAddress.city,
+        state: draftStore.draft.deliveryAddress.state,
       },
-      selected_days: [],
-      meal_types: [],
-      start_date: "",
-      duration_weeks: 4,
-      headcount: 1,
-      veg_count: 0,
-      nonveg_count: 0,
-      notes: "",
+      selected_days: draftStore.draft.selectedDays,
+      meal_types: draftStore.draft.mealTypes,
+      start_date: draftStore.draft.startDate,
+      duration_weeks: draftStore.draft.durationWeeks,
+      headcount: draftStore.draft.headcount || 1,
+      veg_count: draftStore.draft.vegCount,
+      nonveg_count: draftStore.draft.nonvegCount,
+      notes: draftStore.draft.notes,
     },
     mode: "onChange",
   });
@@ -187,7 +194,38 @@ export default function CreateOrderPage() {
   const vegCount = watch("veg_count");
   const nonvegCount = watch("nonveg_count");
   const deliveryAddress = watch("delivery_address");
+  const notes = watch("notes");
   const pincodeValue = watch("delivery_address.pincode");
+
+  // Auto-save to draft store
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      if (value.delivery_address) {
+        draftStore.updateDeliveryAddress({
+          addressLine: value.delivery_address.address_line || "",
+          area: value.delivery_address.area || "",
+          city: value.delivery_address.city || "",
+          state: value.delivery_address.state || "",
+          pincode: value.delivery_address.pincode || "",
+          landmark: value.delivery_address.landmark || "",
+        });
+      }
+      draftStore.updateSchedule({
+        selectedDays: (value.selected_days || []).filter((d): d is string => !!d),
+        mealTypes: (value.meal_types || []).filter((m): m is string => !!m),
+        startDate: value.start_date || "",
+        durationWeeks: value.duration_weeks || 4,
+      });
+      draftStore.updatePreferences({
+        headcount: value.headcount || 0,
+        vegCount: value.veg_count || 0,
+        nonvegCount: value.nonveg_count || 0,
+        notes: value.notes || "",
+      });
+      draftStore.setStep(currentStep);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, draftStore, currentStep]);
 
   // Clear stale refine error when veg + nonveg matches headcount
   useEffect(() => {
@@ -278,8 +316,8 @@ export default function CreateOrderPage() {
   const pricing = useMemo(
     () =>
       computePricing({
-        vegCount,
-        nonvegCount,
+        vegCount: vegCount || 0,
+        nonvegCount: nonvegCount || 0,
         mealTypesCount: mealTypes.length,
         totalDeliveryDays,
       }),
@@ -331,7 +369,9 @@ export default function CreateOrderPage() {
           });
           return false;
         }
-
+        return true;
+      }
+      case 2: {
         const scheduleValid = await trigger([
           "selected_days",
           "meal_types",
@@ -340,7 +380,7 @@ export default function CreateOrderPage() {
         ]);
         return scheduleValid;
       }
-      case 2: {
+      case 3: {
         const result = await trigger(["headcount", "veg_count", "nonveg_count"]);
         return result;
       }
@@ -350,12 +390,16 @@ export default function CreateOrderPage() {
   const handleNext = async () => {
     const isValid = await validateStep(currentStep);
     if (isValid) {
-      setCurrentStep((prev) => Math.min(prev + 1, 2) as Step);
+      setCurrentStep((prev) => Math.min(prev + 1, 3) as Step);
     }
   };
 
   const handleBack = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1) as Step);
+  };
+
+  const handleSaveDraft = () => {
+    toast.success("Draft saved", { description: "Your order progress has been saved." });
   };
 
   const onSubmit = (data: CreateCorporateOrderFormData) => {
@@ -370,10 +414,19 @@ export default function CreateOrderPage() {
     };
     createOrderMutation.mutate(payload, {
       onSuccess: (response) => {
+        draftStore.clearDraft();
+        // Response structure: { order: {...}, invoice: {...} }
+        const order = response.order;
+        const orderId = order?._id || order?.order_id;
         toast.success("Order created successfully!", {
-          description: `Order ${response.order_id} has been created.`,
+          description: `Order ${order?.order_id} has been created.`,
         });
-        router.push(`/corporate/orders/${response._id}`);
+        if (orderId) {
+          router.push(`/corporate/orders/${orderId}`);
+        } else {
+          toast.error("Order created but unable to redirect. Please check your orders list.");
+          router.push("/corporate/orders");
+        }
       },
       onError: (error: Error) => {
         toast.error("Failed to create order", {
@@ -386,22 +439,39 @@ export default function CreateOrderPage() {
   const isSubmitting = createOrderMutation.isPending;
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <CorporatePageHeader
-        icon={MapPin}
-        title="Create New Order"
-        subtitle="Set up a corporate bulk order with delivery schedule and meal preferences."
-      />
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="border-b border-border">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#44151C]">CREATE NEW ORDER</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Set up your corporate delivery schedule and preferences.
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              onClick={() => router.push("/corporate/orders")}
+              className="gap-2 self-start"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+          </div>
+        </div>
+      </div>
 
-      <Stepper items={STEPS} currentStep={currentStep - 1} className="mb-10" />
+      {/* Stepper */}
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <Stepper items={STEPS} currentStep={currentStep - 1} className="mb-6 sm:mb-10" />
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8">
-          {/* Left: Form sections */}
-          <div className="space-y-6">
-            {currentStep === 1 && (
-              <div className="space-y-6">
-                <DeliverySection
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] lg:grid-cols-[1fr_300px] gap-6 lg:gap-8">
+            {/* Left: Form Content */}
+            <div className="space-y-6 order-2 xl:order-1">
+              {currentStep === 1 && (
+                <Step1Delivery
                   register={register}
                   errors={errors}
                   setValue={setValue}
@@ -410,126 +480,123 @@ export default function CreateOrderPage() {
                   isGettingLocation={isGettingLocation}
                   onMapClick={handleMapClick}
                   onGetCurrentLocation={handleGetCurrentLocation}
-                  serviceabilityInfo={serviceabilityInfo}
-                  isCheckingServiceability={isCheckingServiceability}
                 />
-                <ScheduleSection
+              )}
+              {currentStep === 2 && (
+                <Step2Schedule
                   selectedDays={selectedDays}
                   mealTypes={mealTypes}
                   startDate={startDate}
                   durationWeeks={durationWeeks}
-                  totalDeliveryDays={totalDeliveryDays}
-                  endDate={endDate}
                   errors={errors}
                   control={control}
                   onDayToggle={handleDayToggle}
                   onMealToggle={handleMealToggle}
                 />
-              </div>
-            )}
-
-            {currentStep === 2 && (
-              <div className="space-y-6">
-                <QuantitySection
+              )}
+              {currentStep === 3 && (
+                <Step3Preferences
                   headcount={headcount}
                   vegCount={vegCount}
                   nonvegCount={nonvegCount}
+                  notes={notes || ""}
                   errors={errors}
                   register={register}
                   setValue={setValue}
                   trigger={trigger}
                 />
-                {/* Notes (only shown in step 2) */}
-                <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg overflow-hidden">
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
-                  <div className="p-6 pt-7 space-y-2">
-                    <Label htmlFor="notes">Notes (Optional)</Label>
-                    <Textarea
-                      id="notes"
-                      placeholder="Any special instructions..."
-                      rows={3}
-                      {...register("notes")}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
+
+            {/* Right: Order Summary Sidebar */}
+            <div className="order-1 xl:order-2">
+              <OrderSummarySidebar
+                deliveryAddress={deliveryAddress.address_line ? {
+                  addressLine: deliveryAddress.address_line,
+                  area: deliveryAddress.area,
+                  city: deliveryAddress.city,
+                  state: deliveryAddress.state,
+                  pincode: deliveryAddress.pincode,
+                } : null}
+                schedule={selectedDays.length > 0 ? {
+                  selectedDays,
+                  mealTypes,
+                  startDate,
+                  durationWeeks,
+                } : null}
+                headcount={headcount > 0 ? {
+                  total: headcount,
+                  veg: vegCount || 0,
+                  nonVeg: nonvegCount || 0,
+                } : null}
+                pricing={pricing}
+              />
+            </div>
           </div>
 
-          {/* Right: Order Summary (sticky) */}
-          <OrderSummary
-            selectedDays={selectedDays}
-            mealTypes={mealTypes}
-            startDate={startDate}
-            endDate={endDate}
-            totalDeliveryDays={totalDeliveryDays}
-            durationWeeks={durationWeeks}
-            headcount={headcount}
-            vegCount={vegCount}
-            nonvegCount={nonvegCount}
-            addressLine={deliveryAddress.address_line}
-            area={deliveryAddress.area}
-            outletName={serviceabilityInfo?.outletName}
-            pricing={pricing}
-          />
-        </div>
-
-        {/* Navigation Buttons */}
-        <div className="flex items-center justify-between mt-8">
-          {currentStep > 1 ? (
+          {/* Navigation Buttons */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mt-8 sm:mt-10 pt-6 border-t border-border gap-4">
             <Button
               type="button"
               variant="outline"
-              onClick={handleBack}
-              className="gap-2 rounded-xl"
+              onClick={() => {
+                if (currentStep === 1) {
+                  router.push("/corporate/orders");
+                } else {
+                  handleBack();
+                }
+              }}
               disabled={isSubmitting}
+              className="gap-2 rounded-full px-6 order-2 sm:order-1"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back
+              {currentStep === 1 ? "Cancel" : "Back"}
             </Button>
-          ) : (
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => router.push("/corporate")}
-              className="gap-2 rounded-xl"
-              disabled={isSubmitting}
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Cancel
-            </Button>
-          )}
 
-          {currentStep < 2 ? (
-            <Button
-              type="button"
-              onClick={handleNext}
-              className="gap-2 bg-primary hover:bg-primary/80 text-primary-foreground font-semibold rounded-xl shadow-lg shadow-primary/20"
-            >
-              Next
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              className="gap-2 bg-primary hover:bg-primary/80 text-primary-foreground font-semibold rounded-xl shadow-lg shadow-primary/20"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Creating Order...
-                </>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 order-1 sm:order-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleSaveDraft}
+                disabled={isSubmitting}
+                className="gap-2 rounded-full px-6"
+              >
+                <Save className="h-4 w-4" />
+                Save Draft
+              </Button>
+
+              {currentStep < 3 ? (
+                <Button
+                  type="button"
+                  onClick={handleNext}
+                  className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6"
+                >
+                  Next: {STEPS[currentStep].title}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
               ) : (
-                <>
-                  <CheckCircle2 className="h-4 w-4" />
-                  Submit Order
-                </>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      Submit Order
+                      <CheckCircle2 className="h-4 w-4" />
+                    </>
+                  )}
+                </Button>
               )}
-            </Button>
-          )}
-        </div>
-      </form>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

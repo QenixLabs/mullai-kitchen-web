@@ -23,9 +23,11 @@ import {
 import { useCorporateOrders } from "@/api/hooks/useCorporate";
 import { CorporatePageHeader } from "@/components/corporate/CorporatePageHeader";
 import { OrderCard, OrderCardSkeleton } from "@/components/corporate/OrderCard";
-import { OrderFilters } from "@/components/corporate/OrderFilters";
+import { OrdersFilterTabs } from "@/components/corporate/OrdersFilterTabs";
+import { NewOrderCycleCard } from "@/components/corporate/NewOrderCycleCard";
 
-const ORDERS_PER_PAGE = 6;
+const ORDERS_PER_PAGE = 3;
+const ORDERS_FIRST_PAGE = 2; // First page has create card + 2 orders
 
 function OrdersPageContent() {
   const router = useRouter();
@@ -33,91 +35,50 @@ function OrdersPageContent() {
 
   // Read initial status from URL query params (e.g., ?status=active)
   const initialStatus = searchParams.get("status") || "all";
-  const initialPayment = searchParams.get("payment");
 
   // Fetch all orders
   const { data: orders, isLoading, error, refetch } = useCorporateOrders();
 
-  // Filter and sort state
-  const [searchQuery, setSearchQuery] = useState("");
+  // Filter state
   const [activeStatus, setActiveStatus] = useState(initialStatus);
-  const [sortBy, setSortBy] = useState("newest");
   const [currentPage, setCurrentPage] = useState(1);
-
-  // Derive initial activeStatus from payment param if status is "all"
-  // (e.g., ?payment=pending,overdue could pre-filter to show orders needing attention)
-  const effectiveActiveStatus = initialPayment && initialStatus === "all"
-    ? activeStatus
-    : activeStatus;
 
   // Client-side filtering
   const filteredOrders = useMemo(() => {
     let result = orders ?? [];
 
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter((order) =>
-        order.order_id.toLowerCase().includes(query)
-      );
-    }
-
     // Filter by status
-    if (effectiveActiveStatus !== "all") {
-      result = result.filter((order) => order.status === effectiveActiveStatus);
+    if (activeStatus !== "all") {
+      result = result.filter((order) => order.status === activeStatus);
     }
 
     return result;
-  }, [orders, searchQuery, effectiveActiveStatus]);
+  }, [orders, activeStatus]);
 
-  // Client-side sorting
-  const sortedOrders = useMemo(() => {
-    const sorted = [...filteredOrders];
-
-    switch (sortBy) {
-      case "newest":
-        sorted.sort(
-          (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-        break;
-      case "oldest":
-        sorted.sort(
-          (a, b) =>
-            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        );
-        break;
-      case "amount_high":
-        sorted.sort((a, b) => b.final_amount - a.final_amount);
-        break;
-      case "amount_low":
-        sorted.sort((a, b) => a.final_amount - b.final_amount);
-        break;
-    }
-
-    return sorted;
-  }, [filteredOrders, sortBy]);
-
-  // Pagination
-  const totalPages = Math.max(1, Math.ceil(sortedOrders.length / ORDERS_PER_PAGE));
+  // Pagination - first page shows 2 orders (plus create card = 3 total), other pages show 3 orders
+  const totalOrderPages = Math.max(1, Math.ceil((filteredOrders.length - ORDERS_FIRST_PAGE) / ORDERS_PER_PAGE) + 1);
   const paginatedOrders = useMemo(() => {
-    const start = (currentPage - 1) * ORDERS_PER_PAGE;
-    return sortedOrders.slice(start, start + ORDERS_PER_PAGE);
-  }, [sortedOrders, currentPage]);
+    if (currentPage === 1) {
+      // First page: show first 2 orders
+      return filteredOrders.slice(0, ORDERS_FIRST_PAGE);
+    }
+    // Other pages: show 3 orders, offset by the 2 shown on first page
+    const start = ORDERS_FIRST_PAGE + (currentPage - 2) * ORDERS_PER_PAGE;
+    return filteredOrders.slice(start, start + ORDERS_PER_PAGE);
+  }, [filteredOrders, currentPage]);
 
-  // Reset to page 1 when filters change
-  const handleSearchChange = useCallback((query: string) => {
-    setSearchQuery(query);
-    setCurrentPage(1);
-  }, []);
+  // Calculate counts for filter tabs
+  const counts = useMemo(() => {
+    const all = orders?.length ?? 0;
+    const active = orders?.filter((o) => o.status === "active").length ?? 0;
+    const pendingPayment = orders?.filter((o) => o.status === "pending_payment").length ?? 0;
+    const processing = orders?.filter((o) => o.status === "draft").length ?? 0;
+    const completed = orders?.filter((o) => o.status === "completed").length ?? 0;
+    return { all, active, pendingPayment, processing, completed };
+  }, [orders]);
 
   const handleStatusChange = useCallback((status: string) => {
     setActiveStatus(status);
-    setCurrentPage(1);
-  }, []);
-
-  const handleSortChange = useCallback((sort: string) => {
-    setSortBy(sort);
     setCurrentPage(1);
   }, []);
 
@@ -175,8 +136,8 @@ function OrdersPageContent() {
   const getPageNumbers = (): (number | "ellipsis")[] => {
     const pages: (number | "ellipsis")[] = [];
 
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) {
+    if (totalOrderPages <= 7) {
+      for (let i = 1; i <= totalOrderPages; i++) {
         pages.push(i);
       }
       return pages;
@@ -191,17 +152,17 @@ function OrdersPageContent() {
 
     // Pages around current
     const start = Math.max(2, currentPage - 1);
-    const end = Math.min(totalPages - 1, currentPage + 1);
+    const end = Math.min(totalOrderPages - 1, currentPage + 1);
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
 
-    if (currentPage < totalPages - 2) {
+    if (currentPage < totalOrderPages - 2) {
       pages.push("ellipsis");
     }
 
     // Always show last page
-    pages.push(totalPages);
+    pages.push(totalOrderPages);
 
     return pages;
   };
@@ -210,37 +171,34 @@ function OrdersPageContent() {
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
       <CorporatePageHeader
         icon={ClipboardList}
-        title="Orders"
+        title="ORDERS MANAGEMENT"
         subtitle="Manage your corporate orders"
-        action={{
-          label: "Create New Order",
-          onClick: () => router.push("/corporate/create-order"),
-          icon: PlusCircle,
-        }}
       />
 
-      {/* Filters */}
-      <OrderFilters
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchChange}
-        activeStatus={activeStatus}
-        onStatusChange={handleStatusChange}
-        sortBy={sortBy}
-        onSortChange={handleSortChange}
-        orders={orders ?? []}
-      />
+      {/* Filter Tabs */}
+      <div className="mb-6">
+        <OrdersFilterTabs
+          activeTab={activeStatus}
+          onTabChange={handleStatusChange}
+          counts={counts}
+        />
+      </div>
 
       {/* Orders grid or empty state */}
-      {paginatedOrders.length > 0 ? (
+      {filteredOrders.length > 0 ? (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Create New Order Cycle Card - Always first, only on page 1 */}
+            {currentPage === 1 && <NewOrderCycleCard />}
+
+            {/* Order Cards */}
             {paginatedOrders.map((order) => (
               <OrderCard key={order._id} order={order} variant="full" />
             ))}
           </div>
 
           {/* Pagination */}
-          {totalPages > 1 && (
+          {totalOrderPages > 1 && (
             <div className="mt-10">
               <Pagination>
                 <PaginationContent>
@@ -283,10 +241,10 @@ function OrdersPageContent() {
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        setCurrentPage((p) => Math.min(totalPages, p + 1));
+                        setCurrentPage((p) => Math.min(totalOrderPages, p + 1));
                       }}
                       className={cn(
-                        currentPage === totalPages &&
+                        currentPage === totalOrderPages &&
                           "pointer-events-none opacity-50"
                       )}
                     />
@@ -304,20 +262,16 @@ function OrdersPageContent() {
           </div>
             <h3 className="text-2xl font-bold mb-2">No Orders Found</h3>
             <p className="text-muted-foreground mb-8 text-center">
-              {searchQuery
-                ? "No orders match your search."
-                : "Create your first bulk order to get started."}
+              Create your first bulk order to get started.
             </p>
-            {!searchQuery && (
-              <Button
-                onClick={() => router.push("/corporate/create-order")}
-                size="lg"
-                className="gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-              >
-                <PlusCircle className="h-5 w-5" />
-                Create New Order
-              </Button>
-            )}
+            <Button
+              onClick={() => router.push("/corporate/create-order")}
+              size="lg"
+              className="gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            >
+              <PlusCircle className="h-5 w-5" />
+              Create New Order
+            </Button>
           </div>
       )}
     </div>

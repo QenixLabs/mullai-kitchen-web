@@ -2,6 +2,7 @@ import { apiClient } from './client';
 import { CORPORATE_ROUTES } from './routes';
 import type {
   ICreateCorporateOrderRequest,
+  ICreateCorporateOrderResponse,
   IModifyCorporateOrderRequest,
   ICorporateOrder,
   ICorporateOrderModification,
@@ -10,7 +11,7 @@ import type {
 
 export const corporateApi = {
   createOrder: (payload: ICreateCorporateOrderRequest) =>
-    apiClient.post<ICorporateOrder>(CORPORATE_ROUTES.ORDERS, payload).then((r) => r.data),
+    apiClient.post<ICreateCorporateOrderResponse>(CORPORATE_ROUTES.ORDERS, payload).then((r) => r.data),
 
   getOrders: () =>
     apiClient.get<ICorporateOrder[]>(CORPORATE_ROUTES.ORDERS).then((r) => r.data),
