@@ -16,8 +16,6 @@ import {
   useGenerateFinalInvoice,
 } from "@/api/hooks/useCorporate";
 import { modifyCorporateOrderSchema, type ModifyCorporateOrderFormData } from "@/lib/validations/corporate.schema";
-import { OrderStatusBadge } from "@/components/corporate/OrderStatusBadge";
-import { PaymentStatusBadge } from "@/components/corporate/PaymentStatusBadge";
 import { OverviewTab } from "@/components/corporate/order-detail/OverviewTab";
 import { ScheduleTab } from "@/components/corporate/order-detail/ScheduleTab";
 import { InvoicesTab } from "@/components/corporate/order-detail/InvoicesTab";
@@ -30,13 +28,8 @@ import type { ICorporateOrderModification } from "@/api/types/corporate.types";
 
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
-import { 
-  ChevronLeft, 
-  Building2, 
-  History, 
-  CalendarDays, 
-  FileCheck,
-  LayoutDashboard
+import {
+  ChevronLeft
 } from "lucide-react";
 
 
@@ -56,10 +49,10 @@ function OrderDetailSkeleton() {
 }
 
 const TABS_CONFIG = [
-  { value: "overview", label: "Overview", icon: LayoutDashboard },
-  { value: "schedule", label: "Schedule", icon: CalendarDays },
-  { value: "invoices", label: "Invoices", icon: FileCheck },
-  { value: "modifications", label: "Modifications", icon: History },
+  { value: "overview", label: "Overview" },
+  { value: "schedule", label: "Schedule" },
+  { value: "invoices", label: "Invoices" },
+  { value: "modifications", label: "Modifications" },
 ];
 
 function OrderDetailPage() {
@@ -324,78 +317,66 @@ function OrderDetailPage() {
       </motion.div>
 
       {/* Order Header */}
-      <motion.div 
+      <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-10 pb-8 border-b border-border/60"
+        className="flex flex-col lg:flex-row lg:items-start justify-between gap-6 mb-10"
       >
-        <div className="flex items-start gap-6">
-          <div className="hidden sm:flex items-center justify-center p-5 rounded-4xl bg-linear-to-br from-primary to-primary/80 text-white shadow-xl shadow-primary/20">
-            <Building2 className="h-8 w-8" />
-          </div>
-          <div>
-            <div className="flex items-center gap-3 mb-2 flex-wrap">
-              <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground">
-                {order.company_name}
-              </h1>
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-muted/50 rounded-xl border border-border/50">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">ID:</span>
-                <span className="text-xs font-mono font-bold">{order.order_id}</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 text-muted-foreground font-semibold">
-              <span className="flex items-center gap-1.5">
-                {order.outlet_name}
-              </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-border" />
-              <span>Created {formatDate(order.created_at)}</span>
-            </div>
+        <div>
+          <h1 className="text-2xl font-extrabold text-primary mb-2">
+            {order.company_name}
+          </h1>
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <span>Order ID: {order.order_id}</span>
+            <span className="w-1 h-1 rounded-full bg-gray-300" />
+            <span>Created: {format(new Date(order.created_at), "MMM dd, yyyy")}</span>
           </div>
         </div>
-        
+
+        {/* Status Badges - Pill Style */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-3 p-2 bg-secondary/50 backdrop-blur-sm rounded-3xl border border-border/40">
-            <OrderStatusBadge status={order.status} className="h-10 px-5 text-sm" />
-            <PaymentStatusBadge status={order.payment_status} className="h-10 px-5 text-sm" />
-          </div>
-          {!isCancelled && !isCompleted && (
-            <Button
-              variant="destructive"
-              onClick={() => setCancelDialogOpen(true)}
-              className="h-10 px-5 rounded-full border-destructive/30 text-white font-bold text-sm hover:bg-destructive/5 hover:text-destructive hover:border-destructive/50 transition-all"
-            >
-              Cancel Order
-            </Button>
+          <span className={cn(
+            "px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide",
+            order.status === "active"
+              ? "bg-green-100 text-green-700"
+              : "bg-gray-100 text-gray-600"
+          )}>
+            ACTIVE
+          </span>
+          {order.payment_status === "pending" && (
+            <span className="px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide bg-amber-100 text-amber-700">
+              PENDING
+            </span>
           )}
         </div>
       </motion.div>
 
-      {/* Modern Custom Tab System */}
-      <div className="relative mb-10">
-        <div className="flex items-center gap-2 p-2 rounded-4xl bg-secondary/40 backdrop-blur-md border border-border/50 w-fit max-w-full overflow-x-auto no-scrollbar">
+      {/* Modern Tab System */}
+      <div className="relative mb-8 border-b border-gray-100">
+        <div className="flex items-center gap-8">
           {TABS_CONFIG.map((tab) => {
             if (tab.value === "schedule" && order.status !== "active") return null;
             const isActive = activeTab === tab.value;
-            
+
             return (
               <button
                 key={tab.value}
                 onClick={() => handleTabChange(tab.value)}
                 className={cn(
-                  "relative flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold rounded-[1.5rem] transition-all duration-300 whitespace-nowrap outline-none",
-                  isActive ? "text-white" : "text-muted-foreground hover:text-foreground active:scale-95"
+                  "relative py-4 text-sm font-medium transition-colors",
+                  isActive && "text-primary"
                 )}
+                style={isActive ? undefined : { color: '#797778' }}
               >
+                {tab.label}
                 {isActive && (
                   <motion.div
                     layoutId="detail-tab-indicator"
-                    className="absolute inset-0 bg-primary rounded-[1.5rem] shadow-lg shadow-primary/20"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
-                <tab.icon className={cn("relative z-10 h-4 w-4", isActive ? "text-white" : "text-primary/60")} />
-                <span className="relative z-10">{tab.label}</span>
               </button>
             );
           })}

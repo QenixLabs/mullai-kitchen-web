@@ -5,19 +5,19 @@ import type { CorporatePaymentStatus } from "@/api/types/corporate.types";
 
 const paymentStatusConfig: Record<
   CorporatePaymentStatus,
-  { label: string; className: string }
+  { label: string; style: React.CSSProperties }
 > = {
   pending: {
     label: "Pending",
-    className: "bg-amber-50 text-amber-700 border-amber-200",
+    style: { backgroundColor: "#FF962D", color: "#FFFFFF" },
   },
   paid: {
     label: "Paid",
-    className: "bg-emerald-50 text-emerald-800 border-emerald-200",
+    style: { backgroundColor: "#10B981", color: "#FFFFFF" },
   },
   overdue: {
     label: "Overdue",
-    className: "bg-rose-50 text-rose-800 border-rose-200",
+    style: { backgroundColor: "#EF4444", color: "#FFFFFF" },
   },
 };
 
@@ -33,11 +33,13 @@ export function PaymentStatusBadge({
   const config = paymentStatusConfig[status];
 
   return (
-    <span className={cn(
-      "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border",
-      config.className,
-      className
-    )}>
+    <span
+      className={cn(
+        "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider",
+        className
+      )}
+      style={config.style}
+    >
       {config.label}
     </span>
   );
