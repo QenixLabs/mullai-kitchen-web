@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import {
   Building2,
@@ -25,6 +26,7 @@ import { DeliveryAddressDialog } from "./DeliveryAddressDialog";
 
 export function CorporateProfileContent() {
   const user = useCurrentUser();
+  const router = useRouter();
   const { data: profile, isLoading, error } = useCorporateProfile();
   const createProfile = useCreateCorporateProfile();
 
@@ -158,7 +160,7 @@ export function CorporateProfileContent() {
         </div>
 
         <Button
-          onClick={() => setIsEditDialogOpen(true)}
+          onClick={() => router.push("/corporate/profile/edit")}
           className="h-12 w-fit px-8 rounded-full bg-gradient-to-br from-[#3d000c] to-[#5d101d] text-white font-semibold text-base shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
         >
           <Pencil className="h-[18px] w-[18px]" />
