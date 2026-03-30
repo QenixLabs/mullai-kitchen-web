@@ -22,6 +22,7 @@ import { InvoicesTab } from "@/components/corporate/order-detail/InvoicesTab";
 import { ModificationsTab } from "@/components/corporate/order-detail/ModificationsTab";
 import { ModifyMealDialog, computeCredit } from "@/components/corporate/order-detail/ModifyMealDialog";
 import { CancelOrderDialog } from "@/components/corporate/order-detail/CancelOrderDialog";
+import { OrderDetailHeader } from "@/components/corporate/order-detail/OrderDetailHeader";
 import { generateDeliveryDates } from "@/lib/corporate/dates";
 import { formatDate } from "@/lib/corporate/format";
 import type { ICorporateOrderModification } from "@/api/types/corporate.types";
@@ -291,7 +292,11 @@ function OrderDetailPage() {
   const isCancelled = order.status === "cancelled";
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 pt-8 pb-16 sm:px-6 sm:pt-10 sm:pb-20 lg:px-8 lg:pt-12 lg:pb-24">
+    <>
+      {/* Header with Create New Order button and User Avatar */}
+      <OrderDetailHeader />
+
+      <div className="mx-auto w-full max-w-7xl px-4 pt-8 pb-16 sm:px-6 sm:pt-10 sm:pb-20 lg:px-8 lg:pt-12 lg:pb-24">
       {/* Dynamic Background Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-0 right-0 w-[500px] h-125 bg-primary/5 rounded-full blur-[120px] -mr-64 -mt-32" />
@@ -453,6 +458,7 @@ function OrderDetailPage() {
         isPending={cancelMutation.isPending}
       />
     </div>
+    </>
   );
 }
 
