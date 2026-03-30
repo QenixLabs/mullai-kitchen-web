@@ -173,7 +173,7 @@ export function CorporateProfileContent() {
       <BillingAddress profile={profile} />
 
       {/* Delivery Addresses */}
-      <div className="flex flex-col gap-6">
+      {/* <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between px-2">
           <h2 className="text-xl font-bold text-primary">Delivery Addresses</h2>
           <button
@@ -198,7 +198,7 @@ export function CorporateProfileContent() {
             setIsDeliveryDialogOpen(true);
           }}
         />
-      </div>
+      </div> */}
 
       {/* Account Security */}
       <div className="flex flex-col gap-6">

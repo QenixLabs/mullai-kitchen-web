@@ -32,7 +32,7 @@ export function AccountSecurity() {
         </div>
 
         {/* Active Sessions Row */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
               <Laptop className="h-5 w-5" />
@@ -49,7 +49,7 @@ export function AccountSecurity() {
           <button className="shrink-0 border border-border/50 rounded-full px-5 py-2.5 text-xs font-bold text-[#1d1b1c] hover:bg-secondary/80 transition-colors">
             Manage Sessions
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Password Change Dialog */}
