@@ -74,4 +74,7 @@ export const CORPORATE_ROUTES = {
   CANCEL_ORDER: (id: string) => `/corporate/orders/${id}/cancel`,
   GENERATE_FINAL_INVOICE: (id: string) => `/corporate/orders/${id}/generate-final-invoice`,
   UPDATE_PAYMENT: (id: string) => `/corporate/orders/${id}/payment`,
+  PROFILE: "/corporate/profile",
+  DELIVERY_ADDRESSES: "/corporate/profile/delivery-addresses",
+  DELIVERY_ADDRESS: (index: number) => `/corporate/profile/delivery-addresses/${index}`,
 } as const;

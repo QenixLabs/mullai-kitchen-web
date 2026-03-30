@@ -3,6 +3,102 @@
 // ===========================================
 
 // ===========================================
+// Corporate Profile Types
+// ===========================================
+
+/**
+ * Corporate Delegate Information
+ * Represents the authorized contact person for a corporate account
+ */
+export interface ICorporateDelegate {
+  name: string;
+  designation: string;
+  phone?: string;
+  email?: string;
+}
+
+/**
+ * Corporate Billing Address
+ * Registered billing address for a corporate account
+ */
+export interface IBillingAddress {
+  street_address: string;
+  city: string;
+  pincode: string;
+  area_landmark: string;
+  state_country: string;
+}
+
+/**
+ * Corporate Delivery Address
+ * Individual delivery location associated with a corporate account
+ */
+export interface IDeliveryAddress {
+  label: string;
+  full_address: string;
+  is_default: boolean;
+  lat?: number;
+  lng?: number;
+}
+
+/**
+ * Corporate Profile
+ * Full corporate profile response from the API
+ */
+export interface ICorporateProfile {
+  _id: string;
+  user_id: string;
+  company_name: string;
+  gst_number?: string;
+  pan_number?: string;
+  delegate: ICorporateDelegate;
+  billing_address: IBillingAddress;
+  delivery_addresses: IDeliveryAddress[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ===========================================
+// Corporate Profile DTOs
+// ===========================================
+
+/**
+ * Add Delivery Address DTO
+ * Payload for adding a new delivery address to a corporate profile
+ */
+export interface AddDeliveryAddressDto {
+  label: string;
+  full_address: string;
+  is_default?: boolean;
+  lat?: number;
+  lng?: number;
+}
+
+/**
+ * Create Corporate Profile DTO
+ * Payload for creating a new corporate profile
+ */
+export interface CreateCorporateProfileDto {
+  company_name: string;
+  gst_number?: string;
+  pan_number?: string;
+  delegate: ICorporateDelegate;
+  billing_address: IBillingAddress;
+}
+
+/**
+ * Update Corporate Profile DTO
+ * Payload for updating an existing corporate profile (all fields optional)
+ */
+export interface UpdateCorporateProfileDto {
+  company_name?: string;
+  gst_number?: string;
+  pan_number?: string;
+  delegate?: Partial<ICorporateDelegate>;
+  billing_address?: Partial<IBillingAddress>;
+}
+
+// ===========================================
 // Enums
 // ===========================================
 
