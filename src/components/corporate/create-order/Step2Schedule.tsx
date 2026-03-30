@@ -42,7 +42,6 @@ export function Step2Schedule({
         </div>
         <DaySelector
           selectedDays={selectedDays}
-          startDate={startDate}
           onDayToggle={onDayToggle}
         />
         {errors.selected_days && (

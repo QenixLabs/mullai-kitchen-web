@@ -1,159 +1,203 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { 
-  IndianRupee, 
-  History, 
-  Search, 
-  Filter, 
-  TrendingDown, 
-  Utensils, 
-  LucideLayoutList,
-  CalendarDays,
-  CheckCircle2,
-  XCircle,
-  Clock
-} from "lucide-react";
+import { CalendarDays, History, Package, PiggyBank } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/lib/corporate/format";
 import type { ICorporateOrderModification } from "@/api/types/corporate.types";
 
 interface ModificationsTabProps {
   modifications: ICorporateOrderModification[];
 }
 
+function formatDateTime(dateStr: string): { date: string; meta: string } {
+  const d = new Date(dateStr);
+  const date = d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  });
+  const weekday = d.toLocaleDateString("en-US", { weekday: "long" });
+  const time = d.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+  return { date, meta: `${weekday} • ${time}` };
+}
+
 export function ModificationsTab({ modifications }: ModificationsTabProps) {
-  const totalCredit = modifications.reduce(
-    (sum, mod) => sum + mod.credit_amount,
-    0
-  );
+  const totalCredit = modifications.reduce((sum, mod) => sum + mod.credit_amount, 0);
 
   return (
     <div className="space-y-8">
-      {/* Header & Stats Strip */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-            <History className="h-6 w-6" />
-          </div>
-          <div>
-            <h2 className="text-xl font-black">History Log</h2>
-            <p className="text-xs font-bold text-muted-foreground mt-0.5">
-              Detailed tracking of all meal adjustments and credit settlements.
-            </p>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Lifetime Savings Card */}
+        <div className="rounded-2xl bg-rose-50 p-6">
+          <div className="flex items-start gap-4">
+            <div className="h-12 w-12 rounded-xl bg-rose-100 flex items-center justify-center text-rose-700">
+              <PiggyBank className="h-6 w-6" />
+            </div>
+            <div className="flex-1">
+              <p className="text-xs font-bold uppercase tracking-wide text-rose-700/70">
+                Lifetime Savings
+              </p>
+              <div className="mt-1 text-3xl font-bold text-rose-900">
+                <span className="align-top text-xl">₹</span>
+                {totalCredit.toLocaleString("en-IN")}
+              </div>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                  +12% from last month
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  Adjusted against credit limit
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {modifications.length > 0 && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex items-center gap-6 px-8 py-4 rounded-3xl bg-emerald-500/5 border border-emerald-500/20 shadow-lg shadow-emerald-500/5"
-          >
-            <div className="flex flex-col">
-              <span className="text-[9px] font-black uppercase text-emerald-600/60 tracking-widest mb-1">Lifetime Savings</span>
-              <div className="text-2xl font-black text-emerald-600 flex items-baseline gap-1">
-                 <span className="text-sm">₹</span>
-                 {totalCredit.toLocaleString("en-IN")}
-              </div>
-            </div>
-            <div className="w-px h-10 bg-emerald-500/20" />
-            <div className="flex flex-col">
-              <span className="text-[9px] font-black uppercase text-emerald-600/60 tracking-widest mb-1">Adjustments</span>
-              <div className="text-2xl font-black text-emerald-600">
-                 {modifications.length}
-              </div>
-            </div>
-          </motion.div>
-        )}
+        {/* Total Adjustments Card */}
+        <div className="rounded-2xl bg-primary text-primary-foreground p-6">
+          <p className="text-xs font-bold uppercase tracking-wide opacity-80">
+            Total Adjustments
+          </p>
+          <div className="mt-1 text-3xl font-bold">
+            {modifications.length}{" "}
+            <span className="text-base font-medium opacity-80">entries</span>
+          </div>
+          <div className="mt-4 h-1 w-full rounded-full bg-primary-foreground/20 overflow-hidden">
+            <div className="h-full rounded-full bg-primary-foreground" style={{ width: "20%" }} />
+          </div>
+        </div>
       </div>
 
-      {modifications.length > 0 ? (
-        <motion.div 
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           className="rounded-4xl bg-card border border-border/50 shadow-xl shadow-foreground/5 overflow-hidden"
-        >
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-secondary/30 border-b border-border/40">
-                  <th className="text-left px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Execution Date</th>
-                  <th className="text-right px-6 py-5 text-[10px] font-black tracking-widest text-muted-foreground/60 uppercase">Net Veg</th>
-                  <th className="text-right px-6 py-5 text-[10px] font-black tracking-widest text-muted-foreground/60 uppercase">Net Non-Veg</th>
-                  <th className="text-right px-6 py-5 text-[10px] font-black tracking-widest text-emerald-600 uppercase">Credit Gain</th>
-                  <th className="text-right px-6 py-5 text-[10px] font-black tracking-widest text-muted-foreground/60 uppercase">Status</th>
-                  <th className="text-left px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Adjustment Context</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/20">
-                <AnimatePresence>
-                  {modifications.map((mod, index) => (
-                    <motion.tr 
-                      key={mod._id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="group hover:bg-muted/30 transition-colors"
-                    >
-                      <td className="px-8 py-5">
-                         <div className="flex items-center gap-3">
-                            <CalendarDays className="w-4 h-4 text-primary/40" />
-                            <span className="text-sm font-black text-foreground/80">{formatDate(mod.modification_date)}</span>
-                         </div>
-                      </td>
-                      <td className="px-6 py-5 text-right font-black text-emerald-600">
-                        <span className="text-xs mr-0.5">↓</span>
-                        {mod.veg_reduction}
-                      </td>
-                      <td className="px-6 py-5 text-right font-black text-orange-600">
-                        <span className="text-xs mr-0.5">↓</span>
-                        {mod.nonveg_reduction}
-                      </td>
-                      <td className="px-6 py-5 text-right">
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 text-sm font-black ring-1 ring-emerald-500/20">
-                          <span className="text-[10px]">₹</span>
-                          {mod.credit_amount.toLocaleString("en-IN")}
-                        </div>
-                      </td>
-                      <td className="px-6 py-5 text-right">
-                        <Badge
+      {/* History Log Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-foreground">
+            <History className="h-5 w-5" />
+          </div>
+          <h2 className="text-lg font-bold text-foreground">History Log</h2>
+        </div>
+
+        {modifications.length > 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl border border-border bg-white overflow-hidden"
+          >
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border bg-muted/50">
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Execution Date
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Net Veg
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Net Non-Veg
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Credit Gain
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Adjustment Context
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <AnimatePresence>
+                    {modifications.map((mod, index) => {
+                      const { date, meta } = formatDateTime(mod.modification_date);
+                      return (
+                        <motion.tr
+                          key={mod._id}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: index * 0.04 }}
                           className={cn(
-                            "px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border",
-                            mod.status === "approved" 
-                              ? "bg-emerald-500/5 text-emerald-600 border-emerald-500/10" 
-                              : mod.status === "rejected"
-                                ? "bg-rose-500/5 text-rose-600 border-rose-500/10"
-                                : "bg-neutral-500/5 text-neutral-600 border-neutral-500/10"
+                            "group transition-colors",
+                            index !== modifications.length - 1 && "border-b border-border/50"
                           )}
                         >
-                          <div className="flex items-center gap-1.5">
-                             {mod.status === "approved" && <CheckCircle2 className="w-2.5 h-2.5" />}
-                             {mod.status === "rejected" && <XCircle className="w-2.5 h-2.5" />}
-                             {mod.status === "pending" && <Clock className="w-2.5 h-2.5" />}
-                             {mod.status}
-                          </div>
-                        </Badge>
-                      </td>
-                      <td className="px-8 py-5">
-                         <p className="text-xs font-bold text-muted-foreground italic truncate max-w-[150px]">
-                            {mod.reason || "No comment provided"}
-                         </p>
-                      </td>
-                    </motion.tr>
-                  ))}
-                </AnimatePresence>
-              </tbody>
-            </table>
+                          <td className="px-6 py-4 align-top">
+                            <div className="flex items-start gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                                <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-semibold text-foreground">{date}</p>
+                                <p className="text-xs text-muted-foreground">{meta}</p>
+                              </div>
+                            </div>
+                          </td>
+
+                          <td className="px-6 py-4 align-top">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                              <span>↑</span>
+                              +{mod.veg_reduction}
+                            </span>
+                          </td>
+
+                          <td className="px-6 py-4 align-top">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-xs font-semibold text-rose-700">
+                              <span>↓</span>
+                              -{mod.nonveg_reduction}
+                            </span>
+                          </td>
+
+                          <td className="px-6 py-4 align-top">
+                            <span className="text-sm font-bold text-foreground">
+                              <span className="align-top text-xs">₹</span>
+                              {mod.credit_amount.toLocaleString("en-IN")}
+                            </span>
+                          </td>
+
+                          <td className="px-6 py-4 align-top">
+                            <span className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-wide">
+                              <span className={cn(
+                                "h-1.5 w-1.5 rounded-full",
+                                mod.status === "approved" ? "bg-emerald-500" :
+                                mod.status === "rejected" ? "bg-destructive" : "bg-muted-foreground"
+                              )} />
+                              {mod.status === "approved" ? "Settled" : mod.status}
+                            </span>
+                          </td>
+
+                          <td className="px-6 py-4 align-top">
+                            <div className="inline-flex items-center rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
+                              <span className="text-muted-foreground/70">"</span>
+                              <span className="mx-0.5">{mod.reason || "No comment provided"}</span>
+                              <span className="text-muted-foreground/70">"</span>
+                            </div>
+                          </td>
+                        </motion.tr>
+                      );
+                    })}
+                  </AnimatePresence>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="flex items-center justify-center gap-2 border-t border-border py-4">
+              <Package className="h-4 w-4 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">End of modification history</span>
+            </div>
+          </motion.div>
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted/30 py-14">
+            <Package className="mb-3 h-8 w-8 text-muted-foreground/40" />
+            <p className="text-sm font-medium text-muted-foreground">End of modification history</p>
           </div>
-        </motion.div>
-      ) : (
-        <div className="p-20 rounded-4xl bg-secondary/20 border-2 border-dashed border-border/40 text-center">
-          <History className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-          <p className="text-sm font-bold text-muted-foreground">The history of modifications is currently empty.</p>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

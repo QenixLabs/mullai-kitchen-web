@@ -9,7 +9,7 @@ export function NewOrderCycleCard() {
   return (
     <button
       onClick={() => router.push("/corporate/create-order")}
-      className="flex flex-col items-center justify-center gap-4 p-6 rounded-2xl border-2 border-dashed border-primary/50 bg-accent/5 transition-all min-h-[280px] w-full hover:border-primary hover:bg-accent/10"
+      className="flex flex-col items-center justify-center gap-4 p-6 border-2 border-dashed border-primary/50 bg-accent/5 transition-all min-h-[280px] w-full hover:border-primary hover:bg-accent/10"
     >
       <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
         <Plus className="h-6 w-6 text-muted-foreground" />

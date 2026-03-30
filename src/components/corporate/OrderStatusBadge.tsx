@@ -5,27 +5,27 @@ import type { CorporateOrderStatus } from "@/api/types/corporate.types";
 
 const statusConfig: Record<
   CorporateOrderStatus,
-  { label: string; className: string }
+  { label: string; style: React.CSSProperties }
 > = {
   active: {
     label: "Active",
-    className: "bg-emerald-100/80 text-emerald-800 border-emerald-200",
+    style: { backgroundColor: "#00990F", color: "#FFFFFF" },
   },
   draft: {
     label: "Draft",
-    className: "bg-blue-100/80 text-blue-800 border-blue-200",
+    style: { backgroundColor: "#3B82F6", color: "#FFFFFF" },
   },
   pending_payment: {
     label: "Pending Payment",
-    className: "bg-amber-100/80 text-amber-800 border-amber-200",
+    style: { backgroundColor: "#F59E0B", color: "#FFFFFF" },
   },
   completed: {
     label: "Completed",
-    className: "bg-slate-100/80 text-slate-800 border-slate-200",
+    style: { backgroundColor: "#6B7280", color: "#FFFFFF" },
   },
   cancelled: {
     label: "Cancelled",
-    className: "bg-rose-100/80 text-rose-800 border-rose-200",
+    style: { backgroundColor: "#EF4444", color: "#FFFFFF" },
   },
 };
 
@@ -36,13 +36,15 @@ interface OrderStatusBadgeProps {
 
 export function OrderStatusBadge({ status, className }: OrderStatusBadgeProps) {
   const config = statusConfig[status];
-  
+
   return (
-    <span className={cn(
-      "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border backdrop-blur-sm",
-      config.className,
-      className
-    )}>
+    <span
+      className={cn(
+        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold",
+        className
+      )}
+      style={config.style}
+    >
       {config.label}
     </span>
   );

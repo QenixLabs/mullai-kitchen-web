@@ -83,16 +83,38 @@ export function Step3Preferences({
             <Label htmlFor="veg_count" className="text-xs uppercase tracking-wider text-muted-foreground">
               Vegetarian Meals
             </Label>
-            <Input
-              id="veg_count"
-              type="number"
-              min={0}
+            <input type="number" className="hidden" {...register("veg_count", { valueAsNumber: true })} />
+            <div
               className={cn(
-                "text-base sm:text-lg",
-                vegCount > 0 && "bg-green-50 border-green-200 text-green-700"
+                "flex items-center border rounded-xl overflow-hidden h-11 sm:h-12",
+                vegCount > 0
+                  ? "bg-green-50 border-green-200 text-green-700"
+                  : "bg-card border-border text-foreground"
               )}
-              {...register("veg_count", { valueAsNumber: true })}
-            />
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setValue("veg_count", Math.max(0, vegCount - 1));
+                  trigger(["veg_count", "nonveg_count"]);
+                }}
+                disabled={vegCount <= 0}
+                className="h-full px-4 text-lg font-bold hover:bg-black/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+              >
+                -
+              </button>
+              <span className="flex-1 text-center text-base sm:text-lg font-semibold">{vegCount}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setValue("veg_count", vegCount + 1);
+                  trigger(["veg_count", "nonveg_count"]);
+                }}
+                className="h-full px-4 text-lg font-bold hover:bg-black/5 transition-colors"
+              >
+                +
+              </button>
+            </div>
             {errors.veg_count && (
               <p className="text-sm text-destructive">{errors.veg_count.message}</p>
             )}
@@ -102,16 +124,38 @@ export function Step3Preferences({
             <Label htmlFor="nonveg_count" className="text-xs uppercase tracking-wider text-muted-foreground">
               Non-Vegetarian Meals
             </Label>
-            <Input
-              id="nonveg_count"
-              type="number"
-              min={0}
+            <input type="number" className="hidden" {...register("nonveg_count", { valueAsNumber: true })} />
+            <div
               className={cn(
-                "text-base sm:text-lg",
-                nonvegCount > 0 && "bg-red-50 border-red-200 text-red-700"
+                "flex items-center border rounded-xl overflow-hidden h-11 sm:h-12",
+                nonvegCount > 0
+                  ? "bg-red-50 border-red-200 text-red-700"
+                  : "bg-card border-border text-foreground"
               )}
-              {...register("nonveg_count", { valueAsNumber: true })}
-            />
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setValue("nonveg_count", Math.max(0, nonvegCount - 1));
+                  trigger(["veg_count", "nonveg_count"]);
+                }}
+                disabled={nonvegCount <= 0}
+                className="h-full px-4 text-lg font-bold hover:bg-black/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+              >
+                -
+              </button>
+              <span className="flex-1 text-center text-base sm:text-lg font-semibold">{nonvegCount}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setValue("nonveg_count", nonvegCount + 1);
+                  trigger(["veg_count", "nonveg_count"]);
+                }}
+                className="h-full px-4 text-lg font-bold hover:bg-black/5 transition-colors"
+              >
+                +
+              </button>
+            </div>
             {errors.nonveg_count && (
               <p className="text-sm text-destructive">{errors.nonveg_count.message}</p>
             )}

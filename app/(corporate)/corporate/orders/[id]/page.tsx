@@ -16,27 +16,21 @@ import {
   useGenerateFinalInvoice,
 } from "@/api/hooks/useCorporate";
 import { modifyCorporateOrderSchema, type ModifyCorporateOrderFormData } from "@/lib/validations/corporate.schema";
-import { OrderStatusBadge } from "@/components/corporate/OrderStatusBadge";
-import { PaymentStatusBadge } from "@/components/corporate/PaymentStatusBadge";
 import { OverviewTab } from "@/components/corporate/order-detail/OverviewTab";
 import { ScheduleTab } from "@/components/corporate/order-detail/ScheduleTab";
 import { InvoicesTab } from "@/components/corporate/order-detail/InvoicesTab";
 import { ModificationsTab } from "@/components/corporate/order-detail/ModificationsTab";
 import { ModifyMealDialog, computeCredit } from "@/components/corporate/order-detail/ModifyMealDialog";
 import { CancelOrderDialog } from "@/components/corporate/order-detail/CancelOrderDialog";
+import { OrderDetailHeader } from "@/components/corporate/order-detail/OrderDetailHeader";
 import { generateDeliveryDates } from "@/lib/corporate/dates";
 import { formatDate } from "@/lib/corporate/format";
 import type { ICorporateOrderModification } from "@/api/types/corporate.types";
 
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
-import { 
-  ChevronLeft, 
-  Building2, 
-  History, 
-  CalendarDays, 
-  FileCheck,
-  LayoutDashboard
+import {
+  ChevronLeft
 } from "lucide-react";
 
 
@@ -56,10 +50,10 @@ function OrderDetailSkeleton() {
 }
 
 const TABS_CONFIG = [
-  { value: "overview", label: "Overview", icon: LayoutDashboard },
-  { value: "schedule", label: "Schedule", icon: CalendarDays },
-  { value: "invoices", label: "Invoices", icon: FileCheck },
-  { value: "modifications", label: "Modifications", icon: History },
+  { value: "overview", label: "Overview" },
+  { value: "schedule", label: "Schedule" },
+  { value: "invoices", label: "Invoices" },
+  { value: "modifications", label: "Modifications" },
 ];
 
 function OrderDetailPage() {
@@ -298,15 +292,19 @@ function OrderDetailPage() {
   const isCancelled = order.status === "cancelled";
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 pt-8 pb-16 sm:px-6 sm:pt-10 sm:pb-20 lg:px-8 lg:pt-12 lg:pb-24">
+    <>
+      {/* Header with Create New Order button and User Avatar */}
+      <OrderDetailHeader />
+
+      <div className="mx-auto w-full max-w-7xl px-4 pt-8 pb-16 sm:px-6 sm:pt-10 sm:pb-20 lg:px-8 lg:pt-12 lg:pb-24">
       {/* Dynamic Background Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -mr-64 -mt-32" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[120px] -ml-64 -mb-32" />
+        <div className="absolute top-0 right-0 w-[500px] h-125 bg-primary/5 rounded-full blur-[120px] -mr-64 -mt-32" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-125 bg-gold/5 rounded-full blur-[120px] -ml-64 -mb-32" />
       </div>
 
       {/* Back button */}
-      <motion.div 
+      {/* <motion.div 
         initial={{ x: -20, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
       >
@@ -321,81 +319,73 @@ function OrderDetailPage() {
           </div>
           <span className="font-bold text-sm">Back to Orders</span>
         </Button>
-      </motion.div>
+      </motion.div> */}
 
       {/* Order Header */}
-      <motion.div 
+      
+      <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-10 pb-8 border-b border-border/60"
+        className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8"
       >
-        <div className="flex items-start gap-6">
-          <div className="hidden sm:flex items-center justify-center p-5 rounded-4xl bg-linear-to-br from-primary to-primary/80 text-white shadow-xl shadow-primary/20">
-            <Building2 className="h-8 w-8" />
-          </div>
-          <div>
-            <div className="flex items-center gap-3 mb-2 flex-wrap">
-              <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground">
-                {order.company_name}
-              </h1>
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-muted/50 rounded-xl border border-border/50">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">ID:</span>
-                <span className="text-xs font-mono font-bold">{order.order_id}</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 text-muted-foreground font-semibold">
-              <span className="flex items-center gap-1.5">
-                {order.outlet_name}
-              </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-border" />
-              <span>Created {formatDate(order.created_at)}</span>
-            </div>
+        <div>
+          <h1 className="text-[32px] font-bold mb-2 tracking-tight" style={{ color: '#44151C' }}>
+            {order.company_name}
+          </h1>
+          <div className="flex items-center gap-2 text-[15px] font-medium text-gray-700">
+            <span>Order ID: {order.order_id}</span>
+            <span className="text-[#D4D4D4] text-[10px] mx-1">●</span>
+            <span>Created: {format(new Date(order.created_at), "MMM dd, yyyy")}</span>
           </div>
         </div>
-        
+
+        {/* Status Badges - Pill Style */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-3 p-2 bg-secondary/50 backdrop-blur-sm rounded-3xl border border-border/40">
-            <OrderStatusBadge status={order.status} className="h-10 px-5 text-sm" />
-            <PaymentStatusBadge status={order.payment_status} className="h-10 px-5 text-sm" />
-          </div>
-          {!isCancelled && !isCompleted && (
-            <Button
-              variant="destructive"
-              onClick={() => setCancelDialogOpen(true)}
-              className="h-10 px-5 rounded-full border-destructive/30 text-white font-bold text-sm hover:bg-destructive/5 hover:text-destructive hover:border-destructive/50 transition-all"
-            >
-              Cancel Order
-            </Button>
+          <span
+            className={cn(
+              "px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-white",
+              order.status === "active"
+                ? "bg-[#00990F]"
+                : "bg-gray-100 text-gray-600"
+            )}
+          >
+            ACTIVE
+          </span>
+
+          {order.payment_status === "pending" && (
+            <span className="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-[#FF962D] text-white">
+              PENDING
+            </span>
           )}
         </div>
       </motion.div>
 
-      {/* Modern Custom Tab System */}
-      <div className="relative mb-10">
-        <div className="flex items-center gap-2 p-2 rounded-4xl bg-secondary/40 backdrop-blur-md border border-border/50 w-fit max-w-full overflow-x-auto no-scrollbar">
+      {/* Modern Tab System */}
+      <div className="relative mb-8 border-b border-gray-200">
+        <div className="flex items-center gap-10">
           {TABS_CONFIG.map((tab) => {
             if (tab.value === "schedule" && order.status !== "active") return null;
             const isActive = activeTab === tab.value;
-            
+
             return (
               <button
                 key={tab.value}
                 onClick={() => handleTabChange(tab.value)}
                 className={cn(
-                  "relative flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold rounded-[1.5rem] transition-all duration-300 whitespace-nowrap outline-none",
-                  isActive ? "text-white" : "text-muted-foreground hover:text-foreground active:scale-95"
+                  "relative py-4 text-[15px] font-bold transition-colors"
                 )}
+                style={{ color: isActive ? '#44151C' : '#8D8D8D' }}
               >
+                {tab.label}
                 {isActive && (
                   <motion.div
                     layoutId="detail-tab-indicator"
-                    className="absolute inset-0 bg-primary rounded-[1.5rem] shadow-lg shadow-primary/20"
+                    className="absolute bottom-0 left-0 right-0 h-[3px] rounded-t-full"
+                    style={{ backgroundColor: '#44151C' }}
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
-                <tab.icon className={cn("relative z-10 h-4 w-4", isActive ? "text-white" : "text-primary/60")} />
-                <span className="relative z-10">{tab.label}</span>
               </button>
             );
           })}
@@ -468,6 +458,7 @@ function OrderDetailPage() {
         isPending={cancelMutation.isPending}
       />
     </div>
+    </>
   );
 }
 
