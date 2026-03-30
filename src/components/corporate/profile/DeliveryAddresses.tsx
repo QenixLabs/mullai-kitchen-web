@@ -27,65 +27,47 @@ function DeliveryAddressCard({
   return (
     <motion.div
       whileHover={{ y: -3 }}
-      className="group rounded-4xl bg-card border border-border/50 shadow-xl shadow-foreground/5 p-6 sm:p-8 transition-all"
+      className="group bg-white rounded-3xl shadow-[0px_20px_40px_0px_rgba(61,0,12,0.04)] overflow-hidden"
     >
-      {/* Top Row: Label + Default Badge + Actions */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-            <MapPin className="w-5 h-5" />
+      {/* Image Header */}
+      <div className="h-40 bg-secondary/20 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
+        {address.is_default && (
+          <div className="absolute top-4 right-4 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded">
+            Default
           </div>
-          <div>
-            <h4 className="text-base font-black text-foreground">
-              {address.label || "Delivery Location"}
-            </h4>
-            {address.is_default && (
-              <span className="inline-flex items-center gap-1.5 mt-0.5 text-[10px] font-black uppercase tracking-widest text-emerald-600">
-                <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500">
-                  <svg
-                    className="h-2 w-2 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={3}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </span>
-                Default
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onEdit(index)}
-            className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-all outline outline-1 outline-border/40"
-          >
-            <Pencil className="h-4 w-4" />
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onDelete(index)}
-            className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-destructive/10 hover:text-destructive transition-all outline outline-1 outline-border/40"
-          >
-            <Trash2 className="h-4 w-4" />
-          </motion.button>
-        </div>
+        )}
       </div>
 
-      {/* Address Text */}
-      <p className="text-sm font-medium text-muted-foreground leading-relaxed pl-[52px]">
-        {address.full_address}
-      </p>
+      {/* Content */}
+      <div className="p-6 flex flex-col gap-4">
+        <div>
+          <h4 className="text-lg font-bold text-[#1d1b1c] leading-7">
+            {address.label || "Delivery Location"}
+          </h4>
+          <p className="text-sm font-normal text-[#554243] leading-[22.75px] mt-1">
+            {address.full_address}
+          </p>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-4 pt-2">
+          <button
+            onClick={() => onEdit(index)}
+            className="flex items-center gap-1 text-xs font-bold text-[#554243] hover:text-primary transition-colors"
+          >
+            <Pencil className="h-3 w-3" />
+            Edit
+          </button>
+          <button
+            onClick={() => onDelete(index)}
+            className="flex items-center gap-1 text-xs font-bold text-[#554243] hover:text-destructive transition-colors"
+          >
+            <Trash2 className="h-3 w-3" />
+            Delete
+          </button>
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -118,12 +100,12 @@ export function DeliveryAddresses({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="relative flex flex-col items-center justify-center rounded-4xl bg-secondary/10 border-2 border-dashed border-border/40 py-24 px-6"
+            className="relative flex flex-col items-center justify-center rounded-3xl bg-secondary/10 border-2 border-dashed border-border/40 py-24 px-6"
           >
             <div className="absolute inset-0 opacity-5 pointer-events-none">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--primary)_0%,transparent_100%)] blur-3xl" />
             </div>
-            <div className="p-8 rounded-4xl bg-primary/5 text-primary mb-8 relative">
+            <div className="p-8 rounded-3xl bg-primary/5 text-primary mb-8 relative">
               <MapPin className="h-16 w-16" />
               <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center">
                 <Gem className="w-5 h-5 text-gold" />
@@ -138,7 +120,7 @@ export function DeliveryAddresses({
             </p>
             <Button
               onClick={onAddNew}
-              className="h-14 px-10 rounded-[2rem] bg-primary text-white font-black text-xs uppercase tracking-widest shadow-2xl shadow-primary/20 hover:scale-105 transition-all"
+              className="h-12 px-8 rounded-full bg-primary text-white font-black text-xs uppercase tracking-widest shadow-2xl shadow-primary/20 hover:scale-105 transition-all"
             >
               <Plus className="mr-3 h-5 w-5" />
               ADD YOUR FIRST ADDRESS

@@ -1,56 +1,46 @@
 "use client";
 
-import { motion } from "motion/react";
-import {
-  MapPin,
-  Building,
-  Map,
-  Navigation,
-  Globe,
-} from "lucide-react";
+import { MapPin } from "lucide-react";
 import type { ICorporateProfile } from "@/api/types/corporate.types";
 
 interface BillingAddressProps {
   profile: ICorporateProfile;
 }
 
-const BILLING_FIELDS = [
-  {
-    key: "street_address" as const,
-    label: "Street Address",
-    icon: MapPin,
-  },
-  {
-    key: "city" as const,
-    label: "City",
-    icon: Building,
-  },
-  {
-    key: "pincode" as const,
-    label: "Pincode",
-    icon: Map,
-  },
-  {
-    key: "area_landmark" as const,
-    label: "Area / Landmark",
-    icon: Navigation,
-  },
-  {
-    key: "state_country" as const,
-    label: "State / Country",
-    icon: Globe,
-  },
-] as const;
+function FieldCard({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  if (!value?.trim()) return null;
+  return (
+    <div className="bg-secondary/20 border border-border/10 rounded-xl p-4 flex flex-col gap-1">
+      <p className="text-[11px] font-bold text-primary uppercase leading-[16.8px]">
+        {label}
+      </p>
+      <p className="text-sm font-medium text-[#1d1b1c] leading-5">
+        {value}
+      </p>
+    </div>
+  );
+}
 
 export function BillingAddress({ profile }: BillingAddressProps) {
-  const { billing_address: addr } = profile;
-
-  const hasAnyField = BILLING_FIELDS.some((f) => addr[f.key]?.trim());
+  const addr = profile.billing_address;
+  const hasAnyField = Object.values(addr).some((v) => v?.trim());
 
   if (!hasAnyField) {
     return (
-      <div className="rounded-4xl bg-card border border-border/50 shadow-xl shadow-foreground/5 p-8 sm:p-10">
-        <p className="text-sm font-medium text-muted-foreground text-center py-6">
+      <div className="bg-white rounded-3xl p-8 shadow-[0px_20px_40px_0px_rgba(68,21,28,0.04)]">
+        <div className="flex items-center gap-2 mb-6">
+          <MapPin className="h-9 w-9 text-primary" />
+          <h2 className="text-xl font-bold text-[#3d000c] capitalize">
+            Billing Address
+          </h2>
+        </div>
+        <p className="text-sm font-medium text-muted-foreground text-center py-8">
           No billing address configured. Edit your organization info to add a
           billing address.
         </p>
@@ -59,26 +49,31 @@ export function BillingAddress({ profile }: BillingAddressProps) {
   }
 
   return (
-    <div className="rounded-4xl bg-card border border-border/50 shadow-xl shadow-foreground/5 p-8 sm:p-10">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {BILLING_FIELDS.map((field) => {
-          const value = addr[field.key]?.trim();
-          if (!value) return null;
+    <div className="bg-white rounded-3xl p-8 shadow-[0px_20px_40px_0px_rgba(68,21,28,0.04)] flex flex-col gap-6">
+      {/* Title */}
+      <div className="flex items-center gap-2">
+        <MapPin className="h-9 w-9 text-primary" />
+        <h2 className="text-xl font-bold text-[#3d000c] capitalize">
+          Billing Address
+        </h2>
+      </div>
 
-          return (
-            <motion.div
-              key={field.key}
-              whileHover={{ y: -2 }}
-              className="space-y-1.5 p-4 rounded-2xl bg-secondary/30 border border-border/40"
-            >
-              <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-muted-foreground/60">
-                <field.icon className="w-3 h-3" />
-                <span>{field.label}</span>
-              </div>
-              <p className="text-sm font-bold text-foreground">{value}</p>
-            </motion.div>
-          );
-        })}
+      {/* Address Fields Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Column: Street + Area */}
+        <div className="flex flex-col gap-4">
+          <FieldCard label="Street Address" value={addr.street_address} />
+          <FieldCard label="Area / Landmark" value={addr.area_landmark} />
+        </div>
+
+        {/* Right Column: City + Pincode + State */}
+        <div className="grid grid-cols-2 gap-4">
+          <FieldCard label="City" value={addr.city} />
+          <FieldCard label="Pincode" value={addr.pincode} />
+          <div className="col-span-2">
+            <FieldCard label="State / Country" value={addr.state_country} />
+          </div>
+        </div>
       </div>
     </div>
   );
