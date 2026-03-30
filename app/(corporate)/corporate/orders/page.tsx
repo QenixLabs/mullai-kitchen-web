@@ -3,8 +3,8 @@
 import { Suspense, useState, useMemo, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  ClipboardList,
   PlusCircle,
+  ClipboardList,
   AlertTriangle,
   RefreshCw,
 } from "lucide-react";
@@ -21,7 +21,7 @@ import {
   PaginationEllipsis,
 } from "@/components/ui/pagination";
 import { useCorporateOrders } from "@/api/hooks/useCorporate";
-import { CorporatePageHeader } from "@/components/corporate/CorporatePageHeader";
+import { useCurrentUser } from "@/hooks/useUserStore";
 import { OrderCard, OrderCardSkeleton } from "@/components/corporate/OrderCard";
 import { OrdersFilterTabs } from "@/components/corporate/OrdersFilterTabs";
 import { NewOrderCycleCard } from "@/components/corporate/NewOrderCycleCard";
@@ -31,6 +31,7 @@ const ORDERS_FIRST_PAGE = 2; // First page has create card + 2 orders
 
 function OrdersPageContent() {
   const router = useRouter();
+  const user = useCurrentUser();
   const searchParams = useSearchParams();
 
   // Read initial status from URL query params (e.g., ?status=active)
@@ -86,11 +87,41 @@ function OrdersPageContent() {
   if (isLoading) {
     return (
       <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
-        <CorporatePageHeader
-          icon={ClipboardList}
-          title="Orders"
-          subtitle="Manage your corporate orders"
-        />
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
+          <div>
+            <h1 className="text-[36px] font-extrabold text-primary uppercase tracking-tight" style={{ fontFamily: "Inter, sans-serif" }}>
+              Orders Management
+            </h1>
+            <p className="text-[16px] font-medium text-[#554243] mt-1" style={{ fontFamily: "Inter, sans-serif" }}>
+              Manage your corporate orders
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Button
+              onClick={() => router.push("/corporate/create-order")}
+              className="h-11 px-6 bg-primary text-white rounded-full font-semibold text-sm hover:bg-primary/90 transition-colors"
+            >
+              Create New Order
+            </Button>
+            <div className="h-10 w-10 overflow-hidden rounded-full border border-border shadow-sm">
+              {user?.avatar_url ? (
+                <img
+                  src={user.avatar_url}
+                  alt={user?.name ?? "Profile"}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-primary text-xs font-bold text-primary-foreground">
+                  {user?.name
+                    ? user.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()
+                    : "U"}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 3 }).map((_, i) => (
             <OrderCardSkeleton key={i} />
@@ -104,11 +135,41 @@ function OrdersPageContent() {
   if (error) {
     return (
       <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
-        <CorporatePageHeader
-          icon={ClipboardList}
-          title="Orders"
-          subtitle="Manage your corporate orders"
-        />
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
+          <div>
+            <h1 className="text-[36px] font-extrabold text-primary uppercase tracking-tight" style={{ fontFamily: "Inter, sans-serif" }}>
+              Orders Management
+            </h1>
+            <p className="text-[16px] font-medium text-[#554243] mt-1" style={{ fontFamily: "Inter, sans-serif" }}>
+              Manage your corporate orders
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Button
+              onClick={() => router.push("/corporate/create-order")}
+              className="h-11 px-6 bg-primary text-white rounded-full font-semibold text-sm hover:bg-primary/90 transition-colors"
+            >
+              Create New Order
+            </Button>
+            <div className="h-10 w-10 overflow-hidden rounded-full border border-border shadow-sm">
+              {user?.avatar_url ? (
+                <img
+                  src={user.avatar_url}
+                  alt={user?.name ?? "Profile"}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-primary text-xs font-bold text-primary-foreground">
+                  {user?.name
+                    ? user.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()
+                    : "U"}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
         <div className="flex flex-col items-center justify-center py-24 px-6">
           <div className="p-5 rounded-2xl bg-destructive/10 mb-6 text-destructive">
             <AlertTriangle className="h-10 w-10" />
@@ -169,11 +230,41 @@ function OrdersPageContent() {
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
-      <CorporatePageHeader
-        icon={ClipboardList}
-        title="ORDERS MANAGEMENT"
-        subtitle="Manage your corporate orders"
-      />
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
+        <div>
+          <h1 className="text-[36px] font-extrabold text-primary uppercase tracking-tight" style={{ fontFamily: "Inter, sans-serif" }}>
+            Orders Management
+          </h1>
+          <p className="text-[16px] font-medium text-[#554243] mt-1" style={{ fontFamily: "Inter, sans-serif" }}>
+            Manage your corporate orders
+          </p>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <Button
+            onClick={() => router.push("/corporate/create-order")}
+            className="h-11 px-6 bg-primary text-white rounded-full font-semibold text-sm hover:bg-primary/90 transition-colors"
+          >
+            Create New Order
+          </Button>
+          <div className="h-10 w-10 overflow-hidden rounded-full border border-border shadow-sm">
+            {user?.avatar_url ? (
+              <img
+                src={user.avatar_url}
+                alt={user?.name ?? "Profile"}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-primary text-xs font-bold text-primary-foreground">
+                {user?.name
+                  ? user.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()
+                  : "U"}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* Filter Tabs */}
       <div className="mb-6">
@@ -283,7 +374,17 @@ export default function OrdersPage() {
     <Suspense
       fallback={
         <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
-          <Skeleton className="h-10 w-48 mb-4 rounded-xl" />
+          {/* Header Skeleton */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
+            <div>
+              <Skeleton className="h-10 w-64 mb-2 rounded-xl" />
+              <Skeleton className="h-5 w-48 rounded-lg" />
+            </div>
+            <div className="flex items-center gap-4">
+              <Skeleton className="h-11 w-36 rounded-full" />
+              <Skeleton className="h-10 w-10 rounded-full" />
+            </div>
+          </div>
           <Skeleton className="h-20 w-full rounded-xl mb-6" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 3 }).map((_, i) => (

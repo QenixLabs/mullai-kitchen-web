@@ -11,10 +11,10 @@ import {
   ArrowRight,
   Utensils,
   Calendar,
-  Gem
+  Gem,
+  IndianRupee
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -34,7 +34,7 @@ function LiveOperationsCard({ count }: { count: number }) {
     <Link href="/corporate/orders?status=active">
       <motion.div
         whileHover={{ y: -4 }}
-        className="relative overflow-hidden rounded-xl bg-white border border-border/40 p-6 h-full cursor-pointer group"
+        className="relative overflow-hidden rounded-3xl bg-white border border-border/40 p-6 h-full cursor-pointer group"
       >
         {/* Fork/Knife Icon - top right */}
         <div className="absolute top-4 right-4 text-muted/20">
@@ -51,7 +51,7 @@ function LiveOperationsCard({ count }: { count: number }) {
               {String(count).padStart(2, '0')}
             </span>
             {count > 0 && (
-              <span className="inline-flex items-center px-3 py-1 rounded-md bg-emerald-500 text-white text-xs font-semibold">
+              <span className="inline-flex items-center px-3 py-1 rounded-[9px] bg-emerald-500 text-white text-xs font-semibold">
                 Active
               </span>
             )}
@@ -74,7 +74,7 @@ function FinancialPendingsCard({ count }: { count: number }) {
     <Link href="/corporate/orders?payment=pending,overdue">
       <motion.div
         whileHover={{ y: -4 }}
-        className="relative overflow-hidden rounded-xl p-6 h-full cursor-pointer group"
+        className="relative overflow-hidden rounded-3xl p-6 h-full cursor-pointer group border border-black"
         style={{ backgroundColor: '#F2ECED' }}
       >
         <div className="relative z-10">
@@ -101,7 +101,7 @@ function NextAllocationCard({ order }: { order?: ICorporateOrder }) {
   return (
     <motion.div
       whileHover={{ y: -4 }}
-      className="relative overflow-hidden rounded-xl p-6 h-full"
+      className="relative overflow-hidden rounded-3xl p-6 h-full"
       style={{ backgroundColor: '#3A070F' }}
     >
       {/* Calendar watermark */}
@@ -152,15 +152,30 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
   ).join(' & ') || 'N/A';
 
   // Format delivery address
-  const formatAddress = (address: any): string => {
+  type DeliveryAddress = {
+    area?: string;
+    city?: string;
+    address_line?: string;
+  };
+
+  const formatAddress = (address: unknown): string => {
     if (!address) return 'Not specified';
     if (typeof address === 'string') return address;
+    if (typeof address !== 'object') return 'Not specified';
+
+    const safeAddress = address as DeliveryAddress;
+
     try {
       const parts = [
-        address?.area,
-        address?.city
+        safeAddress.area,
+        safeAddress.city
       ].filter((part): part is string => Boolean(part) && typeof part === 'string');
-      return parts.length > 0 ? parts.join(', ') : (address?.address_line || 'Not specified');
+
+      if (parts.length > 0) {
+        return parts.join(', ');
+      }
+
+      return safeAddress.address_line || 'Not specified';
     } catch {
       return 'Not specified';
     }
@@ -173,7 +188,7 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
       <motion.div
         layout
         whileHover={{ y: -4 }}
-        className="group relative flex flex-col overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 h-full cursor-pointer"
+        className="group relative flex flex-col overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 h-full cursor-pointer"
       >
         <div className="flex flex-1 flex-col p-6">
           {/* Status Badges - Top */}
@@ -181,19 +196,19 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
             <div className="flex items-center gap-2">
               <span className={cn(
                 "w-2.5 h-2.5 rounded-full",
-                isActive ? "bg-green-500" : "bg-gray-300"
+                isActive ? "bg-[#00990F]" : "bg-gray-300"
               )} />
               <span className={cn(
                 "text-xs font-semibold tracking-wide",
-                isActive ? "text-green-600" : "text-gray-500"
+                isActive ? "text-[#00990F]" : "text-gray-500"
               )}>
                 ACTIVE
               </span>
             </div>
             {order.status === "pending_payment" && (
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                <span className="text-xs font-semibold tracking-wide text-amber-600">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#FF962D]" />
+                <span className="text-xs font-semibold tracking-wide text-[#FF962D]">
                   PENDING
                 </span>
               </div>
@@ -202,8 +217,8 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
 
           {/* Order ID and Company Name */}
           <div className="mb-6">
-            <p className="text-sm text-gray-600 mb-1">Order {order.order_id}</p>
-            <h3 className="text-3xl font-bold text-gray-900">
+            <p className="text-base font-semibold text-primary mb-1" style={{ fontFamily: "Inter, sans-serif" }}>{order.order_id}</p>
+            <h3 className="text-base font-semibold text-primary" style={{ fontFamily: "Inter, sans-serif" }}>
               {order.company_name}
             </h3>
           </div>
@@ -212,20 +227,20 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
           <div className="grid grid-cols-2 gap-y-5 gap-x-4 mb-6">
             {/* Headcount */}
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">HEADCOUNT</p>
-              <p className="text-base font-semibold text-gray-900">{order.headcount} People</p>
+              <p className="text-xs font-medium text-[#554243] uppercase tracking-wider mb-1">HEADCOUNT</p>
+              <p className="text-base font-semibold text-[#554243]">{order.headcount} People</p>
             </div>
 
             {/* Meal Mix */}
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">MEAL MIX</p>
-              <p className="text-base font-semibold text-gray-900">{mealMixText}</p>
+              <p className="text-xs font-medium text-[#554243] uppercase tracking-wider mb-1">MEAL MIX</p>
+              <p className="text-base font-semibold text-[#554243]">{mealMixText}</p>
             </div>
 
             {/* Duration */}
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">DURATION</p>
-              <p className="text-base font-semibold text-gray-900 truncate">
+              <p className="text-xs font-medium text-[#554243] uppercase tracking-wider mb-1">DURATION</p>
+              <p className="text-base font-semibold text-[#554243] truncate">
                 {order.selected_days.slice(0, 2).join(", ")}
                 {order.selected_days.length > 2 && "..."}
               </p>
@@ -233,8 +248,8 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
 
             {/* Status */}
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">STATUS</p>
-              <p className="text-base font-semibold text-gray-900">
+              <p className="text-xs font-medium text-[#554243] uppercase tracking-wider mb-1">STATUS</p>
+              <p className="text-base font-semibold text-[#554243]">
                 {order.status === "active" ? "In Progress" :
                  order.status === "pending_payment" ? "Pending Payment" :
                  order.status === "completed" ? "Completed" : "Draft"}
@@ -243,14 +258,14 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
 
             {/* Active Progress */}
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">ACTIVE PROGRESS</p>
-              <p className="text-base font-semibold text-gray-900">{elapsed}/{total} Days</p>
+              <p className="text-xs font-medium text-[#554243] uppercase tracking-wider mb-1">ACTIVE PROGRESS</p>
+              <p className="text-base font-semibold text-[#554243]">{elapsed}/{total} Days</p>
             </div>
 
             {/* Location */}
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">LOCATION</p>
-              <p className="text-base font-semibold text-gray-900 truncate">{locationText}</p>
+              <p className="text-xs font-medium text-[#554243] uppercase tracking-wider mb-1">LOCATION</p>
+              <p className="text-base font-semibold text-[#554243] truncate">{locationText}</p>
             </div>
           </div>
 
@@ -261,8 +276,8 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
           <div className="mt-auto pt-4 flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">TOTAL</p>
-              <div className="flex items-center gap-1 text-2xl font-bold text-gray-900">
-                <span>₹</span>
+              <div className="flex items-center gap-1 text-2xl font-bold text-primary">
+                <IndianRupee className="h-5 w-5" />
                 <span>{order.final_amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
             </div>
@@ -281,6 +296,7 @@ export default function CorporateDashboardPage() {
   const router = useRouter();
   const user = useCurrentUser();
   const { data: orders, isLoading, error } = useCorporateOrders();
+  const avatarUrl = user?.avatar_url ?? "";
 
   const ordersList = orders ?? [];
 
@@ -325,7 +341,7 @@ export default function CorporateDashboardPage() {
 
   if (error) {
     return (
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 sm:py-24 lg:px-8 flex flex-col items-center justify-center min-h-[500px]">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 sm:py-24 lg:px-8 flex flex-col items-center justify-center min-h-125">
         <motion.div 
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -353,36 +369,46 @@ export default function CorporateDashboardPage() {
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
       {/* Background Decorative Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[140px] -mr-80 -mt-40" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[140px] -ml-80 -mb-40" />
+        <div className="absolute top-0 right-0 w-150 h-150 bg-primary/5 rounded-full blur-[140px] -mr-80 -mt-40" />
+        <div className="absolute bottom-0 left-0 w-150 h-150 bg-gold/5 rounded-full blur-[140px] -ml-80 -mb-40" />
       </div>
 
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12">
-         <div className="flex items-center gap-6">
-            <div className="hidden sm:flex items-center justify-center w-16 h-16 rounded-3xl bg-linear-to-br from-primary to-primary/80 text-white shadow-2xl shadow-primary/20">
-               <LayoutDashboard className="w-8 h-8" />
-            </div>
-            <div>
-               <h1 className="text-4xl sm:text-5xl font-black tracking-tighter mb-2">
-                  Command Center
-               </h1>
-               <div className="flex items-center gap-3">
-                  <Badge variant="secondary" className="rounded-full px-3 py-1 bg-primary/5 text-primary border-primary/10 text-[10px] font-black uppercase tracking-widest">
-                     Mullai Corporate
-                  </Badge>
-                  <p className="text-sm font-bold text-muted-foreground">Welcome back, {user?.name || "Corporate Partner"}</p>
-               </div>
-            </div>
-         </div>
-         
-         <Button
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
+        <div>
+          <h1 className="text-[36px] font-extrabold text-primary uppercase tracking-tight" style={{ fontFamily: "Inter, sans-serif" }}>
+            Command Center
+          </h1>
+          <p className="text-[16px] font-medium text-[#554243] mt-1" style={{ fontFamily: "Inter, sans-serif" }}>
+            Strategic Overview & Real-time Culinary Logistics
+          </p>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <Button
             onClick={() => router.push("/corporate/create-order")}
-            className="group relative h-14 px-8 bg-primary text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 overflow-hidden transition-all hover:scale-105 active:scale-95"
-         >
-            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-            <PlusCircle className="mr-3 h-5 w-5 relative z-10" />
-            <span className="relative z-10">Initiate New Cycle</span>
-         </Button>
+            className="h-11 px-6 bg-primary text-white rounded-full font-semibold text-sm hover:bg-primary/90 transition-colors"
+          >
+            Create New Order
+          </Button>
+          <div className="h-10 w-10 overflow-hidden rounded-full border border-border shadow-sm">
+            {avatarUrl ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={avatarUrl}
+                  alt={user?.name ?? "Profile"}
+                  className="h-full w-full object-cover"
+                />
+              </>
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-primary text-xs font-bold text-primary-foreground">
+                {user?.name
+                  ? user.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()
+                  : "U"}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Stats Cards Row */}
@@ -407,13 +433,15 @@ export default function CorporateDashboardPage() {
               {hasMoreActiveOrders && (
                 <Link
                   href="/corporate/orders"
-                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                  className="text-sm font-medium hover:text-primary transition-colors"
+                  style={{ color: '#7A4B4E' }}
                 >
                   View All Records
                 </Link>
               )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              
               {spotlightOrders.map((order) => (
                 <CompactOrderCard key={order._id} order={order} />
               ))}
@@ -430,7 +458,8 @@ export default function CorporateDashboardPage() {
           </h2>
           <Link
             href="/corporate/orders"
-            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            className="text-sm font-medium hover:text-primary transition-colors"
+            style={{ color: '#7A4B4E' }}
           >
             View Archive
           </Link>
@@ -453,24 +482,24 @@ export default function CorporateDashboardPage() {
             </p>
             <Button
               onClick={() => router.push("/corporate/create-order")}
-              className="h-14 px-10 rounded-[2rem] bg-primary text-white font-black text-xs uppercase tracking-widest shadow-2xl shadow-primary/20 hover:scale-105 transition-all"
+              className="h-14 px-10 rounded-4xl bg-primary text-white font-black text-xs uppercase tracking-widest shadow-2xl shadow-primary/20 hover:scale-105 transition-all"
             >
               <PlusCircle className="mr-3 h-5 w-5" />
               NEW CYCLE REQUEST
             </Button>
           </div>
         ) : (
-          <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: '#F2ECED' }}>
-            <div className="overflow-x-auto">
+          <div className="rounded-3xl overflow-hidden" style={{ backgroundColor: '#F8F2F3' }}>
+            <div className="overflow-x-auto" >
               <Table>
                 <TableHeader>
-                  <TableRow className="hover:bg-transparent border-0">
-                    <TableHead className="py-4 px-6 text-sm font-semibold text-foreground/80">Execution ID</TableHead>
-                    <TableHead className="py-4 text-sm font-semibold text-foreground/80">LifeCycle</TableHead>
-                    <TableHead className="py-4 text-sm font-semibold text-foreground/80 text-center">Operation</TableHead>
-                    <TableHead className="py-4 text-sm font-semibold text-foreground/80 text-center">Financials</TableHead>
-                    <TableHead className="py-4 text-sm font-semibold text-foreground/80 text-right">Commitment</TableHead>
-                    <TableHead className="py-4 px-6 w-[80px]"></TableHead>
+                  <TableRow className="hover:bg-transparent border-0" style={{backgroundColor:'#FFFFFF'}}>
+                    <TableHead className="py-4 px-6 text-sm font-semibold text-primary">Execution ID</TableHead>
+                    <TableHead className="py-4 text-sm font-semibold text-primary">LifeCycle</TableHead>
+                    <TableHead className="py-4 text-sm font-semibold text-primary text-center">Operation</TableHead>
+                    <TableHead className="py-4 text-sm font-semibold text-primary text-center">Financials</TableHead>
+                    <TableHead className="py-4 text-sm font-semibold text-primary text-right">Commitment</TableHead>
+                    <TableHead className="py-4 px-6 w-20"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -485,31 +514,31 @@ export default function CorporateDashboardPage() {
                           <span className="text-base font-bold text-primary">
                             {order.order_id}
                           </span>
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-sm text-primary/70">
                             {order.company_name}
                           </span>
                         </div>
                       </TableCell>
                       <TableCell className="py-5">
                         <div className="flex flex-col gap-0.5">
-                          <span className="text-sm font-medium text-foreground">
+                          <span className="text-sm font-medium text-primary">
                             {format(new Date(order.start_date), "MMM dd, yyyy")}
                           </span>
-                          <span className="text-sm font-medium text-foreground">
+                          <span className="text-sm font-medium text-primary">
                             {format(new Date(order.end_date), "MMM dd, yyyy")}
                           </span>
                         </div>
                       </TableCell>
                       <TableCell className="py-5">
                         <div className="flex justify-center">
-                          <span className="inline-flex items-center px-4 py-1.5 rounded-md bg-emerald-500 text-white text-sm font-semibold">
+                          <span className="inline-flex items-center px-4 py-1.5 rounded-[9px] bg-emerald-500 text-white text-sm font-semibold">
                             Active
                           </span>
                         </div>
                       </TableCell>
                       <TableCell className="py-5">
                         <div className="flex justify-center">
-                          <span className="inline-flex items-center px-4 py-1.5 rounded-md bg-amber-500 text-white text-sm font-semibold">
+                          <span className="inline-flex items-center px-4 py-1.5 rounded-[9px] bg-amber-500 text-white text-sm font-semibold">
                             Pending
                           </span>
                         </div>
@@ -522,7 +551,7 @@ export default function CorporateDashboardPage() {
                       <TableCell className="py-5 px-6">
                         <div className="flex justify-end">
                           <div className="w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white transition-all">
-                            <ArrowRight className="h-5 w-5" />
+                            <ArrowRight className="h-5 w-5 text-[#FBFBFB]" />
                           </div>
                         </div>
                       </TableCell>

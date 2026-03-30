@@ -28,7 +28,7 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
     return (
       <motion.div
         whileHover={{ x: 4 }}
-        className="group relative flex items-center gap-4 p-4 rounded-2xl bg-card border border-border hover:border-primary/20 hover:shadow-md transition-all cursor-pointer"
+        className="group relative flex items-center gap-4 p-4 bg-card border border-border hover:border-primary/20 hover:shadow-md transition-all cursor-pointer"
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
@@ -61,7 +61,7 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
     <motion.div
       layout
       whileHover={{ y: -4 }}
-      className="group relative flex flex-col overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300"
+      className="group relative flex flex-col overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300"
     >
       <div className="flex flex-1 flex-col p-6">
         {/* Status Badges - Top */}
@@ -90,8 +90,8 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
 
         {/* Order ID and Company Name */}
         <div className="mb-6">
-          <p className="text-sm text-gray-600 mb-1">Order {order.order_id}</p>
-          <h3 className="text-3xl font-bold text-gray-900">
+          <p className="text-base font-semibold text-primary mb-1" style={{ fontFamily: "Inter, sans-serif" }}>{order.order_id}</p>
+          <h3 className="text-base font-semibold text-primary" style={{ fontFamily: "Inter, sans-serif" }}>
             {order.company_name}
           </h3>
         </div>
@@ -171,7 +171,7 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
  */
 export function OrderCardSkeleton() {
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-2xl bg-card border border-border shadow-sm">
+    <div className="relative flex flex-col overflow-hidden bg-card border border-border shadow-sm">
       <div className="p-5 space-y-4">
         <div className="flex items-start justify-between gap-3">
           <Skeleton className="h-6 w-32 rounded-lg" />

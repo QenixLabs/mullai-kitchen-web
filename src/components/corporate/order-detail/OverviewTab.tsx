@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { CalendarDays, Calendar, MapPin, CreditCard } from "lucide-react";
 import Image from "next/image";
 import type { ICorporateOrder } from "@/api/types/corporate.types";
+import { useCurrentUser } from "@/hooks/useUserStore";
 
 interface OverviewTabProps {
   order: ICorporateOrder;
@@ -39,7 +40,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
           animate={{ opacity: 1, y: 0 }}
           className="lg:col-span-2 bg-white rounded-2xl p-8 border border-gray-100"
         >
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-8 rounded-xl" >
             <h3 className="text-lg font-medium" style={{ color: '#44151C' }}>Subscription Timeline</h3>
             <Calendar className="w-5 h-5 text-gray-400" />
           </div>

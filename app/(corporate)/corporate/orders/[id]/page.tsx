@@ -294,12 +294,12 @@ function OrderDetailPage() {
     <div className="mx-auto w-full max-w-7xl px-4 pt-8 pb-16 sm:px-6 sm:pt-10 sm:pb-20 lg:px-8 lg:pt-12 lg:pb-24">
       {/* Dynamic Background Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -mr-64 -mt-32" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[120px] -ml-64 -mb-32" />
+        <div className="absolute top-0 right-0 w-[500px] h-125 bg-primary/5 rounded-full blur-[120px] -mr-64 -mt-32" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-125 bg-gold/5 rounded-full blur-[120px] -ml-64 -mb-32" />
       </div>
 
       {/* Back button */}
-      <motion.div 
+      {/* <motion.div 
         initial={{ x: -20, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
       >
@@ -314,38 +314,42 @@ function OrderDetailPage() {
           </div>
           <span className="font-bold text-sm">Back to Orders</span>
         </Button>
-      </motion.div>
+      </motion.div> */}
 
       {/* Order Header */}
+      
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="flex flex-col lg:flex-row lg:items-start justify-between gap-6 mb-10"
+        className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8"
       >
         <div>
-          <h1 className="text-2xl font-extrabold text-primary mb-2">
+          <h1 className="text-[32px] font-bold mb-2 tracking-tight" style={{ color: '#44151C' }}>
             {order.company_name}
           </h1>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-2 text-[15px] font-medium text-gray-700">
             <span>Order ID: {order.order_id}</span>
-            <span className="w-1 h-1 rounded-full bg-gray-300" />
+            <span className="text-[#D4D4D4] text-[10px] mx-1">●</span>
             <span>Created: {format(new Date(order.created_at), "MMM dd, yyyy")}</span>
           </div>
         </div>
 
         {/* Status Badges - Pill Style */}
         <div className="flex items-center gap-3">
-          <span className={cn(
-            "px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide",
-            order.status === "active"
-              ? "bg-green-100 text-green-700"
-              : "bg-gray-100 text-gray-600"
-          )}>
+          <span
+            className={cn(
+              "px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-white",
+              order.status === "active"
+                ? "bg-[#00990F]"
+                : "bg-gray-100 text-gray-600"
+            )}
+          >
             ACTIVE
           </span>
+
           {order.payment_status === "pending" && (
-            <span className="px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide bg-amber-100 text-amber-700">
+            <span className="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-[#FF962D] text-white">
               PENDING
             </span>
           )}
@@ -353,8 +357,8 @@ function OrderDetailPage() {
       </motion.div>
 
       {/* Modern Tab System */}
-      <div className="relative mb-8 border-b border-gray-100">
-        <div className="flex items-center gap-8">
+      <div className="relative mb-8 border-b border-gray-200">
+        <div className="flex items-center gap-10">
           {TABS_CONFIG.map((tab) => {
             if (tab.value === "schedule" && order.status !== "active") return null;
             const isActive = activeTab === tab.value;
@@ -364,16 +368,16 @@ function OrderDetailPage() {
                 key={tab.value}
                 onClick={() => handleTabChange(tab.value)}
                 className={cn(
-                  "relative py-4 text-sm font-medium transition-colors",
-                  isActive && "text-primary"
+                  "relative py-4 text-[15px] font-bold transition-colors"
                 )}
-                style={isActive ? undefined : { color: '#797778' }}
+                style={{ color: isActive ? '#44151C' : '#8D8D8D' }}
               >
                 {tab.label}
                 {isActive && (
                   <motion.div
                     layoutId="detail-tab-indicator"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                    className="absolute bottom-0 left-0 right-0 h-[3px] rounded-t-full"
+                    style={{ backgroundColor: '#44151C' }}
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
