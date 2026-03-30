@@ -49,6 +49,11 @@ export interface IVerifySignupOtpResponse {
   signup_token: string;
 }
 
+export interface IChangePasswordRequest {
+  old_password: string;
+  new_password: string;
+}
+
 export interface ICorporateRegisterRequest {
   email: string;
   company_name: string;

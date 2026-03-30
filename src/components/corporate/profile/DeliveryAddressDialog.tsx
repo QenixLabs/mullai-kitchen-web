@@ -2,13 +2,14 @@
 
 import { useEffect } from "react";
 import { motion } from "motion/react";
-import { MapPin, Loader2 } from "lucide-react";
+import { MapPin, Loader2, Star } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -26,7 +27,16 @@ import type { IDeliveryAddress } from "@/api/types/corporate.types";
 
 const deliveryAddressSchema = z.object({
   label: z.string().min(1, "Location label is required"),
-  full_address: z.string().min(1, "Full address is required"),
+  street_address: z.string().optional(),
+  area: z.string().optional(),
+  landmark: z.string().optional(),
+  city: z.string().min(1, "City is required"),
+  state: z.string().min(1, "State is required"),
+  pincode: z
+    .string()
+    .min(1, "Pincode is required")
+    .regex(/^\d{6}$/, "Enter a valid 6-digit pincode"),
+  is_default: z.boolean(),
 });
 
 type DeliveryAddressFormValues = z.infer<typeof deliveryAddressSchema>;
@@ -52,7 +62,13 @@ export function DeliveryAddressDialog({
     resolver: zodResolver(deliveryAddressSchema),
     defaultValues: {
       label: "",
-      full_address: "",
+      street_address: "",
+      area: "",
+      landmark: "",
+      city: "",
+      state: "",
+      pincode: "",
+      is_default: false,
     },
   });
 
@@ -61,12 +77,24 @@ export function DeliveryAddressDialog({
       if (isEditing && existingAddress) {
         form.reset({
           label: existingAddress.label || "",
-          full_address: existingAddress.full_address || "",
+          street_address: existingAddress.street_address || "",
+          area: existingAddress.area || "",
+          landmark: existingAddress.landmark || "",
+          city: existingAddress.city || "",
+          state: existingAddress.state || "",
+          pincode: existingAddress.pincode || "",
+          is_default: existingAddress.is_default ?? false,
         });
       } else {
         form.reset({
           label: "",
-          full_address: "",
+          street_address: "",
+          area: "",
+          landmark: "",
+          city: "",
+          state: "",
+          pincode: "",
+          is_default: false,
         });
       }
     }
@@ -74,13 +102,35 @@ export function DeliveryAddressDialog({
 
   const isPending = addAddress.isPending || updateAddress.isPending;
 
+  const buildFullAddress = (values: DeliveryAddressFormValues) => {
+    const parts = [
+      values.street_address,
+      values.area,
+      values.landmark,
+      values.city,
+      values.state,
+      values.pincode,
+    ].filter(Boolean);
+    return parts.join(", ");
+  };
+
   const handleSubmit = (values: DeliveryAddressFormValues) => {
+    const full_address = buildFullAddress(values);
+    const payload = {
+      label: values.label,
+      full_address,
+      street_address: values.street_address || undefined,
+      area: values.area || undefined,
+      landmark: values.landmark || undefined,
+      city: values.city,
+      state: values.state,
+      pincode: values.pincode,
+      is_default: values.is_default,
+    };
+
     if (isEditing && editIndex !== null) {
       updateAddress.mutate(
-        {
-          index: editIndex,
-          data: values,
-        },
+        { index: editIndex, data: payload },
         {
           onSuccess: () => {
             toast.success("Delivery location updated successfully");
@@ -92,27 +142,21 @@ export function DeliveryAddressDialog({
         },
       );
     } else {
-      addAddress.mutate(
-        {
-          label: values.label,
-          full_address: values.full_address,
+      addAddress.mutate(payload, {
+        onSuccess: () => {
+          toast.success("Delivery location added successfully");
+          onOpenChange(false);
         },
-        {
-          onSuccess: () => {
-            toast.success("Delivery location added successfully");
-            onOpenChange(false);
-          },
-          onError: () => {
-            toast.error("Failed to add delivery location");
-          },
+        onError: () => {
+          toast.error("Failed to add delivery location");
         },
-      );
+      });
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden border-0 bg-transparent shadow-none">
+      <DialogContent className="sm:max-w-lg p-0 overflow-hidden border-0 bg-transparent shadow-none">
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -133,21 +177,22 @@ export function DeliveryAddressDialog({
             </div>
             <DialogDescription className="text-xs font-bold text-muted-foreground leading-relaxed">
               {isEditing
-                ? "Update the label or address for this delivery location."
+                ? "Update the details for this delivery location."
                 : "Add a new delivery location for meal logistics."}
             </DialogDescription>
           </DialogHeader>
 
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6 relative z-10"
+            className="space-y-5 relative z-10"
           >
+            {/* Label */}
             <div className="space-y-2">
               <Label
                 htmlFor="addr-label"
                 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1"
               >
-                Location Label
+                Location Label *
               </Label>
               <Input
                 id="addr-label"
@@ -162,24 +207,143 @@ export function DeliveryAddressDialog({
               )}
             </div>
 
+            {/* Street Address */}
             <div className="space-y-2">
               <Label
-                htmlFor="addr-full"
+                htmlFor="addr-street"
                 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1"
               >
-                Full Address
+                Street Address
               </Label>
               <Input
-                id="addr-full"
-                placeholder="Complete delivery address"
+                id="addr-street"
+                placeholder="Building name, flat / house no."
                 className="h-12 rounded-2xl bg-secondary/20 border-border/40 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all"
-                {...form.register("full_address")}
+                {...form.register("street_address")}
               />
-              {form.formState.errors.full_address && (
+            </div>
+
+            {/* Area + Landmark Row */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="addr-area"
+                  className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1"
+                >
+                  Area
+                </Label>
+                <Input
+                  id="addr-area"
+                  placeholder="e.g., Anna Nagar"
+                  className="h-12 rounded-2xl bg-secondary/20 border-border/40 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all"
+                  {...form.register("area")}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label
+                  htmlFor="addr-landmark"
+                  className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1"
+                >
+                  Landmark
+                </Label>
+                <Input
+                  id="addr-landmark"
+                  placeholder="e.g., Near Temple"
+                  className="h-12 rounded-2xl bg-secondary/20 border-border/40 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all"
+                  {...form.register("landmark")}
+                />
+              </div>
+            </div>
+
+            {/* City + State Row */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="addr-city"
+                  className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1"
+                >
+                  City *
+                </Label>
+                <Input
+                  id="addr-city"
+                  placeholder="e.g., Chennai"
+                  className="h-12 rounded-2xl bg-secondary/20 border-border/40 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all"
+                  {...form.register("city")}
+                />
+                {form.formState.errors.city && (
+                  <p className="text-xs text-destructive ml-1">
+                    {form.formState.errors.city.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label
+                  htmlFor="addr-state"
+                  className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1"
+                >
+                  State *
+                </Label>
+                <Input
+                  id="addr-state"
+                  placeholder="e.g., Tamil Nadu"
+                  className="h-12 rounded-2xl bg-secondary/20 border-border/40 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all"
+                  {...form.register("state")}
+                />
+                {form.formState.errors.state && (
+                  <p className="text-xs text-destructive ml-1">
+                    {form.formState.errors.state.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Pincode */}
+            <div className="space-y-2">
+              <Label
+                htmlFor="addr-pincode"
+                className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1"
+              >
+                Pincode *
+              </Label>
+              <Input
+                id="addr-pincode"
+                placeholder="6-digit pincode"
+                maxLength={6}
+                className="h-12 rounded-2xl bg-secondary/20 border-border/40 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all"
+                {...form.register("pincode", {
+                  onChange: (e) => {
+                    const onlyDigits = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    form.setValue("pincode", onlyDigits, { shouldValidate: true });
+                  },
+                })}
+              />
+              {form.formState.errors.pincode && (
                 <p className="text-xs text-destructive ml-1">
-                  {form.formState.errors.full_address.message}
+                  {form.formState.errors.pincode.message}
                 </p>
               )}
+            </div>
+
+            {/* Set as Default */}
+            <div className="flex items-center justify-between rounded-2xl bg-secondary/20 border border-border/30 p-4">
+              <div className="flex items-center gap-3">
+                <Star className="h-4 w-4 text-gold" />
+                <div>
+                  <p className="text-sm font-semibold text-[#1d1b1c]">
+                    Set as default
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Orders will use this address by default
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={form.watch("is_default")}
+                onCheckedChange={(checked) =>
+                  form.setValue("is_default", checked)
+                }
+                className="data-[state=checked]:bg-primary"
+              />
             </div>
 
             <DialogFooter className="sm:justify-between sm:gap-4 relative z-10 border-t border-border/40 pt-8">

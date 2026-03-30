@@ -1,9 +1,12 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, MapPin, Pencil, Trash2, Gem } from "lucide-react";
+import { Plus, MapPin, Pencil, Trash2, Gem, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useDeleteDeliveryAddress } from "@/api/hooks/useCorporateProfile";
+import {
+  useDeleteDeliveryAddress,
+  useUpdateDeliveryAddress,
+} from "@/api/hooks/useCorporateProfile";
 import { toast } from "sonner";
 import type { ICorporateProfile, IDeliveryAddress } from "@/api/types/corporate.types";
 
@@ -13,16 +16,28 @@ interface DeliveryAddressesProps {
   onEdit: (index: number) => void;
 }
 
+function AddressLine({ value, isLast }: { value?: string; isLast?: boolean }) {
+  if (!value?.trim()) return null;
+  return (
+    <span>
+      {value}
+      {!isLast ? <span className="text-[#554243]/60">, </span> : ""}
+    </span>
+  );
+}
+
 function DeliveryAddressCard({
   address,
   index,
   onEdit,
   onDelete,
+  onSetDefault,
 }: {
   address: IDeliveryAddress;
   index: number;
   onEdit: (index: number) => void;
   onDelete: (index: number) => void;
+  onSetDefault: (index: number) => void;
 }) {
   return (
     <motion.div
@@ -30,10 +45,11 @@ function DeliveryAddressCard({
       className="group bg-white rounded-3xl shadow-[0px_20px_40px_0px_rgba(61,0,12,0.04)] overflow-hidden"
     >
       {/* Image Header */}
-      <div className="h-40 bg-secondary/20 relative">
+      <div className="h-28 bg-secondary/20 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
         {address.is_default && (
-          <div className="absolute top-4 right-4 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded">
+          <div className="absolute top-4 right-4 bg-primary text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+            <Star className="h-3 w-3 fill-current" />
             Default
           </div>
         )}
@@ -46,12 +62,40 @@ function DeliveryAddressCard({
             {address.label || "Delivery Location"}
           </h4>
           <p className="text-sm font-normal text-[#554243] leading-[22.75px] mt-1">
-            {address.full_address}
+            {address.street_address && (
+              <AddressLine value={address.street_address} />
+            )}
+            {address.area && <AddressLine value={address.area} />}
+            {address.landmark && (
+              <AddressLine value={address.landmark} />
+            )}
+            {address.city && <AddressLine value={address.city} />}
+            {address.state && <AddressLine value={address.state} />}
+            {address.pincode && (
+              <AddressLine value={address.pincode} isLast />
+            )}
+            {!address.street_address &&
+              !address.area &&
+              !address.city &&
+              !address.state &&
+              !address.pincode &&
+              address.full_address && (
+                <>{address.full_address}</>
+              )}
           </p>
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-4 pt-2">
+          {!address.is_default && (
+            <button
+              onClick={() => onSetDefault(index)}
+              className="flex items-center gap-1 text-xs font-bold text-gold hover:text-gold/70 transition-colors"
+            >
+              <Star className="h-3 w-3" />
+              Set Default
+            </button>
+          )}
           <button
             onClick={() => onEdit(index)}
             className="flex items-center gap-1 text-xs font-bold text-[#554243] hover:text-primary transition-colors"
@@ -78,6 +122,7 @@ export function DeliveryAddresses({
   onEdit,
 }: DeliveryAddressesProps) {
   const deleteAddress = useDeleteDeliveryAddress();
+  const updateAddress = useUpdateDeliveryAddress();
   const addresses = profile.delivery_addresses ?? [];
 
   const handleDelete = (index: number) => {
@@ -89,6 +134,20 @@ export function DeliveryAddresses({
         toast.error("Failed to remove delivery location");
       },
     });
+  };
+
+  const handleSetDefault = (index: number) => {
+    updateAddress.mutate(
+      { index, data: { is_default: true } },
+      {
+        onSuccess: () => {
+          toast.success("Default delivery location updated");
+        },
+        onError: () => {
+          toast.error("Failed to set default delivery location");
+        },
+      },
+    );
   };
 
   return (
@@ -141,6 +200,7 @@ export function DeliveryAddresses({
                 index={idx}
                 onEdit={onEdit}
                 onDelete={handleDelete}
+                onSetDefault={handleSetDefault}
               />
             ))}
           </motion.div>

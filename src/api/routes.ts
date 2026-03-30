@@ -8,6 +8,7 @@ export const AUTH_ROUTES = {
   RESET_PASSWORD: "/auth/reset-password",
   SEND_SIGNUP_OTP: "/auth/send-signup-otp",
   VERIFY_SIGNUP_OTP: "/auth/verify-signup-otp",
+  CHANGE_PASSWORD: "/auth/change-password",
   CORPORATE_REGISTER: "/auth/corporate/register",
 } as const;
 

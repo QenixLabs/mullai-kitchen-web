@@ -36,6 +36,12 @@ export interface IBillingAddress {
 export interface IDeliveryAddress {
   label: string;
   full_address: string;
+  street_address?: string;
+  area?: string;
+  landmark?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
   is_default: boolean;
   lat?: number;
   lng?: number;
@@ -69,6 +75,12 @@ export interface ICorporateProfile {
 export interface AddDeliveryAddressDto {
   label: string;
   full_address: string;
+  street_address?: string;
+  area?: string;
+  landmark?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
   is_default?: boolean;
   lat?: number;
   lng?: number;
