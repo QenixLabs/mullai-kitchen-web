@@ -4,6 +4,7 @@ import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { CorporateSidebar } from "@/components/navigation/CorporateSidebar";
+import { CorporateMobileBottomNav } from "@/components/navigation/CorporateMobileBottomNav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { useAuthHydrated, useIsAuthenticated, useCurrentUser } from "@/hooks/useUserStore";
 
@@ -59,6 +60,7 @@ export default function CorporateLayout({
       <SidebarInset className="flex flex-col min-h-svh bg-background pb-28 md:pb-0">
         {children}
       </SidebarInset>
+      <CorporateMobileBottomNav />
     </SidebarProvider>
   );
 }
