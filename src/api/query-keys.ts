@@ -61,3 +61,8 @@ export const corporateKeys = {
   modifications: (orderId: string) => [...corporateKeys.all, 'modifications', orderId] as const,
   invoice: (orderId: string, type: string) => [...corporateKeys.all, 'invoice', orderId, type] as const,
 };
+
+export const corporateProfileKeys = {
+  all: ['corporate-profile'] as const,
+  profile: () => [...corporateProfileKeys.all, 'profile'] as const,
+};
