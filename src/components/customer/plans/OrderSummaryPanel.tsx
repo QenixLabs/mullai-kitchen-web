@@ -1,7 +1,6 @@
 "use client";
 
-import { FaArrowRight, FaCheck, FaSpinner, FaShieldAlt } from "react-icons/fa";
-import { BadgePercent } from "lucide-react";
+import { FaSpinner } from "react-icons/fa";
 
 import { useCustomPlanPricing } from "@/api/hooks/useCustomPlans";
 import type { CustomPlanMenuPreviewParams } from "@/api/types/customer.types";
@@ -29,160 +28,94 @@ export function OrderSummaryPanel({
   params,
   onContinue,
   isContinueDisabled,
-  isAuthenticated,
+  isAuthenticated: _isAuthenticated,
 }: OrderSummaryPanelProps) {
   const { data: pricing, isLoading, error } = useCustomPlanPricing(params);
 
-  const mealTypeLetters = params?.meal_types.map((m) => m[0]).join("") || "-";
+  const mealTypeLetters = params?.meal_types.map((m) => m[0]).join(" + ") || "-";
+
+  const preferenceLabel =
+    params?.preference === "VEG"
+      ? "Veg Only"
+      : params?.preference === "NON_VEG"
+        ? "Non-Veg"
+        : "-";
 
   return (
-    <div className="rounded-2xl bg-white border border-gray-200 shadow-lg overflow-hidden">
-      {/* Header */}
-      <div className="p-5 border-b border-gray-200">
-        <h2
-          className="text-xl font-bold text-primary"
-          style={{ fontFamily: "var(--font-inter), sans-serif" }}
-        >
-          Order Summary
-        </h2>
-      </div>
+    <div className="overflow-hidden rounded-3xl border border-[#E7E0E4] bg-[#F8F4F6] p-5 shadow-[0_10px_26px_rgba(20,15,17,0.08)] lg:sticky lg:top-6">
+      <h2
+        className="text-[24px] font-bold leading-none text-[#341117]"
+        style={{ fontFamily: "var(--font-inter), sans-serif" }}
+      >
+        Order Summary
+      </h2>
 
-      <div className="p-5">
-        {/* Selection Summary */}
-        <div className="space-y-3 pb-5 mb-5 border-b border-gray-200">
+      <div className="mt-6">
+        <div className="space-y-2.5 pb-4">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-500">Duration</span>
-            <span className="font-semibold text-primary">
+            <span className="text-[#7A6F73]">Duration</span>
+            <span className="font-bold text-[#2E1318]">
               {params?.days || "-"} Days
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-500">Meals per day</span>
-            <span className="font-semibold text-primary">
-              {params?.meal_types.length || 0}({mealTypeLetters})
+            <span className="text-[#7A6F73]">Meals per day</span>
+            <span className="font-bold text-[#2E1318]">
+              {params?.meal_types.length || 0} ({mealTypeLetters})
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-500">Preference</span>
-            <span
-              className={cn(
-                "font-semibold flex items-center gap-1.5",
-                params?.preference === "VEG"
-                  ? "text-emerald-600"
-                  : "text-red-600",
-              )}
-            >
-              {params?.preference && (
-                <span
-                  className={cn(
-                    "w-4 h-4 rounded flex items-center justify-center border-2",
-                    params?.preference === "VEG"
-                      ? "border-emerald-500 bg-white"
-                      : "border-red-500 bg-white",
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "w-2 h-2 rounded-full",
-                      params?.preference === "VEG"
-                        ? "bg-emerald-500"
-                        : "bg-red-500",
-                    )}
-                  />
-                </span>
-              )}
-              {params?.preference === "VEG"
-                ? "Veg"
-                : params?.preference === "NON_VEG"
-                  ? "Non-veg"
-                  : "-"}
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex flex-col">
-              <span className="text-gray-500">Price per meal</span>
-              {pricing && pricing.subtotal > 0 && (
-                <span className="text-xs text-gray-400">
-                  Standard rate ₹100
-                </span>
-              )}
-            </div>
-            <span className="font-semibold text-primary">
-              ₹{pricing?.price_per_meal || 0}
-            </span>
+            <span className="text-[#7A6F73]">Preference</span>
+            <span className="font-bold text-[#2E1318]">{preferenceLabel}</span>
           </div>
         </div>
 
-        {/* Pricing Breakdown */}
         {isLoading ? (
           <PricingSkeleton />
         ) : error ? (
-          <div className="py-4">
-            <p className="text-xs text-red-500 text-center">
-              Failed to load pricing
-            </p>
-          </div>
+          <div className="rounded-xl bg-red-50 px-3 py-3 text-xs text-red-600">Failed to load pricing</div>
         ) : pricing ? (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-500">
-                Subtotal ({pricing.total_meals} meals)
-              </span>
-              <span className="font-semibold text-primary">
-                ₹{pricing.subtotal.toLocaleString()}
-              </span>
-            </div>
-            {pricing.bulk_discount.amount > 0 && (
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-emerald-600 font-medium flex items-center gap-1">
-                  <BadgePercent className="w-4 h-4" />
-                  Bulk Discount ({pricing.bulk_discount.percentage}%)
-                </span>
-                <span className="font-semibold text-emerald-600">
+          <>
+            <div className="space-y-2 border-t border-[#E7DEE2] pt-4 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[#7A6F73]">Subtotal</span>
+                <span className="font-semibold text-[#2E1318]">₹{pricing.subtotal.toLocaleString()}</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-[#22A35A]">Bulk Discount</span>
+                <span className="font-semibold text-[#22A35A]">
                   - ₹{pricing.bulk_discount.amount.toLocaleString()}
                 </span>
               </div>
-            )}
 
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200 mt-4">
-              <span
-                className="text-lg font-bold text-primary"
-                style={{ fontFamily: "var(--font-inter), sans-serif" }}
-              >
-                Total Pay
-              </span>
-              <span
-                className="text-3xl font-bold text-primary"
-                style={{ fontFamily: "var(--font-inter), sans-serif" }}
-              >
-                ₹{pricing.total.toLocaleString()}
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="text-[#7A6F73]">Delivery Fee</span>
+                <span className="font-semibold text-[#2E1318]">FREE</span>
+              </div>
             </div>
 
-            {/* Continue Button */}
+            <div className="mt-4 rounded-2xl bg-[#4A0010] p-4 text-white">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/70">Estimated Total</p>
+              <p className="mt-1 text-[40px] font-black leading-none">₹{pricing.total.toLocaleString()}</p>
+              <p className="mt-1 text-xs text-white/80">tax incl.</p>
+            </div>
+
             <Button
               onClick={onContinue}
               disabled={isContinueDisabled || isLoading}
               className={cn(
-                "w-full h-12 rounded-lg font-semibold text-white mt-5 text-sm group transition-all",
-                "bg-primary hover:bg-[#5a1c28] active:scale-[0.98]",
-                "disabled:opacity-50 disabled:cursor-not-allowed",
+                "mt-4 h-12 w-full rounded-full bg-[#4A0010] text-base font-bold text-white",
+                "hover:bg-[#35000B] disabled:opacity-50 disabled:cursor-not-allowed",
               )}
             >
-              {isLoading ? (
-                <FaSpinner className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  Proceed to Checkout
-                  <FaArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-                </>
-              )}
+              {isLoading ? <FaSpinner className="h-5 w-5 animate-spin" /> : "Proceed to Checkout"}
             </Button>
 
-            <p className="text-xs text-gray-400 text-center mt-3">
+            <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#A2959A]">
               *Free delivery included. Pause or skip anytime.
             </p>
-          </div>
+          </>
         ) : (
           <div className="py-6 text-center">
             <p className="text-sm text-gray-400">

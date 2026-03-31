@@ -8,10 +8,10 @@ export default function ProfilePage() {
       {/* Page Header */}
       <div className="mb-6 sm:mb-8">
         <h1
-          className="text-3xl sm:text-[48px] font-bold text-primary"
+          className="text-[26px] font-extrabold uppercase text-primary"
           style={{ fontFamily: "var(--font-inter), sans-serif" }}
         >
-          Profile
+          PROFILE
         </h1>
         <p className="text-gray-500 mt-2 text-sm sm:text-base">
           Manage your personal information, addresses, and preferences

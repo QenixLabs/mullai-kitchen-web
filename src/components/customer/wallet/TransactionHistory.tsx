@@ -1,19 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   FaArrowDown,
   FaArrowUp,
   FaCalendarAlt,
-  FaChevronDown,
-  FaChevronUp,
-  FaFilter,
   FaSpinner,
-  FaSyncAlt,
 } from "react-icons/fa";
 import { motion } from "motion/react";
 
-import { useWalletTransactions } from "@/api/hooks/usePayment";
 import type { WalletTransaction } from "@/api/types/payment.types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -28,9 +23,6 @@ export interface TransactionHistoryProps {
   limit: number;
   onPageChange: (page: number) => void;
 }
-
-type SortOrder = "desc" | "asc";
-type FilterType = "all" | "credit" | "debit";
 
 const TRANSACTION_CATEGORY_LABELS: Record<
   string,
@@ -98,35 +90,20 @@ export function TransactionHistory({
   className,
   data,
   isLoading,
-  error,
-  refetch,
   isFetching,
-  limit,
-  onPageChange,
+  error,
+  refetch: _refetch,
+  limit: _limit,
+  onPageChange: _onPageChange,
 }: TransactionHistoryProps) {
   const transactions = data?.transactions ?? [];
   const refreshing = isFetching && !isLoading;
   const hasError = error !== null;
 
-  const [filter, setFilter] = useState<FilterType>("all");
-  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
-  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-
-  const handleRefresh = () => {
-    refetch();
-  };
-
-  const filteredTransactions = transactions.filter((tx) => {
-    if (filter === "all") return true;
-    if (filter === "credit") return tx.type === "CREDIT";
-    if (filter === "debit") return tx.type === "DEBIT";
-    return true;
-  });
-
-  const sortedTransactions = [...filteredTransactions].sort((a, b) => {
+  const sortedTransactions = [...transactions].sort((a, b) => {
     const dateA = new Date(a.createdAt).getTime();
     const dateB = new Date(b.createdAt).getTime();
-    return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+    return dateB - dateA;
   });
 
   const formatDate = (dateString: string) => {
@@ -161,9 +138,7 @@ export function TransactionHistory({
 
   if (isLoading && !refreshing) {
     return (
-      <div
-        className={cn("flex min-h-80 items-center justify-center", className)}
-      >
+      <div className={cn("flex min-h-80 items-center justify-center rounded-[28px] border border-[#ECE7EA] bg-white", className)}>
         <FaSpinner className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -173,7 +148,7 @@ export function TransactionHistory({
     return (
       <div
         className={cn(
-          "flex min-h-80 items-center justify-center rounded-sm border border-red-200 bg-red-50 p-8",
+          "flex min-h-80 items-center justify-center rounded-[28px] border border-red-200 bg-red-50 p-8",
           className,
         )}
       >
@@ -181,134 +156,33 @@ export function TransactionHistory({
           <p className="text-sm font-medium text-red-900">
             Failed to load transactions
           </p>
-          <Button
-            onClick={handleRefresh}
-            variant="outline"
-            size="sm"
-            className="mt-4"
-          >
-            <FaSyncAlt className="mr-2 h-4 w-4" />
-            Retry
-          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={cn("space-y-4", className)}>
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-foreground">
-          Transaction History
-        </h2>
-        <div className="flex items-center gap-2">
-          {/* Filter Dropdown */}
-          <div className="relative">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-              className="gap-2"
-            >
-              <FaFilter className="h-4 w-4" />
-              <span className="capitalize">{filter}</span>
-              {showFilterDropdown ? (
-                <FaChevronUp className="h-4 w-4" />
-              ) : (
-                <FaChevronDown className="h-4 w-4" />
-              )}
-            </Button>
-
-            {showFilterDropdown && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="absolute right-0 top-full z-10 mt-2 w-48 overflow-hidden rounded-sm border border-gray-200 bg-white shadow-lg"
-              >
-                <div className="p-1">
-                  {(["all", "credit", "debit"] as FilterType[]).map((type) => (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => {
-                        setFilter(type);
-                        onPageChange(1);
-                        setShowFilterDropdown(false);
-                      }}
-                      className={cn(
-                        "flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm transition-colors",
-                        filter === type
-                          ? "bg-primary/10 text-primary"
-                          : "text-foreground hover:bg-accent",
-                      )}
-                    >
-                      {type === "all" && <span>All Transactions</span>}
-                      {type === "credit" && (
-                        <>
-                          <FaArrowUp className="h-4 w-4 text-emerald-500" />
-                          <span>Credits Only</span>
-                        </>
-                      )}
-                      {type === "debit" && (
-                        <>
-                          <FaArrowDown className="h-4 w-4 text-primary" />
-                          <span>Debits Only</span>
-                        </>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </div>
-
-          {/* Sort Toggle */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setSortOrder(sortOrder === "desc" ? "asc" : "desc")}
-            title="Sort by date"
-          >
-            {sortOrder === "desc" ? (
-              <FaChevronDown className="h-4 w-4" />
-            ) : (
-              <FaChevronUp className="h-4 w-4" />
-            )}
-          </Button>
-
-          {/* Refresh */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={refreshing}
-          >
-            <FaSyncAlt
-              className={cn("h-4 w-4", refreshing && "animate-spin")}
-            />
-          </Button>
-        </div>
-      </div>
+    <div className={cn("rounded-[28px] border border-[#ECE7EA] bg-white p-7 shadow-[0_10px_24px_rgba(20,15,17,0.07)]", className)}>
+      <h2 className="text-[36px] font-black leading-[0.92] tracking-tight text-[#341117]">
+        Recent
+        <br />
+        Activity
+      </h2>
 
       {/* Transactions List */}
       {sortedTransactions.length === 0 ? (
-        <div className="rounded-sm border border-dashed border-border bg-muted p-12 text-center">
+        <div className="mt-8 rounded-xl border border-dashed border-[#E5DEE2] bg-[#FAF7F8] p-12 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
             <FaCalendarAlt className="h-8 w-8 text-muted-foreground/70" />
           </div>
           <h3 className="text-lg font-semibold text-foreground">
             No Transactions Yet
           </h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {filter === "all"
-              ? "Your wallet transaction history will appear here once you start using it for payments."
-              : `No ${filter} transactions found.`}
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">Your wallet transaction history will appear here once you start using it for payments.</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {sortedTransactions.map((tx, index) => {
+        <div className="mt-8 space-y-3">
+          {sortedTransactions.slice(0, 4).map((tx, index) => {
             const isCredit = tx.type === "CREDIT";
             // Normalize category for lookup (e.g. "Reservation Confirmed" -> "RESERVATION_CONFIRMED")
             const categoryKey = tx.category.toUpperCase().replace(/\s+/g, "_");
@@ -320,21 +194,21 @@ export function TransactionHistory({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex items-start gap-4 rounded-sm border border-border bg-background p-4 shadow-sm hover:shadow-md transition-shadow"
+                className="flex items-center gap-4 rounded-xl px-2 py-2"
               >
                 {/* Icon */}
                 <div
                   className={cn(
-                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
+                    "flex h-12 w-12 shrink-0 items-center justify-center rounded-full",
                     isCredit
-                      ? "bg-emerald-50 ring-1 ring-emerald-100"
-                      : "bg-primary/10 ring-1 ring-primary/20",
+                      ? "bg-[#D8F0F1]"
+                      : "bg-[#F6DFE3]",
                   )}
                 >
                   {isCredit ? (
-                    <FaArrowUp className="h-5 w-5 text-emerald-600" />
+                    <FaArrowUp className="h-4 w-4 text-[#2B95A0]" />
                   ) : (
-                    <FaArrowDown className="h-5 w-5 text-primary" />
+                    <FaArrowDown className="h-4 w-4 text-[#7A2D3C]" />
                   )}
                 </div>
 
@@ -342,16 +216,10 @@ export function TransactionHistory({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="text-sm font-semibold text-foreground">
+                      <p className="text-[22px] font-bold leading-tight text-[#28191D]">
                         {categoryInfo?.label || tx.category}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        {categoryInfo?.description || tx.description}
-                      </p>
-                      <p
-                        className="mt-1 text-[11px] text-muted-foreground/70"
-                        title={formatFullDate(tx.createdAt)}
-                      >
+                      <p className="mt-1 text-sm text-[#7D7276]" title={formatFullDate(tx.createdAt)}>
                         {formatDate(tx.createdAt)}
                       </p>
                     </div>
@@ -360,29 +228,16 @@ export function TransactionHistory({
                     <div className="shrink-0 text-right">
                       <p
                         className={cn(
-                          "text-sm font-bold",
-                          isCredit ? "text-emerald-600" : "text-primary",
+                          "text-[28px] font-extrabold leading-none",
+                          isCredit ? "text-[#2C95A0]" : "text-[#4E1020]",
                         )}
                       >
-                        {isCredit ? "+" : "-"}₹{tx.amount.toFixed(2)}
+                        {isCredit ? "+" : "-"}₹{tx.amount.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </p>
-                      <p className="text-[11px] text-muted-foreground/70">
-                        {isCredit ? "Credited" : "Debited"}
+                      <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#9A8D92]">
+                        {isCredit ? "Success" : "Completed"}
                       </p>
                     </div>
-                  </div>
-
-                  {/* Balance change */}
-                  <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-                    <span>Balance:</span>
-                    <span className="font-medium text-foreground">
-                      ₹{tx.balanceBefore.toFixed(2)}
-                    </span>
-                    <FaArrowDown className="h-3 w-3 text-muted-foreground/70" />
-                    <FaArrowUp className="h-3 w-3 text-muted-foreground/70" />
-                    <span className="font-medium text-foreground">
-                      ₹{tx.balanceAfter.toFixed(2)}
-                    </span>
                   </div>
                 </div>
               </motion.div>
@@ -390,6 +245,10 @@ export function TransactionHistory({
           })}
         </div>
       )}
+
+      <Button variant="outline" className="mt-7 h-11 w-full rounded-2xl border-[#E9E1E5] bg-white font-bold uppercase tracking-[0.12em] text-[#66585D] hover:bg-[#FAF7F8]">
+        View Full History
+      </Button>
     </div>
   );
 }

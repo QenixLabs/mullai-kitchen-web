@@ -188,7 +188,7 @@ export default function SubscriptionPage() {
   // Error state
   if (error) {
     return (
-      <div className="container mx-auto p-4 sm:p-6 max-w-7xl flex flex-col items-center justify-center min-h-[300px] sm:min-h-[400px]">
+      <div className="container mx-auto flex min-h-75 max-w-7xl flex-col items-center justify-center p-4 sm:min-h-100 sm:p-6">
         <div className="p-4 rounded-full bg-destructive/10 text-destructive mb-6">
           <FaExclamationCircle className="h-8 w-8 sm:h-10 sm:w-10" />
         </div>
@@ -208,9 +208,9 @@ export default function SubscriptionPage() {
   return (
     <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
       {/* Page Header */}
-      <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+      <div className="mb-6 flex flex-col gap-4 sm:mb-8 md:flex-row md:items-start md:justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-[#44151C] mb-2">
+          <h1 className="mb-2 text-2xl font-black tracking-tight text-[#44151C] sm:text-3xl md:text-[34px] lg:text-4xl">
             Subscriptions
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground">
@@ -235,7 +235,7 @@ export default function SubscriptionPage() {
         <Button
           onClick={() => router.push("/plans")}
           size="lg"
-          className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-sm shrink-0 w-full sm:w-auto"
+          className="w-full shrink-0 gap-2 bg-primary text-white shadow-sm hover:bg-primary/90 md:w-auto"
         >
           <FaPlus className="h-4 w-4" />
           New Subscription
@@ -266,7 +266,7 @@ export default function SubscriptionPage() {
             </Button>
           </div>
         ) : (
-          <div className="pb-8 sm:pb-12">
+          <div className="pb-8 sm:pb-10 lg:pb-12">
             <h2 className="text-lg sm:text-xl font-bold text-primary mb-4">Active Subscriptions</h2>
             <SubscriptionList
               subscriptions={subscriptions}

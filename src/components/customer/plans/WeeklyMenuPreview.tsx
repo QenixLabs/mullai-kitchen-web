@@ -1,115 +1,70 @@
 "use client";
 
-import { FaCalendarAlt } from "react-icons/fa";
 import Image from "next/image";
 
-import { useCustomPlanMenuPreview } from "@/api/hooks/useCustomPlans";
 import type { CustomPlanMenuPreviewParams } from "@/api/types/customer.types";
-import { cn } from "@/lib/utils";
 
 interface WeeklyMenuPreviewProps {
   params: CustomPlanMenuPreviewParams | null;
   preference?: "VEG" | "NON_VEG" | null;
 }
 
-function MealCardSkeleton() {
-  return (
-    <div className="rounded-xl border border-gray-100 overflow-hidden bg-white flex-shrink-0 w-[160px] shadow-md">
-      <div className="aspect-square bg-gray-100 animate-pulse" />
-      <div className="p-3">
-        <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
-      </div>
-    </div>
-  );
-}
-
-function LoadingSkeleton() {
-  return (
-    <div className="flex gap-3 overflow-x-auto pb-2">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <MealCardSkeleton key={i} />
-      ))}
-    </div>
-  );
-}
+const SAMPLE_HIGHLIGHTS = [
+  {
+    name: "Chicken Curry",
+    subtitle: "HIGH PROTEIN • 420 KCAL",
+    image: "/images/plans/chiken curry.png",
+  },
+  {
+    name: "Tofu Buddha Bowl",
+    subtitle: "PLANT BASED • 340 KCAL",
+    image: "/images/plans/Tofu Buddha Bowl.png",
+  },
+  {
+    name: "Grilled Salmon",
+    subtitle: "OMEGA-3 RICH • 380 KCAL",
+    image: "/images/plans/Grilled Salmon.png",
+  },
+  {
+    name: "Med Mezze",
+    subtitle: "HEART HEALTHY • 290 KCAL",
+    image: "/images/plans/Med Mezze.png",
+  },
+];
 
 export function WeeklyMenuPreview({
-  params,
-  preference,
+  params: _params,
+  preference: _preference,
 }: WeeklyMenuPreviewProps) {
-  const { data, isLoading, error } = useCustomPlanMenuPreview(params);
-
-  if (isLoading) {
-    return <LoadingSkeleton />;
-  }
-
-  if (error) {
-    return (
-      <div className="p-6 rounded-xl border border-red-100 bg-red-50 text-center">
-        <p className="text-sm text-red-500">Failed to load menu preview.</p>
-      </div>
-    );
-  }
-
-  if (!data || data.menu.length === 0) {
-    return null;
-  }
-
-  // Get first meal of each day for the preview
-  const menuPreview = data.menu
-    .map((day) => ({
-      day: day.day,
-      meal: day.meals[0],
-    }))
-    .slice(0, 7);
-
-  const preferenceLabel =
-    preference === "VEG" ? "Veg" : preference === "NON_VEG" ? "Non-veg" : "";
-
   return (
-    <div className="space-y-4">
-      {preferenceLabel && (
+    <section>
+      <div className="mb-3 flex items-center justify-between">
         <h3
-          className="text-sm font-medium text-primary"
+          className="text-[14px] font-bold uppercase tracking-[0.08em] text-[#5F5659]"
           style={{ fontFamily: "var(--font-inter), sans-serif" }}
         >
-          {preferenceLabel} (weekly menu)
+          Sample Menu Highlights
         </h3>
-      )}
+        <button type="button" className="text-xs font-bold text-[#4B1A24] hover:opacity-75">
+          View All
+        </button>
+      </div>
 
-      <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
-        {menuPreview.map((item) => (
-          <div
-            key={item.day}
-            className="rounded-xl border border-gray-100 overflow-hidden bg-white flex-shrink-0 w-[160px] shadow-md"
-          >
-            <div className="aspect-square relative bg-gray-50 overflow-hidden m-2 rounded-lg">
-              {item.meal.recipe.recipe_image ? (
-                <Image
-                  src={item.meal.recipe.recipe_image}
-                  alt={item.meal.recipe.recipe_name}
-                  fill
-                  className="object-cover rounded-lg"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-xs text-gray-300 text-center px-2">
-                    {item.day}
-                  </span>
-                </div>
-              )}
+      <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {SAMPLE_HIGHLIGHTS.map((item) => (
+          <article key={item.name} className="w-43 shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-[#E6DEE2]">
+            <div className="relative h-31">
+              <Image src={item.image} alt={item.name} fill className="object-cover" />
             </div>
-            <div className="p-3 pt-1">
-              <p
-                className="text-sm font-medium text-primary line-clamp-1"
-                style={{ fontFamily: "var(--font-inter), sans-serif" }}
-              >
-                {item.meal.recipe.recipe_name}
+            <div className="px-3 pb-3 pt-2">
+              <p className="text-[13px] font-bold text-[#2B171C]">{item.name}</p>
+              <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8B7F84]">
+                {item.subtitle}
               </p>
             </div>
-          </div>
+          </article>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

@@ -1,11 +1,9 @@
+import { useState } from "react";
 import {
   FaExclamationCircle,
-  FaCreditCard,
-  FaPlus,
-  FaSyncAlt,
-  FaArrowDown,
-  FaArrowUp,
+  FaMoneyBillWave,
   FaWallet,
+  FaSyncAlt,
 } from "react-icons/fa";
 import { motion } from "motion/react";
 
@@ -16,7 +14,7 @@ import { Button } from "@/components/ui/button";
 export interface WalletBalanceCardProps {
   className?: string;
   showRefresh?: boolean;
-  onAddFunds?: () => void;
+  onAddFunds?: (amount?: number) => void;
   isTopupProcessing?: boolean;
 }
 
@@ -27,6 +25,8 @@ export function WalletBalanceCard({
   isTopupProcessing = false,
 }: WalletBalanceCardProps) {
   const { data, isLoading, error, refetch, isFetching } = useWalletBalance();
+  const [selectedAmount, setSelectedAmount] = useState<number>(5000);
+  const [customAmount, setCustomAmount] = useState("");
 
   const balance = data?.balance ?? null;
   const currency = data?.currency ?? "INR";
@@ -38,147 +38,123 @@ export function WalletBalanceCard({
   };
 
   const currencySymbol = currency === "INR" ? "₹" : "$";
-  const hasBalance = balance !== null && balance > 0;
+  const handleProceed = () => {
+    const parsed = Number(customAmount);
+    if (customAmount.trim().length > 0 && Number.isFinite(parsed) && parsed > 0) {
+      onAddFunds?.(parsed);
+      return;
+    }
+    onAddFunds?.(selectedAmount);
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={cn(
-        "overflow-hidden rounded-sm border bg-white shadow-sm",
-        hasBalance ? "border-primary/20" : "border-gray-200",
-        className,
-      )}
+      className={cn("space-y-5", className)}
     >
-      {/* Header */}
-      <div
-        className={cn(
-          "flex items-center justify-between border-b p-5",
-          hasBalance ? "border-primary/10 bg-primary/5" : "border-gray-100",
-        )}
-      >
-        <div className="flex items-center gap-3">
-          <div
-            className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-full",
-              hasBalance ? "bg-primary/10" : "bg-gray-100",
-            )}
-          >
-            <FaWallet
-              className={cn(
-                "h-5 w-5",
-                hasBalance ? "text-primary" : "text-muted-foreground",
-              )}
-            />
-          </div>
+      <div className="rounded-[28px] bg-[#3D000C] p-6 text-white shadow-[0_18px_38px_rgba(39,0,8,0.35)]">
+        <div className="mb-6 flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-sm font-semibold text-foreground">
-              Wallet Balance
-            </h3>
-            <p className="text-xs text-muted-foreground">Available funds</p>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/70">
+              Available Balance
+            </p>
+            {isLoading ? (
+              <div className="mt-3 h-10 w-44 animate-pulse rounded-md bg-white/20" />
+            ) : (
+              <h3 className="mt-2 text-[52px] font-black leading-none">
+                {currencySymbol}
+                {balance !== null ? balance.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00"}
+              </h3>
+            )}
+          </div>
+
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10">
+            <FaWallet className="h-8 w-8 text-white/45" />
           </div>
         </div>
 
-        {showRefresh && !isLoading && !isTopupProcessing && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleRefresh}
-            disabled={refreshing || isTopupProcessing}
-            className="h-8 w-8 text-muted-foreground hover:text-foreground"
-          >
-            <FaSyncAlt
-              className={cn("h-4 w-4", refreshing && "animate-spin")}
-            />
-          </Button>
-        )}
+        <div className="flex items-center justify-between text-sm text-white/80">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/60">
+              Last Updated
+            </p>
+            <p className="mt-1 font-medium">{refreshing ? "Refreshing..." : "Just now"}</p>
+          </div>
+
+          {showRefresh && !isTopupProcessing && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="h-9 w-9 rounded-full bg-white/10 text-white hover:bg-white/20 hover:text-white"
+            >
+              <FaSyncAlt className={cn("h-4 w-4", refreshing && "animate-spin")} />
+            </Button>
+          )}
+        </div>
       </div>
 
-      {/* Balance Display */}
-      <div className="p-6">
-        {isLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-primary" />
-          </div>
-        ) : hasError ? (
-          <div className="flex items-center gap-3 rounded-sm border border-red-100 bg-red-50 p-4">
-            <FaExclamationCircle className="h-5 w-5 shrink-0 text-red-600" />
-            <p className="text-sm text-red-900">
-              Failed to load wallet balance
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {/* Main Balance */}
-            <div>
-              <p className="mb-1 text-sm font-medium text-muted-foreground">
-                Available Balance
-              </p>
-              <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold text-foreground">
-                  {currencySymbol}
-                </span>
-                <span className="text-4xl font-extrabold text-foreground">
-                  {balance !== null ? balance.toFixed(2) : "0.00"}
-                </span>
-              </div>
-            </div>
+      <div className="rounded-[22px] border border-[#EEE7EA] bg-[#F7F3F5] p-6">
+        <h4 className="text-[30px] font-black leading-none text-[#3A1118]">Add Funds</h4>
+        <p className="mt-2 text-sm text-[#7C7074]">Quickly recharge your concierge wallet</p>
 
-            {/* Action Button */}
-            <Button
-              onClick={onAddFunds}
-              disabled={isTopupProcessing}
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              {isTopupProcessing ? (
-                <>
-                  <FaSyncAlt className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <FaPlus className="mr-2 h-4 w-4" />
-                  Add Funds
-                </>
+        <div className="mt-5 grid grid-cols-3 gap-3">
+          {[2000, 5000, 10000].map((amount) => (
+            <button
+              key={amount}
+              type="button"
+              onClick={() => {
+                setSelectedAmount(amount);
+                setCustomAmount("");
+              }}
+              className={cn(
+                "rounded-xl border px-3 py-2 text-sm font-bold transition-colors",
+                selectedAmount === amount && customAmount === ""
+                  ? "border-[#7D2E3B] bg-[#F1DDE2] text-[#4A111A]"
+                  : "border-[#E7DDE1] bg-white text-[#352D31] hover:bg-[#FBF8F9]",
               )}
-            </Button>
+            >
+              ₹{amount.toLocaleString("en-IN")}
+            </button>
+          ))}
+        </div>
 
-            {/* Quick Info */}
-            {balance !== null && balance > 0 && (
-              <div className="flex items-start gap-2 rounded-sm border border-blue-50 bg-blue-50 p-3">
-                <FaCreditCard className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
-                <p className="text-xs text-foreground">
-                  Your wallet balance can be used for subscriptions, add-on
-                  orders, and meal plan purchases. Funds are automatically
-                  deducted at the time of payment.
-                </p>
-              </div>
-            )}
+        <div className="mt-4 flex h-12 items-center justify-between rounded-xl border border-[#ECE2E6] bg-white px-4">
+          <input
+            type="number"
+            min={1}
+            value={customAmount}
+            onChange={(e) => setCustomAmount(e.target.value)}
+            placeholder="Enter custom amount"
+            className="w-full bg-transparent text-sm font-medium text-[#3B3135] placeholder:text-[#9A8F94] outline-none"
+          />
+          <FaMoneyBillWave className="h-4 w-4 text-[#6D5E64]" />
+        </div>
 
-            {/* Zero Balance Info */}
-            {balance === 0 && (
-              <div className="flex items-start gap-2 rounded-sm border border-primary/20 bg-primary/10 p-3">
-                <FaArrowDown className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <p className="text-xs text-foreground">
-                  Your wallet is empty. Add funds to take advantage of
-                  wallet-based payments and earn rewards on every top-up!
-                </p>
-              </div>
-            )}
-
-            {/* High Balance Info */}
-            {balance !== null && balance >= 1000 && (
-              <div className="flex items-start gap-2 rounded-sm border border-success/10 bg-success/5 p-3">
-                <FaArrowUp className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                <p className="text-xs text-foreground">
-                  Great! You have a healthy wallet balance. Your funds are
-                  secure and ready to use for your next subscription or order.
-                </p>
-              </div>
-            )}
+        {hasError && (
+          <div className="mt-4 flex items-center gap-2 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-xs text-red-700">
+            <FaExclamationCircle className="h-3.5 w-3.5" />
+            Failed to load wallet balance
           </div>
         )}
+
+        <Button
+          onClick={handleProceed}
+          disabled={isTopupProcessing}
+          className="mt-5 h-11 w-full rounded-full bg-[#4A0010] font-bold uppercase tracking-[0.12em] text-white hover:bg-[#35000B]"
+        >
+          {isTopupProcessing ? (
+            <span className="flex items-center gap-2">
+              <FaSyncAlt className="h-4 w-4 animate-spin" />
+              Processing
+            </span>
+          ) : (
+            "Proceed to Payment"
+          )}
+        </Button>
       </div>
     </motion.div>
   );

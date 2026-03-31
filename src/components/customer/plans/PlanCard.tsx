@@ -35,8 +35,15 @@ export function PlanCard({
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
 
   const fallbackImage = "/images/plans/thali.png";
-  const imageSrc = !plan.image_url || imageLoadFailed ? fallbackImage : plan.image_url;
-  const isFallback = !plan.image_url || imageLoadFailed;
+  const curatedImage = /recommend/i.test(plan.badge ?? "")
+    ? "/images/plans/recommended%20meal.png"
+    : /best\s*-?\s*value|value/i.test(plan.badge ?? "")
+      ? "/images/plans/best-value.png"
+      : null;
+
+  const preferredImage = curatedImage ?? plan.image_url ?? fallbackImage;
+  const imageSrc = imageLoadFailed ? fallbackImage : preferredImage;
+  const isFallback = imageSrc === fallbackImage;
   const isWeekly = plan.duration.toLowerCase().includes("week");
   const periodLabel = isWeekly ? "week" : "month";
   const mealsPerDay = plan.meals_included.length;
@@ -52,12 +59,12 @@ export function PlanCard({
 
   const badgeColorClass = plan.badge
     ? /popular/i.test(plan.badge)
-      ? 'bg-warning text-foreground'
+      ? 'bg-[#5A1622] text-white'
       : /recommend/i.test(plan.badge)
-      ? 'bg-primary/10 text-primary border border-primary/20'
+      ? 'bg-[#7C5A31] text-white'
       : /value|best/i.test(plan.badge)
-      ? 'bg-success text-success-foreground'
-      : 'bg-primary text-primary-foreground'
+      ? 'bg-[#0D4B37] text-white'
+      : 'bg-[#5A1622] text-white'
     : '';
 
   // Compact variant for mobile horizontal scroll
@@ -65,8 +72,8 @@ export function PlanCard({
     return (
       <article
         className={cn(
-          "group relative flex w-72 flex-col overflow-hidden rounded-sm bg-card shrink-0",
-          "shadow-md",
+          "group relative flex w-72 shrink-0 flex-col overflow-hidden rounded-3xl border border-[#E8E2E5] bg-[#FCFBFC]",
+          "shadow-[0_2px_12px_rgba(20,15,17,0.06)]",
           "transition-all duration-300",
           isSelected && "ring-2 ring-primary ring-offset-2",
           className
@@ -80,14 +87,13 @@ export function PlanCard({
         )}
 
         {/* Image */}
-        <div className="relative h-32 overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
+        <div className="relative mx-3 mt-3 h-36 overflow-hidden rounded-2xl">
           <Image
             src={imageSrc}
             alt={plan.name}
             fill
             className={cn(
-              "object-cover transition-transform duration-500",
+              "object-cover transition-transform duration-500 group-hover:scale-[1.03]",
               isFallback && "object-contain p-4"
             )}
             sizes="(max-width: 768px) 288px, 288px"
@@ -96,65 +102,57 @@ export function PlanCard({
 
           {/* Badge */}
           {plan.badge && (
-            <Badge className={cn("absolute left-3 top-3 z-10 gap-1 border-0 px-2 py-1 text-[10px]", badgeColorClass)}>
+            <Badge className={cn("absolute left-2 top-2 z-10 gap-1 border-0 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.08em]", badgeColorClass)}>
               <FaStar className="h-2.5 w-2.5" />
               {plan.badge}
             </Badge>
           )}
-
-          {/* Price on image */}
-          <div className="absolute bottom-2 right-2 z-10 text-right">
-            <div className="flex items-baseline gap-0.5">
-              <span className="text-xl font-bold text-white">
-                {currencyFormatter.format(plan.price)}
-              </span>
-              <span className="text-xs text-white/80">/{periodLabel}</span>
-            </div>
-          </div>
         </div>
 
         {/* Content */}
-        <div className="flex flex-1 flex-col p-4">
-          <div className="mb-3">
-            <div className="mb-1 flex items-center gap-2">
-              <span className={cn(
-                "inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-[10px] font-medium",
-                isWeekly ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
-              )}>
-                <FaCalendarAlt className="h-2.5 w-2.5" />
-                {isWeekly ? "Weekly" : "Monthly"}
-              </span>
-              <span className="text-[10px] text-muted-foreground">{mealsPerDay} meals/day</span>
+        <div className="flex flex-1 flex-col p-4 pt-3">
+          <div className="mb-2 flex items-start justify-between gap-2">
+            <h3 className="line-clamp-2 text-lg font-bold leading-tight text-[#261217]">{plan.name}</h3>
+            <div className="shrink-0 text-right">
+              <div className="text-2xl font-black leading-none text-[#5A1622]">
+                {currencyFormatter.format(plan.price)}
+              </div>
+              <div className="text-[10px] text-[#6E6467]">/{periodLabel}</div>
             </div>
-            <h3 className="text-base font-bold text-primary">{plan.name}</h3>
           </div>
 
           {/* Meals - horizontal scroll */}
-          <div className="mb-4 flex gap-1.5 overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {plan.meals_included.map((meal) => (
-              <span
-                key={`${plan._id}-${meal}`}
-                className="inline-flex shrink-0 items-center gap-1 rounded-sm bg-muted px-2.5 py-1 text-xs text-muted-foreground"
-              >
-                <FaCheck className="h-2.5 w-2.5 text-primary" />
-                {meal}
-              </span>
-            ))}
+          <div className="mb-4 flex items-center gap-3 text-[11px] text-[#5F5458]">
+            <span className="inline-flex items-center gap-1">
+              <FaCalendarAlt className="h-3 w-3" />
+              {isWeekly ? "7 Days" : "30 Days"}
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <FaFire className="h-3 w-3" />
+              {mealsPerDay} meals/day
+            </span>
           </div>
 
           {/* CTA - Simple Get Started */}
           <Button
             type="button"
             className={cn(
-              "mt-auto h-10 rounded-sm bg-primary font-semibold text-primary-foreground shadow-md transition-all duration-300",
-              "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
+              "mt-auto h-10 rounded-full bg-[#5A1622] font-semibold text-white transition-all duration-300",
+              "hover:bg-[#4A111C]",
               "active:scale-[0.98]"
             )}
             onClick={handleSelectPlan}
           >
-            Get Started
-            <FaArrowRight className="ml-1 h-4 w-4" />
+            Start Plan
           </Button>
+
+          <button
+            type="button"
+            onClick={handleViewMenu}
+            className="mt-2.5 text-center text-xs font-semibold text-[#6E6467] transition-colors hover:text-[#5A1622]"
+          >
+            View meal
+          </button>
         </div>
       </article>
     );
@@ -164,67 +162,61 @@ export function PlanCard({
   return (
     <article
       className={cn(
-        "relative flex flex-col overflow-visible rounded-2xl bg-card border border-border shadow-sm transition-all duration-200",
-        "hover:shadow-md",
+        "relative flex flex-col overflow-hidden rounded-3xl border border-[#E8E2E5] bg-[#FCFBFC] transition-all duration-200",
+        "hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(20,15,17,0.08)]",
         isSelected && "ring-2 ring-primary ring-offset-2",
         className
       )}
     >
       {/* Badge - floating pill at top-left */}
       {plan.badge && (
-        <div className={cn("absolute top-3 left-4 z-10 rounded-full px-3 py-1 text-xs font-semibold shadow-sm", badgeColorClass)}>
+        <div className={cn("absolute left-5 top-5 z-10 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest shadow-sm", badgeColorClass)}>
           {plan.badge}
         </div>
       )}
 
-      {/* Food image — natural display, centered, no clip */}
-      <div className="flex justify-center px-6 pt-10 pb-4 relative h-44 w-44 mx-auto">
+      {/* Food image */}
+      <div className="relative mx-4 mt-4 h-42.5 overflow-hidden rounded-2xl">
         <Image
           src={imageSrc}
           alt={plan.name}
           fill
-          className="object-contain drop-shadow-md"
-          sizes="(max-width: 768px) 176px, 176px"
+          className={cn(
+            "object-cover transition-transform duration-500 hover:scale-[1.02]",
+            isFallback && "object-contain p-4",
+          )}
+          sizes="(max-width: 768px) 100vw, 420px"
           onError={() => setImageLoadFailed(true)}
         />
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col px-5 pb-5">
-        <h3 className="text-xl font-black text-primary">{plan.name}</h3>
-        {plan.description && (
-          <p className="mt-1 line-clamp-2 text-sm font-normal text-muted-foreground">{plan.description}</p>
-        )}
-
-        <hr className="my-4 border-border" />
-
-        {/* Stats row */}
-        <div className="flex items-center gap-5 text-sm text-foreground">
-          <div className="flex items-center gap-1.5">
-            <FaClock className="h-4 w-4 text-foreground" />
-            <span>{isWeekly ? "7 days" : "30 days"}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <FaFire className="h-4 w-4 text-foreground" />
-            <span>{mealsPerDay} meals/day</span>
+      <div className="flex flex-1 flex-col px-4 pb-4 pt-3">
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <h3 className="line-clamp-2 text-[30px] font-bold leading-[1.08] text-[#2A1216]">{plan.name}</h3>
+          <div className="shrink-0 text-right">
+            <div className="text-[34px] font-black leading-none text-[#5A1622]">
+              {currencyFormatter.format(plan.price)}
+            </div>
+            <div className="mt-0.5 text-[11px] text-[#6E6467]">/{periodLabel}</div>
           </div>
         </div>
 
-        {/* Price */}
-        <div className="mt-4">
-          <span className="text-sm text-primary">From</span>
-          <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-semibold text-primary">
-              {currencyFormatter.format(plan.price)}
-            </span>
-            <span className="text-sm font-medium text-primary">/{periodLabel}</span>
+        <div className="mb-5 flex items-center gap-4 text-xs text-[#5F5458]">
+          <div className="flex items-center gap-1.5">
+            <FaClock className="h-3.5 w-3.5 text-[#7A6F73]" />
+            <span>{isWeekly ? "7 Days" : "30 Days"}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <FaFire className="h-3.5 w-3.5 text-[#7A6F73]" />
+            <span>{mealsPerDay} meals/day</span>
           </div>
         </div>
 
         {/* Start Plan button */}
         <Button
           type="button"
-          className="mt-5 h-12 w-full rounded-full bg-primary text-base font-bold text-primary-foreground hover:bg-primary/90 active:scale-[0.98]"
+          className="mt-auto h-11 w-full rounded-full bg-[#5A1622] text-sm font-bold text-white hover:bg-[#4A111C] active:scale-[0.98]"
           onClick={handleSelectPlan}
         >
           Start Plan
@@ -234,9 +226,9 @@ export function PlanCard({
         <button
           type="button"
           onClick={handleViewMenu}
-          className="mt-2.5 text-center text-sm text-muted-foreground hover:text-primary transition-colors"
+          className="mt-2.5 text-center text-xs font-semibold text-[#6E6467] transition-colors hover:text-[#5A1622]"
         >
-          ⓘ View meal
+          View meal
         </button>
       </div>
     </article>

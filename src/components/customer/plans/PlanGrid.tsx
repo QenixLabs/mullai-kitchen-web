@@ -37,7 +37,7 @@ const PlanLoadingSkeleton = ({ count, className }: { count: number; className?: 
       {Array.from({ length: count }).map((_, index) => (
         <div
           key={index}
-          className="h-[26rem] animate-pulse rounded-sm border border-orange-100 bg-white"
+          className="h-104 animate-pulse rounded-sm border border-orange-100 bg-white"
           aria-hidden="true"
         />
       ))}
@@ -97,7 +97,7 @@ export function PlanGrid({
   }
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("space-y-5 sm:space-y-6", className)}>
       {/* Mobile: Horizontal scroll view */}
       <div className="flex gap-4 overflow-x-auto pb-4 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:hidden">
         {plans.map((plan) => (
@@ -128,7 +128,7 @@ export function PlanGrid({
       )}
 
       {/* Tablet & Desktop: Grid view */}
-      <div className="hidden grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 sm:grid">
+      <div className="hidden grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 sm:grid">
         {plans.map((plan) => (
           <PlanCard
             key={plan._id}

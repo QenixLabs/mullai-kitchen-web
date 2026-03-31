@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Subscription,
   SubscriptionStatus,
-  MealType,
 } from "@/api/types/subscription.types";
 import { Utensils, CalendarDays, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -40,41 +39,20 @@ export function SubscriptionCard({
   onViewDetails,
   onAddOn,
 }: SubscriptionCardProps) {
-  const getFallbackImage = () => {
-    const meals = subscription.meals_included ?? [];
-    if (meals.length >= 3) return "/images/plans/thali.png";
-    if (
-      meals.includes("dinner" as MealType) ||
-      meals.includes("DINNER" as MealType)
-    )
-      return "/images/plans/thali.png";
-    if (
-      meals.includes("lunch" as MealType) ||
-      meals.includes("LUNCH" as MealType)
-    )
-      return "/images/plans/office-lunch-monthly.jpg";
-    if (
-      meals.includes("breakfast" as MealType) ||
-      meals.includes("BREAKFAST" as MealType)
-    )
-      return "/images/plans/idli.jpg";
-    return "/images/plans/thali.png";
-  };
-
   const getStatusConfig = (status: SubscriptionStatus) => {
     switch (status) {
       case STATUS.ACTIVE:
-        return { bg: "bg-emerald-500", label: "Active" };
+        return { bg: "bg-emerald-100 text-emerald-700", label: "Active" };
       case STATUS.PAUSED:
-        return { bg: "bg-amber-400", label: "Paused" };
+        return { bg: "bg-zinc-200 text-zinc-700", label: "Paused" };
       case STATUS.EXPIRED:
-        return { bg: "bg-slate-400", label: "Expired" };
+        return { bg: "bg-slate-200 text-slate-700", label: "Expired" };
       case STATUS.CANCELLED:
-        return { bg: "bg-rose-500", label: "Cancelled" };
+        return { bg: "bg-rose-100 text-rose-700", label: "Cancelled" };
       case STATUS.PENDING_RENEWAL:
-        return { bg: "bg-blue-500", label: "Pending Renewal" };
+        return { bg: "bg-blue-100 text-blue-700", label: "Pending Renewal" };
       default:
-        return { bg: "bg-slate-400", label: status };
+        return { bg: "bg-slate-200 text-slate-700", label: status };
     }
   };
 
@@ -87,16 +65,13 @@ export function SubscriptionCard({
 
   const total = subscription.total_deliveries ?? 0;
   const completed = subscription.completed_deliveries ?? 0;
+  const progressPercentage = total > 0 ? Math.min((completed / total) * 100, 100) : 0;
 
-  // Progress dots — max 30 dots, scale completed proportionally
-  const DOT_COUNT = Math.min(total, 30);
-  const filledDots =
-    total > 0 ? Math.round((completed / total) * DOT_COUNT) : 0;
-  const dotColor = isPaused ? "bg-amber-400" : "bg-primary";
+  const progressColor = isPaused ? "bg-zinc-400" : "bg-primary";
 
   const mealsLabel = subscription.meals_included
     .map((m) => m.charAt(0).toUpperCase() + m.slice(1).toLowerCase())
-    .join(" + ");
+    .join(" + ") || "Chef Curated Meals";
 
   const formatDate = (date: string | Date) => {
     const d = typeof date === "string" ? new Date(date) : date;
@@ -108,154 +83,148 @@ export function SubscriptionCard({
   };
 
   return (
-    <div className="relative">
-      {/* Thali image — floats outside the card, overflows top and bottom - hidden on mobile */}
-      <div className="hidden md:block absolute right-0 -top-6 -bottom-6 w-48 lg:w-64 pointer-events-none select-none z-10">
-        <Image
-          src={getFallbackImage()}
-          alt={subscription.plan_name}
-          fill
-          className="object-contain object-center"
-        />
-      </div>
-
-      <Card className="overflow-hidden border-border bg-card shadow-sm hover:shadow-md transition-shadow duration-200">
-        <CardContent className="p-4 sm:p-6 pb-4 sm:pb-5 space-y-3 pr-0 md:pr-48 lg:pr-60">
-          {/* Status badge */}
-          <div>
-            <span
+    <Card
+      className={cn(
+        "overflow-hidden rounded-[24px] border border-[#E9E5E7] shadow-none transition-colors",
+        isPaused ? "bg-[#F3EEF0]" : "bg-white",
+      )}
+    >
+      <CardContent className="p-0">
+        <div className="grid md:grid-cols-[250px_minmax(0,1fr)] lg:grid-cols-[300px_minmax(0,1fr)]">
+          <div className="relative min-h-52 md:min-h-64 lg:min-h-62.5">
+            <Image
+              src="/images/subscriptions/Container.png"
+              alt={subscription.plan_name}
+              fill
               className={cn(
-                "inline-flex items-center rounded-full px-2.5 sm:px-3 py-1 text-white text-xs sm:text-sm font-semibold",
-                statusConfig.bg,
+                "object-cover object-center",
+                isPaused ? "opacity-55" : "opacity-100",
               )}
-            >
-              {statusConfig.label}
-            </span>
+              sizes="(min-width: 1024px) 300px, (min-width: 768px) 250px, 100vw"
+              priority={false}
+            />
           </div>
 
-          {/* Plan name — Inter Bold 32 */}
-          <h3 className="text-xl sm:text-[32px] font-bold text-primary leading-tight">
-            {subscription.plan_name}
-          </h3>
-
-          {/* Info row: Meals + Date */}
-          <div className="flex flex-wrap gap-x-4 sm:gap-x-6 gap-y-1 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Utensils className="h-3.5 w-3.5 shrink-0" />
-              <span>
-                Meals :{" "}
-                <span className="font-semibold text-foreground">
+          <div className="p-4 sm:p-5 md:p-6 lg:p-6">
+            <div className="mb-4 flex flex-col items-start justify-between gap-3 sm:flex-row sm:gap-4">
+              <div>
+                <span
+                  className={cn(
+                    "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.14em]",
+                    statusConfig.bg,
+                  )}
+                >
+                  {statusConfig.label}
+                </span>
+                <h3 className="mt-2 text-[28px] font-bold leading-tight text-[#2A1216] sm:text-[30px] md:text-[32px] lg:text-[34px]">
+                  {subscription.plan_name}
+                </h3>
+                <p className="mt-1 flex items-center gap-1.5 text-sm text-[#6A5E62]">
+                  <Utensils className="h-3.5 w-3.5 shrink-0" />
                   {mealsLabel}
-                </span>
-              </span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CalendarDays className="h-3.5 w-3.5 shrink-0" />
-              <span>
-                Ends :{" "}
-                <span className="font-semibold text-foreground">
-                  {formatDate(subscription.end_date)}
-                </span>
-              </span>
-            </span>
-          </div>
+                </p>
+              </div>
 
-          {/* Progress dots — inline with Day label */}
-          {total > 0 && (
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-              <span className="text-sm font-semibold text-foreground shrink-0">
-                Day {completed}/{total}
-              </span>
-              <div className="flex flex-wrap gap-1">
-                {Array.from({ length: DOT_COUNT }).map((_, i) => (
-                  <span
-                    key={i}
-                    className={cn(
-                      "h-2 w-4 sm:h-2.5 sm:w-6 rounded-full",
-                      i < filledDots ? dotColor : "bg-muted",
-                    )}
-                  />
-                ))}
+              <div className="w-full text-left sm:w-auto sm:text-right">
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#7B6E72]">
+                  {isPaused ? "Plan Ends" : "Next Delivery"}
+                </p>
+                <p className="mt-1 text-base font-bold text-[#5A1622] sm:text-lg md:text-[22px] lg:text-2xl">
+                  {formatDate(subscription.end_date)}
+                </p>
               </div>
             </div>
-          )}
 
-          {/* Action buttons */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4 pt-2">
-            {isActive && (
-              <Button
-                variant="outline"
-                className="gap-2 font-semibold text-primary bg-secondary/20 border-secondary/40 hover:bg-secondary/40"
-                onClick={() => onPause?.(subscription._id)}
-              >
-                <Image
-                  src="/images/subscriptions/pause.png"
-                  width={16}
-                  height={16}
-                  alt="pause"
-                  className="shrink-0"
-                />
-                Pause
-              </Button>
-            )}
-            {isPaused && (
-              <Button
-                variant="outline"
-                className="gap-2 font-semibold text-primary bg-secondary/20 border-secondary/40 hover:bg-secondary/40"
-                onClick={() => onResume?.(subscription._id)}
-              >
-                <Image
-                  src="/images/subscriptions/play.png"
-                  width={16}
-                  height={16}
-                  alt="play"
-                  className="shrink-0"
-                />
-                Paused
-              </Button>
-            )}
-            {isInactive && (
-              <Button
-                className="gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
-                onClick={() => onRenew?.(subscription._id)}
-              >
-                <RotateCcw className="h-4 w-4" />
-                Renew
-              </Button>
+            {total > 0 && (
+              <div className="mb-5">
+                <div className="mb-2 flex items-center justify-between text-sm font-semibold text-[#4A3B40]">
+                  <span className="flex items-center gap-1.5">
+                    <CalendarDays className="h-3.5 w-3.5" />
+                    Plan Progress
+                  </span>
+                  <span>
+                    Day {completed} of {total}
+                  </span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-[#ECE7E9]">
+                  <div
+                    className={cn("h-full rounded-full transition-all", progressColor)}
+                    style={{ width: `${progressPercentage}%` }}
+                  />
+                </div>
+              </div>
             )}
 
-            {/* View Details */}
-            <Button
-              variant="outline"
-              className="bg-secondary/20 text-primary border-secondary/40 hover:bg-secondary/40"
-              onClick={() => onViewDetails?.(subscription._id)}
-            >
-              View Details
-            </Button>
-
-            <Button
-              className={cn(
-                "gap-2 font-semibold text-[#FBFBFB]",
-                isPaused
-                  ? "bg-primary/50 cursor-not-allowed"
-                  : "bg-primary hover:bg-primary/90",
+            <div className="flex flex-wrap items-center gap-2 md:grid md:grid-cols-3 md:gap-2 lg:flex lg:flex-wrap lg:gap-2.5">
+              {isActive && (
+                <Button
+                  variant="outline"
+                  className="h-10 rounded-full border-transparent bg-[#E8E4E6] px-4 text-sm font-semibold text-[#2E2326] hover:bg-[#DCD6D9] md:h-11 md:w-full md:px-3 md:text-[13px] lg:px-5 lg:text-sm"
+                  onClick={() => onPause?.(subscription._id)}
+                >
+                  <Image
+                    src="/images/subscriptions/pause.png"
+                    width={14}
+                    height={14}
+                    alt="pause"
+                    className="mr-2 shrink-0"
+                  />
+                  Pause
+                </Button>
               )}
-              disabled={isPaused}
-              onClick={() => !isPaused && onAddOn?.(subscription._id)}
-            >
-              <Image
-                src="/images/plans/white-bell.png"
-                width={16}
-                height={16}
-                alt=""
-                className="shrink-0"
-                style={{ filter: "brightness(0) invert(1) opacity(0.98)" }}
-              />
-              Add on
-            </Button>
+
+              {isPaused && (
+                <Button
+                  variant="outline"
+                  className="h-10 rounded-full border-transparent bg-[#5A1622] px-4 text-sm font-semibold text-white hover:bg-[#49121C] md:h-11 md:w-full md:px-3 md:text-[13px] lg:px-5 lg:text-sm"
+                  onClick={() => onResume?.(subscription._id)}
+                >
+                  <Image
+                    src="/images/subscriptions/play.png"
+                    width={14}
+                    height={14}
+                    alt="play"
+                    className="mr-2 shrink-0"
+                  />
+                  Resume
+                </Button>
+              )}
+
+              {isInactive && (
+                <Button
+                  className="h-10 rounded-full bg-[#5A1622] px-4 text-sm font-semibold text-white hover:bg-[#49121C] md:h-11 md:w-full md:px-3 md:text-[13px] lg:px-5 lg:text-sm"
+                  onClick={() => onRenew?.(subscription._id)}
+                >
+                  <RotateCcw className="mr-2 h-4 w-4" />
+                  Renew
+                </Button>
+              )}
+
+              <Button
+                variant="outline"
+                className="h-10 rounded-full border-transparent bg-[#E8E4E6] px-4 text-sm font-semibold text-[#2E2326] hover:bg-[#DCD6D9] md:h-11 md:w-full md:px-3 md:text-[13px] lg:px-5 lg:text-sm"
+                onClick={() => onViewDetails?.(subscription._id)}
+              >
+                View Details
+              </Button>
+
+              <Button
+                variant="outline"
+                className={cn(
+                  "h-10 rounded-full border-transparent px-4 text-sm font-semibold md:h-11 md:w-full md:px-3 md:text-[13px] lg:px-5 lg:text-sm",
+                  isPaused
+                    ? "cursor-not-allowed bg-[#ECE7E9] text-[#9A8E92]"
+                    : "bg-[#E8E4E6] text-[#2E2326] hover:bg-[#DCD6D9]",
+                )}
+                disabled={isPaused}
+                onClick={() => !isPaused && onAddOn?.(subscription._id)}
+              >
+                Add-on
+              </Button>
+            </div>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
