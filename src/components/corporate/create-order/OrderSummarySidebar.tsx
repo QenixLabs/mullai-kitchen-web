@@ -1,8 +1,8 @@
 "use client";
 
-import { MapPin, Calendar, Users, ShoppingBag, AlertCircle } from "lucide-react";
+import { MapPin, Calendar, ShoppingBag, AlertCircle, Loader2 } from "lucide-react";
 import { format } from "date-fns";
-import type { PricingBreakdown } from "@/lib/corporate/pricing";
+import type { ICorporatePricingResponse } from "@/api/types/corporate.types";
 
 interface OrderSummarySidebarProps {
   deliveryAddress: {
@@ -23,7 +23,9 @@ interface OrderSummarySidebarProps {
     veg: number;
     nonVeg: number;
   } | null;
-  pricing: PricingBreakdown;
+  pricing: ICorporatePricingResponse;
+  isLoading?: boolean;
+  error?: Error | null;
 }
 
 export function OrderSummarySidebar({
@@ -31,6 +33,8 @@ export function OrderSummarySidebar({
   schedule,
   headcount,
   pricing,
+  isLoading,
+  error,
 }: OrderSummarySidebarProps) {
   const hasAddress = deliveryAddress && deliveryAddress.addressLine;
   const hasSchedule = schedule && schedule.selectedDays.length > 0;
@@ -50,6 +54,8 @@ export function OrderSummarySidebar({
     if (isNaN(date.getTime())) return null;
     return format(date, "MMM dd, yyyy");
   };
+
+  const mealsSubtotal = pricing.veg_amount + pricing.nonveg_amount;
 
   return (
     <div className="xl:sticky xl:top-6 bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
@@ -89,11 +95,14 @@ export function OrderSummarySidebar({
               <p>{schedule.selectedDays.join(", ")}</p>
               <p>{schedule.mealTypes.join(", ")}</p>
               <p>
-                {schedule.startDate && formatDate(schedule.startDate)
-                  ? `Starts ${formatDate(schedule.startDate)}${schedule.endDate && formatDate(schedule.endDate) ? ` · Ends ${formatDate(schedule.endDate)}` : ''}`
-                  : schedule.endDate && formatDate(schedule.endDate)
-                    ? `Ends ${formatDate(schedule.endDate)}`
-                    : ''}
+                {(() => {
+                  const start = schedule.startDate ? formatDate(schedule.startDate) : null;
+                  const end = schedule.endDate ? formatDate(schedule.endDate) : null;
+                  if (start && end) return `Starts ${start} · Ends ${end}`;
+                  if (start) return `Starts ${start}`;
+                  if (end) return `Ends ${end}`;
+                  return '';
+                })()}
               </p>
             </div>
           ) : (
@@ -153,20 +162,49 @@ export function OrderSummarySidebar({
           <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider">
             Pricing Breakdown
           </h4>
-          <div className="text-sm space-y-1">
-            <div className="flex justify-between text-gray-600">
-              <span>Meals Subtotal</span>
-              <span>{formatCurrency(pricing.subtotal - pricing.deliveryTotal)}</span>
+
+          {isLoading ? (
+            <div className="flex items-center gap-2 text-sm text-gray-400 py-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Calculating pricing...
             </div>
-            <div className="flex justify-between text-gray-600">
-              <span>Delivery Fees</span>
-              <span>{formatCurrency(pricing.deliveryTotal)}</span>
+          ) : error ? (
+            <div className="flex items-start gap-2 text-sm text-red-600 py-2">
+              <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+              <span>Unable to load pricing. Please check your selections.</span>
             </div>
-            <div className="flex justify-between text-gray-600">
-              <span>Taxes (GST 5%)</span>
-              <span>{formatCurrency(pricing.tax)}</span>
+          ) : pricing.grand_total > 0 ? (
+            <div className="text-sm space-y-1">
+              {pricing.veg_meals > 0 && (
+                <div className="flex justify-between text-gray-600">
+                  <span>Veg Meals ({pricing.veg_meals} × ₹{pricing.veg_price_per_meal})</span>
+                  <span>{formatCurrency(pricing.veg_amount)}</span>
+                </div>
+              )}
+              {pricing.nonveg_meals > 0 && (
+                <div className="flex justify-between text-gray-600">
+                  <span>Non-Veg Meals ({pricing.nonveg_meals} × ₹{pricing.nonveg_price_per_meal})</span>
+                  <span>{formatCurrency(pricing.nonveg_amount)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-gray-600">
+                <span>Meals Subtotal</span>
+                <span>{formatCurrency(mealsSubtotal)}</span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span>Delivery ({pricing.total_delivery_days} days × ₹{pricing.delivery_charge_per_day})</span>
+                <span>{formatCurrency(pricing.delivery_total)}</span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span>Taxes (GST {(pricing.tax_rate).toFixed(0)}%)</span>
+                <span>{formatCurrency(pricing.tax)}</span>
+              </div>
             </div>
-          </div>
+          ) : (
+            <p className="text-sm text-gray-400 py-2">
+              Complete all steps to see pricing.
+            </p>
+          )}
         </div>
 
         {/* Divider */}
@@ -178,7 +216,14 @@ export function OrderSummarySidebar({
             Estimated Total
           </h4>
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl sm:text-3xl font-bold text-[#39070F]">{formatCurrency(pricing.grandTotal)}</span>
+            <span className="text-2xl sm:text-3xl font-bold text-[#39070F]">
+              {formatCurrency(pricing.grand_total)}
+            </span>
+            {pricing.total_delivery_days > 0 && (
+              <span className="text-xs text-gray-400">
+                ({pricing.total_delivery_days} delivery days)
+              </span>
+            )}
           </div>
         </div>
 

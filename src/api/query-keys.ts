@@ -62,6 +62,7 @@ export const corporateKeys = {
   invoice: (orderId: string, type: string) => [...corporateKeys.all, 'invoice', orderId, type] as const,
   dailyOrders: (orderId: string, params?: unknown) => [...corporateKeys.all, 'daily-orders', orderId, params] as const,
   upcomingDeliveries: (orderId: string) => [...corporateKeys.all, 'upcoming-deliveries', orderId] as const,
+  orderPricing: (params: unknown) => [...corporateKeys.all, 'pricing', params] as const,
 };
 
 export const corporateProfileKeys = {

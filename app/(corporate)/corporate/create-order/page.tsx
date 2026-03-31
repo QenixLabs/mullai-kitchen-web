@@ -18,16 +18,13 @@ import { Step1Delivery } from "@/components/corporate/create-order/Step1Delivery
 import { Step2Schedule } from "@/components/corporate/create-order/Step2Schedule";
 import { Step3Preferences } from "@/components/corporate/create-order/Step3Preferences";
 import { OrderSummarySidebar } from "@/components/corporate/create-order/OrderSummarySidebar";
-import { useCreateCorporateOrder } from "@/api/hooks/useCorporate";
+import { useCreateCorporateOrder, useCorporateOrderPricing } from "@/api/hooks/useCorporate";
 import { useServiceability } from "@/api/hooks/useCustomer";
 import { useOrderDraftStore } from "@/stores/orderDraftStore";
 import {
   createCorporateOrderSchema,
   type CreateCorporateOrderFormData,
 } from "@/lib/validations/corporate.schema";
-import {
-  computePricing,
-} from "@/lib/corporate/pricing";
 
 // Chennai default coordinates
 const DEFAULT_COORDS = { lat: 13.0827, lng: 80.2707 };
@@ -51,6 +48,7 @@ export default function CreateOrderPage() {
 
   const [serviceabilityInfo, setServiceabilityInfo] = useState<{
     isServiceable: boolean;
+    outletId?: string;
     outletName?: string;
     message: string;
   } | null>(null);
@@ -266,8 +264,10 @@ export default function CreateOrderPage() {
 
         if (result.isServiceable) {
           const outletName = (result.outlet?.name as string) || undefined;
+          const outletId = result.outlet?._id as string | undefined;
           setServiceabilityInfo({
             isServiceable: true,
+            outletId,
             outletName,
             message: coordsToCheck
               ? "We are currently delivering to this location."
@@ -299,33 +299,48 @@ export default function CreateOrderPage() {
     };
   }, [pincodeValue, coordinates, checkServiceability, form]);
 
-  // Compute delivery days directly from the date range to avoid
-  // round-trip precision loss (date -> weeks -> date).
-  const totalDeliveryDays = useMemo(() => {
-    if (!startDate || !endDate || selectedDays.length === 0) return 0;
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    if (isNaN(start.getTime()) || isNaN(end.getTime()) || start > end) return 0;
-    let count = 0;
-    const current = new Date(start);
-    while (current <= end) {
-      const dayName = current.toLocaleDateString("en-US", { weekday: "long" });
-      if (selectedDays.includes(dayName)) count++;
-      current.setDate(current.getDate() + 1);
+  // Build pricing params for backend call
+  const pricingParams = useMemo(() => {
+    if (
+      !serviceabilityInfo?.isServiceable ||
+      !serviceabilityInfo.outletId ||
+      !startDate ||
+      !endDate ||
+      selectedDays.length === 0 ||
+      mealTypes.length === 0 ||
+      (vegCount || 0) + (nonvegCount || 0) === 0
+    ) {
+      return null;
     }
-    return count;
-  }, [startDate, endDate, selectedDays]);
+    return {
+      outlet_id: serviceabilityInfo.outletId,
+      veg_count: vegCount || 0,
+      nonveg_count: nonvegCount || 0,
+      meal_types: mealTypes,
+      selected_days: selectedDays,
+      start_date: startDate,
+      end_date: endDate,
+    };
+  }, [serviceabilityInfo, startDate, endDate, selectedDays, mealTypes, vegCount, nonvegCount]);
 
-  const pricing = useMemo(
-    () =>
-      computePricing({
-        vegCount: vegCount || 0,
-        nonvegCount: nonvegCount || 0,
-        mealTypesCount: mealTypes.length,
-        totalDeliveryDays,
-      }),
-    [vegCount, nonvegCount, mealTypes.length, totalDeliveryDays],
-  );
+  const { data: pricingResponse, isLoading: isPricingLoading, error: pricingError } = useCorporateOrderPricing(pricingParams);
+
+  // Provide zeroed defaults when pricing hasn't loaded yet
+  const pricing = useMemo(() => pricingResponse ?? {
+    veg_price_per_meal: 0,
+    nonveg_price_per_meal: 0,
+    delivery_charge_per_day: 0,
+    tax_rate: 0,
+    total_delivery_days: 0,
+    veg_meals: 0,
+    nonveg_meals: 0,
+    veg_amount: 0,
+    nonveg_amount: 0,
+    delivery_total: 0,
+    subtotal: 0,
+    tax: 0,
+    grand_total: 0,
+  }, [pricingResponse]);
 
   // Day/meal toggle handlers
   const handleDayToggle = (day: string, checked: boolean) => {
@@ -533,6 +548,8 @@ export default function CreateOrderPage() {
                   nonVeg: nonvegCount || 0,
                 } : null}
                 pricing={pricing}
+                isLoading={isPricingLoading}
+                error={pricingError}
               />
             </div>
           </div>

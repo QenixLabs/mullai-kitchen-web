@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { corporateApi } from '@/api/corporate.api';
 import { corporateKeys } from '@/api/query-keys';
-import type { ICreateCorporateOrderRequest, IModifyCorporateOrderRequest, ICreateCorporateOrderResponse } from '@/api/types/corporate.types';
+import type { ICreateCorporateOrderRequest, IModifyCorporateOrderRequest, ICreateCorporateOrderResponse, ICorporatePricingParams } from '@/api/types/corporate.types';
 
 export function useCreateCorporateOrder() {
   const queryClient = useQueryClient();
@@ -92,5 +92,20 @@ export function useCorporateUpcomingDeliveries(orderId: string) {
     queryKey: corporateKeys.upcomingDeliveries(orderId),
     queryFn: () => corporateApi.getUpcomingDeliveries(orderId),
     enabled: !!orderId,
+  });
+}
+
+export function useCorporateOrderPricing(params: ICorporatePricingParams | null) {
+  return useQuery({
+    queryKey: corporateKeys.orderPricing(params),
+    queryFn: () => corporateApi.getOrderPricing(params!),
+    enabled:
+      params !== null &&
+      !!params.outlet_id &&
+      !!params.start_date &&
+      !!params.end_date &&
+      (params.veg_count > 0 || params.nonveg_count > 0) &&
+      params.meal_types.length > 0 &&
+      params.selected_days.length > 0,
   });
 }

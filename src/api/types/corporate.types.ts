@@ -319,3 +319,41 @@ export interface ICorporateDailyOrder {
   created_at: string;
   updated_at: string;
 }
+
+// ===========================================
+// Corporate Order Pricing Types
+// ===========================================
+
+/**
+ * Corporate Order Pricing Query Params
+ * Query parameters for fetching real-time pricing preview
+ */
+export interface ICorporatePricingParams {
+  outlet_id: string;
+  veg_count: number;
+  nonveg_count: number;
+  meal_types: string[];
+  selected_days: string[];
+  start_date: string;
+  end_date: string;
+}
+
+/**
+ * Corporate Order Pricing Response
+ * Pricing breakdown from the backend, computed from outlet config
+ */
+export interface ICorporatePricingResponse {
+  veg_price_per_meal: number;
+  nonveg_price_per_meal: number;
+  delivery_charge_per_day: number;
+  tax_rate: number;
+  total_delivery_days: number;
+  veg_meals: number;
+  nonveg_meals: number;
+  veg_amount: number;
+  nonveg_amount: number;
+  delivery_total: number;
+  subtotal: number;
+  tax: number;
+  grand_total: number;
+}

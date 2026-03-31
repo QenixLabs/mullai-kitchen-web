@@ -8,6 +8,8 @@ import type {
   ICorporateOrder,
   ICorporateOrderModification,
   ICorporateInvoice,
+  ICorporatePricingParams,
+  ICorporatePricingResponse,
 } from './types/corporate.types';
 
 export const corporateApi = {
@@ -43,4 +45,7 @@ export const corporateApi = {
 
   getUpcomingDeliveries: (id: string) =>
     apiClient.get<ICorporateDailyOrder[]>(CORPORATE_ROUTES.UPCOMING_DELIVERIES(id)).then((r) => r.data),
+
+  getOrderPricing: (params: ICorporatePricingParams) =>
+    apiClient.get<ICorporatePricingResponse>(CORPORATE_ROUTES.ORDER_PRICING, { params }).then((r) => r.data),
 };

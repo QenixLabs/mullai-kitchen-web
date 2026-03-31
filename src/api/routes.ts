@@ -80,4 +80,5 @@ export const CORPORATE_ROUTES = {
   DELIVERY_ADDRESS: (index: number) => `/corporate/profile/delivery-addresses/${index}`,
   DAILY_ORDERS: (id: string) => `/corporate/orders/${id}/daily-orders`,
   UPCOMING_DELIVERIES: (id: string) => `/corporate/orders/${id}/upcoming-deliveries`,
+  ORDER_PRICING: '/corporate/orders/pricing',
 } as const;
