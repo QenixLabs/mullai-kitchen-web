@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin, Calendar, ShoppingBag, AlertCircle, Loader2 } from "lucide-react";
+import { MapPin, Calendar, ShoppingBag, AlertCircle, Loader2, CalendarClock } from "lucide-react";
 import { format } from "date-fns";
 import type { ICorporatePricingResponse } from "@/api/types/corporate.types";
 
@@ -16,7 +16,8 @@ interface OrderSummarySidebarProps {
     selectedDays: string[];
     mealTypes: string[];
     startDate: string;
-    endDate: string;
+    endDate: string | undefined;
+    billingCycleDays?: number;
   } | null;
   headcount: {
     total: number;
@@ -56,6 +57,16 @@ export function OrderSummarySidebar({
   };
 
   const mealsSubtotal = pricing.veg_amount + pricing.nonveg_amount;
+
+  const getBillingCycleLabel = (days?: number): string | null => {
+    if (!days) return null;
+    if (days === 7) return 'Weekly';
+    if (days === 30) return 'Monthly';
+    if (days === 90) return 'Quarterly';
+    return `${days} days`;
+  };
+
+  const billingCycleLabel = getBillingCycleLabel(schedule?.billingCycleDays);
 
   return (
     <div className="xl:sticky xl:top-6 bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
@@ -99,7 +110,7 @@ export function OrderSummarySidebar({
                   const start = schedule.startDate ? formatDate(schedule.startDate) : null;
                   const end = schedule.endDate ? formatDate(schedule.endDate) : null;
                   if (start && end) return `Starts ${start} · Ends ${end}`;
-                  if (start) return `Starts ${start}`;
+                  if (start) return `Starts ${start} · Ongoing`;
                   if (end) return `Ends ${end}`;
                   return '';
                 })()}
@@ -112,6 +123,24 @@ export function OrderSummarySidebar({
             </p>
           )}
         </div>
+
+        {/* Billing Cycle */}
+        {billingCycleLabel && (
+          <>
+            <div className="border-t border-gray-100" />
+            <div className="space-y-2">
+              <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                Billing
+              </h4>
+              <div className="bg-blue-50 border border-blue-100 rounded-lg p-2.5 sm:p-3 flex items-start gap-2">
+                <CalendarClock className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-blue-700 leading-relaxed">
+                  Will be billed every <strong>{billingCycleLabel}</strong>
+                </p>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Divider */}
         <div className="border-t border-gray-100" />
@@ -213,7 +242,9 @@ export function OrderSummarySidebar({
         {/* Estimated Total */}
         <div>
           <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
-            Estimated Total
+            {billingCycleLabel
+              ? `Estimated per ${billingCycleLabel.toLowerCase()} cost`
+              : 'Estimated Total'}
           </h4>
           <div className="flex items-baseline gap-1">
             <span className="text-2xl sm:text-3xl font-bold text-[#39070F]">
@@ -221,7 +252,7 @@ export function OrderSummarySidebar({
             </span>
             {pricing.total_delivery_days > 0 && (
               <span className="text-xs text-gray-400">
-                ({pricing.total_delivery_days} delivery days)
+                ({pricing.total_delivery_days} delivery days{schedule?.billingCycleDays ? ` / ${schedule.billingCycleDays}-day cycle` : ''})
               </span>
             )}
           </div>

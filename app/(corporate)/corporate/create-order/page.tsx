@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format, addDays } from "date-fns";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -24,6 +25,7 @@ import { useOrderDraftStore } from "@/stores/orderDraftStore";
 import {
   createCorporateOrderSchema,
   type CreateCorporateOrderFormData,
+  type BillingCycleDays,
 } from "@/lib/validations/corporate.schema";
 
 // Chennai default coordinates
@@ -162,6 +164,7 @@ export default function CreateOrderPage() {
       meal_types: draftStore.draft.mealTypes,
       start_date: draftStore.draft.startDate,
       end_date: draftStore.draft.endDate || "",
+      billing_cycle_days: draftStore.draft.billingCycleDays,
       headcount: draftStore.draft.headcount || 1,
       veg_count: draftStore.draft.vegCount,
       nonveg_count: draftStore.draft.nonvegCount,
@@ -185,6 +188,7 @@ export default function CreateOrderPage() {
   const mealTypes = watch("meal_types");
   const startDate = watch("start_date");
   const endDate = watch("end_date");
+  const billingCycleDays = watch("billing_cycle_days");
   const headcount = watch("headcount");
   const vegCount = watch("veg_count");
   const nonvegCount = watch("nonveg_count");
@@ -210,6 +214,7 @@ export default function CreateOrderPage() {
         mealTypes: (value.meal_types || []).filter((m): m is string => !!m),
         startDate: value.start_date || "",
         endDate: value.end_date || "",
+        billingCycleDays: value.billing_cycle_days || undefined,
       });
       draftStore.updatePreferences({
         headcount: value.headcount || 0,
@@ -299,19 +304,23 @@ export default function CreateOrderPage() {
     };
   }, [pincodeValue, coordinates, checkServiceability, form]);
 
-  // Build pricing params for backend call
+  // Build pricing params for backend call — uses cycle end date for per-cycle pricing
   const pricingParams = useMemo(() => {
     if (
       !serviceabilityInfo?.isServiceable ||
       !serviceabilityInfo.outletId ||
       !startDate ||
-      !endDate ||
+      !billingCycleDays ||
       selectedDays.length === 0 ||
       mealTypes.length === 0 ||
       (vegCount || 0) + (nonvegCount || 0) === 0
     ) {
       return null;
     }
+
+    // Compute cycle end date: start_date + billing_cycle_days
+    const cycleEndDate = format(addDays(new Date(startDate), billingCycleDays), "yyyy-MM-dd");
+
     return {
       outlet_id: serviceabilityInfo.outletId,
       veg_count: vegCount || 0,
@@ -319,9 +328,9 @@ export default function CreateOrderPage() {
       meal_types: mealTypes,
       selected_days: selectedDays,
       start_date: startDate,
-      end_date: endDate,
+      end_date: cycleEndDate,
     };
-  }, [serviceabilityInfo, startDate, endDate, selectedDays, mealTypes, vegCount, nonvegCount]);
+  }, [serviceabilityInfo, startDate, billingCycleDays, selectedDays, mealTypes, vegCount, nonvegCount]);
 
   const { data: pricingResponse, isLoading: isPricingLoading, error: pricingError } = useCorporateOrderPricing(pricingParams);
 
@@ -367,6 +376,10 @@ export default function CreateOrderPage() {
     }
   };
 
+  const handleBillingCycleChange = (days: BillingCycleDays) => {
+    setValue("billing_cycle_days", days, { shouldValidate: true });
+  };
+
   // Step validation
   const validateStep = async (step: Step): Promise<boolean> => {
     switch (step) {
@@ -394,7 +407,7 @@ export default function CreateOrderPage() {
           "selected_days",
           "meal_types",
           "start_date",
-          "end_date",
+          "billing_cycle_days",
         ]);
         return scheduleValid;
       }
@@ -421,8 +434,14 @@ export default function CreateOrderPage() {
   };
 
   const onSubmit = (data: CreateCorporateOrderFormData) => {
+    // Compute cycle end date as fallback if no explicit end date
+    const cycleEndDate = data.start_date && data.billing_cycle_days
+      ? format(addDays(new Date(data.start_date), data.billing_cycle_days), "yyyy-MM-dd")
+      : undefined;
+
     const payload = {
       ...data,
+      end_date: data.end_date || cycleEndDate || "",
       delivery_address: {
         ...data.delivery_address,
         ...(coordinates
@@ -506,10 +525,12 @@ export default function CreateOrderPage() {
                   mealTypes={mealTypes}
                   startDate={startDate}
                   endDate={endDate}
+                  billingCycleDays={billingCycleDays}
                   errors={errors}
                   control={control}
                   onDayToggle={handleDayToggle}
                   onMealToggle={handleMealToggle}
+                  onBillingCycleChange={handleBillingCycleChange}
                 />
               )}
               {currentStep === 3 && (
@@ -541,6 +562,7 @@ export default function CreateOrderPage() {
                   mealTypes,
                   startDate,
                   endDate,
+                  billingCycleDays,
                 } : null}
                 headcount={headcount > 0 ? {
                   total: headcount,

@@ -1,5 +1,13 @@
 import { z } from 'zod';
 
+export const BILLING_CYCLE_OPTIONS = [
+  { days: 7, label: 'Weekly' },
+  { days: 30, label: 'Monthly' },
+  { days: 90, label: 'Quarterly' },
+] as const;
+
+export type BillingCycleDays = 7 | 30 | 90;
+
 export const createCorporateOrderSchema = z
   .object({
     delivery_address: z.object({
@@ -19,8 +27,13 @@ export const createCorporateOrderSchema = z
       .array(z.string())
       .min(1, 'Select at least one meal type'),
     start_date: z.string().min(1, 'Select a start date'),
-    end_date: z.string().min(1, 'Select an end date'),
-    billing_cycle_days: z.coerce.number().int().min(1).max(90).optional(),
+    end_date: z.string().optional(),
+    billing_cycle_days: z.coerce
+      .number()
+      .int()
+      .refine((val) => [7, 30, 90].includes(val), {
+        message: 'Select a billing cycle',
+      }),
     headcount: z.coerce.number().int().min(1, 'Enter headcount'),
     veg_count: z.coerce.number().int().min(0),
     nonveg_count: z.coerce.number().int().min(0),

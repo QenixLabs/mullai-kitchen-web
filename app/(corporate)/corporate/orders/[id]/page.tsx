@@ -198,17 +198,23 @@ function OrderDetailPage() {
       return;
     }
 
+    // Only validate upper bound for reductions (positive change can't exceed base)
     if (modVegChange > order.veg_count || modNonvegChange > order.nonveg_count) {
-      toast.error("Invalid reduction", {
+      toast.error("Invalid modification", {
         description: "Reduction cannot exceed current meal allocation.",
       });
       return;
     }
 
+    const isAddition = (modVegChange + modNonvegChange) < 0;
+    const successDescription = isAddition
+      ? `Meals added for ${format(selectedModifyDate, "MMM dd, yyyy")}. Additional: Rs. ${Math.abs(currentModification).toLocaleString("en-IN")}`
+      : `Meals reduced for ${format(selectedModifyDate, "MMM dd, yyyy")}. Credit: Rs. ${currentModification.toLocaleString("en-IN")}`;
+
     modifyMutation.mutate(formData, {
       onSuccess: () => {
         toast.success("Modification submitted", {
-          description: `Meals reduced for ${format(selectedModifyDate, "MMM dd, yyyy")}. Credit: Rs. ${currentModification.toLocaleString("en-IN")}`,
+          description: successDescription,
         });
         setModifyDialogOpen(false);
       },
