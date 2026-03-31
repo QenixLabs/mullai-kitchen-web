@@ -306,7 +306,10 @@ export function PlansContent({
         {/* Popular Plans heading + filters */}
         <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="text-[34px] font-black leading-none tracking-tight text-[#371116] sm:text-[38px]">
+            <h2
+              className="text-[30px] font-bold leading-none text-[#371116]"
+              style={{ fontFamily: "var(--font-inter), sans-serif" }}
+            >
               Popular Plans
             </h2>
             <p className="mt-1 text-sm text-[#7B6E72]">

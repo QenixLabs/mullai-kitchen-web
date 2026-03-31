@@ -36,8 +36,7 @@ export function MealTypeCard({ type, selected, onToggle }: MealTypeCardProps) {
       type="button"
       onClick={() => onToggle(!selected)}
       className={cn(
-        "relative flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border-2 transition-all",
-        "min-w-22.5 sm:min-w-25 flex-1 sm:flex-none",
+        "relative flex w-full flex-col items-center gap-2 rounded-xl border-2 p-3 transition-all sm:gap-3 sm:p-4",
         selected
           ? "bg-card border-primary"
           : "bg-card border-border hover:border-primary/30"

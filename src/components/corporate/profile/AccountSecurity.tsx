@@ -9,7 +9,7 @@ export function AccountSecurity() {
 
   return (
     <>
-      <div className="bg-white rounded-3xl p-8 shadow-[0px_20px_40px_0px_rgba(61,0,12,0.04)] flex flex-col gap-8">
+      <div className="flex flex-col gap-6 rounded-3xl bg-white p-5 shadow-[0px_20px_40px_0px_rgba(61,0,12,0.04)] sm:gap-8 sm:p-8">
         {/* Password Row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -25,7 +25,7 @@ export function AccountSecurity() {
           </div>
           <button
             onClick={() => setIsPasswordDialogOpen(true)}
-            className="shrink-0 border border-border/50 rounded-full px-5 py-2.5 text-xs font-bold text-[#1d1b1c] hover:bg-secondary/80 transition-colors"
+            className="w-full shrink-0 rounded-full border border-border/50 px-5 py-2.5 text-xs font-bold text-[#1d1b1c] transition-colors hover:bg-secondary/80 sm:w-auto"
           >
             Change Password
           </button>

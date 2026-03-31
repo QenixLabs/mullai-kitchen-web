@@ -165,20 +165,20 @@ export function Step3Preferences({
         {/* Validation Badge */}
         {headcount > 0 && (
           <div className={cn(
-            "flex items-center justify-between p-2.5 sm:p-3 rounded-lg border",
+            "flex flex-col gap-2 p-2.5 sm:flex-row sm:items-center sm:justify-between sm:p-3 rounded-lg border",
             isMatch
               ? "bg-green-50 border-green-200"
               : isOver
                 ? "bg-red-50 border-red-200"
                 : "bg-gray-50 border-gray-200"
           )}>
-            <div className="flex items-center gap-2">
+            <div className="flex items-start gap-2 sm:items-center">
               <CheckCircle2 className={cn(
                 "h-5 w-5 shrink-0",
                 isMatch ? "text-green-600" : "text-gray-400"
               )} />
               <span className={cn(
-                "text-sm",
+                "text-sm wrap-break-word",
                 isMatch ? "text-green-700" : "text-gray-600"
               )}>
                 Veg ({vegCount}) + Non-veg ({nonvegCount}) = {total} / {headcount}

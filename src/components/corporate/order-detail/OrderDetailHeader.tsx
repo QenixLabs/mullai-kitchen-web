@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useUserStore";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ export function OrderDetailHeader({ className }: { className?: string }) {
   return (
     <header
       className={cn(
-        "flex items-center justify-end border-gray-200 px-4 py-8 gap-4",
+        "flex flex-wrap items-center justify-end gap-3 border-gray-200 px-4 py-5 sm:gap-4 sm:py-8",
         className
       )}
     >
@@ -25,15 +26,17 @@ export function OrderDetailHeader({ className }: { className?: string }) {
 
       <Button
         onClick={() => router.push("/corporate/create-order")}
-        className="h-10 px-6 bg-primary text-primary-foreground rounded-full font-semibold text-sm hover:bg-primary/90 transition-colors"
+        className="h-10 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 sm:px-6"
       >
         Create New Order
       </Button>
        <div className="h-10 w-10 overflow-hidden rounded-full border border-border shadow-sm">
         {user?.avatar_url ? (
-          <img
+          <Image
             src={user.avatar_url}
             alt={user?.name ?? "Profile"}
+            width={40}
+            height={40}
             className="h-full w-full object-cover"
           />
         ) : (

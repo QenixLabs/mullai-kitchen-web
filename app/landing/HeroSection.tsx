@@ -55,14 +55,14 @@ function StatPill({
       initial={{ opacity: 0, scale: 0.9 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
-      className="inline-flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20"
+      className="inline-flex items-center gap-2 sm:gap-3 md:gap-4 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20"
     >
-      <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#D4A574] to-[#c49a6a] flex-shrink-0">
-        <Icon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-primary" />
+      <div className="flex h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#D4A574] to-[#c49a6a] flex-shrink-0">
+        <Icon className="h-4 w-4 sm:h-4.5 sm:w-4.5 md:h-5 md:w-5 text-primary" />
       </div>
       <div className="flex flex-col justify-center">
         <div className="flex items-baseline gap-0.5 sm:gap-1 leading-none">
-          <span className="text-base sm:text-lg font-bold text-white">
+          <span className="text-base sm:text-lg md:text-xl font-bold text-white">
             {displayValue}
           </span>
           {suffix && (
@@ -163,8 +163,8 @@ export function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 pt-24 sm:pt-32 pb-16 sm:pb-20">
-        <div className="grid lg:grid-cols-[1.3fr_1fr] gap-8 lg:gap-16 items-center min-h-[60vh] sm:min-h-[70vh]">
+      <div className="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20">
+        <div className="grid lg:grid-cols-[1.3fr_1fr] gap-8 lg:gap-16 items-center min-h-[50vh] sm:min-h-[60vh] md:min-h-[65vh] lg:min-h-[70vh]">
           {/* Left Content */}
           <motion.div
             initial="initial"
@@ -188,7 +188,7 @@ export function HeroSection() {
             {/* Premium Headline */}
             <motion.h1
               variants={fadeInUp}
-              className="text-4xl sm:text-5xl lg:text-[3.75rem] font-bold text-white leading-[1.1] tracking-tight"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.75rem] font-bold text-white leading-[1.1] tracking-tight"
             >
               Authentic South Indian
               <br />
@@ -289,7 +289,7 @@ export function HeroSection() {
             initial="initial"
             animate={isInView ? "animate" : "initial"}
             variants={slideInRight}
-            className="hidden lg:block"
+            className="hidden md:block"
           >
             <motion.div
               whileHover={{ y: -8, transition: { duration: 0.3 } }}

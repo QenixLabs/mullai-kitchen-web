@@ -227,8 +227,8 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 md:px-8 lg:px-8">
+        <div className="flex flex-col gap-6 md:flex-row md:items-start lg:items-start">
           <div className="min-w-0 flex-1 space-y-5">
             {/* Meal Type Selection with Integrated Address Selection */}
             <section className="rounded-sm border border-border bg-card p-5 shadow-md sm:p-6">
@@ -362,7 +362,7 @@ export default function CheckoutPage() {
             </section>
           </div>
 
-          <div className="w-full space-y-4 lg:w-72 xl:w-80">
+          <div className="w-full space-y-4 md:w-72 lg:w-72 xl:w-80">
             <OrderSummary
               planName={plan.name}
               planDuration={plan.duration}

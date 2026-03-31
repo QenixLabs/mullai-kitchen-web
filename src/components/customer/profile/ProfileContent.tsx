@@ -64,10 +64,10 @@ export function ProfileContent() {
   return (
     <div className="flex flex-col gap-8 pb-20">
       <Card className="overflow-hidden rounded-[24px] border border-[#E8E0E4] bg-white shadow-sm">
-        <CardContent className="p-4 sm:p-5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-12 w-12 ring-2 ring-[#E7E0E4]">
+        <CardContent className="p-4 sm:p-5 md:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between md:gap-4">
+            <div className="flex items-center gap-3 md:gap-4">
+              <Avatar className="h-12 w-12 sm:h-14 sm:w-14 ring-2 ring-[#E7E0E4]">
                 <AvatarImage src={user?.avatar_url} />
                 <AvatarFallback className="bg-primary/10 font-bold text-primary">
                   {initials}
@@ -75,27 +75,27 @@ export function ProfileContent() {
               </Avatar>
 
               <div>
-                <p className="text-[30px] font-bold leading-none text-[#27161A]">
+                <p className="text-[26px] sm:text-[30px] md:text-[32px] font-bold leading-none text-[#27161A]">
                   {user?.name || "-"}
                 </p>
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-[#6F666A]">
+                <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-[#6F666A] md:text-base md:gap-3">
                   <span className="inline-flex items-center gap-1">
-                    <FaPhone className="h-3.5 w-3.5" />
+                    <FaPhone className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     {user?.phone || "-"}
                   </span>
-                  <span className="rounded-full bg-[#EAF8EF] px-2 py-0.5 text-[11px] font-bold text-[#209952]">
+                  <span className="rounded-full bg-[#EAF8EF] px-2 py-0.5 text-[11px] font-bold text-[#209952] sm:text-xs">
                     Verified
                   </span>
                 </div>
-                <div className="mt-1 flex items-center gap-1.5 text-sm text-[#6F666A]">
-                  <FaEnvelope className="h-3.5 w-3.5" />
+                <div className="mt-1 flex items-center gap-1.5 text-sm text-[#6F666A] md:text-base">
+                  <FaEnvelope className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   <span>{user?.email || "-"}</span>
                 </div>
               </div>
             </div>
 
             <Button
-              className="h-9 rounded-full bg-[#4A0010] px-6 font-bold text-white hover:bg-[#35000B]"
+              className="h-9 sm:h-10 md:h-11 rounded-full bg-[#4A0010] px-5 sm:px-6 md:px-8 text-sm sm:text-base font-bold text-white hover:bg-[#35000B]"
               onClick={() => router.push("/profile/edit")}
             >
               Edit Profile
@@ -105,15 +105,15 @@ export function ProfileContent() {
       </Card>
 
       <section>
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between md:mb-6">
           <h2
-            className="text-[20px] font-bold leading-none text-[#341117]"
+            className="text-[18px] sm:text-[20px] md:text-[22px] font-bold leading-none text-[#341117]"
             style={{ fontFamily: "var(--font-inter), sans-serif" }}
           >
             Delivery Addresses
           </h2>
           <button
-            className="text-sm font-bold text-[#4A1A24] hover:opacity-75"
+            className="text-sm font-bold text-[#4A1A24] hover:opacity-75 md:text-base"
             onClick={() => {
               setEditingAddress(undefined);
               setIsAddressModalOpen(true);
@@ -123,9 +123,9 @@ export function ProfileContent() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2">
           {isAddressesLoading ? (
-            <div className="h-40 w-full animate-pulse rounded-xl bg-gray-100" />
+            <div className="h-40 w-full animate-pulse rounded-xl bg-gray-100 md:col-span-2" />
           ) : addresses && addresses.length > 0 ? (
             addresses.map((address) => {
               const mapCenter =

@@ -57,8 +57,8 @@ export function CorporateProfileContent() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
-        <div className="flex items-center justify-between mb-10">
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+        <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-3">
             <Skeleton className="h-10 w-72 rounded-2xl" />
             <Skeleton className="h-6 w-96 rounded-xl" />
@@ -75,7 +75,7 @@ export function CorporateProfileContent() {
 
   if (error) {
     return (
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 sm:py-24 lg:px-8 flex flex-col items-center justify-center min-h-[500px]">
+      <div className="mx-auto flex min-h-125 w-full max-w-7xl flex-col items-center justify-center px-4 sm:px-6 sm:py-24 lg:px-8">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -103,10 +103,10 @@ export function CorporateProfileContent() {
     return (
       <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
         <div className="flex flex-col items-center gap-6 mb-12">
-          <h1 className="text-4xl sm:text-[36px] font-extrabold tracking-tight uppercase text-primary">
+          <h1 className="text-[30px] font-extrabold uppercase tracking-tight text-primary sm:text-[36px]">
             Corporate Profile
           </h1>
-          <p className="text-lg text-[#554243] font-normal">
+          <p className="text-base font-normal text-[#554243] sm:text-lg">
             Welcome, {user?.name || "Corporate Partner"}
           </p>
         </div>
@@ -118,7 +118,7 @@ export function CorporateProfileContent() {
           <div className="p-8 rounded-3xl bg-primary/5 text-primary mb-8 relative">
             <Building2 className="h-16 w-16" />
           </div>
-          <h3 className="text-3xl font-black mb-4">Complete Your Profile</h3>
+          <h3 className="mb-4 text-2xl font-black sm:text-3xl">Complete Your Profile</h3>
           <p className="text-muted-foreground mb-12 text-center font-medium leading-relaxed">
             Set up your corporate identity to unlock order management, billing,
             and delivery configuration for your organization.
@@ -146,14 +146,14 @@ export function CorporateProfileContent() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12 flex flex-col gap-10">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:gap-10 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
       {/* Page Header */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+      <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
         <div className="flex flex-col gap-1">
-          <h1 className="text-[36px] font-extrabold tracking-[-0.9px] uppercase text-primary">
+          <h1 className="text-[30px] font-extrabold uppercase tracking-[-0.9px] text-primary sm:text-[34px] lg:text-[36px]">
             Corporate Profile
           </h1>
-          <p className="text-lg text-[#554243] font-normal leading-7">
+          <p className="text-sm leading-6 text-[#554243] sm:text-base lg:text-lg lg:leading-7">
             Manage your organization&apos;s identity, billing parameters,
             and high-frequency delivery locations
           </p>
@@ -161,9 +161,9 @@ export function CorporateProfileContent() {
 
         <Button
           onClick={() => router.push("/corporate/profile/edit")}
-          className="h-12 w-fit px-8 rounded-full bg-gradient-to-br from-[#3d000c] to-[#5d101d] text-white font-semibold text-base shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+          className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-linear-to-br from-[#3d000c] to-[#5d101d] px-6 text-sm font-semibold text-white shadow-lg transition-all hover:scale-105 active:scale-95 sm:h-12 sm:w-fit sm:px-8 sm:text-base"
         >
-          <Pencil className="h-[18px] w-[18px]" />
+          <Pencil className="h-4.5 w-4.5" />
           Edit Organization Info
         </Button>
       </div>

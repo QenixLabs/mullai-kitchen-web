@@ -34,7 +34,7 @@ function LiveOperationsCard({ count }: { count: number }) {
     <Link href="/corporate/orders?status=active">
       <motion.div
         whileHover={{ y: -4 }}
-        className="relative overflow-hidden rounded-3xl bg-white border border-border/40 p-6 h-full cursor-pointer group"
+        className="group relative h-full cursor-pointer overflow-hidden rounded-3xl border border-border/40 bg-white p-5 sm:p-6"
       >
         {/* Fork/Knife Icon - top right */}
         <div className="absolute top-4 right-4 text-muted/20">
@@ -42,12 +42,12 @@ function LiveOperationsCard({ count }: { count: number }) {
         </div>
 
         <div className="relative z-10">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-4">
+          <p className="mb-4 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
             Live Operations
           </p>
 
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-5xl font-bold text-primary tracking-tight">
+          <div className="mb-3 flex items-center gap-3">
+            <span className="text-4xl font-bold tracking-tight text-primary sm:text-5xl">
               {String(count).padStart(2, '0')}
             </span>
             {count > 0 && (
@@ -74,7 +74,7 @@ function FinancialPendingsCard({ count }: { count: number }) {
     <Link href="/corporate/orders?payment=pending,overdue">
       <motion.div
         whileHover={{ y: -4 }}
-        className="relative overflow-hidden rounded-3xl p-6 h-full cursor-pointer group border border-black"
+        className="group relative h-full cursor-pointer overflow-hidden rounded-3xl border border-black p-5 sm:p-6"
         style={{ backgroundColor: '#F2ECED' }}
       >
         <div className="relative z-10">
@@ -82,8 +82,8 @@ function FinancialPendingsCard({ count }: { count: number }) {
             Financial Pendings
           </p>
 
-          <div className="flex items-baseline gap-0.5 mb-3">
-            <span className="text-4xl font-bold text-primary tracking-tight">
+          <div className="mb-3 flex items-baseline gap-0.5">
+            <span className="text-2xl font-bold tracking-tight text-primary sm:text-3xl xl:text-4xl">
               ₹{pendingAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
@@ -101,7 +101,7 @@ function NextAllocationCard({ order }: { order?: ICorporateOrder }) {
   return (
     <motion.div
       whileHover={{ y: -4 }}
-      className="relative overflow-hidden rounded-3xl p-6 h-full"
+      className="relative h-full overflow-hidden rounded-3xl p-5 sm:p-6"
       style={{ backgroundColor: '#3A070F' }}
     >
       {/* Calendar watermark */}
@@ -116,7 +116,7 @@ function NextAllocationCard({ order }: { order?: ICorporateOrder }) {
 
         {order ? (
           <>
-            <p className="text-3xl font-semibold text-white tracking-tight mb-2">
+            <p className="mb-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
               {format(new Date(order.start_date), "MMM dd, yyyy")}
             </p>
             <p className="text-sm text-white/80 font-medium">
@@ -125,7 +125,7 @@ function NextAllocationCard({ order }: { order?: ICorporateOrder }) {
           </>
         ) : (
           <>
-            <p className="text-3xl font-semibold text-white tracking-tight mb-2">
+            <p className="mb-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
               --
             </p>
             <p className="text-sm text-white/80 font-medium">
@@ -188,9 +188,9 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
       <motion.div
         layout
         whileHover={{ y: -4 }}
-        className="group relative flex flex-col overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 h-full cursor-pointer"
+        className="group relative flex h-full cursor-pointer flex-col overflow-hidden border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:shadow-lg"
       >
-        <div className="flex flex-1 flex-col p-6">
+        <div className="flex flex-1 flex-col p-4 sm:p-6">
           {/* Status Badges - Top */}
           <div className="flex items-center gap-4 mb-4">
             <div className="flex items-center gap-2">
@@ -224,7 +224,7 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
           </div>
 
           {/* Info Grid - 2 columns */}
-          <div className="grid grid-cols-2 gap-y-5 gap-x-4 mb-6">
+          <div className="mb-6 grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 sm:gap-y-5">
             {/* Headcount */}
             <div>
               <p className="text-xs font-medium text-[#554243] uppercase tracking-wider mb-1">HEADCOUNT</p>
@@ -240,7 +240,7 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
             {/* Duration */}
             <div>
               <p className="text-xs font-medium text-[#554243] uppercase tracking-wider mb-1">DURATION</p>
-              <p className="text-base font-semibold text-[#554243] truncate">
+              <p className="truncate text-base font-semibold text-[#554243]">
                 {order.selected_days.slice(0, 2).join(", ")}
                 {order.selected_days.length > 2 && "..."}
               </p>
@@ -265,7 +265,7 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
             {/* Location */}
             <div>
               <p className="text-xs font-medium text-[#554243] uppercase tracking-wider mb-1">LOCATION</p>
-              <p className="text-base font-semibold text-[#554243] truncate">{locationText}</p>
+              <p className="truncate text-base font-semibold text-[#554243]">{locationText}</p>
             </div>
           </div>
 
@@ -273,16 +273,16 @@ function CompactOrderCard({ order }: { order: ICorporateOrder }) {
           <div className="border-t border-gray-100 my-2" />
 
           {/* Footer - Total and Arrow */}
-          <div className="mt-auto pt-4 flex items-center justify-between">
+          <div className="mt-auto flex items-center justify-between pt-4">
             <div>
               <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">TOTAL</p>
-              <div className="flex items-center gap-1 text-2xl font-bold text-primary">
-                <IndianRupee className="h-5 w-5" />
+              <div className="flex items-center gap-1 text-xl font-bold text-primary sm:text-2xl">
+                <IndianRupee className="h-4 w-4 sm:h-5 sm:w-5" />
                 <span>{order.final_amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
             </div>
 
-            <button className="h-12 w-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">
+            <button className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-gray-200 sm:h-12 sm:w-12">
               <ArrowRight className="h-5 w-5 text-gray-700" />
             </button>
           </div>
@@ -366,27 +366,27 @@ export default function CorporateDashboardPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+    <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
       {/* Background Decorative Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-0 right-0 w-150 h-150 bg-primary/5 rounded-full blur-[140px] -mr-80 -mt-40" />
         <div className="absolute bottom-0 left-0 w-150 h-150 bg-gold/5 rounded-full blur-[140px] -ml-80 -mb-40" />
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
+      <div className="mb-10 flex flex-col gap-5 sm:mb-12 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-[36px] font-extrabold text-primary uppercase tracking-tight" style={{ fontFamily: "Inter, sans-serif" }}>
+          <h1 className="text-[30px] font-extrabold uppercase tracking-tight text-primary sm:text-[34px] lg:text-[36px]" style={{ fontFamily: "Inter, sans-serif" }}>
             Command Center
           </h1>
-          <p className="text-[16px] font-medium text-[#554243] mt-1" style={{ fontFamily: "Inter, sans-serif" }}>
+          <p className="mt-1 text-sm font-medium text-[#554243] sm:text-[15px] lg:text-[16px]" style={{ fontFamily: "Inter, sans-serif" }}>
             Strategic Overview & Real-time Culinary Logistics
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <Button
             onClick={() => router.push("/corporate/create-order")}
-            className="h-11 px-6 bg-primary text-white rounded-full font-semibold text-sm hover:bg-primary/90 transition-colors"
+            className="h-11 rounded-full bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-primary/90 sm:px-6"
           >
             Create New Order
           </Button>
@@ -412,7 +412,7 @@ export default function CorporateDashboardPage() {
       </div>
 
       {/* Stats Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+      <div className="mb-14 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         <LiveOperationsCard count={activeOrders.length} />
         <FinancialPendingsCard count={pendingInvoices.length} />
         <NextAllocationCard order={upcomingDelivery} />
@@ -426,7 +426,7 @@ export default function CorporateDashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-16"
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-2xl font-bold tracking-tight text-primary">
                 ACTIVE SPOTLIGHT
               </h2>
@@ -440,7 +440,7 @@ export default function CorporateDashboardPage() {
                 </Link>
               )}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
               
               {spotlightOrders.map((order) => (
                 <CompactOrderCard key={order._id} order={order} />
@@ -452,7 +452,7 @@ export default function CorporateDashboardPage() {
 
       {/* Recent Orders Overview */}
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-2xl font-bold tracking-tight text-primary uppercase">
             Fulfillment History
           </h2>
@@ -466,7 +466,7 @@ export default function CorporateDashboardPage() {
         </div>
 
         {ordersList.length === 0 ? (
-          <div className="relative flex flex-col items-center justify-center rounded-4xl bg-secondary/10 border-2 border-dashed border-border/40 py-32 px-6">
+          <div className="relative flex flex-col items-center justify-center rounded-4xl border-2 border-dashed border-border/40 bg-secondary/10 px-6 py-20 sm:py-24 lg:py-32">
             <div className="absolute inset-0 opacity-5 pointer-events-none">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--primary)_0%,transparent_100%)] blur-3xl" />
             </div>

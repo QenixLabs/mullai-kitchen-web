@@ -55,7 +55,7 @@ export function Step2Schedule({
           <UtensilsCrossed className="h-5 w-5 text-[#44151C]" />
           <h3 className="text-base sm:text-lg font-semibold text-[#44151C]">Meal Types</h3>
         </div>
-        <div className="flex flex-wrap gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {["Breakfast", "Lunch", "Dinner"].map((meal) => (
             <MealTypeCard
               key={meal}

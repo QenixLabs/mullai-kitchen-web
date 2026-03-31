@@ -26,7 +26,7 @@ function formatDateTime(dateStr: string): { date: string; meta: string } {
 }
 
 export function ModificationsTab({ modifications }: ModificationsTabProps) {
-  const totalCredit = modifications.reduce((sum, mod) => sum + mod.credit_amount, 0);
+  const totalCredit = modifications.reduce((sum, mod) => sum + (mod.credit_amount ?? 0), 0);
 
   return (
     <div className="space-y-8">
@@ -44,7 +44,7 @@ export function ModificationsTab({ modifications }: ModificationsTabProps) {
               </p>
               <div className="mt-1 text-3xl font-bold text-rose-900">
                 <span className="align-top text-xl">₹</span>
-                {totalCredit.toLocaleString("en-IN")}
+                {(totalCredit ?? 0).toLocaleString("en-IN")}
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
@@ -142,21 +142,21 @@ export function ModificationsTab({ modifications }: ModificationsTabProps) {
                           <td className="px-6 py-4 align-top">
                             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
                               <span>↑</span>
-                              +{mod.veg_reduction}
+                              +{mod.veg_reduction ?? 0}
                             </span>
                           </td>
 
                           <td className="px-6 py-4 align-top">
                             <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-xs font-semibold text-rose-700">
                               <span>↓</span>
-                              -{mod.nonveg_reduction}
+                              -{mod.nonveg_reduction ?? 0}
                             </span>
                           </td>
 
                           <td className="px-6 py-4 align-top">
                             <span className="text-sm font-bold text-foreground">
                               <span className="align-top text-xs">₹</span>
-                              {mod.credit_amount.toLocaleString("en-IN")}
+                              {(mod.credit_amount ?? 0).toLocaleString("en-IN")}
                             </span>
                           </td>
 

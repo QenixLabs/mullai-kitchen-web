@@ -246,7 +246,7 @@ export function TodaysMenuSection() {
           initial="initial"
           animate={isInView ? "animate" : "initial"}
           variants={staggerContainer}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8"
         >
           <AnimatePresence mode="popLayout">
             {filteredItems.map((item) => (

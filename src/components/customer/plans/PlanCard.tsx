@@ -34,14 +34,12 @@ export function PlanCard({
 }: PlanCardProps) {
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
 
-  const fallbackImage = "/images/plans/thali.png";
-  const curatedImage = /recommend/i.test(plan.badge ?? "")
-    ? "/images/plans/recommended%20meal.png"
-    : /best\s*-?\s*value|value/i.test(plan.badge ?? "")
-      ? "/images/plans/best-value.png"
-      : null;
-
-  const preferredImage = curatedImage ?? plan.image_url ?? fallbackImage;
+  const recommendedImage = "/images/plans/recommended%20meal.png";
+  const bestValueImage = "/images/plans/best-value.png";
+  const preferredImage = /best\s*-?\s*value|value/i.test(plan.badge ?? "")
+    ? bestValueImage
+    : recommendedImage;
+  const fallbackImage = recommendedImage;
   const imageSrc = imageLoadFailed ? fallbackImage : preferredImage;
   const isFallback = imageSrc === fallbackImage;
   const isWeekly = plan.duration.toLowerCase().includes("week");
@@ -112,24 +110,47 @@ export function PlanCard({
         {/* Content */}
         <div className="flex flex-1 flex-col p-4 pt-3">
           <div className="mb-2 flex items-start justify-between gap-2">
-            <h3 className="line-clamp-2 text-lg font-bold leading-tight text-[#261217]">{plan.name}</h3>
+            <h3
+              className="line-clamp-2 text-[20px] font-bold leading-tight text-[#261217]"
+              style={{ fontFamily: "var(--font-inter), sans-serif" }}
+            >
+              {plan.name}
+            </h3>
             <div className="shrink-0 text-right">
-              <div className="text-2xl font-black leading-none text-[#5A1622]">
+              <div
+                className="text-[20px] font-bold leading-none text-[#5A1622]"
+                style={{ fontFamily: "var(--font-inter), sans-serif" }}
+              >
                 {currencyFormatter.format(plan.price)}
               </div>
-              <div className="text-[10px] text-[#6E6467]">/{periodLabel}</div>
+              <div
+                className="text-[12px] font-semibold text-[#6E6467]"
+                style={{ fontFamily: "var(--font-inter), sans-serif" }}
+              >
+                /{periodLabel}
+              </div>
             </div>
           </div>
 
           {/* Meals - horizontal scroll */}
-          <div className="mb-4 flex items-center gap-3 text-[11px] text-[#5F5458]">
+          <div className="mb-4 flex items-center gap-3 text-[#5F5458]">
             <span className="inline-flex items-center gap-1">
               <FaCalendarAlt className="h-3 w-3" />
-              {isWeekly ? "7 Days" : "30 Days"}
+              <span
+                className="text-[12px] font-semibold"
+                style={{ fontFamily: "var(--font-inter), sans-serif" }}
+              >
+                {isWeekly ? "7 Days" : "30 Days"}
+              </span>
             </span>
             <span className="inline-flex items-center gap-1">
               <FaFire className="h-3 w-3" />
-              {mealsPerDay} meals/day
+              <span
+                className="text-[12px] font-bold"
+                style={{ fontFamily: "var(--font-inter), sans-serif" }}
+              >
+                {mealsPerDay} meals/day
+              </span>
             </span>
           </div>
 
@@ -161,7 +182,7 @@ export function PlanCard({
   // Default variant
   return (
     <article
-      className={cn(
+          className={cn(
         "relative flex flex-col overflow-hidden rounded-3xl border border-[#E8E2E5] bg-[#FCFBFC] transition-all duration-200",
         "hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(20,15,17,0.08)]",
         isSelected && "ring-2 ring-primary ring-offset-2",
@@ -193,23 +214,46 @@ export function PlanCard({
       {/* Content */}
       <div className="flex flex-1 flex-col px-4 pb-4 pt-3">
         <div className="mb-3 flex items-start justify-between gap-3">
-          <h3 className="line-clamp-2 text-[30px] font-bold leading-[1.08] text-[#2A1216]">{plan.name}</h3>
+          <h3
+            className="line-clamp-2 text-[20px] font-bold leading-[1.2] text-[#2A1216]"
+            style={{ fontFamily: "var(--font-inter), sans-serif" }}
+          >
+            {plan.name}
+          </h3>
           <div className="shrink-0 text-right">
-            <div className="text-[34px] font-black leading-none text-[#5A1622]">
+            <div
+              className="text-[20px] font-bold leading-none text-[#5A1622]"
+              style={{ fontFamily: "var(--font-inter), sans-serif" }}
+            >
               {currencyFormatter.format(plan.price)}
             </div>
-            <div className="mt-0.5 text-[11px] text-[#6E6467]">/{periodLabel}</div>
+            <div
+              className="mt-0.5 text-[12px] font-semibold text-[#6E6467]"
+              style={{ fontFamily: "var(--font-inter), sans-serif" }}
+            >
+              /{periodLabel}
+            </div>
           </div>
         </div>
 
-        <div className="mb-5 flex items-center gap-4 text-xs text-[#5F5458]">
+        <div className="mb-5 flex items-center gap-4 text-[#5F5458]">
           <div className="flex items-center gap-1.5">
             <FaClock className="h-3.5 w-3.5 text-[#7A6F73]" />
-            <span>{isWeekly ? "7 Days" : "30 Days"}</span>
+            <span
+              className="text-[12px] font-semibold"
+              style={{ fontFamily: "var(--font-inter), sans-serif" }}
+            >
+              {isWeekly ? "7 Days" : "30 Days"}
+            </span>
           </div>
           <div className="flex items-center gap-1.5">
             <FaFire className="h-3.5 w-3.5 text-[#7A6F73]" />
-            <span>{mealsPerDay} meals/day</span>
+            <span
+              className="text-[12px] font-bold"
+              style={{ fontFamily: "var(--font-inter), sans-serif" }}
+            >
+              {mealsPerDay} meals/day
+            </span>
           </div>
         </div>
 

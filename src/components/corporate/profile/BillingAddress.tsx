@@ -33,7 +33,7 @@ export function BillingAddress({ profile }: BillingAddressProps) {
 
   if (!hasAnyField) {
     return (
-      <div className="bg-white rounded-3xl p-8 shadow-[0px_20px_40px_0px_rgba(68,21,28,0.04)]">
+      <div className="rounded-3xl bg-white p-5 shadow-[0px_20px_40px_0px_rgba(68,21,28,0.04)] sm:p-8">
         <div className="flex items-center gap-2 mb-6">
           <MapPin className="h-9 w-9 text-primary" />
           <h2 className="text-xl font-bold text-[#3d000c] capitalize">
@@ -49,7 +49,7 @@ export function BillingAddress({ profile }: BillingAddressProps) {
   }
 
   return (
-    <div className="bg-white rounded-3xl p-8 shadow-[0px_20px_40px_0px_rgba(68,21,28,0.04)] flex flex-col gap-6">
+    <div className="flex flex-col gap-6 rounded-3xl bg-white p-5 shadow-[0px_20px_40px_0px_rgba(68,21,28,0.04)] sm:p-8">
       {/* Title */}
       <div className="flex items-center gap-2">
         <MapPin className="h-9 w-9 text-primary" />
@@ -59,7 +59,7 @@ export function BillingAddress({ profile }: BillingAddressProps) {
       </div>
 
       {/* Address Fields Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
         {/* Left Column: Street + Area */}
         <div className="flex flex-col gap-4">
           <FieldCard label="Street Address" value={addr.street_address} />
@@ -67,10 +67,10 @@ export function BillingAddress({ profile }: BillingAddressProps) {
         </div>
 
         {/* Right Column: City + Pincode + State */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FieldCard label="City" value={addr.city} />
           <FieldCard label="Pincode" value={addr.pincode} />
-          <div className="col-span-2">
+          <div className="sm:col-span-2">
             <FieldCard label="State / Country" value={addr.state_country} />
           </div>
         </div>

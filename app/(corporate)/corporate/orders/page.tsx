@@ -86,22 +86,22 @@ function OrdersPageContent() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
+        <div className="mb-10 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-[36px] font-extrabold text-primary uppercase tracking-tight" style={{ fontFamily: "Inter, sans-serif" }}>
+            <h1 className="text-[28px] font-extrabold uppercase tracking-tight text-primary sm:text-[32px] lg:text-[36px]" style={{ fontFamily: "Inter, sans-serif" }}>
               Orders Management
             </h1>
-            <p className="text-[16px] font-medium text-[#554243] mt-1" style={{ fontFamily: "Inter, sans-serif" }}>
+            <p className="mt-1 text-sm font-medium text-[#554243] sm:text-[15px] lg:text-[16px]" style={{ fontFamily: "Inter, sans-serif" }}>
               Manage your corporate orders
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             <Button
               onClick={() => router.push("/corporate/create-order")}
-              className="h-11 px-6 bg-primary text-white rounded-full font-semibold text-sm hover:bg-primary/90 transition-colors"
+              className="h-11 rounded-full bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-primary/90 sm:px-6"
             >
               Create New Order
             </Button>
@@ -134,22 +134,22 @@ function OrdersPageContent() {
   // Error state
   if (error) {
     return (
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
+        <div className="mb-10 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-[36px] font-extrabold text-primary uppercase tracking-tight" style={{ fontFamily: "Inter, sans-serif" }}>
+            <h1 className="text-[28px] font-extrabold uppercase tracking-tight text-primary sm:text-[32px] lg:text-[36px]" style={{ fontFamily: "Inter, sans-serif" }}>
               Orders Management
             </h1>
-            <p className="text-[16px] font-medium text-[#554243] mt-1" style={{ fontFamily: "Inter, sans-serif" }}>
+            <p className="mt-1 text-sm font-medium text-[#554243] sm:text-[15px] lg:text-[16px]" style={{ fontFamily: "Inter, sans-serif" }}>
               Manage your corporate orders
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             <Button
               onClick={() => router.push("/corporate/create-order")}
-              className="h-11 px-6 bg-primary text-white rounded-full font-semibold text-sm hover:bg-primary/90 transition-colors"
+              className="h-11 rounded-full bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-primary/90 sm:px-6"
             >
               Create New Order
             </Button>
@@ -229,22 +229,22 @@ function OrdersPageContent() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+    <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
+      <div className="mb-10 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-[36px] font-extrabold text-primary uppercase tracking-tight" style={{ fontFamily: "Inter, sans-serif" }}>
+          <h1 className="text-[28px] font-extrabold uppercase tracking-tight text-primary sm:text-[32px] lg:text-[36px]" style={{ fontFamily: "Inter, sans-serif" }}>
             Orders Management
           </h1>
-          <p className="text-[16px] font-medium text-[#554243] mt-1" style={{ fontFamily: "Inter, sans-serif" }}>
+          <p className="mt-1 text-sm font-medium text-[#554243] sm:text-[15px] lg:text-[16px]" style={{ fontFamily: "Inter, sans-serif" }}>
             Manage your corporate orders
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <Button
             onClick={() => router.push("/corporate/create-order")}
-            className="h-11 px-6 bg-primary text-white rounded-full font-semibold text-sm hover:bg-primary/90 transition-colors"
+            className="h-11 rounded-full bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-primary/90 sm:px-6"
           >
             Create New Order
           </Button>
@@ -278,7 +278,7 @@ function OrdersPageContent() {
       {/* Orders grid or empty state */}
       {filteredOrders.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {/* Create New Order Cycle Card - Always first, only on page 1 */}
             {currentPage === 1 && <NewOrderCycleCard />}
 
@@ -347,7 +347,7 @@ function OrdersPageContent() {
         </>
       ) : (
         /* Empty state */
-        <div className="relative flex flex-col items-center justify-center rounded-2xl bg-card border border-border shadow-sm py-24 px-6">
+        <div className="relative flex flex-col items-center justify-center rounded-2xl border border-border bg-card px-6 py-16 shadow-sm sm:py-20 lg:py-24">
           <div className="p-5 rounded-full bg-muted mb-6 text-muted-foreground">
             <ClipboardList className="h-10 w-10" />
           </div>
@@ -373,9 +373,9 @@ export default function OrdersPage() {
   return (
     <Suspense
       fallback={
-        <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+        <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
           {/* Header Skeleton */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
+          <div className="mb-10 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <Skeleton className="h-10 w-64 mb-2 rounded-xl" />
               <Skeleton className="h-5 w-48 rounded-lg" />

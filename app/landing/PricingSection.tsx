@@ -245,7 +245,7 @@ export function PricingSection() {
           initial="initial"
           animate={isInView ? "animate" : "initial"}
           variants={staggerContainer}
-          className="grid md:grid-cols-3 gap-6 lg:gap-8"
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
         >
           {plans.map((plan) => (
             <motion.div
@@ -253,7 +253,7 @@ export function PricingSection() {
               variants={scaleIn}
               className={cn(
                 "perspective-1000",
-                plan.popular && "md:-mt-4 md:mb-4",
+                plan.popular && "lg:-mt-4 lg:mb-4",
               )}
             >
               <TiltCard popular={plan.popular} className="relative h-full">
@@ -280,7 +280,7 @@ export function PricingSection() {
                     )}
                   />
 
-                  <div className="p-6 lg:p-8 pt-8">
+                  <div className="p-5 sm:p-6 lg:p-8 pt-6 sm:pt-8">
                     {/* Popular Badge */}
                     {plan.popular && (
                       <motion.div

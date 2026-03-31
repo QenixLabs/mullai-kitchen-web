@@ -120,7 +120,7 @@ export default function WalletPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F2F3]">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-350 px-4 py-8 sm:px-6 lg:px-8 xl:px-12">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -129,13 +129,13 @@ export default function WalletPage() {
         >
           <div className="flex items-end justify-between gap-4">
             <div className="space-y-1">
-              <h1 className="text-[58px] font-black leading-none tracking-tight text-[#3B1118]">WALLET BALANCE</h1>
-              <p className="text-lg text-[#6D6367]">Available funds</p>
+              <h1 className="text-[36px] font-black leading-none tracking-tight text-[#3B1118] sm:text-[44px] md:text-[50px] xl:text-[58px]">WALLET BALANCE</h1>
+              <p className="text-base text-[#6D6367] sm:text-lg md:text-[19px]">Available funds</p>
             </div>
           </div>
         </motion.div>
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.45fr)]">
+        <div className="grid gap-6 xl:grid-cols-[minmax(320px,0.95fr)_minmax(0,1.3fr)] 2xl:grid-cols-[minmax(320px,1fr)_minmax(0,1.45fr)]">
           {/* Main Content */}
           <div>
             {/* Wallet Balance Card */}

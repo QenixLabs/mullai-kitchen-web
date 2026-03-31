@@ -54,7 +54,7 @@ export function WalletBalanceCard({
       transition={{ duration: 0.3 }}
       className={cn("space-y-5", className)}
     >
-      <div className="rounded-[28px] bg-[#3D000C] p-6 text-white shadow-[0_18px_38px_rgba(39,0,8,0.35)]">
+      <div className="rounded-[28px] bg-[#3D000C] p-5 text-white shadow-[0_18px_38px_rgba(39,0,8,0.35)] sm:p-6">
         <div className="mb-6 flex items-start justify-between gap-3">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/70">
@@ -63,15 +63,15 @@ export function WalletBalanceCard({
             {isLoading ? (
               <div className="mt-3 h-10 w-44 animate-pulse rounded-md bg-white/20" />
             ) : (
-              <h3 className="mt-2 text-[52px] font-black leading-none">
+              <h3 className="mt-2 text-[38px] font-black leading-none sm:text-[44px] xl:text-[52px]">
                 {currencySymbol}
                 {balance !== null ? balance.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00"}
               </h3>
             )}
           </div>
 
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10">
-            <FaWallet className="h-8 w-8 text-white/45" />
+          <div className="flex h-13 w-13 items-center justify-center rounded-2xl bg-white/10 sm:h-16 sm:w-16">
+            <FaWallet className="h-6 w-6 text-white/45 sm:h-8 sm:w-8" />
           </div>
         </div>
 
@@ -97,11 +97,11 @@ export function WalletBalanceCard({
         </div>
       </div>
 
-      <div className="rounded-[22px] border border-[#EEE7EA] bg-[#F7F3F5] p-6">
-        <h4 className="text-[30px] font-black leading-none text-[#3A1118]">Add Funds</h4>
+      <div className="rounded-[22px] border border-[#EEE7EA] bg-[#F7F3F5] p-5 sm:p-6">
+        <h4 className="text-[26px] font-black leading-none text-[#3A1118] sm:text-[30px]">Add Funds</h4>
         <p className="mt-2 text-sm text-[#7C7074]">Quickly recharge your concierge wallet</p>
 
-        <div className="mt-5 grid grid-cols-3 gap-3">
+        <div className="mt-5 grid grid-cols-3 gap-2.5 sm:gap-3">
           {[2000, 5000, 10000].map((amount) => (
             <button
               key={amount}
@@ -111,7 +111,7 @@ export function WalletBalanceCard({
                 setCustomAmount("");
               }}
               className={cn(
-                "rounded-xl border px-3 py-2 text-sm font-bold transition-colors",
+                "rounded-xl border px-2.5 py-2 text-xs font-bold transition-colors sm:px-3 sm:text-sm",
                 selectedAmount === amount && customAmount === ""
                   ? "border-[#7D2E3B] bg-[#F1DDE2] text-[#4A111A]"
                   : "border-[#E7DDE1] bg-white text-[#352D31] hover:bg-[#FBF8F9]",
@@ -122,14 +122,14 @@ export function WalletBalanceCard({
           ))}
         </div>
 
-        <div className="mt-4 flex h-12 items-center justify-between rounded-xl border border-[#ECE2E6] bg-white px-4">
+        <div className="mt-4 flex h-11 items-center justify-between rounded-xl border border-[#ECE2E6] bg-white px-3 sm:h-12 sm:px-4">
           <input
             type="number"
             min={1}
             value={customAmount}
             onChange={(e) => setCustomAmount(e.target.value)}
             placeholder="Enter custom amount"
-            className="w-full bg-transparent text-sm font-medium text-[#3B3135] placeholder:text-[#9A8F94] outline-none"
+            className="w-full bg-transparent text-xs font-medium text-[#3B3135] placeholder:text-[#9A8F94] outline-none sm:text-sm"
           />
           <FaMoneyBillWave className="h-4 w-4 text-[#6D5E64]" />
         </div>
