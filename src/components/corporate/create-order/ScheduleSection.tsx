@@ -7,13 +7,6 @@ import { format, addDays, startOfDay } from "date-fns";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { DatePicker } from "@/components/ui/date-picker";
 import type { CreateCorporateOrderFormData } from "@/lib/validations/corporate.schema";
 
@@ -37,9 +30,8 @@ export interface ScheduleSectionProps {
   selectedDays: string[];
   mealTypes: string[];
   startDate: string;
-  durationWeeks: number;
+  endDate: string;
   totalDeliveryDays: number;
-  endDate: string | null;
   errors: FieldErrors<CreateCorporateOrderFormData>;
   control: Control<CreateCorporateOrderFormData>;
   onDayToggle: (day: string, checked: boolean) => void;
@@ -50,9 +42,8 @@ export function ScheduleSection({
   selectedDays,
   mealTypes,
   startDate,
-  durationWeeks,
-  totalDeliveryDays,
   endDate,
+  totalDeliveryDays,
   errors,
   control,
   onDayToggle,
@@ -177,36 +168,22 @@ export function ScheduleSection({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="duration_weeks">Duration (Weeks)</Label>
+            <Label htmlFor="end_date">End Date</Label>
             <Controller
               control={control}
-              name="duration_weeks"
+              name="end_date"
               render={({ field }) => (
-                <Select
-                  value={String(field.value)}
-                  onValueChange={(val) => field.onChange(Number(val))}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select duration" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[1, 2, 4, 6, 8, 12, 16, 24, 36, 52].map((weeks) => (
-                      <SelectItem key={weeks} value={String(weeks)}>
-                        {weeks} {weeks === 1 ? "week" : "weeks"}
-                        {weeks >= 4 && (
-                          <span className="text-muted-foreground ml-1">
-                            (~{Math.round((weeks * 7) / 30)} months)
-                          </span>
-                        )}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <DatePicker
+                  value={field.value ? new Date(field.value) : undefined}
+                  onChange={(date) => field.onChange(date ? format(date, 'yyyy-MM-dd') : '')}
+                  placeholder="Select end date"
+                  disabled={(date) => date < new Date(startDate)}
+                />
               )}
             />
-            {errors.duration_weeks && (
+            {errors.end_date && (
               <p className="text-sm text-destructive">
-                {errors.duration_weeks.message}
+                {errors.end_date.message}
               </p>
             )}
           </div>

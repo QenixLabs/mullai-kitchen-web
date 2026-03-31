@@ -26,8 +26,6 @@ import {
   type CreateCorporateOrderFormData,
 } from "@/lib/validations/corporate.schema";
 import {
-  computeDeliveryDays,
-  computeEndDate,
   computePricing,
 } from "@/lib/corporate/pricing";
 
@@ -63,12 +61,11 @@ export default function CreateOrderPage() {
   const [mapCenter, setMapCenter] = useState(DEFAULT_COORDS);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
 
-  // Restore draft on mount
+  // Always start fresh when visiting the create-order page
   useEffect(() => {
-    if (draftStore.draft.step && draftStore.draft.step >= 1 && draftStore.draft.step <= 3) {
-      setCurrentStep(draftStore.draft.step as Step);
-    }
-  }, [draftStore.draft.step]);
+    draftStore.clearDraft();
+    setCurrentStep(1);
+  }, []);
 
   // Reverse geocoding to auto-fill address fields from coordinates
   const reverseGeocode = async (lat: number, lng: number) => {
@@ -166,7 +163,7 @@ export default function CreateOrderPage() {
       selected_days: draftStore.draft.selectedDays,
       meal_types: draftStore.draft.mealTypes,
       start_date: draftStore.draft.startDate,
-      duration_weeks: draftStore.draft.durationWeeks,
+      end_date: draftStore.draft.endDate || "",
       headcount: draftStore.draft.headcount || 1,
       veg_count: draftStore.draft.vegCount,
       nonveg_count: draftStore.draft.nonvegCount,
@@ -189,7 +186,7 @@ export default function CreateOrderPage() {
   const selectedDays = watch("selected_days");
   const mealTypes = watch("meal_types");
   const startDate = watch("start_date");
-  const durationWeeks = watch("duration_weeks");
+  const endDate = watch("end_date");
   const headcount = watch("headcount");
   const vegCount = watch("veg_count");
   const nonvegCount = watch("nonveg_count");
@@ -214,7 +211,7 @@ export default function CreateOrderPage() {
         selectedDays: (value.selected_days || []).filter((d): d is string => !!d),
         mealTypes: (value.meal_types || []).filter((m): m is string => !!m),
         startDate: value.start_date || "",
-        durationWeeks: value.duration_weeks || 4,
+        endDate: value.end_date || "",
       });
       draftStore.updatePreferences({
         headcount: value.headcount || 0,
@@ -302,16 +299,22 @@ export default function CreateOrderPage() {
     };
   }, [pincodeValue, coordinates, checkServiceability, form]);
 
-  // Computed values using pricing utilities
-  const totalDeliveryDays = useMemo(
-    () => computeDeliveryDays(selectedDays, startDate, durationWeeks),
-    [selectedDays, startDate, durationWeeks],
-  );
-
-  const endDate = useMemo(
-    () => computeEndDate(startDate, durationWeeks),
-    [startDate, durationWeeks],
-  );
+  // Compute delivery days directly from the date range to avoid
+  // round-trip precision loss (date -> weeks -> date).
+  const totalDeliveryDays = useMemo(() => {
+    if (!startDate || !endDate || selectedDays.length === 0) return 0;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (isNaN(start.getTime()) || isNaN(end.getTime()) || start > end) return 0;
+    let count = 0;
+    const current = new Date(start);
+    while (current <= end) {
+      const dayName = current.toLocaleDateString("en-US", { weekday: "long" });
+      if (selectedDays.includes(dayName)) count++;
+      current.setDate(current.getDate() + 1);
+    }
+    return count;
+  }, [startDate, endDate, selectedDays]);
 
   const pricing = useMemo(
     () =>
@@ -376,7 +379,7 @@ export default function CreateOrderPage() {
           "selected_days",
           "meal_types",
           "start_date",
-          "duration_weeks",
+          "end_date",
         ]);
         return scheduleValid;
       }
@@ -487,7 +490,7 @@ export default function CreateOrderPage() {
                   selectedDays={selectedDays}
                   mealTypes={mealTypes}
                   startDate={startDate}
-                  durationWeeks={durationWeeks}
+                  endDate={endDate}
                   errors={errors}
                   control={control}
                   onDayToggle={handleDayToggle}
@@ -522,7 +525,7 @@ export default function CreateOrderPage() {
                   selectedDays,
                   mealTypes,
                   startDate,
-                  durationWeeks,
+                  endDate,
                 } : null}
                 headcount={headcount > 0 ? {
                   total: headcount,

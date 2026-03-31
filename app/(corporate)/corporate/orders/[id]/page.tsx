@@ -20,7 +20,7 @@ import { OverviewTab } from "@/components/corporate/order-detail/OverviewTab";
 import { ScheduleTab } from "@/components/corporate/order-detail/ScheduleTab";
 import { InvoicesTab } from "@/components/corporate/order-detail/InvoicesTab";
 import { ModificationsTab } from "@/components/corporate/order-detail/ModificationsTab";
-import { ModifyMealDialog, computeCredit } from "@/components/corporate/order-detail/ModifyMealDialog";
+import { ModifyMealDialog, computeModification } from "@/components/corporate/order-detail/ModifyMealDialog";
 import { CancelOrderDialog } from "@/components/corporate/order-detail/CancelOrderDialog";
 import { OrderDetailHeader } from "@/components/corporate/order-detail/OrderDetailHeader";
 import { generateDeliveryDates } from "@/lib/corporate/dates";
@@ -95,8 +95,8 @@ function OrderDetailPage() {
   const [selectedModifyDate, setSelectedModifyDate] = useState<Date | null>(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
-  const [modVegReduction, setModVegReduction] = useState(0);
-  const [modNonvegReduction, setModNonvegReduction] = useState(0);
+  const [modVegChange, setModVegChange] = useState(0);
+  const [modNonvegChange, setModNonvegChange] = useState(0);
   const [modReason, setModReason] = useState("");
 
   const modsList = modifications ?? [];
@@ -135,26 +135,26 @@ function OrderDetailPage() {
     const existingMod = getModificationForDate(date);
     if (existingMod) {
       toast.info("This date already has a modification", {
-        description: `Veg: -${existingMod.veg_reduction}, Non-veg: -${existingMod.nonveg_reduction}`,
+        description: `Veg: ${existingMod.veg_change >= 0 ? '+' : ''}${existingMod.veg_change}, Non-veg: ${existingMod.nonveg_change >= 0 ? '+' : ''}${existingMod.nonveg_change}`,
       });
       return;
     }
 
     setSelectedModifyDate(date);
-    setModVegReduction(0);
-    setModNonvegReduction(0);
+    setModVegChange(0);
+    setModNonvegChange(0);
     setModReason("");
     setModifyDialogOpen(true);
   };
 
-  // Auto-suggest proportional split when total reduction changes
-  const handleTotalReductionChange = (totalReduction: number) => {
+  // Auto-suggest proportional split when total change changes
+  const handleTotalChange = (totalChange: number) => {
     if (!order) return;
-    const clampedTotal = Math.min(Math.max(totalReduction, 0), order.veg_count + order.nonveg_count);
+    const clampedTotal = Math.min(Math.max(totalChange, 0), order.veg_count + order.nonveg_count);
 
     if (clampedTotal === 0) {
-      setModVegReduction(0);
-      setModNonvegReduction(0);
+      setModVegChange(0);
+      setModNonvegChange(0);
       return;
     }
 
@@ -163,21 +163,21 @@ function OrderDetailPage() {
     const suggestedVeg = Math.round(clampedTotal * vegRatio);
     const suggestedNonveg = clampedTotal - suggestedVeg;
 
-    setModVegReduction(suggestedVeg);
-    setModNonvegReduction(suggestedNonveg);
+    setModVegChange(suggestedVeg);
+    setModNonvegChange(suggestedNonveg);
   };
 
-  // Compute credit for the current modification form state
-  const currentCredit = useMemo(() => {
+  // Compute modification for the current modification form state
+  const currentModification = useMemo(() => {
     if (!order) return 0;
-    return computeCredit(
-      modVegReduction,
-      modNonvegReduction,
+    return computeModification(
+      modVegChange,
+      modNonvegChange,
       order.veg_price_per_meal,
       order.nonveg_price_per_meal,
-      order.meal_types.length
+      order.meal_types.length,
     );
-  }, [modVegReduction, modNonvegReduction, order]);
+  }, [modVegChange, modNonvegChange, order]);
 
   // Submit modification
   const handleSubmitModification = () => {
@@ -185,8 +185,8 @@ function OrderDetailPage() {
 
     const formData: ModifyCorporateOrderFormData = {
       modification_date: format(selectedModifyDate, "yyyy-MM-dd"),
-      veg_reduction: modVegReduction,
-      nonveg_reduction: modNonvegReduction,
+      veg_change: modVegChange,
+      nonveg_change: modNonvegChange,
       reason: modReason || undefined,
     };
 
@@ -198,7 +198,7 @@ function OrderDetailPage() {
       return;
     }
 
-    if (modVegReduction > order.veg_count || modNonvegReduction > order.nonveg_count) {
+    if (modVegChange > order.veg_count || modNonvegChange > order.nonveg_count) {
       toast.error("Invalid reduction", {
         description: "Reduction cannot exceed current meal allocation.",
       });
@@ -208,7 +208,7 @@ function OrderDetailPage() {
     modifyMutation.mutate(formData, {
       onSuccess: () => {
         toast.success("Modification submitted", {
-          description: `Meals reduced for ${format(selectedModifyDate, "MMM dd, yyyy")}. Credit: Rs. ${currentCredit.toLocaleString("en-IN")}`,
+          description: `Meals reduced for ${format(selectedModifyDate, "MMM dd, yyyy")}. Credit: Rs. ${currentModification.toLocaleString("en-IN")}`,
         });
         setModifyDialogOpen(false);
       },
@@ -435,16 +435,16 @@ function OrderDetailPage() {
           onOpenChange={setModifyDialogOpen}
           order={order}
           selectedDate={selectedModifyDate}
-          vegReduction={modVegReduction}
-          nonvegReduction={modNonvegReduction}
+          vegChange={modVegChange}
+          nonvegChange={modNonvegChange}
           reason={modReason}
-          onVegReductionChange={setModVegReduction}
-          onNonvegReductionChange={setModNonvegReduction}
+          onVegChangeChange={setModVegChange}
+          onNonvegChangeChange={setModNonvegChange}
           onReasonChange={setModReason}
-          onTotalReductionChange={handleTotalReductionChange}
+          onTotalChangeChange={handleTotalChange}
           onSubmit={handleSubmitModification}
           isPending={modifyMutation.isPending}
-          credit={currentCredit}
+          modificationAmount={currentModification}
         />
       )}
 

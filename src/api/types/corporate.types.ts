@@ -135,7 +135,7 @@ export type CorporatePaymentStatus = 'pending' | 'paid' | 'overdue';
  * Corporate Invoice Type Enum
  * Defines the type of invoice (proforma or final)
  */
-export type CorporateInvoiceType = 'proforma' | 'final';
+export type CorporateInvoiceType = 'proforma' | 'cycle' | 'final';
 
 /**
  * Corporate Invoice Status Enum
@@ -165,7 +165,8 @@ export interface ICreateCorporateOrderRequest {
   selected_days: string[];
   meal_types: string[];
   start_date: string;
-  duration_weeks: number;
+  end_date: string;
+  billing_cycle_days?: number;
   headcount: number;
   veg_count: number;
   nonveg_count: number;
@@ -178,8 +179,8 @@ export interface ICreateCorporateOrderRequest {
  */
 export interface IModifyCorporateOrderRequest {
   modification_date: string;
-  veg_reduction: number;
-  nonveg_reduction: number;
+  veg_change: number;
+  nonveg_change: number;
   reason?: string;
 }
 
@@ -219,7 +220,9 @@ export interface ICorporateOrder {
   delivery_charge_per_day: number;
   tax_rate: number;
   proforma_amount: number;
-  total_reduction_amount: number;
+  total_modification_amount: number;
+  billing_cycle_days: number;
+  current_billing_start: string;
   final_amount: number;
   payment_status: CorporatePaymentStatus;
   status: CorporateOrderStatus;
@@ -236,10 +239,10 @@ export interface ICorporateOrderModification {
   _id: string;
   corporate_order_id: string;
   modification_date: string;
-  veg_reduction: number;
-  nonveg_reduction: number;
+  veg_change: number;
+  nonveg_change: number;
   reason?: string;
-  credit_amount: number;
+  modification_amount: number;
   status: string;
   created_at: string;
 }
@@ -266,12 +269,15 @@ export interface ICorporateInvoice {
   company_name: string;
   outlet_name: string;
   type: CorporateInvoiceType;
+  billing_period_start?: string;
+  billing_period_end?: string;
+  cycle_number?: number;
   line_items: ICorporateInvoiceLineItem[];
   modifications: {
     date: string;
-    veg_reduction: number;
-    nonveg_reduction: number;
-    credit: number;
+    veg_change: number;
+    nonveg_change: number;
+    modification_amount: number;
   }[];
   subtotal: number;
   total_reduction: number;
@@ -291,4 +297,25 @@ export interface ICorporateInvoice {
 export interface ICreateCorporateOrderResponse {
   order: ICorporateOrder;
   invoice: ICorporateInvoice;
+}
+
+/**
+ * Corporate Daily Order Interface
+ * Represents a single day's meal order within a corporate subscription
+ */
+export interface ICorporateDailyOrder {
+  _id: string;
+  corporate_order_id: string;
+  date: string;
+  veg_count: number;
+  nonveg_count: number;
+  total_meals: number;
+  status: string;
+  modification_id?: string;
+  delivery_route_id?: string;
+  route_sequence?: number;
+  delivery_address: ICorporateOrder['delivery_address'];
+  notes?: string;
+  created_at: string;
+  updated_at: string;
 }

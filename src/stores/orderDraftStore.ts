@@ -19,7 +19,7 @@ export interface OrderDraft {
   selectedDays: string[];
   mealTypes: string[];
   startDate: string;
-  durationWeeks: number;
+  endDate: string;
   headcount: number;
   vegCount: number;
   nonvegCount: number;
@@ -30,7 +30,7 @@ export interface OrderDraftStore {
   draft: OrderDraft;
   setStep: (step: number) => void;
   updateDeliveryAddress: (address: Partial<OrderDraftDeliveryAddress>) => void;
-  updateSchedule: (data: Partial<Pick<OrderDraft, 'selectedDays' | 'mealTypes' | 'startDate' | 'durationWeeks'>>) => void;
+  updateSchedule: (data: Partial<Pick<OrderDraft, 'selectedDays' | 'mealTypes' | 'startDate' | 'endDate'>>) => void;
   updatePreferences: (data: Partial<Pick<OrderDraft, 'headcount' | 'vegCount' | 'nonvegCount' | 'notes'>>) => void;
   clearDraft: () => void;
 }
@@ -48,7 +48,7 @@ const initialDraft: OrderDraft = {
   selectedDays: [],
   mealTypes: [],
   startDate: '',
-  durationWeeks: 4,
+  endDate: '',
   headcount: 0,
   vegCount: 0,
   nonvegCount: 0,

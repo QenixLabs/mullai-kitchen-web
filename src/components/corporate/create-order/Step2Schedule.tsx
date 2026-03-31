@@ -1,13 +1,11 @@
 "use client";
 
 import { CalendarDays, UtensilsCrossed, Calendar } from "lucide-react";
-import { Label } from "@/components/ui/label";
 import { Controller } from "react-hook-form";
 import { format, addDays, startOfDay } from "date-fns";
 import { DatePicker } from "@/components/ui/date-picker";
 import { DaySelector } from "./DaySelector";
 import { MealTypeCard } from "./MealTypeCard";
-import { DurationPills } from "./DurationPills";
 import type { Control, FieldErrors } from "react-hook-form";
 import type { CreateCorporateOrderFormData } from "@/lib/validations/corporate.schema";
 
@@ -15,7 +13,7 @@ interface Step2ScheduleProps {
   selectedDays: string[];
   mealTypes: string[];
   startDate: string;
-  durationWeeks: number;
+  endDate: string;
   errors: FieldErrors<CreateCorporateOrderFormData>;
   control: Control<CreateCorporateOrderFormData>;
   onDayToggle: (day: string, checked: boolean) => void;
@@ -26,7 +24,7 @@ export function Step2Schedule({
   selectedDays,
   mealTypes,
   startDate,
-  durationWeeks,
+  endDate,
   errors,
   control,
   onDayToggle,
@@ -97,19 +95,21 @@ export function Step2Schedule({
         </div>
 
         <div className="space-y-3 sm:space-y-4">
-          <h3 className="text-base sm:text-lg font-semibold text-[#44151C]">Program Duration</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-[#44151C]">End Date</h3>
           <Controller
             control={control}
-            name="duration_weeks"
+            name="end_date"
             render={({ field }) => (
-              <DurationPills
-                value={field.value}
-                onChange={(weeks) => field.onChange(weeks)}
+              <DatePicker
+                value={field.value ? new Date(field.value) : undefined}
+                onChange={(date) => field.onChange(date ? format(date, 'yyyy-MM-dd') : '')}
+                placeholder="Select end date"
+                disabled={(date) => date < new Date(startDate)}
               />
             )}
           />
-          {errors.duration_weeks && (
-            <p className="text-sm text-destructive">{errors.duration_weeks.message}</p>
+          {errors.end_date && (
+            <p className="text-sm text-destructive">{errors.end_date.message}</p>
           )}
         </div>
       </div>

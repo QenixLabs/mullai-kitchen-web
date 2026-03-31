@@ -26,13 +26,13 @@ function formatDateTime(dateStr: string): { date: string; meta: string } {
 }
 
 export function ModificationsTab({ modifications }: ModificationsTabProps) {
-  const totalCredit = modifications.reduce((sum, mod) => sum + mod.credit_amount, 0);
+  const totalAdjustment = modifications.reduce((sum, mod) => sum + mod.modification_amount, 0);
 
   return (
     <div className="space-y-8">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Lifetime Savings Card */}
+        {/* Total Adjustment Card */}
         <div className="rounded-2xl bg-rose-50 p-6">
           <div className="flex items-start gap-4">
             <div className="h-12 w-12 rounded-xl bg-rose-100 flex items-center justify-center text-rose-700">
@@ -40,16 +40,13 @@ export function ModificationsTab({ modifications }: ModificationsTabProps) {
             </div>
             <div className="flex-1">
               <p className="text-xs font-bold uppercase tracking-wide text-rose-700/70">
-                Lifetime Savings
+                Total Adjustment
               </p>
               <div className="mt-1 text-3xl font-bold text-rose-900">
                 <span className="align-top text-xl">₹</span>
-                {totalCredit.toLocaleString("en-IN")}
+                {totalAdjustment.toLocaleString("en-IN")}
               </div>
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-                  +12% from last month
-                </span>
+              <div className="mt-3">
                 <span className="text-xs text-muted-foreground">
                   Adjusted against credit limit
                 </span>
@@ -67,9 +64,7 @@ export function ModificationsTab({ modifications }: ModificationsTabProps) {
             {modifications.length}{" "}
             <span className="text-base font-medium opacity-80">entries</span>
           </div>
-          <div className="mt-4 h-1 w-full rounded-full bg-primary-foreground/20 overflow-hidden">
-            <div className="h-full rounded-full bg-primary-foreground" style={{ width: "20%" }} />
-          </div>
+          <div className="mt-4 h-1 w-full rounded-full bg-primary-foreground/20 overflow-hidden" />
         </div>
       </div>
 
@@ -140,23 +135,32 @@ export function ModificationsTab({ modifications }: ModificationsTabProps) {
                           </td>
 
                           <td className="px-6 py-4 align-top">
-                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-                              <span>↑</span>
-                              +{mod.veg_reduction}
+                            <span className={cn(
+                              'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold',
+                              mod.veg_change >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700',
+                            )}>
+                              <span>{mod.veg_change >= 0 ? '↑' : '↓'}</span>
+                              {mod.veg_change >= 0 ? '+' : ''}{mod.veg_change}
                             </span>
                           </td>
 
                           <td className="px-6 py-4 align-top">
-                            <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-xs font-semibold text-rose-700">
-                              <span>↓</span>
-                              -{mod.nonveg_reduction}
+                            <span className={cn(
+                              'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold',
+                              mod.nonveg_change >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700',
+                            )}>
+                              <span>{mod.nonveg_change >= 0 ? '↑' : '↓'}</span>
+                              {mod.nonveg_change >= 0 ? '+' : ''}{mod.nonveg_change}
                             </span>
                           </td>
 
                           <td className="px-6 py-4 align-top">
-                            <span className="text-sm font-bold text-foreground">
+                            <span className={cn(
+                              'text-sm font-bold',
+                              mod.modification_amount > 0 ? 'text-amber-600' : 'text-emerald-600',
+                            )}>
                               <span className="align-top text-xs">₹</span>
-                              {mod.credit_amount.toLocaleString("en-IN")}
+                              {Math.abs(mod.modification_amount).toLocaleString("en-IN")}
                             </span>
                           </td>
 

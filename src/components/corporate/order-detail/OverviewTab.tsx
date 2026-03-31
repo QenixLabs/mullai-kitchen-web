@@ -6,7 +6,6 @@ import { format } from "date-fns";
 import { CalendarDays, Calendar, MapPin, CreditCard } from "lucide-react";
 import Image from "next/image";
 import type { ICorporateOrder } from "@/api/types/corporate.types";
-import { useCurrentUser } from "@/hooks/useUserStore";
 
 interface OverviewTabProps {
   order: ICorporateOrder;
@@ -174,8 +173,15 @@ export function OverviewTab({ order }: OverviewTabProps) {
               <span className="text-base font-semibold" style={{ color: '#554243' }}>₹ {order.proforma_amount.toLocaleString("en-IN")}</span>
             </div>
             <div className="flex items-center justify-between py-1">
-              <span className="text-sm" style={{ color: '#554243' }}>Credits / Reductions</span>
-              <span className="text-base font-semibold text-red-600">- ₹ {order.total_reduction_amount.toLocaleString("en-IN")}</span>
+              <span className="text-sm" style={{ color: '#554243' }}>Modifications</span>
+              <span
+                className={cn(
+                  'text-base font-semibold',
+                  order.total_modification_amount > 0 ? 'text-amber-600' : 'text-emerald-600',
+                )}
+              >
+                {order.total_modification_amount > 0 ? '+ ' : ''}₹ {Math.abs(order.total_modification_amount).toLocaleString("en-IN")}
+              </span>
             </div>
             <div className="flex items-center justify-between pt-4 border-t border-gray-100">
               <span className="text-sm font-bold uppercase tracking-wider" style={{ color: 'hsl(var(--primary))' }}>FINAL PAYABLE</span>

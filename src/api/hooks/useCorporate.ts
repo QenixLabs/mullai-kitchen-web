@@ -78,3 +78,19 @@ export function useGenerateFinalInvoice(orderId: string) {
     },
   });
 }
+
+export function useCorporateDailyOrders(orderId: string, params?: Record<string, string>) {
+  return useQuery({
+    queryKey: corporateKeys.dailyOrders(orderId, params),
+    queryFn: () => corporateApi.getDailyOrders(orderId, params),
+    enabled: !!orderId,
+  });
+}
+
+export function useCorporateUpcomingDeliveries(orderId: string) {
+  return useQuery({
+    queryKey: corporateKeys.upcomingDeliveries(orderId),
+    queryFn: () => corporateApi.getUpcomingDeliveries(orderId),
+    enabled: !!orderId,
+  });
+}

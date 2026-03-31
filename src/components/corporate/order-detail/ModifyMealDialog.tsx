@@ -30,16 +30,16 @@ import {
 } from "@/components/ui/dialog";
 import type { ICorporateOrder } from "@/api/types/corporate.types";
 
-export function computeCredit(
-  vegReduction: number,
-  nonvegReduction: number,
+export function computeModification(
+  vegChange: number,
+  nonvegChange: number,
   vegPrice: number,
   nonvegPrice: number,
-  mealTypesCount: number
+  mealTypesCount: number,
 ): number {
   return (
-    vegReduction * vegPrice * mealTypesCount +
-    nonvegReduction * nonvegPrice * mealTypesCount
+    vegChange * vegPrice * mealTypesCount +
+    nonvegChange * nonvegPrice * mealTypesCount
   );
 }
 
@@ -48,16 +48,16 @@ interface ModifyMealDialogProps {
   onOpenChange: (open: boolean) => void;
   order: ICorporateOrder;
   selectedDate: Date | null;
-  vegReduction: number;
-  nonvegReduction: number;
+  vegChange: number;
+  nonvegChange: number;
   reason: string;
-  onVegReductionChange: (val: number) => void;
-  onNonvegReductionChange: (val: number) => void;
+  onVegChangeChange: (val: number) => void;
+  onNonvegChangeChange: (val: number) => void;
   onReasonChange: (val: string) => void;
-  onTotalReductionChange: (total: number) => void;
+  onTotalChangeChange: (total: number) => void;
   onSubmit: () => void;
   isPending: boolean;
-  credit: number;
+  modificationAmount: number;
 }
 
 export function ModifyMealDialog({
@@ -65,18 +65,18 @@ export function ModifyMealDialog({
   onOpenChange,
   order,
   selectedDate,
-  vegReduction,
-  nonvegReduction,
+  vegChange,
+  nonvegChange,
   reason,
-  onVegReductionChange,
-  onNonvegReductionChange,
+  onVegChangeChange,
+  onNonvegChangeChange,
   onReasonChange,
-  onTotalReductionChange,
+  onTotalChangeChange,
   onSubmit,
   isPending,
-  credit,
+  modificationAmount,
 }: ModifyMealDialogProps) {
-  const totalReduction = vegReduction + nonvegReduction;
+  const totalChange = vegChange + nonvegChange;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -98,7 +98,7 @@ export function ModifyMealDialog({
                <DialogTitle className="text-xl font-black uppercase tracking-tight">Modify Daily Allotment</DialogTitle>
             </div>
             <DialogDescription className="text-xs font-bold text-muted-foreground leading-relaxed">
-              Adjusting the count for a single day cycle. Any reductions will be balanced and credited back to your account in the final settlement.
+              Adjusting the count for a single day cycle. Changes will be balanced and reflected in your final settlement.
             </DialogDescription>
           </DialogHeader>
 
@@ -136,7 +136,7 @@ export function ModifyMealDialog({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                <div className="space-y-2">
                   <Label htmlFor="total-reduction" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
-                     Collective Reduction Target
+                     Meal Count Change
                   </Label>
                   <div className="relative group">
                      <Users className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
@@ -149,7 +149,7 @@ export function ModifyMealDialog({
                         className="pl-12 h-14 rounded-2xl text-lg font-black bg-secondary/20 border-border/40 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all"
                         onChange={(e) => {
                            const val = parseInt(e.target.value) || 0;
-                           onTotalReductionChange(val);
+                           onTotalChangeChange(val);
                         }}
                      />
                   </div>
@@ -176,7 +176,7 @@ export function ModifyMealDialog({
             {/* Split Breakdown */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="mod-veg" className="text-[10px] font-black uppercase tracking-widest text-emerald-600 ml-1">Veg Offset</Label>
+                <Label htmlFor="mod-veg" className="text-[10px] font-black uppercase tracking-widest text-emerald-600 ml-1">Veg Change</Label>
                 <div className="relative">
                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-muted-foreground/30 uppercase">MAX {order.veg_count}</div>
                    <Input
@@ -184,14 +184,14 @@ export function ModifyMealDialog({
                      type="number"
                      min={0}
                      max={order.veg_count}
-                     value={vegReduction}
-                     onChange={(e) => onVegReductionChange(parseInt(e.target.value) || 0)}
+                     value={vegChange}
+                     onChange={(e) => onVegChangeChange(parseInt(e.target.value) || 0)}
                      className="h-12 rounded-2xl font-black text-emerald-600 bg-emerald-500/5 border-emerald-500/10 focus:ring-emerald-500/10"
                    />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="mod-nonveg" className="text-[10px] font-black uppercase tracking-widest text-orange-600 ml-1">Non-Veg Offset</Label>
+                <Label htmlFor="mod-nonveg" className="text-[10px] font-black uppercase tracking-widest text-orange-600 ml-1">Non-Veg Change</Label>
                 <div className="relative">
                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-muted-foreground/30 uppercase">MAX {order.nonveg_count}</div>
                    <Input
@@ -199,8 +199,8 @@ export function ModifyMealDialog({
                      type="number"
                      min={0}
                      max={order.nonveg_count}
-                     value={nonvegReduction}
-                     onChange={(e) => onNonvegReductionChange(parseInt(e.target.value) || 0)}
+                     value={nonvegChange}
+                     onChange={(e) => onNonvegChangeChange(parseInt(e.target.value) || 0)}
                      className="h-12 rounded-2xl font-black text-orange-600 bg-orange-500/5 border-orange-500/10 focus:ring-orange-500/10"
                    />
                 </div>
@@ -208,7 +208,7 @@ export function ModifyMealDialog({
             </div>
 
             <AnimatePresence>
-               {totalReduction > 0 && (
+               {totalChange !== 0 && (
                   <motion.div
                      initial={{ opacity: 0, height: 0 }}
                      animate={{ opacity: 1, height: "auto" }}
@@ -220,15 +220,32 @@ export function ModifyMealDialog({
                         <div className="p-4 rounded-3xl bg-secondary/20 border border-border/40 flex items-center justify-between">
                            <div>
                               <p className="text-[9px] font-black uppercase text-muted-foreground/60 tracking-widest mb-1">Cycle New Total</p>
-                              <p className="text-xl font-black text-foreground">{order.headcount - totalReduction} Meals</p>
+                              <p className="text-xl font-black text-foreground">{order.headcount + totalChange} Meals</p>
                            </div>
                            <ArrowRight className="w-5 h-5 text-muted-foreground/30" />
                         </div>
-                        <div className="p-4 rounded-3xl bg-emerald-500/5 border border-emerald-500/20 flex flex-col items-end">
-                           <p className="text-[9px] font-black uppercase text-emerald-600/80 tracking-widest mb-1">Projected Credit</p>
-                           <p className="text-xl font-black text-emerald-600 flex items-baseline gap-0.5">
+                        <div className={cn(
+                           "p-4 rounded-3xl flex flex-col items-end",
+                           modificationAmount < 0
+                              ? "bg-emerald-500/5 border border-emerald-500/20"
+                              : "bg-amber-500/5 border border-amber-500/20"
+                        )}>
+                           <p className={cn(
+                              "text-[9px] font-black uppercase tracking-widest mb-1",
+                              modificationAmount < 0
+                                 ? "text-emerald-600/80"
+                                 : "text-amber-600/80"
+                           )}>
+                              {modificationAmount < 0 ? "Projected Credit" : "Additional Charge"}
+                           </p>
+                           <p className={cn(
+                              "text-xl font-black flex items-baseline gap-0.5",
+                              modificationAmount < 0
+                                 ? "text-emerald-600"
+                                 : "text-amber-600"
+                           )}>
                               <span className="text-xs">₹</span>
-                              {credit.toLocaleString("en-IN")}
+                              {Math.abs(modificationAmount).toLocaleString("en-IN")}
                            </p>
                         </div>
                      </div>
@@ -236,7 +253,7 @@ export function ModifyMealDialog({
                      <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20 flex items-start gap-3">
                         <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                         <p className="text-[10px] font-bold text-amber-800 leading-relaxed italic">
-                           Note: Credits will be added to your virtual wallet and used for the final invoice generation. Modification is locked once the day cycle starts.
+                           Note: Adjustments will be reflected in your virtual wallet and used for the final invoice generation. Modification is locked once the day cycle starts.
                         </p>
                      </div>
                   </motion.div>
@@ -255,7 +272,7 @@ export function ModifyMealDialog({
             </Button>
             <Button
               onClick={onSubmit}
-              disabled={isPending || totalReduction === 0}
+              disabled={isPending || totalChange === 0}
               className="bg-primary hover:bg-primary/90 text-white rounded-2xl h-12 px-10 shadow-xl shadow-primary/20 font-black text-[10px] tracking-widest active:scale-95 transition-all"
             >
               {isPending ? (

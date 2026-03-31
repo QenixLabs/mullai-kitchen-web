@@ -16,7 +16,7 @@ interface OrderSummarySidebarProps {
     selectedDays: string[];
     mealTypes: string[];
     startDate: string;
-    durationWeeks: number;
+    endDate: string;
   } | null;
   headcount: {
     total: number;
@@ -90,8 +90,10 @@ export function OrderSummarySidebar({
               <p>{schedule.mealTypes.join(", ")}</p>
               <p>
                 {schedule.startDate && formatDate(schedule.startDate)
-                  ? `Starts ${formatDate(schedule.startDate)} · ${schedule.durationWeeks} weeks`
-                  : `Duration: ${schedule.durationWeeks} weeks`}
+                  ? `Starts ${formatDate(schedule.startDate)}${schedule.endDate && formatDate(schedule.endDate) ? ` · Ends ${formatDate(schedule.endDate)}` : ''}`
+                  : schedule.endDate && formatDate(schedule.endDate)
+                    ? `Ends ${formatDate(schedule.endDate)}`
+                    : ''}
               </p>
             </div>
           ) : (

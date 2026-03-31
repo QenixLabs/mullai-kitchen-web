@@ -4,6 +4,7 @@ import type {
   ICreateCorporateOrderRequest,
   ICreateCorporateOrderResponse,
   IModifyCorporateOrderRequest,
+  ICorporateDailyOrder,
   ICorporateOrder,
   ICorporateOrderModification,
   ICorporateInvoice,
@@ -33,4 +34,13 @@ export const corporateApi = {
 
   generateFinalInvoice: (id: string) =>
     apiClient.post<ICorporateInvoice>(CORPORATE_ROUTES.GENERATE_FINAL_INVOICE(id)).then((r) => r.data),
+
+  getDailyOrders: (id: string, params?: Record<string, string>) =>
+    apiClient.get<{ items: ICorporateDailyOrder[]; total: number; page: number; limit: number }>(
+      CORPORATE_ROUTES.DAILY_ORDERS(id),
+      { params },
+    ).then((r) => r.data),
+
+  getUpcomingDeliveries: (id: string) =>
+    apiClient.get<ICorporateDailyOrder[]>(CORPORATE_ROUTES.UPCOMING_DELIVERIES(id)).then((r) => r.data),
 };
