@@ -327,12 +327,12 @@ function OrderDetailPage() {
         className="mb-8 flex flex-col justify-between gap-4 lg:flex-row lg:items-center"
       >
         <div>
-          <h1 className="mb-2 text-[24px] font-bold tracking-tight sm:text-[28px] lg:text-[32px]" style={{ color: '#44151C' }}>
+          <h1 className="mb-2 text-[24px] font-bold tracking-tight text-primary sm:text-[28px] lg:text-[32px]">
             {order.company_name}
           </h1>
           <div className="flex flex-wrap items-center gap-2 text-[13px] font-medium text-gray-700 sm:text-[15px]">
             <span className="break-all">Order ID: {order.order_id}</span>
-            <span className="mx-1 text-[10px] text-[#D4D4D4]">●</span>
+            <span className="mx-1 text-[10px] text-muted-foreground/40">●</span>
             <span>Created: {format(new Date(order.created_at), "MMM dd, yyyy")}</span>
           </div>
         </div>
@@ -341,17 +341,17 @@ function OrderDetailPage() {
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <span
             className={cn(
-              "rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white sm:px-5 sm:text-xs",
+              "rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-primary-foreground sm:px-5 sm:text-xs",
               order.status === "active"
-                ? "bg-[#00990F]"
-                : "bg-gray-100 text-gray-600"
+                ? "bg-success text-success-foreground"
+                : "bg-muted text-muted-foreground"
             )}
           >
             ACTIVE
           </span>
 
           {order.payment_status === "pending" && (
-            <span className="rounded-full bg-[#FF962D] px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white sm:px-5 sm:text-xs">
+            <span className="rounded-full bg-warning text-warning-foreground px-4 py-2 text-[11px] font-bold uppercase tracking-wider sm:px-5 sm:text-xs">
               PENDING
             </span>
           )}
@@ -370,16 +370,15 @@ function OrderDetailPage() {
                 key={tab.value}
                 onClick={() => handleTabChange(tab.value)}
                 className={cn(
-                  "relative py-4 text-[15px] font-bold transition-colors"
+                  "relative py-4 text-[15px] font-bold transition-colors",
+                  isActive ? "text-primary" : "text-muted-foreground"
                 )}
-                style={{ color: isActive ? '#44151C' : '#8D8D8D' }}
               >
                 {tab.label}
                 {isActive && (
                   <motion.div
                     layoutId="detail-tab-indicator"
-                    className="absolute bottom-0 left-0 right-0 h-0.75 rounded-t-full"
-                    style={{ backgroundColor: '#44151C' }}
+                    className="absolute bottom-0 left-0 right-0 h-0.75 rounded-t-full bg-primary"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
