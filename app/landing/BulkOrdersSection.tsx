@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import {
   Building2,
@@ -44,7 +45,7 @@ export function BulkOrdersSection() {
       {/* Premium Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-0 w-full h-full bg-linear-to-b from-primary/40 to-transparent" />
-        <div className="absolute top-1/2 -right-1/4 w-[500px] h-[500px] bg-[#D4A574]/10 rounded-full blur-[120px]" />
+        <div className="absolute top-1/2 -right-1/4 w-[500px] h-[500px] bg-skin/10 rounded-full blur-[120px]" />
         <div className="absolute -bottom-1/4 -left-1/4 w-[500px] h-[500px] bg-primary/30 rounded-full blur-[120px]" />
       </div>
 
@@ -62,7 +63,7 @@ export function BulkOrdersSection() {
                 variants={fadeInUp}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10"
               >
-                <Building2 className="h-4 w-4 text-[#D4A574]" />
+                <Building2 className="h-4 w-4 text-skin" />
                 <span className="text-xs font-bold text-white/80 uppercase tracking-widest">
                   Corporate & Events
                 </span>
@@ -73,7 +74,7 @@ export function BulkOrdersSection() {
                 className="text-4xl sm:text-5xl font-bold text-white leading-[1.15]"
               >
                 Large Scale Catering for <br />
-                <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4A574] via-[#e8c4a0] to-[#D4A574]">
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-skin via-skin-light to-skin">
                   Special Occasions
                 </span>
               </motion.h2>
@@ -97,7 +98,7 @@ export function BulkOrdersSection() {
                   className="flex gap-5 p-5 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all group"
                 >
                   <div className="shrink-0 w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-[#5a0f1a] flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform">
-                    <feature.icon className="h-7 w-7 text-[#D4A574]" />
+                    <feature.icon className="h-7 w-7 text-skin" />
                   </div>
                   <div className="space-y-1">
                     <h3 className="text-lg font-bold text-white">
@@ -120,7 +121,7 @@ export function BulkOrdersSection() {
                   (window.location.href =
                     "mailto:founder@mullai.net?subject=Corporate/Bulk Order Inquiry")
                 }
-                className="h-14 px-10 bg-[#D4A574] hover:bg-[#C39463] text-[#1a0509] font-bold rounded-xl shadow-lg shadow-[#D4A574]/20 group"
+                className="h-14 px-10 bg-skin hover:bg-[#C39463] text-[#1a0509] font-bold rounded-xl shadow-lg shadow-skin/20 group"
               >
                 <Mail className="w-5 h-5 mr-2" />
                 Contact for Quote
@@ -131,7 +132,7 @@ export function BulkOrdersSection() {
                 onClick={() => (window.location.href = "tel:+918428129262")}
                 className="h-14 px-10 border-white/10 bg-white/5 text-white hover:bg-white/10 font-bold rounded-xl"
               >
-                <Phone className="w-5 h-5 mr-2 text-[#D4A574]" />
+                <Phone className="w-5 h-5 mr-2 text-skin" />
                 Call +91 84281 29262
               </Button>
             </motion.div>
@@ -145,10 +146,12 @@ export function BulkOrdersSection() {
             className="relative"
           >
             <div className="relative rounded-[3rem] overflow-hidden aspect-[4/5] shadow-2xl border border-white/10">
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1555244162-803834f70033?w=800&q=80"
                 alt="Bulk Corporate Catering"
-                className="object-cover w-full h-full"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
               <div className="absolute inset-0 bg-linear-to-t from-[#1a0509]/80 via-transparent to-transparent" />
 
@@ -159,15 +162,18 @@ export function BulkOrdersSection() {
                     {[1, 2, 3, 4].map((i) => (
                       <div
                         key={i}
-                        className="w-12 h-12 rounded-full border-2 border-[#1a0509] bg-gray-200 overflow-hidden"
+                        className="w-12 h-12 rounded-full border-2 border-[#1a0509] bg-gray-200 overflow-hidden relative"
                       >
-                        <img
+                        <Image
                           src={`https://i.pravatar.cc/100?img=${i + 10}`}
                           alt="Client"
+                          fill
+                          sizes="48px"
+                          className="object-cover"
                         />
                       </div>
                     ))}
-                    <div className="w-12 h-12 rounded-full border-2 border-[#1a0509] bg-[#D4A574] flex items-center justify-center text-xs font-bold text-[#1a0509]">
+                    <div className="w-12 h-12 rounded-full border-2 border-[#1a0509] bg-skin flex items-center justify-center text-xs font-bold text-[#1a0509]">
                       50+
                     </div>
                   </div>
@@ -182,7 +188,7 @@ export function BulkOrdersSection() {
                 </div>
                 <div className="h-px bg-white/5 mb-6" />
                 <div className="flex items-start gap-4">
-                  <div className="w-2 h-2 rounded-full bg-[#D4A574] mt-2 shrink-0 animate-pulse" />
+                  <div className="w-2 h-2 rounded-full bg-skin mt-2 shrink-0 animate-pulse" />
                   <p className="text text-white/70 italic leading-relaxed">
                     "Exceptional service for our annual event! The food was
                     fresh and stayed hot throughout."

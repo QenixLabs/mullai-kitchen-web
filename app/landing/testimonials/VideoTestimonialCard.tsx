@@ -26,7 +26,7 @@ export function VideoTestimonialCard({
       whileHover={hoverScale as TargetAndTransition}
       className={cn(
         "relative group bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden transition-all duration-300",
-        "hover:border-[#D4A574]/30 hover:shadow-[0_0_30px_rgba(212,165,116,0.1)]"
+        "hover:border-skin/30 hover:shadow-[0_0_30px_rgba(212,165,116,0.1)]"
       )}
     >
       {/* Video Thumbnail */}
@@ -52,14 +52,14 @@ export function VideoTestimonialCard({
           onClick={() => onPlay(testimonial)}
           aria-label={`Play testimonial video by ${testimonial.name}`}
         >
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#D4A574]/90 shadow-lg shadow-[#D4A574]/20 group-hover:bg-[#D4A574] transition-colors">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-skin/90 shadow-lg shadow-skin/20 group-hover:bg-skin transition-colors">
             <Play className="h-6 w-6 text-white fill-white ml-1" />
           </div>
         </motion.button>
 
         {/* Video Badge */}
         <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full">
-          <Video className="h-3 w-3 text-[#D4A574]" />
+          <Video className="h-3 w-3 text-skin" />
           <span className="text-xs font-medium text-white">Video</span>
         </div>
 
@@ -91,7 +91,7 @@ export function VideoTestimonialCard({
         {/* Author Info Strip */}
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/10">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="relative w-8 h-8 rounded-full overflow-hidden ring-2 ring-[#D4A574]/30 flex-shrink-0">
+            <div className="relative w-8 h-8 rounded-full overflow-hidden ring-2 ring-skin/30 flex-shrink-0">
               <Image
                 src={testimonial.image}
                 alt={testimonial.name}
@@ -110,7 +110,7 @@ export function VideoTestimonialCard({
                   {testimonial.name}
                 </span>
                 {testimonial.verified && (
-                  <BadgeCheck className="h-3.5 w-3.5 text-[#D4A574] flex-shrink-0" />
+                  <BadgeCheck className="h-3.5 w-3.5 text-skin flex-shrink-0" />
                 )}
               </div>
               <p className="text-[11px] text-white/50 truncate">
@@ -124,7 +124,7 @@ export function VideoTestimonialCard({
             {[...Array(testimonial.rating)].map((_, i) => (
               <Star
                 key={i}
-                className="h-3 w-3 fill-[#D4A574] text-[#D4A574]"
+                className="h-3 w-3 fill-skin text-skin"
               />
             ))}
           </div>

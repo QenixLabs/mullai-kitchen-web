@@ -3,6 +3,7 @@
 import { FaCalendarAlt } from "react-icons/fa";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface DurationOption {
   value: 15 | 30;
@@ -43,23 +44,24 @@ export function DurationSelector({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {DURATION_OPTIONS.map((option) => (
-        <button
+        <Button
           key={option.value}
           type="button"
+          variant="ghost"
           onClick={() => onChange(option.value)}
           disabled={disabled}
           className={cn(
-            "relative flex flex-col rounded-2xl p-5 transition-all duration-200 text-left",
+            "relative flex h-auto flex-col rounded-2xl border p-5 text-left transition-all duration-200",
             value === option.value
-              ? "border-2 border-[#5A1622] bg-white shadow-[0_6px_16px_rgba(37,10,17,0.08)]"
+              ? "border-2 border-primary bg-white shadow-[0_6px_16px_rgba(37,10,17,0.08)]"
               : option.value === 30
-                ? "border border-[#E6DFE2] bg-[#F8F2F3] hover:border-[#D7CBD0]"
-                : "border border-[#E6DFE2] bg-[#F9F7F8] hover:border-[#D7CBD0]",
+                ? "border-[#E6DFE2] bg-[#F8F2F3] hover:border-[#D7CBD0] hover:bg-[#F8F2F3]"
+                : "border-[#E6DFE2] bg-[#F9F7F8] hover:border-[#D7CBD0] hover:bg-[#F9F7F8]",
             disabled && "opacity-50 cursor-not-allowed hover:border-gray-200",
           )}
         >
           <div className="flex items-start justify-between gap-3">
-            <div className="rounded-md bg-[#EFE8EB] p-2 text-[#5A1622]">
+            <div className="rounded-md bg-[#EFE8EB] p-2 text-primary">
               <FaCalendarAlt className="h-3.5 w-3.5" />
             </div>
             {option.badge && (
@@ -90,7 +92,7 @@ export function DurationSelector({
               {option.description}
             </p>
           </div>
-        </button>
+        </Button>
       ))}
     </div>
   );

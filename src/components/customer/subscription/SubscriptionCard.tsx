@@ -154,7 +154,7 @@ export function SubscriptionCard({
                 </p>
                 <p className={cn(
                   "mt-1 text-[18px] font-bold sm:text-[22px]",
-                  isPaused ? "text-[#5D5055]" : "text-[#5A1622]",
+                  isPaused ? "text-[#5D5055]" : "text-primary",
                 )}>
                   {isPaused ? formatDateWithOrdinal(subscription.end_date) : formatDate(subscription.end_date)}
                 </p>
@@ -176,7 +176,7 @@ export function SubscriptionCard({
                   <div
                     className={cn(
                       "h-full rounded-full transition-all",
-                      isPaused ? "bg-zinc-400" : "bg-linear-to-r from-[#5A0014] to-[#7A1023]",
+                      isPaused ? "bg-zinc-400" : "bg-linear-to-r from-primary to-primary/80",
                     )}
                     style={{ width: `${progressPercentage}%` }}
                   />
@@ -199,7 +199,7 @@ export function SubscriptionCard({
               {isPaused && (
                 <Button
                   variant="outline"
-                  className="h-10 rounded-full border-transparent bg-[#5A1622] px-5 text-sm font-semibold text-white shadow-[0_8px_16px_rgba(90,22,34,0.25)] hover:bg-[#49121C]"
+                  className="h-10 rounded-full border-transparent bg-primary px-5 text-sm font-semibold text-white shadow-[0_8px_16px_rgba(90,22,34,0.25)] hover:bg-primary/90"
                   onClick={() => onResume?.(subscription._id)}
                 >
                   <Play className="mr-2 h-3.5 w-3.5 fill-current" />
@@ -209,7 +209,7 @@ export function SubscriptionCard({
 
               {isInactive && (
                 <Button
-                  className="h-10 rounded-full bg-[#5A1622] px-5 text-sm font-semibold text-white hover:bg-[#49121C]"
+                  className="h-10 rounded-full bg-primary px-5 text-sm font-semibold text-white hover:bg-primary/90"
                   onClick={() => onRenew?.(subscription._id)}
                 >
                   <RotateCcw className="mr-2 h-4 w-4" />

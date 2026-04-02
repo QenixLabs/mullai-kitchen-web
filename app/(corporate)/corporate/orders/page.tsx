@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState, useMemo, useCallback } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   PlusCircle,
@@ -105,12 +106,14 @@ function OrdersPageContent() {
             >
               Create New Order
             </Button>
-            <div className="h-10 w-10 overflow-hidden rounded-full border border-border shadow-sm">
+            <div className="h-10 w-10 overflow-hidden rounded-full border border-border shadow-sm relative">
               {user?.avatar_url ? (
-                <img
+                <Image
                   src={user.avatar_url}
                   alt={user?.name ?? "Profile"}
-                  className="h-full w-full object-cover"
+                  fill
+                  sizes="40px"
+                  className="object-cover"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-primary text-xs font-bold text-primary-foreground">
@@ -153,12 +156,14 @@ function OrdersPageContent() {
             >
               Create New Order
             </Button>
-            <div className="h-10 w-10 overflow-hidden rounded-full border border-border shadow-sm">
+            <div className="h-10 w-10 overflow-hidden rounded-full border border-border shadow-sm relative">
               {user?.avatar_url ? (
-                <img
+                <Image
                   src={user.avatar_url}
                   alt={user?.name ?? "Profile"}
-                  className="h-full w-full object-cover"
+                  fill
+                  sizes="40px"
+                  className="object-cover"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-primary text-xs font-bold text-primary-foreground">
@@ -248,12 +253,14 @@ function OrdersPageContent() {
           >
             Create New Order
           </Button>
-          <div className="h-10 w-10 overflow-hidden rounded-full border border-border shadow-sm">
+          <div className="h-10 w-10 overflow-hidden rounded-full border border-border shadow-sm relative">
             {user?.avatar_url ? (
-              <img
+              <Image
                 src={user.avatar_url}
                 alt={user?.name ?? "Profile"}
-                className="h-full w-full object-cover"
+                fill
+                sizes="40px"
+                className="object-cover"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-primary text-xs font-bold text-primary-foreground">

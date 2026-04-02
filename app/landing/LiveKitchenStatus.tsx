@@ -161,7 +161,7 @@ function StatCard({
       className="group relative overflow-hidden rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-3 sm:p-5 transition-all duration-300"
     >
       {/* Subtle Top Border */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#D4A574]/50 to-transparent opacity-80" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-skin/50 to-transparent opacity-80" />
 
       {/* Live Badge - Absolute positioned top-right */}
       {trend && (
@@ -174,8 +174,8 @@ function StatCard({
       )}
 
       <div className="flex items-start gap-2 sm:gap-4">
-        <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-[#D4A574]/10 border border-[#D4A574]/20 flex-shrink-0">
-          <Icon className="h-4 w-4 sm:h-6 sm:w-6 text-[#D4A574]" />
+        <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-skin/10 border border-skin/20 flex-shrink-0">
+          <Icon className="h-4 w-4 sm:h-6 sm:w-6 text-skin" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline gap-1 sm:gap-1.5">
@@ -183,7 +183,7 @@ function StatCard({
               {displayValue}
             </span>
             {suffix && (
-              <span className="text-sm sm:text-lg font-semibold text-[#D4A574]">
+              <span className="text-sm sm:text-lg font-semibold text-skin">
                 {suffix}
               </span>
             )}
@@ -276,7 +276,7 @@ function DeliveryZoneCard({
 // Live Badge Component
 function LiveBadge() {
   return (
-    <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-linear-to-r from-primary to-[#5a0f1a] border border-[#D4A574]/20 shadow-lg shadow-primary/30">
+    <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-linear-to-r from-primary to-[#5a0f1a] border border-skin/20 shadow-lg shadow-primary/30">
       <div className="relative flex h-2 w-2">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
@@ -434,7 +434,7 @@ export function LiveKitchenStatus() {
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-[1.1]">
                 Live from Our
                 <br />
-                <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4A574] to-[#e8c4a0]">
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-skin to-skin-light">
                   Cloud Kitchen
                 </span>
               </h2>
@@ -487,7 +487,7 @@ export function LiveKitchenStatus() {
             >
               <Button
                 size="lg"
-                className="h-14 px-8 bg-linear-to-r from-primary to-[#5a0f1a] hover:from-[#4a0a15] hover:to-[#6b1020] text-white font-semibold rounded-full shadow-xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98] border border-[#D4A574]/20"
+                className="h-14 px-8 bg-linear-to-r from-primary to-[#5a0f1a] hover:from-[#4a0a15] hover:to-[#6b1020] text-white font-semibold rounded-full shadow-xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98] border border-skin/20"
               >
                 <Zap className="w-5 h-5 mr-2" />
                 Order Now
@@ -513,7 +513,7 @@ export function LiveKitchenStatus() {
             {/* Schedule Card */}
             <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10 relative overflow-hidden group">
               {/* Subtle Top Border */}
-              <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#D4A574]/50 to-transparent opacity-80" />
+              <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-skin/50 to-transparent opacity-80" />
 
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold text-white">Delivery Zones</h3>
@@ -544,17 +544,17 @@ export function LiveKitchenStatus() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-lg font-bold text-white">12:30</span>
-                    <ArrowRight className="w-4 h-4 text-[#D4A574]" />
+                    <ArrowRight className="w-4 h-4 text-skin" />
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Quick Info Card */}
-            <div className="bg-linear-to-br from-primary to-[#5a0f1a] rounded-2xl p-5 shadow-xl border border-[#D4A574]/20">
+            <div className="bg-linear-to-br from-primary to-[#5a0f1a] rounded-2xl p-5 shadow-xl border border-skin/20">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0">
-                  <Flame className="w-6 h-6 text-[#D4A574]" />
+                  <Flame className="w-6 h-6 text-skin" />
                 </div>
                 <div>
                   <p className="font-semibold text-white mb-1">

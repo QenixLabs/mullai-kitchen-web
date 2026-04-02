@@ -112,15 +112,16 @@ export function ProfileContent() {
           >
             Delivery Addresses
           </h2>
-          <button
-            className="text-sm font-bold text-[#4A1A24] hover:opacity-75 md:text-base"
+          <Button
+            variant="link"
+            className="h-auto text-sm font-bold text-[#4A1A24] hover:opacity-75 md:text-base"
             onClick={() => {
               setEditingAddress(undefined);
               setIsAddressModalOpen(true);
             }}
           >
             + Add New Address
-          </button>
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2">
@@ -165,18 +166,20 @@ export function ProfileContent() {
                           {address.full_address}, {address.area}, {address.city} - {address.pincode}
                         </p>
                         <div className="mt-3 flex items-center gap-3 text-xs font-semibold text-[#6F6569]">
-                          <button
+                          <Button
+                            variant="link"
                             onClick={() => handleEditAddress(address)}
-                            className="inline-flex items-center gap-1 hover:text-[#4A0010]"
+                            className="inline-flex h-auto items-center gap-1 p-0 hover:text-[#4A0010]"
                           >
                             <FaPencilAlt className="h-3 w-3" /> Edit
-                          </button>
-                          <button
+                          </Button>
+                          <Button
+                            variant="link"
                             onClick={() => handleDeleteAddress(address._id)}
-                            className="inline-flex items-center gap-1 hover:text-[#4A0010]"
+                            className="inline-flex h-auto items-center gap-1 p-0 hover:text-[#4A0010]"
                           >
                             <FaTrash className="h-3 w-3" /> Delete
-                          </button>
+                          </Button>
                         </div>
                       </div>
 
@@ -282,7 +285,7 @@ export function ProfileContent() {
             <div className="flex items-center justify-between gap-4 rounded-[24px] bg-[#FBF9FA] px-4 py-3">
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 items-center justify-center rounded-[24px] bg-[#F4ECEF]">
-                  <FaLock className="h-4 w-4 text-[#5A1622]" />
+                  <FaLock className="h-4 w-4 text-primary" />
                 </span>
                 <div>
                   <p
@@ -306,7 +309,7 @@ export function ProfileContent() {
             <div className="flex items-center justify-between gap-4 rounded-[24px] bg-[#FBF9FA] px-4 py-3">
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 items-center justify-center rounded-[24px] bg-[#F4ECEF]">
-                  <FaLaptop className="h-4 w-4 text-[#5A1622]" />
+                  <FaLaptop className="h-4 w-4 text-primary" />
                 </span>
                 <div>
                   <p

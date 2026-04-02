@@ -24,12 +24,12 @@ export function TextTestimonialCard({
       whileHover={hoverPremiumLift as unknown as TargetAndTransition}
       className={cn(
         "relative group bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden transition-all duration-300",
-        "hover:border-[#D4A574]/30 hover:shadow-[0_0_30px_rgba(212,165,116,0.1)]",
+        "hover:border-skin/30 hover:shadow-[0_0_30px_rgba(212,165,116,0.1)]",
         isLarge && "hover:shadow-[0_0_40px_rgba(212,165,116,0.15)]"
       )}
     >
       {/* Gradient Top Border */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#D4A574] to-primary" />
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-skin to-primary" />
 
       <div
         className={cn(
@@ -40,7 +40,7 @@ export function TextTestimonialCard({
         {/* Quote Icon */}
         <Quote
           className={cn(
-            "text-[#D4A574] mb-4",
+            "text-skin mb-4",
             isLarge ? "h-10 w-10" : "h-8 w-8"
           )}
         />
@@ -60,7 +60,7 @@ export function TextTestimonialCard({
         {/* Footer */}
         <div className="flex items-center justify-between mt-5 pt-4 border-t border-white/10">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-[#D4A574]/30 flex-shrink-0">
+            <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-skin/30 flex-shrink-0">
               <Image
                 src={testimonial.image}
                 alt={testimonial.name}
@@ -79,7 +79,7 @@ export function TextTestimonialCard({
                   {testimonial.name}
                 </h4>
                 {testimonial.verified && (
-                  <BadgeCheck className="h-4 w-4 text-[#D4A574] flex-shrink-0" />
+                  <BadgeCheck className="h-4 w-4 text-skin flex-shrink-0" />
                 )}
               </div>
               <p className="text-xs text-white/50 truncate">
@@ -93,7 +93,7 @@ export function TextTestimonialCard({
             {[...Array(testimonial.rating)].map((_, i) => (
               <Star
                 key={i}
-                className="h-3.5 w-3.5 fill-[#D4A574] text-[#D4A574]"
+                className="h-3.5 w-3.5 fill-skin text-skin"
               />
             ))}
           </div>

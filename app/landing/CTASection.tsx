@@ -58,7 +58,7 @@ export function CTASection() {
           animate={floatAnimation}
           className="absolute top-0 left-1/3"
         >
-          <div className="w-96 h-96 bg-[#D4A574]/10 rounded-full blur-[150px]" />
+          <div className="w-96 h-96 bg-skin/10 rounded-full blur-[150px]" />
         </motion.div>
         <motion.div
           animate={{
@@ -90,7 +90,7 @@ export function CTASection() {
           }}
           className="absolute bottom-20 right-20 opacity-10"
         >
-          <Sparkles className="h-24 w-24 text-[#D4A574]" />
+          <Sparkles className="h-24 w-24 text-skin" />
         </motion.div>
 
         <motion.div
@@ -106,7 +106,7 @@ export function CTASection() {
           }}
           className="absolute top-1/3 right-1/4 opacity-5"
         >
-          <ChefHat className="h-20 w-20 text-[#D4A574]" />
+          <ChefHat className="h-20 w-20 text-skin" />
         </motion.div>
 
         <motion.div
@@ -122,7 +122,7 @@ export function CTASection() {
           }}
           className="absolute bottom-1/3 left-1/4 opacity-5"
         >
-          <Heart className="h-16 w-16 text-[#D4A574]" />
+          <Heart className="h-16 w-16 text-skin" />
         </motion.div>
 
         {/* Grid Pattern */}
@@ -145,9 +145,9 @@ export function CTASection() {
           {/* Premium Badge */}
           <motion.div
             variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#D4A574]/20 to-primary/20 border border-[#D4A574]/30 mb-8"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-skin/20 to-primary/20 border border-skin/30 mb-8"
           >
-            <Clock className="h-4 w-4 text-[#D4A574]" />
+            <Clock className="h-4 w-4 text-skin" />
             <span className="text-sm font-semibold text-white tracking-wide">
               Limited Time Offer
             </span>
@@ -160,7 +160,7 @@ export function CTASection() {
           >
             Ready to Transform
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] via-[#e8c4a0] to-[#D4A574]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-skin via-skin-light to-skin">
               Your Daily Meals?
             </span>
           </motion.h2>
@@ -169,7 +169,7 @@ export function CTASection() {
           <motion.p variants={fadeInUp} className="text-lg text-white/70 mb-10">
             Join thousands of happy customers enjoying healthy, home-style South
             Indian meals every day. Start with your{" "}
-            <span className="text-[#D4A574] font-semibold">
+            <span className="text-skin font-semibold">
               first meal FREE!
             </span>
           </motion.p>
@@ -181,7 +181,7 @@ export function CTASection() {
           >
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-primary to-[#5a0f1a]">
-                <Zap className="h-5 w-5 text-[#D4A574]" />
+                <Zap className="h-5 w-5 text-skin" />
               </div>
               <div className="text-left">
                 <p className="text-sm text-white/60">
@@ -226,7 +226,7 @@ export function CTASection() {
             <Link href="/plans">
               <Button
                 size="lg"
-                className="h-14 px-10 rounded-full bg-gradient-to-r from-[#D4A574] to-[#c49a6a] hover:from-[#e8c4a0] hover:to-[#D4A574] text-primary font-bold shadow-xl shadow-[#D4A574]/30 transition-all hover:scale-[1.02] active:scale-[0.98] group"
+                className="h-14 px-10 rounded-full bg-gradient-to-r from-skin to-skin-mid hover:from-skin-light hover:to-skin text-primary font-bold shadow-xl shadow-skin/30 transition-all hover:scale-[1.02] active:scale-[0.98] group"
               >
                 <Zap className="w-5 h-5 mr-2" />
                 Start Free Trial
@@ -238,7 +238,7 @@ export function CTASection() {
               <Button
                 size="lg"
                 variant="outline"
-                className="h-14 px-10 rounded-full border-2 border-white/20 bg-transparent text-white font-semibold hover:bg-white/10 hover:border-[#D4A574]/50 transition-all"
+                className="h-14 px-10 rounded-full border-2 border-white/20 bg-transparent text-white font-semibold hover:bg-white/10 hover:border-skin/50 transition-all"
               >
                 View Full Menu
               </Button>

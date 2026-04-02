@@ -57,12 +57,12 @@ export function PlanCard({
 
   const badgeColorClass = plan.badge
     ? /popular/i.test(plan.badge)
-      ? 'bg-[#5A1622] text-white'
+      ? 'bg-primary text-white'
       : /recommend/i.test(plan.badge)
       ? 'bg-[#7C5A31] text-white'
       : /value|best/i.test(plan.badge)
       ? 'bg-[#0D4B37] text-white'
-      : 'bg-[#5A1622] text-white'
+      : 'bg-primary text-white'
     : '';
 
   // Compact variant for mobile horizontal scroll
@@ -118,7 +118,7 @@ export function PlanCard({
             </h3>
             <div className="shrink-0 text-right">
               <div
-                className="text-[20px] font-bold leading-none text-[#5A1622]"
+                className="text-[20px] font-bold leading-none text-primary"
                 style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
                 {currencyFormatter.format(plan.price)}
@@ -158,8 +158,8 @@ export function PlanCard({
           <Button
             type="button"
             className={cn(
-              "mt-auto h-10 rounded-full bg-[#5A1622] font-semibold text-white transition-all duration-300",
-              "hover:bg-[#4A111C]",
+              "mt-auto h-10 rounded-full bg-primary font-semibold text-white transition-all duration-300",
+              "hover:bg-primary/90",
               "active:scale-[0.98]"
             )}
             onClick={handleSelectPlan}
@@ -167,13 +167,14 @@ export function PlanCard({
             Start Plan
           </Button>
 
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={handleViewMenu}
-            className="mt-2.5 text-center text-xs font-semibold text-[#6E6467] transition-colors hover:text-[#5A1622]"
+            className="mt-2.5 h-auto text-center text-xs font-semibold text-[#6E6467] transition-colors hover:text-primary"
           >
             View meal
-          </button>
+          </Button>
         </div>
       </article>
     );
@@ -222,7 +223,7 @@ export function PlanCard({
           </h3>
           <div className="shrink-0 text-right">
             <div
-              className="text-[20px] font-bold leading-none text-[#5A1622]"
+              className="text-[20px] font-bold leading-none text-primary"
               style={{ fontFamily: "var(--font-inter), sans-serif" }}
             >
               {currencyFormatter.format(plan.price)}
@@ -260,20 +261,21 @@ export function PlanCard({
         {/* Start Plan button */}
         <Button
           type="button"
-          className="mt-auto h-11 w-full rounded-full bg-[#5A1622] text-sm font-bold text-white hover:bg-[#4A111C] active:scale-[0.98]"
+          className="mt-auto h-11 w-full rounded-full bg-primary text-sm font-bold text-white hover:bg-primary/90 active:scale-[0.98]"
           onClick={handleSelectPlan}
         >
           Start Plan
         </Button>
 
         {/* View meal link */}
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={handleViewMenu}
-          className="mt-2.5 text-center text-xs font-semibold text-[#6E6467] transition-colors hover:text-[#5A1622]"
+          className="mt-2.5 h-auto text-center text-xs font-semibold text-[#6E6467] transition-colors hover:text-primary"
         >
           View meal
-        </button>
+        </Button>
       </div>
     </article>
   );

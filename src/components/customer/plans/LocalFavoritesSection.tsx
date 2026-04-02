@@ -1,3 +1,7 @@
+"use client";
+
+import Image from "next/image";
+import { useState } from "react";
 import { FaCheckCircle, FaHeadset, FaLeaf, FaShieldAlt, FaStar, FaRocket } from "react-icons/fa";
 
 import { cn } from "@/lib/utils";
@@ -34,8 +38,9 @@ const trustBadges = [
   },
 ];
 
-// Server Component - no interactivity, renders on server for better SEO and initial load
 export function LocalFavoritesSection({ className }: LocalFavoritesSectionProps) {
+  const [imageError, setImageError] = useState(false);
+
   return (
     <section className={cn("bg-card py-14 sm:py-16", className)}>
       <div className="mx-auto max-w-7xl px-4">
@@ -56,18 +61,21 @@ export function LocalFavoritesSection({ className }: LocalFavoritesSectionProps)
           {/* Left Column - Chennai Map Image */}
           <div className="flex items-center justify-center">
             <div className="relative h-80 w-full overflow-hidden rounded-sm sm:h-96">
-              <img
-                src="https://images.unsplash.com/photo-1630383249896-424e482df921?auto=format&fit=crop&w=800&q=80"
-                alt="Authentic South Indian cuisine - Chennai local favorites"
-                className="h-full w-full object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  target.nextElementSibling?.classList.remove('hidden');
-                }}
-              />
+              {!imageError && (
+                <Image
+                  src="https://images.unsplash.com/photo-1630383249896-424e482df921?auto=format&fit=crop&w=800&q=80"
+                  alt="Authentic South Indian cuisine - Chennai local favorites"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  onError={() => setImageError(true)}
+                />
+              )}
               {/* Fallback placeholder if image fails to load */}
-              <div className="hidden h-full w-full flex-col items-center justify-center rounded-sm border-2 border-dashed border-border bg-gradient-to-br from-accent to-accent/50 p-8">
+              <div className={cn(
+                "h-full w-full flex-col items-center justify-center rounded-sm border-2 border-dashed border-border bg-gradient-to-br from-accent to-accent/50 p-8",
+                !imageError && "hidden"
+              )}>
                 <div className="mb-4 rounded-full bg-primary/10 p-6">
                   <svg
                     className="h-12 w-12 text-primary"

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bell } from "lucide-react";
@@ -60,9 +61,11 @@ export function DashboardTopBar({ className }: { className?: string }) {
           {/* Avatar */}
           <div className="h-9 w-9 overflow-hidden rounded-full border-2 border-border shadow-sm">
             {avatarUrl ? (
-              <img
+              <Image
                 src={avatarUrl}
                 alt={user?.name ?? "Profile"}
+                width={36}
+                height={36}
                 className="h-full w-full object-cover"
               />
             ) : (

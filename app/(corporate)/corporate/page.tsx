@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { format, differenceInDays, parseISO } from "date-fns";
@@ -390,16 +391,15 @@ export default function CorporateDashboardPage() {
           >
             Create New Order
           </Button>
-          <div className="h-10 w-10 overflow-hidden rounded-full border border-border shadow-sm">
+          <div className="h-10 w-10 overflow-hidden rounded-full border border-border shadow-sm relative">
             {avatarUrl ? (
-              <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={avatarUrl}
-                  alt={user?.name ?? "Profile"}
-                  className="h-full w-full object-cover"
-                />
-              </>
+              <Image
+                src={avatarUrl}
+                alt={user?.name ?? "Profile"}
+                fill
+                sizes="40px"
+                className="object-cover"
+              />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-primary text-xs font-bold text-primary-foreground">
                 {user?.name
@@ -551,7 +551,7 @@ export default function CorporateDashboardPage() {
                       <TableCell className="py-5 px-6">
                         <div className="flex justify-end">
                           <div className="w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white transition-all">
-                            <ArrowRight className="h-5 w-5 text-[#FBFBFB]" />
+                            <ArrowRight className="h-5 w-5 text-background-alt" />
                           </div>
                         </div>
                       </TableCell>

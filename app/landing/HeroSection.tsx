@@ -57,7 +57,7 @@ function StatPill({
       viewport={{ once: true }}
       className="inline-flex items-center gap-2 sm:gap-3 md:gap-4 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20"
     >
-      <div className="flex h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#D4A574] to-[#c49a6a] flex-shrink-0">
+      <div className="flex h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 items-center justify-center rounded-full bg-gradient-to-br from-skin to-skin-mid flex-shrink-0">
         <Icon className="h-4 w-4 sm:h-4.5 sm:w-4.5 md:h-5 md:w-5 text-primary" />
       </div>
       <div className="flex flex-col justify-center">
@@ -66,7 +66,7 @@ function StatPill({
             {displayValue}
           </span>
           {suffix && (
-            <span className="text-xs sm:text-sm font-semibold text-[#D4A574]">
+            <span className="text-xs sm:text-sm font-semibold text-skin">
               {suffix}
             </span>
           )}
@@ -130,14 +130,14 @@ export function HeroSection() {
             rotate: 360,
             transition: { duration: 30, repeat: Infinity, ease: "linear" },
           }}
-          className="absolute -right-40 top-1/4 w-96 h-96 rounded-full border border-[#D4A574]/10"
+          className="absolute -right-40 top-1/4 w-96 h-96 rounded-full border border-skin/10"
         />
         <motion.div
           animate={{
             rotate: -360,
             transition: { duration: 25, repeat: Infinity, ease: "linear" },
           }}
-          className="absolute -right-20 top-1/3 w-72 h-72 rounded-full border border-[#D4A574]/5"
+          className="absolute -right-20 top-1/3 w-72 h-72 rounded-full border border-skin/5"
         />
 
         {/* Floating Elements */}
@@ -145,7 +145,7 @@ export function HeroSection() {
           animate={floatAnimation}
           className="absolute right-[15%] top-[20%]"
         >
-          <div className="w-4 h-4 rounded-full bg-[#D4A574]/30 blur-sm" />
+          <div className="w-4 h-4 rounded-full bg-skin/30 blur-sm" />
         </motion.div>
         <motion.div
           animate={{
@@ -154,11 +154,11 @@ export function HeroSection() {
           }}
           className="absolute left-[10%] bottom-[30%]"
         >
-          <div className="w-3 h-3 rounded-full bg-[#D4A574]/20 blur-sm" />
+          <div className="w-3 h-3 rounded-full bg-skin/20 blur-sm" />
         </motion.div>
 
         {/* Glow Orbs */}
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[#D4A574]/10 rounded-full blur-[100px]" />
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-skin/10 rounded-full blur-[100px]" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/30 rounded-full blur-[120px]" />
       </div>
 
@@ -174,7 +174,7 @@ export function HeroSection() {
           >
             {/* Premium Live Badge */}
             <motion.div variants={fadeInUp} className="inline-flex">
-              <div className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-linear-to-r from-primary to-[#5a0f1a] border border-[#D4A574]/20 shadow-lg shadow-primary/30">
+              <div className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-linear-to-r from-primary to-[#5a0f1a] border border-skin/20 shadow-lg shadow-primary/30">
                 <div className="relative flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
@@ -192,7 +192,7 @@ export function HeroSection() {
             >
               Authentic South Indian
               <br />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4A574] via-[#e8c4a0] to-[#D4A574]">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-skin via-skin-light to-skin">
                 Meals Delivered Daily
               </span>
             </motion.h1>
@@ -209,10 +209,10 @@ export function HeroSection() {
 
             {/* Premium Pincode Card */}
             <motion.div variants={fadeInUp} className="relative">
-              <div className="absolute -inset-1 bg-linear-to-r from-[#D4A574] to-primary rounded-2xl opacity-20 blur-lg" />
+              <div className="absolute -inset-1 bg-linear-to-r from-skin to-primary rounded-2xl opacity-20 blur-lg" />
               <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-2xl overflow-hidden">
                 {/* Gradient Accent */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-primary via-[#D4A574] to-primary rounded-t-2xl" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-primary via-skin to-primary rounded-t-2xl" />
 
                 <p className="text-sm text-gray-600 mb-3 font-medium">
                   Enter your pincode to check availability
@@ -228,7 +228,7 @@ export function HeroSection() {
                       onChange={(e) =>
                         setPincode(e.target.value.replace(/\D/g, ""))
                       }
-                      className="h-12 sm:h-14 pl-12 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 text-base sm:text-lg font-medium rounded-xl focus:ring-2 focus:ring-[#D4A574] focus:border-transparent"
+                      className="h-12 sm:h-14 pl-12 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 text-base sm:text-lg font-medium rounded-xl focus:ring-2 focus:ring-skin focus:border-transparent"
                     />
                   </div>
                   <Button
@@ -296,11 +296,11 @@ export function HeroSection() {
               className="relative"
             >
               {/* Glow Effect */}
-              <div className="absolute -inset-2 bg-gradient-to-r from-[#D4A574]/20 to-primary/20 rounded-3xl blur-2xl opacity-60" />
+              <div className="absolute -inset-2 bg-gradient-to-r from-skin/20 to-primary/20 rounded-3xl blur-2xl opacity-60" />
 
               <div className="relative bg-white/95 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl border border-white/50">
                 {/* Gradient Accent */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-primary via-[#D4A574] to-primary" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-primary via-skin to-primary" />
 
                 {/* Card Header */}
                 <div className="absolute top-4 left-4 z-10">
@@ -310,7 +310,7 @@ export function HeroSection() {
                     transition={{ delay: 0.5, type: "spring" }}
                     className="flex items-center gap-2 bg-gradient-to-r from-primary to-[#5a0f1a] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg shadow-primary/30"
                   >
-                    <Flame className="h-4 w-4 text-[#D4A574]" />
+                    <Flame className="h-4 w-4 text-skin" />
                     Today&apos;s Special
                   </motion.div>
                 </div>
@@ -353,11 +353,11 @@ export function HeroSection() {
                 <div className="px-6 pb-6">
                   <div className="flex items-center gap-4 text-sm text-gray-500">
                     <div className="flex items-center gap-1.5">
-                      <Clock className="h-4 w-4 text-[#D4A574]" />
+                      <Clock className="h-4 w-4 text-skin" />
                       <span>30 min delivery</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <ChefHat className="h-4 w-4 text-[#D4A574]" />
+                      <ChefHat className="h-4 w-4 text-skin" />
                       <span>Fresh daily</span>
                     </div>
                   </div>

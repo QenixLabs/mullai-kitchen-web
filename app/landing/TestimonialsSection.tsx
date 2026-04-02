@@ -33,13 +33,13 @@ function AnimatedStat({
       viewport={{ once: true }}
       className="flex flex-col items-center text-center"
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#D4A574]/20 to-primary/20 mb-3">
-        <Icon className="h-5 w-5 text-[#D4A574]" />
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-skin/20 to-primary/20 mb-3">
+        <Icon className="h-5 w-5 text-skin" />
       </div>
       <div className="flex items-baseline gap-1">
         <span className="text-3xl font-bold text-white">{displayValue}</span>
         {suffix && (
-          <span className="text-xl font-semibold text-[#D4A574]">{suffix}</span>
+          <span className="text-xl font-semibold text-skin">{suffix}</span>
         )}
       </div>
       <p className="text-sm text-white/50 mt-1">{label}</p>
@@ -71,7 +71,7 @@ export function TestimonialsSection() {
           animate={floatAnimation}
           className="absolute top-1/4 left-1/4"
         >
-          <div className="w-80 h-80 bg-[#D4A574]/5 rounded-full blur-[100px]" />
+          <div className="w-80 h-80 bg-skin/5 rounded-full blur-[100px]" />
         </motion.div>
         <motion.div
           animate={{
@@ -84,10 +84,10 @@ export function TestimonialsSection() {
         </motion.div>
 
         {/* Decorative Quote Marks */}
-        <div className="absolute top-20 left-10 text-[#D4A574]/5 text-[200px] font-serif leading-none select-none">
+        <div className="absolute top-20 left-10 text-skin/5 text-[200px] font-serif leading-none select-none">
           &ldquo;
         </div>
-        <div className="absolute bottom-20 right-10 text-[#D4A574]/5 text-[200px] font-serif leading-none select-none rotate-180">
+        <div className="absolute bottom-20 right-10 text-skin/5 text-[200px] font-serif leading-none select-none rotate-180">
           &ldquo;
         </div>
       </div>
@@ -104,9 +104,9 @@ export function TestimonialsSection() {
           >
             <motion.div
               variants={fadeInUp}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary to-[#5a0f1a] border border-[#D4A574]/20 mb-6"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary to-[#5a0f1a] border border-skin/20 mb-6"
             >
-              <Heart className="h-4 w-4 text-[#D4A574]" />
+              <Heart className="h-4 w-4 text-skin" />
               <span className="text-sm font-semibold text-white tracking-wide">
                 Customer Love
               </span>
@@ -117,7 +117,7 @@ export function TestimonialsSection() {
               className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight px-2 sm:px-0"
             >
               What Our{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#e8c4a0]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-skin to-skin-light">
                 Customers Say
               </span>
             </motion.h2>

@@ -4,6 +4,7 @@ import { FaCheck, FaCoffee, FaHamburger, FaUtensils } from "react-icons/fa";
 import type { ComponentType } from "react";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export type MealType = "Breakfast" | "Lunch" | "Dinner";
 
@@ -48,20 +49,21 @@ export function MealTypeSelector({
         const Icon = MEAL_ICON[meal];
 
         return (
-          <button
+          <Button
             key={meal}
             type="button"
+            variant="ghost"
             onClick={() => toggleMeal(meal)}
             disabled={disabled}
             className={cn(
-              "relative flex items-center gap-4 rounded-xl p-4 text-left transition-all duration-200",
+              "relative flex h-auto items-center gap-4 rounded-xl border p-4 text-left transition-all duration-200",
               isSelected
-                ? "border-2 border-[#5A1622] bg-white shadow-[0_4px_14px_rgba(37,10,17,0.08)]"
-                : "border border-[#E5DEE2] bg-white hover:border-[#D9CFD4]",
+                ? "border-2 border-primary bg-white shadow-[0_4px_14px_rgba(37,10,17,0.08)]"
+                : "border border-[#E5DEE2] bg-white hover:border-[#D9CFD4] hover:bg-white",
               disabled && "opacity-50 cursor-not-allowed hover:border-gray-200",
             )}
           >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[#F3ECEF] text-[#5A1622]">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[#F3ECEF] text-primary">
               <Icon className="h-4 w-4" />
             </div>
 
@@ -81,13 +83,13 @@ export function MealTypeSelector({
               className={cn(
                 "h-5 w-5 shrink-0 rounded border transition-all flex items-center justify-center",
                 isSelected
-                  ? "border-[#5A1622] bg-[#5A1622]"
+                  ? "border-primary bg-primary"
                   : "border-[#D5CACE] bg-white",
               )}
             >
               {isSelected && <FaCheck className="h-3 w-3 text-white" />}
             </div>
-          </button>
+          </Button>
         );
       })}
     </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, ClipboardList, User, LogOut } from "lucide-react";
@@ -45,10 +46,13 @@ export function CorporateSidebar() {
           href="/corporate"
           className="flex items-center gap-3 active:opacity-90 transition-opacity"
         >
-          <img
+          <Image
             src="/logo.png"
             alt="Mullai Kitchen Corporate"
+            width={150}
+            height={40}
             className="h-auto w-full rounded group-data-[collapsible=icon]:hidden"
+            priority
           />
         </Link>
       </SidebarHeader>

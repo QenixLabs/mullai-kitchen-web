@@ -66,7 +66,7 @@ export function LandingNavbar() {
             <span className="text-xl font-bold text-white tracking-tight leading-tight">
               Mullai
             </span>
-            <span className="text-xs text-[#D4A574]/80 tracking-wide">
+            <span className="text-xs text-skin/80 tracking-wide">
               your everyday meal partner
             </span>
           </div> */}
@@ -80,21 +80,23 @@ export function LandingNavbar() {
             animate="animate"
             className="relative"
           >
-            <div className="flex items-center gap-3 rounded-full bg-white/10 backdrop-blur-xl px-5 py-2.5 border border-white/20 hover:border-[#D4A574]/40 transition-all">
+            <div className="flex items-center gap-3 rounded-full bg-white/10 backdrop-blur-xl px-5 py-2.5 border border-white/20 hover:border-skin/40 transition-all">
               <span className="text-xs font-medium text-white/60 uppercase tracking-widest">Delivering to</span>
               <div className="w-px h-4 bg-white/20" />
-              <button
+              <Button
+                type="button"
+                variant="ghost"
                 onClick={() => setShowAreaDropdown(!showAreaDropdown)}
-                className="flex items-center gap-2 text-sm font-semibold text-white hover:text-[#D4A574] transition-colors"
+                className="flex items-center gap-2 text-sm font-semibold text-white hover:text-skin transition-colors h-auto p-0"
                 aria-expanded={showAreaDropdown}
               >
-                <MapPin className="h-4 w-4 text-[#D4A574]" />
+                <MapPin className="h-4 w-4 text-skin" />
                 {selectedArea}, Chennai
                 <ChevronDown className={cn(
                   "h-4 w-4 transition-transform duration-300",
                   showAreaDropdown && "rotate-180"
                 )} />
-              </button>
+              </Button>
             </div>
 
             {/* Area Dropdown */}
@@ -109,21 +111,23 @@ export function LandingNavbar() {
                 >
                   <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
                     {chennaiAreas.map((area) => (
-                      <button
+                      <Button
                         key={area}
+                        type="button"
+                        variant="ghost"
                         onClick={() => {
                           setSelectedArea(area);
                           setShowAreaDropdown(false);
                         }}
                         className={cn(
-                          "w-full text-left px-4 py-2.5 text-sm transition-colors",
+                          "w-full text-left px-4 py-2.5 text-sm transition-colors h-auto justify-start rounded-none",
                           selectedArea === area
-                            ? "text-[#D4A574] bg-white/5 font-semibold"
+                            ? "text-skin bg-white/5 font-semibold hover:bg-white/5"
                             : "text-white/70 hover:text-white hover:bg-white/10"
                         )}
                       >
                         {area}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </motion.div>
@@ -137,7 +141,7 @@ export function LandingNavbar() {
             </Link>
           )}
 
-          <Button onClick={handleGetStarted} className="bg-[#D4A574] hover:bg-[#C39463] text-[#1a0509] font-bold rounded-full px-8 shadow-lg shadow-[#D4A574]/20 hover:shadow-[#D4A574]/30 transition-all active:scale-95">
+          <Button onClick={handleGetStarted} className="bg-skin hover:bg-[#C39463] text-[#1a0509] font-bold rounded-full px-8 shadow-lg shadow-skin/20 hover:shadow-skin/30 transition-all active:scale-95">
             {isAuthenticated ? "Dashboard" : "Get Started"}
           </Button>
         </div>
@@ -157,13 +161,16 @@ export function LandingNavbar() {
             </Link>
           )}
 
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 text-white hover:bg-white/10 rounded-xl transition-colors"
+            className="p-2 text-white hover:bg-white/10 rounded-xl h-auto w-auto"
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -178,27 +185,29 @@ export function LandingNavbar() {
           >
             <div className="px-4 py-8 space-y-8">
               <div className="space-y-4">
-                <div className="flex items-center gap-2 text-[#D4A574] font-medium px-2">
+                <div className="flex items-center gap-2 text-skin font-medium px-2">
                   <MapPin className="h-4 w-4" />
                   <span className="text-sm">Select Delivery Area</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 p-2 bg-white/5 rounded-2xl max-h-[250px] overflow-y-auto">
                   {chennaiAreas.map((area) => (
-                    <button
+                    <Button
                       key={area}
+                      type="button"
+                      variant="ghost"
                       onClick={() => {
                         setSelectedArea(area);
                         setIsMobileMenuOpen(false);
                       }}
                       className={cn(
-                        "text-left px-3 py-2.5 text-xs rounded-lg transition-all",
-                        selectedArea === area 
-                          ? "bg-[#D4A574] text-[#1a0509] font-bold" 
+                        "text-left px-3 py-2.5 text-xs rounded-lg transition-all h-auto justify-start",
+                        selectedArea === area
+                          ? "bg-skin text-[#1a0509] font-bold hover:bg-skin"
                           : "text-white/60 hover:text-white hover:bg-white/10"
                       )}
                     >
                       {area}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -211,7 +220,7 @@ export function LandingNavbar() {
                     </Button>
                   </Link>
                 )}
-                <Button onClick={handleGetStarted} className="bg-[#D4A574] hover:bg-[#C39463] text-[#1a0509] w-full font-bold rounded-xl h-12 shadow-lg shadow-[#D4A574]/20">
+                <Button onClick={handleGetStarted} className="bg-skin hover:bg-[#C39463] text-[#1a0509] w-full font-bold rounded-xl h-12 shadow-lg shadow-skin/20">
                   {isAuthenticated ? "Dashboard" : "Get Started Now"}
                 </Button>
               </div>

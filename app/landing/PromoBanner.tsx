@@ -65,7 +65,8 @@ export function PromoBanner() {
             opacity: [0.3, 0.6, 0.3],
             transition: { duration: 10, repeat: Infinity, ease: "easeInOut" },
           }}
-          className="absolute top-0 left-1/4 w-32 h-32 bg-[#D4A574]/30 rounded-full blur-[60px]"
+
+          className="absolute top-0 left-1/4 w-32 h-32 bg-skin/30 rounded-full blur-[60px]"
         />
         <motion.div
           animate={{
@@ -78,7 +79,7 @@ export function PromoBanner() {
               delay: 2,
             },
           }}
-          className="absolute bottom-0 right-1/4 w-24 h-24 bg-[#D4A574]/20 rounded-full blur-[40px]"
+          className="absolute bottom-0 right-1/4 w-24 h-24 bg-skin/20 rounded-full blur-[40px]"
         />
       </div>
 
@@ -89,7 +90,7 @@ export function PromoBanner() {
             <motion.div
               animate={{ rotate: [0, 15, -15, 0] }}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-              className="hidden sm:flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#D4A574] to-[#c49a6a] shadow-lg shadow-[#D4A574]/30"
+              className="hidden sm:flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-skin to-skin-mid shadow-lg shadow-skin/30"
             >
               <Sparkles className="h-6 w-6 text-primary" />
             </motion.div>
@@ -105,7 +106,7 @@ export function PromoBanner() {
               </div>
               <p className="text-xs sm:text-sm text-white/60">
                 Use code:{" "}
-                <span className="font-mono font-bold text-[#D4A574]">
+                <span className="font-mono font-bold text-skin">
                   MULLAI50
                 </span>
               </p>
@@ -115,7 +116,7 @@ export function PromoBanner() {
           {/* Center: Countdown */}
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
-              <Clock className="h-5 w-5 text-[#D4A574]" />
+              <Clock className="h-5 w-5 text-skin" />
             </div>
             <span className="text-white/70 text-xs sm:text-sm font-medium">
               Ends in:
@@ -151,7 +152,7 @@ export function PromoBanner() {
 
           {/* Right: CTA */}
           <Link href="/plans">
-            <Button className="bg-gradient-to-r from-[#D4A574] to-[#c49a6a] hover:from-[#e8c4a0] hover:to-[#D4A574] text-primary font-semibold rounded-full px-4 sm:px-6 py-2 h-auto text-sm sm:text-base shadow-lg shadow-[#D4A574]/30 transition-all hover:scale-[1.02] active:scale-[0.98] group">
+            <Button className="bg-gradient-to-r from-skin to-skin-mid hover:from-skin-light hover:to-skin text-primary font-semibold rounded-full px-4 sm:px-6 py-2 h-auto text-sm sm:text-base shadow-lg shadow-skin/30 transition-all hover:scale-[1.02] active:scale-[0.98] group">
               <Gift className="h-4 w-4 mr-2" />
               Claim
               <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
@@ -159,12 +160,15 @@ export function PromoBanner() {
           </Link>
 
           {/* Close Button */}
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => setIsVisible(false)}
-            className="absolute top-1 right-1 sm:static p-1.5 text-white/40 hover:text-white transition-colors rounded-full hover:bg-white/10"
+            className="absolute top-1 right-1 sm:static p-1.5 text-white/40 hover:text-white hover:bg-white/10 rounded-full h-auto w-auto"
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
       </div>
     </motion.div>

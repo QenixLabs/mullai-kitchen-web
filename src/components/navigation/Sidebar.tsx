@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -53,7 +54,7 @@ export function Sidebar() {
     <ShadcnSidebar collapsible="icon" className="w-60 border-r border-border shadow-none">
       <SidebarHeader className="border-none px-6 pt-8 pb-4 group-data-[collapsible=icon]:px-2">
         <Link href="/subscription" className="flex items-center gap-3 active:opacity-90 transition-opacity">
-          <img src="/logo-tranparent.png" alt="Mullai Kitchen" className="h-auto w-full rounded group-data-[collapsible=icon]:hidden" />
+          <Image src="/logo-tranparent.png" alt="Mullai Kitchen" width={150} height={40} className="h-auto w-full rounded group-data-[collapsible=icon]:hidden" priority />
         </Link>
       </SidebarHeader>
       <SidebarContent className="flex flex-col h-full">
