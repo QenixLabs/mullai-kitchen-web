@@ -1,6 +1,10 @@
 "use client";
 
+import { FaLeaf } from "react-icons/fa";
+import { IoFastFood } from "react-icons/io5";
+
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface PreferenceToggleProps {
   value: "VEG" | "NON_VEG" | null;
@@ -18,62 +22,48 @@ export function PreferenceToggle({
   disabled = false,
 }: PreferenceToggleProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {/* Veg Option */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => onChange("VEG")}
         disabled={disabled}
         className={cn(
-          "flex items-center justify-center gap-3 p-4 rounded-xl transition-all duration-200 border-2",
+          "flex h-auto items-center justify-between rounded-xl border px-4 py-3 transition-all duration-200",
           value === "VEG"
-            ? "border-emerald-500 bg-emerald-50/30 shadow-lg"
-            : "border-gray-200 bg-white hover:border-gray-300 shadow-sm",
+            ? "border-2 border-primary bg-white shadow-[0_4px_14px_rgba(37,10,17,0.08)]"
+            : "border-[#E4DCE0] bg-[#F9F7F8] hover:border-[#D8CDD1] hover:bg-[#F9F7F8]",
           disabled && "opacity-50 cursor-not-allowed hover:border-gray-200",
         )}
       >
-        {/* Veg Icon - Green Square with Circle inside */}
-        <div className="relative flex items-center justify-center">
-          <div className={cn(
-            "w-5 h-5 rounded flex items-center justify-center border-2 transition-all",
-            value === "VEG"
-              ? "border-emerald-500 bg-white"
-              : "border-emerald-500 bg-white"
-          )}>
-            {value === "VEG" && <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />}
-          </div>
+        <div className="flex items-center gap-2">
+          <FaLeaf className="h-4 w-4 text-[#1D8F4E]" />
+          <span className="font-semibold text-[#1F7C47]">Veg</span>
         </div>
-        <span className="font-semibold text-emerald-600">Veg</span>
-        <span className="text-gray-400 text-sm">(₹{vegPrice}/meal)</span>
-      </button>
+        <span className="text-xs font-semibold text-[#7A6F73]">₹{vegPrice} / meal</span>
+      </Button>
 
       {/* Non-Veg Option */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => onChange("NON_VEG")}
         disabled={disabled}
         className={cn(
-          "flex items-center justify-center gap-3 p-4 rounded-xl transition-all duration-200 border-2",
+          "flex h-auto items-center justify-between rounded-xl border px-4 py-3 transition-all duration-200",
           value === "NON_VEG"
-            ? "border-red-500 bg-red-50/30 shadow-lg"
-            : "border-gray-200 bg-white hover:border-gray-300 shadow-sm",
+            ? "border-2 border-primary bg-white shadow-[0_4px_14px_rgba(37,10,17,0.08)]"
+            : "border-[#E4DCE0] bg-[#F9F7F8] hover:border-[#D8CDD1] hover:bg-[#F9F7F8]",
           disabled && "opacity-50 cursor-not-allowed hover:border-gray-200",
         )}
       >
-        {/* Non-Veg Icon - Red Square with Circle inside */}
-        <div className="relative flex items-center justify-center">
-          <div className={cn(
-            "w-5 h-5 rounded flex items-center justify-center border-2 transition-all",
-            value === "NON_VEG"
-              ? "border-red-500 bg-white"
-              : "border-red-500 bg-white"
-          )}>
-            {value === "NON_VEG" && <div className="w-2.5 h-2.5 rounded-full bg-red-500" />}
-          </div>
+        <div className="flex items-center gap-2">
+          <IoFastFood className="h-4 w-4 text-[#A6323A]" />
+          <span className="font-semibold text-[#3A1A21]">Non-Veg</span>
         </div>
-        <span className="font-semibold text-red-600">Non-veg</span>
-        <span className="text-gray-400 text-sm">(₹{nonvegPrice}/meal)</span>
-      </button>
+        <span className="text-xs font-semibold text-[#7A6F73]">₹{nonvegPrice} / meal</span>
+      </Button>
     </div>
   );
 }

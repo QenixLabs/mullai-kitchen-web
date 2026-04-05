@@ -638,6 +638,12 @@ function SignUpForm() {
             actionLabel="Sign in"
             actionHref="/auth/signin"
           />
+          <Link
+            className="text-xs font-medium text-muted-foreground/70 transition-colors hover:text-foreground"
+            href="/auth/corporate-signup"
+          >
+            Registering for a company? Corporate Account
+          </Link>
         </div>
       </AuthFormCard>
     </AuthShell>

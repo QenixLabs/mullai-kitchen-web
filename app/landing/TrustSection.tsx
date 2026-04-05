@@ -103,16 +103,16 @@ function AnimatedStat({
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="flex items-start gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-[#D4A574]/30 transition-all duration-300"
+      className="flex items-start gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-skin/30 transition-all duration-300"
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-[#D4A574] to-[#c49a6a] shrink-0">
+      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-skin to-skin-mid shrink-0">
         <Icon className="h-6 w-6 text-primary" />
       </div>
       <div>
         <div className="flex items-baseline gap-1">
           <span className="text-2xl font-bold text-white">{displayValue}</span>
           {suffix && (
-            <span className="text-lg font-semibold text-[#D4A574]">
+            <span className="text-lg font-semibold text-skin">
               {suffix}
             </span>
           )}
@@ -139,7 +139,7 @@ export function TrustSection() {
           animate={floatAnimation}
           className="absolute top-1/4 left-1/4"
         >
-          <div className="w-96 h-96 bg-[#D4A574]/5 rounded-full blur-[120px]" />
+          <div className="w-96 h-96 bg-skin/5 rounded-full blur-[120px]" />
         </motion.div>
         <motion.div
           animate={{
@@ -171,9 +171,9 @@ export function TrustSection() {
         >
           <motion.div
             variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-[#D4A574]/20 to-primary/20 border border-[#D4A574]/30 mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-skin/20 to-primary/20 border border-skin/30 mb-6"
           >
-            <ChefHat className="h-4 w-4 text-[#D4A574]" />
+            <ChefHat className="h-4 w-4 text-skin" />
             <span className="text-sm font-semibold text-white tracking-wide">
               Chennai&apos;s Trusted Cloud Kitchen
             </span>
@@ -184,7 +184,7 @@ export function TrustSection() {
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight"
           >
             Why Chennai Chooses{" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4A574] to-[#e8c4a0]">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-skin to-skin-light">
               Mullai
             </span>
           </motion.h2>
@@ -211,14 +211,14 @@ export function TrustSection() {
               className="group relative"
             >
               {/* Hover Glow */}
-              <div className="absolute -inset-1 bg-linear-to-r from-[#D4A574]/10 to-primary/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute -inset-1 bg-linear-to-r from-skin/10 to-primary/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-              <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-[#D4A574]/30 transition-all duration-300">
+              <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-skin/30 transition-all duration-300">
                 {/* Gradient Top Border */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-primary via-[#D4A574] to-primary opacity-80 rounded-t-2xl" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-primary via-skin to-primary opacity-80 rounded-t-2xl" />
 
                 <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#D4A574] to-[#c49a6a]">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-skin to-skin-mid">
                     <signal.icon className="h-6 w-6 text-primary" />
                   </div>
                   <div>
@@ -243,17 +243,17 @@ export function TrustSection() {
           className="relative"
         >
           {/* Glow Effect */}
-          <div className="absolute -inset-2 bg-linear-to-r from-[#D4A574]/10 to-primary/10 rounded-3xl blur-2xl opacity-50" />
+          <div className="absolute -inset-2 bg-linear-to-r from-skin/10 to-primary/10 rounded-3xl blur-2xl opacity-50" />
 
           <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
             {/* Gradient Top Border */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-primary via-[#D4A574] to-primary rounded-t-3xl" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-primary via-skin to-primary rounded-t-3xl" />
 
             <div className="grid lg:grid-cols-2 gap-8 items-center">
               {/* Left: Info */}
               <div>
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#D4A574] to-[#c49a6a]">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-skin to-skin-mid">
                     <MapPin className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="text-2xl font-bold text-white">
@@ -271,7 +271,7 @@ export function TrustSection() {
                   {chennaiAreas.map((area) => (
                     <span
                       key={area}
-                      className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/10 text-white/80 text-xs sm:text-sm border border-white/10 hover:bg-white/20 hover:border-[#D4A574]/30 transition-all cursor-pointer"
+                      className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/10 text-white/80 text-xs sm:text-sm border border-white/10 hover:bg-white/20 hover:border-skin/30 transition-all cursor-pointer"
                     >
                       {area}
                     </span>
@@ -280,9 +280,9 @@ export function TrustSection() {
 
                 <div className="flex items-center gap-6">
                   <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-linear-to-r from-primary to-[#5a0f1a]">
-                    <Users className="h-5 w-5 text-[#D4A574]" />
+                    <Users className="h-5 w-5 text-skin" />
                     <span className="text-white font-semibold">
-                      <span className="text-[#D4A574] font-bold">2,000+</span>{" "}
+                      <span className="text-skin font-bold">2,000+</span>{" "}
                       Happy Customers
                     </span>
                   </div>

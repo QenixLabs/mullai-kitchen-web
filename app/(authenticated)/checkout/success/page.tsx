@@ -2,20 +2,23 @@
 
 import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  ArrowRight,
   CheckCircle2,
   Home,
-  Receipt,
   RefreshCw,
   XCircle,
-  ExternalLink,
-  CreditCard,
-  ShieldCheck,
+  Utensils,
+  Clock,
+  Calendar,
+  MapPin,
+  Download,
+  ArrowRight,
   Loader2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { format, addMonths } from "date-fns";
 
 import { usePaymentStore } from "@/hooks/usePaymentStore";
 import { useOrderStatus } from "@/api/hooks/usePayment";
@@ -25,46 +28,29 @@ import { Badge } from "@/components/ui/badge";
 
 type ConfirmationStatus = "loading" | "confirmed" | "failed";
 
-// Animated ring spinner for loading state
-function LoadingRing({ className }: { className?: string }) {
-  return (
-    <div className={cn("relative", className)}>
-      <svg className="h-full w-full animate-spin" viewBox="0 0 24 24">
-        <circle
-          className="opacity-10"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          strokeWidth="2"
-          fill="none"
-        />
-        <path
-          className="opacity-100"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          d="M12 2a10 10 0 0 1 10 10"
-        />
-      </svg>
-    </div>
-  );
-}
+// Mock subscription data - in real app this would come from API
+const MOCK_SUBSCRIPTION = {
+  planName: "Monthly Subscription",
+  planType: "Active Monthly Plan",
+  mealPreference: "Vegetarian",
+  deliverySlot: "Lunch & Dinner (Daily)",
+  renewalDate: addMonths(new Date(), 1),
+  deliveryLocation: "123 Culinary Lane, Foodie District, Chennai",
+  firstDeliveryTime: "7:30 AM",
+};
 
 function CheckoutSuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<ConfirmationStatus>("loading");
   const [retryCount, setRetryCount] = useState(0);
-  const [countdown, setCountdown] = useState(5);
 
   const paymentStore = usePaymentStore();
   const { orderId, razorpayPaymentId, paymentId, amount, errorMessage } = paymentStore;
 
   const { data: orderStatus } = useOrderStatus(orderId || "");
 
-  const planName = searchParams.get("planName") || "Subscription Plan";
+  const planName = searchParams.get("planName") || "Monthly Flex Plan";
 
   // Derive status and error from orderStatus synchronously
   const { derivedStatus, derivedError } = (() => {
@@ -115,29 +101,17 @@ function CheckoutSuccessContent() {
     }
   }, [derivedError]);
 
-  // Countdown timer for confirmed status
-  useEffect(() => {
-    if (status === "confirmed" && countdown > 0) {
-      const timer = setTimeout(() => setCountdown((prev) => prev - 1), 1000);
-      return () => clearTimeout(timer);
-    } else if (status === "confirmed" && countdown === 0) {
-      router.push("/subscription");
-    }
-  }, [status, countdown, router]);
-
   const handleRetry = () => {
     setRetryCount((prev) => prev + 1);
     setStatus("loading");
     window.location.reload();
   };
 
-  return (
-    <div className="relative min-h-screen flex items-center justify-center p-4 sm:p-6">
-      {/* Subtle background gradient */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-b from-primary/5 to-transparent blur-3xl" />
-      </div>
+  // Generate order ID for display
+  const displayOrderId = orderId || `ME-${Math.floor(1000 + Math.random() * 9000)}-${new Date().getFullYear()}`;
 
+  return (
+    <div className="min-h-screen bg-[#FAFAFA] py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
       <AnimatePresence mode="wait">
         <motion.div
           key={status}
@@ -145,271 +119,253 @@ function CheckoutSuccessContent() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="w-full "
+          className="max-w-5xl mx-auto"
         >
-          {/* Card */}
-          <div className="bg-card border border-border shadow-xl rounded-2xl overflow-hidden">
-            
-            {/* Header Section */}
-            <div
-              className={cn(
-                "px-6 sm:px-10 pt-12 pb-8 text-center",
-                status === "confirmed" && "bg-linear-to-b from-success/5 to-transparent",
-                status === "failed" && "bg-linear-to-b from-destructive/5 to-transparent"
-              )}
+          {/* Success Header */}
+          {status === "confirmed" && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="text-center mb-8"
             >
-              {/* Icon */}
-              <div className="mb-6">
-                {status === "loading" && (
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="inline-flex"
-                  >
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-info/20 blur-2xl rounded-full" />
-                      <div className="relative text-info">
-                        <LoadingRing className="h-16 w-16" />
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-
-                {status === "confirmed" && (
-                  <motion.div
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                    className="inline-flex"
-                  >
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-success/30 blur-2xl rounded-full" />
-                      <div className="relative bg-success text-success-foreground rounded-full p-4 shadow-lg">
-                        <CheckCircle2 className="h-10 w-10" strokeWidth={2} />
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-
-                {status === "failed" && (
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="inline-flex"
-                  >
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-destructive/20 blur-2xl rounded-full" />
-                      <div className="relative bg-destructive text-destructive-foreground rounded-full p-4 shadow-lg">
-                        <XCircle className="h-10 w-10" strokeWidth={2} />
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
+              {/* Success Icon */}
+              <div className="relative inline-flex mb-6">
+                <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-150" />
+                <div className="relative w-20 h-20 bg-white rounded-full shadow-xl flex items-center justify-center border-4 border-white">
+                  <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center">
+                    <CheckCircle2 className="w-8 h-8 text-white" strokeWidth={3} />
+                  </div>
+                </div>
               </div>
 
-              {/* Title */}
-              <h1 className="text-2xl sm:text-3xl font-semibold text-[#44151C] tracking-tight mb-3">
-                {status === "loading" && "Verifying Payment"}
-                {status === "confirmed" && "Payment Successful"}
-                {status === "failed" && "Payment Failed"}
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#44151C] mb-3">
+                Order Placed Successfully!
               </h1>
-
-              {/* Subtitle */}
-              <p className="text-muted-foreground text-base leading-relaxed mx-auto">
-                {status === "loading" && "We're confirming your transaction with the payment gateway."}
-                {status === "confirmed" && `Your ${planName} subscription is now active.`}
-                {status === "failed" && (derivedError || "Something went wrong. Please try again or contact support.")}
+              <p className="text-[#797778] max-w-md mx-auto mb-6">
+                Your culinary journey begins now. We&apos;ve sent a confirmation email to your registered address.
               </p>
+
+              {/* Order ID Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-[#E8E1E4] shadow-sm">
+                <span className="text-xs text-[#797778] uppercase tracking-wider">Order ID:</span>
+                <span className="font-mono font-semibold text-[#44151C]">{displayOrderId}</span>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Loading State */}
+          {status === "loading" && (
+            <div className="flex flex-col items-center justify-center py-20">
+              <div className="relative mb-6">
+                <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full" />
+                <Loader2 className="relative w-16 h-16 text-primary animate-spin" />
+              </div>
+              <h2 className="text-xl font-semibold text-[#44151C] mb-2">Verifying Payment</h2>
+              <p className="text-[#797778]">We&apos;re confirming your transaction...</p>
             </div>
+          )}
 
-            {/* Content Section */}
-            <div className="px-6 sm:px-10 pb-10">
-              
-              {/* Loading State - Simple Progress */}
-              {status === "loading" && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="space-y-6"
-                >
-                  {/* Progress Bar */}
-                  <div className="space-y-3">
-                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                      <motion.div
-                        animate={{ 
-                          width: ["0%", "70%", "50%", "80%"],
-                        }}
-                        transition={{
-                          duration: 4,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
-                        className="h-full bg-info rounded-full"
-                      />
+          {/* Failed State */}
+          {status === "failed" && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="max-w-md mx-auto text-center py-12"
+            >
+              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <XCircle className="w-10 h-10 text-red-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-[#44151C] mb-3">Payment Failed</h2>
+              <p className="text-[#797778] mb-6">{derivedError || "Something went wrong. Please try again."}</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button onClick={handleRetry} disabled={retryCount >= 3} className="bg-primary">
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Try Again
+                </Button>
+                <Button asChild variant="outline">
+                  <Link href="/dashboard">Go to Dashboard</Link>
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Main Content - Only show for confirmed */}
+          {status === "confirmed" && (
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-5 sm:gap-6">
+              {/* Left Column - Subscription Details */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="bg-white rounded-2xl border border-[#E8E1E4] p-5 sm:p-8">
+                  {/* Plan Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-7 sm:mb-8">
+                    <div>
+                      <h2 className="text-xl font-bold text-[#2A1216] mb-1">
+                        {MOCK_SUBSCRIPTION.planName}
+                      </h2>
+                      <p className="text-[#797778]">{MOCK_SUBSCRIPTION.planType}</p>
                     </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Processing</span>
-                      <span className="text-info font-medium">Verifying...</span>
+                    <Badge className="bg-green-100 text-green-700 hover:bg-green-100 px-3 py-1">
+                      <span className="w-2 h-2 bg-green-500 rounded-full mr-2" />
+                      Status: Active
+                    </Badge>
+                  </div>
+
+                  {/* Details Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 mb-8">
+                    {/* Meal Preference */}
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-[#F5F1F3] flex items-center justify-center shrink-0">
+                        <Utensils className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-[#797778] uppercase tracking-wider mb-1">
+                          Meal Preference
+                        </p>
+                        <p className="text-[#2A1216] font-medium">
+                          {MOCK_SUBSCRIPTION.mealPreference}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Delivery Slot */}
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-[#F5F1F3] flex items-center justify-center shrink-0">
+                        <Clock className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-[#797778] uppercase tracking-wider mb-1">
+                          Delivery Slot
+                        </p>
+                        <p className="text-[#2A1216] font-medium">
+                          {MOCK_SUBSCRIPTION.deliverySlot}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Renewal Date */}
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-[#F5F1F3] flex items-center justify-center shrink-0">
+                        <Calendar className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-[#797778] uppercase tracking-wider mb-1">
+                          Renewal Date
+                        </p>
+                        <p className="text-[#2A1216] font-medium">
+                          {format(MOCK_SUBSCRIPTION.renewalDate, "do MMMM yyyy")}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Delivery Location */}
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-[#F5F1F3] flex items-center justify-center shrink-0">
+                        <MapPin className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-[#797778] uppercase tracking-wider mb-1">
+                          Delivery Location
+                        </p>
+                        <p className="text-[#2A1216] font-medium line-clamp-2">
+                          {MOCK_SUBSCRIPTION.deliveryLocation}
+                        </p>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Trust indicators */}
-                  <div className="flex items-center justify-center gap-6 pt-4 text-muted-foreground/60">
-                    <div className="flex items-center gap-1.5 text-xs">
-                      <ShieldCheck className="h-3.5 w-3.5" />
-                      <span>Secure</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs">
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      <span>Encrypted</span>
+                  {/* Food Image */}
+                  <div className="relative rounded-xl overflow-hidden">
+                    <Image
+                      src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80"
+                      alt="Your meal"
+                      width={600}
+                      height={300}
+                      className="w-full h-44 sm:h-48 object-cover"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <p className="font-medium">
+                        Your first delivery arrives tomorrow at {MOCK_SUBSCRIPTION.firstDeliveryTime}
+                      </p>
                     </div>
                   </div>
-                </motion.div>
-              )}
+                </div>
+              </motion.div>
 
-              {/* Confirmed State */}
-              {status === "confirmed" && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="space-y-6"
-                >
-                  {/* Receipt Card */}
-                  <div className="bg-muted/50 rounded-xl p-5 border border-border">
-                    <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium uppercase tracking-wider mb-4">
-                      <Receipt className="h-3.5 w-3.5" />
-                      Transaction Details
+              {/* Right Column - Payment & Next Steps */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+                className="space-y-6"
+              >
+                {/* Payment Details */}
+                <div className="bg-[#F5F1F3] rounded-2xl p-5 sm:p-6">
+                  <h3 className="text-lg font-bold text-[#2A1216] mb-4">Payment Details</h3>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-[#797778]">Monthly Plan</span>
+                      <span className="text-[#2A1216] font-medium">
+                        ₹{(amount || 2499).toLocaleString()}
+                      </span>
                     </div>
-                    
-                    <div className="space-y-3">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Transaction ID</span>
-                        <span className="font-mono text-foreground">
-                          {razorpayPaymentId || paymentId || searchParams.get("razorpay_payment_id") || "N/A"}
+                    <div className="flex justify-between">
+                      <span className="text-[#797778]">Service & Delivery</span>
+                      <span className="text-[#2A1216] font-medium">0.00</span>
+                    </div>
+                    <div className="border-t border-[#E8E1E4] pt-3 mt-3">
+                      <div className="flex justify-between">
+                        <span className="text-[#2A1216] font-semibold">Total Paid</span>
+                        <span className="text-xl font-bold text-[#44151C]">
+                          ₹{(amount || 2499).toLocaleString()}
                         </span>
                       </div>
-                      
-                      {orderId && (
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Order ID</span>
-                          <span className="font-mono text-foreground">{orderId}</span>
-                        </div>
-                      )}
-                      
-                      <div className="h-px bg-border my-3" />
-                      
-                      <div className="flex justify-between items-baseline">
-                        <span className="text-foreground font-medium">Total Paid</span>
-                        <span className="text-2xl font-semibold text-foreground">
-                          ₹{(amount ? amount : 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                        </span>
-                      </div>
                     </div>
                   </div>
+                </div>
 
-                  {/* Redirect Notice */}
-                  <div className="flex items-center justify-between bg-primary/5 rounded-lg px-4 py-3">
-                    <div className="flex items-center gap-2 text-sm">
-                      <RefreshCw className="h-4 w-4 text-primary animate-spin" />
-                      <span className="text-primary">Redirecting in {countdown}s</span>
-                    </div>
-                    <div className="w-20 h-1 bg-primary/20 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: "100%" }}
-                        animate={{ width: "0%" }}
-                        transition={{ duration: 5, ease: "linear" }}
-                        className="h-full bg-primary rounded-full"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button asChild size="lg" className="h-12 font-medium">
-                      <Link href="/subscription" className="flex items-center justify-center gap-2">
-                        View Subscription
-                        <ArrowRight className="h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <Button asChild variant="outline" size="lg" className="h-12 font-medium">
-                      <Link href="/dashboard" className="flex items-center justify-center gap-2">
-                        <Home className="h-4 w-4" />
-                        Dashboard
-                      </Link>
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Failed State */}
-              {status === "failed" && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="space-y-6"
-                >
-                  <div className="bg-destructive/5 border border-destructive/10 rounded-xl p-5">
-                    <p className="text-sm text-destructive/90 leading-relaxed">
-                      If funds were deducted from your account, don&apos;t worry. 
-                      Verification can take up to 2 minutes. Please wait or try again.
-                    </p>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Button
-                      onClick={handleRetry}
-                      disabled={retryCount >= 3}
-                      className="w-full h-12 bg-destructive hover:bg-destructive/90 text-white font-medium"
-                    >
-                      <RefreshCw className="mr-2 h-4 w-4" />
-                      Try Again
-                    </Button>
-                    <Button asChild variant="ghost" className="w-full h-12 font-medium">
-                      <Link href="/dashboard" className="flex items-center justify-center gap-2">
-                        <Home className="h-4 w-4" />
-                        Go to Dashboard
-                      </Link>
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
+                {/* What's Next */}
+                <div className="bg-white rounded-2xl border border-[#E8E1E4] p-5 sm:p-6">
+                  <h3 className="text-lg font-bold text-[#2A1216] mb-4 text-center">
+                    What&apos;s Next?
+                  </h3>
+                  <Button
+                    asChild
+                    className="w-full h-12 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 mb-3"
+                  >
+                    <Link href="/subscription" className="flex items-center justify-center gap-2">
+                      Go to Subscriptions
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full text-[#797778] hover:text-primary"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Invoice (PDF)
+                  </Button>
+                </div>
+              </motion.div>
             </div>
-          </div>
-
-          {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-sm text-muted-foreground mb-3">
-              Need help?{" "}
-              <Link href="/support" className="text-primary hover:underline font-medium">
-                Contact Support
-              </Link>
-            </p>
-            <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground/50">
-              <ShieldCheck className="h-3 w-3" />
-              <span>Secured by Zoho Payments</span>
-            </div>
-          </div>
+          )}
         </motion.div>
       </AnimatePresence>
     </div>
   );
 }
 
-// Suspense Fallback - Clean minimal loader
+// Suspense Fallback
 function PageLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA]">
       <div className="text-center">
-        <div className="relative inline-flex mb-6">
-          <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full" />
-          <div className="relative text-primary">
-            <LoadingRing className="h-12 w-12" />
-          </div>
-        </div>
-        <h2 className="text-lg font-medium text-foreground mb-1">Loading...</h2>
-        <p className="text-sm text-muted-foreground">Please wait</p>
+        <Loader2 className="w-12 h-12 text-primary animate-spin mx-auto mb-4" />
+        <h2 className="text-lg font-medium text-[#44151C]">Loading...</h2>
       </div>
     </div>
   );

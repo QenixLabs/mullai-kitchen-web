@@ -8,7 +8,13 @@ import { useForm } from "react-hook-form";
 import { useLogin } from "@/api/hooks/useAuth";
 import { signInSchema, type SignInFormData } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AuthFooterLinks, AuthFormCard, AuthHeader, AuthHighlights, AuthShell } from "@/components/Auth";
+import {
+  AuthFooterLinks,
+  AuthFormCard,
+  AuthHeader,
+  AuthHighlights,
+  AuthShell,
+} from "@/components/Auth";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +35,11 @@ import { formatAuthError, getAuthErrorTitle } from "@/lib/auth-errors";
 const AUTH_ROUTES = new Set(["/auth/signin", "/auth/signup"]);
 
 const getSafeRedirectPath = (redirectTo: string | null): string | null => {
-  if (!redirectTo || !redirectTo.startsWith("/") || redirectTo.startsWith("//")) {
+  if (
+    !redirectTo ||
+    !redirectTo.startsWith("/") ||
+    redirectTo.startsWith("//")
+  ) {
     return null;
   }
 
@@ -100,15 +110,28 @@ function SignInForm() {
         subtitle="Sign in to manage your subscriptions and track your orders."
       />
 
-      <AuthFormCard footer={<AuthFooterLinks prompt="Forgot your password?" actionLabel="Reset it" actionHref="/auth/forgot-password" />}>
+      <AuthFormCard
+        footer={
+          <AuthFooterLinks
+            prompt="Forgot your password?"
+            actionLabel="Reset it"
+            actionHref="/auth/forgot-password"
+          />
+        }
+      >
         <Form {...form}>
-          <form className="space-y-5" onSubmit={form.handleSubmit(handleSubmit)}>
+          <form
+            className="space-y-5"
+            onSubmit={form.handleSubmit(handleSubmit)}
+          >
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">Email address</FormLabel>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Email address
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -119,7 +142,7 @@ function SignInForm() {
                       className={cn(
                         "h-11 rounded-xl border-gray-200 bg-gray-50 text-gray-900",
                         "placeholder:text-gray-400",
-                        "focus:border-primary focus:bg-white focus:ring-primary/20"
+                        "focus:border-primary focus:bg-white focus:ring-primary/20",
                       )}
                     />
                   </FormControl>
@@ -133,7 +156,9 @@ function SignInForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">Password</FormLabel>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Password
+                  </FormLabel>
                   <FormControl>
                     <PasswordInput
                       {...field}
@@ -143,7 +168,7 @@ function SignInForm() {
                       className={cn(
                         "h-11 rounded-xl border-gray-200 bg-gray-50 text-gray-900",
                         "placeholder:text-gray-400",
-                        "focus:border-primary focus:bg-white focus:ring-primary/20"
+                        "focus:border-primary focus:bg-white focus:ring-primary/20",
                       )}
                     />
                   </FormControl>
@@ -153,7 +178,10 @@ function SignInForm() {
             />
 
             {loginMutation.isError ? (
-              <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800">
+              <Alert
+                variant="destructive"
+                className="border-red-200 bg-red-50 text-red-800"
+              >
                 <AlertTitle>{getAuthErrorTitle("signin")}</AlertTitle>
                 <AlertDescription>
                   {formatAuthError(loginMutation.error, "signin")}
@@ -167,7 +195,7 @@ function SignInForm() {
                 "bg-primary",
                 "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/10",
                 "active:scale-[0.98]",
-                "disabled:opacity-70 disabled:cursor-not-allowed"
+                "disabled:opacity-70 disabled:cursor-not-allowed",
               )}
               type="submit"
               disabled={loginMutation.isPending}
@@ -176,6 +204,22 @@ function SignInForm() {
             </Button>
           </form>
         </Form>
+
+        {/* Corporate CTA */}
+        <div className="mt-6 rounded-xl border border-gray-200 bg-gradient-to-r from-gray-50 to-slate-50 p-4 text-center">
+          <p className="text-sm font-semibold text-gray-700">
+            Ordering for your team?
+          </p>
+          <p className="mt-1 text-xs text-gray-500">
+            Corporate bulk ordering with postpaid billing
+          </p>
+          <Link
+            href="/auth/corporate-signin"
+            className=""
+          >
+            <Button variant={"secondary"} className="mt-3 cursor-pointer">Corporate Sign In</Button>
+          </Link>
+        </div>
       </AuthFormCard>
     </AuthShell>
   );
@@ -183,7 +227,9 @@ function SignInForm() {
 
 export default function SignInPage() {
   return (
-    <Suspense fallback={<div className="p-6 text-center text-gray-500">Loading...</div>}>
+    <Suspense
+      fallback={<div className="p-6 text-center text-gray-500">Loading...</div>}
+    >
       <SignInForm />
     </Suspense>
   );

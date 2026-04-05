@@ -148,7 +148,7 @@ export function PricingSection() {
           animate={floatAnimation}
           className="absolute top-1/4 left-1/4"
         >
-          <div className="w-96 h-96 bg-[#D4A574]/5 rounded-full blur-[120px]" />
+          <div className="w-96 h-96 bg-skin/5 rounded-full blur-[120px]" />
         </motion.div>
         <motion.div
           animate={{
@@ -181,9 +181,9 @@ export function PricingSection() {
         >
           <motion.div
             variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-primary to-[#5a0f1a] border border-[#D4A574]/20 mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-primary to-[#5a0f1a] border border-skin/20 mb-6"
           >
-            <Sparkles className="h-4 w-4 text-[#D4A574]" />
+            <Sparkles className="h-4 w-4 text-skin" />
             <span className="text-sm font-semibold text-white tracking-wide">
               Flexible Plans
             </span>
@@ -194,7 +194,7 @@ export function PricingSection() {
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight"
           >
             Choose Your{" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-[#D4A574] to-[#e8c4a0]">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-skin to-skin-light">
               Subscription
             </span>
           </motion.h2>
@@ -212,7 +212,7 @@ export function PricingSection() {
             <span
               className={cn(
                 "text-sm font-semibold transition-colors",
-                !isMonthly ? "text-[#D4A574]" : "text-white/50",
+                !isMonthly ? "text-skin" : "text-white/50",
               )}
             >
               Weekly
@@ -225,7 +225,7 @@ export function PricingSection() {
             <span
               className={cn(
                 "text-sm font-semibold transition-colors",
-                isMonthly ? "text-[#D4A574]" : "text-white/50",
+                isMonthly ? "text-skin" : "text-white/50",
               )}
             >
               Monthly
@@ -245,7 +245,7 @@ export function PricingSection() {
           initial="initial"
           animate={isInView ? "animate" : "initial"}
           variants={staggerContainer}
-          className="grid md:grid-cols-3 gap-6 lg:gap-8"
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
         >
           {plans.map((plan) => (
             <motion.div
@@ -253,20 +253,20 @@ export function PricingSection() {
               variants={scaleIn}
               className={cn(
                 "perspective-1000",
-                plan.popular && "md:-mt-4 md:mb-4",
+                plan.popular && "lg:-mt-4 lg:mb-4",
               )}
             >
               <TiltCard popular={plan.popular} className="relative h-full">
                 {/* Popular Glow Effect */}
                 {plan.popular && (
-                  <div className="absolute -inset-1 bg-linear-to-r from-[#D4A574] to-primary rounded-3xl opacity-50 blur-xl" />
+                  <div className="absolute -inset-1 bg-linear-to-r from-skin to-primary rounded-3xl opacity-50 blur-xl" />
                 )}
 
                 <div
                   className={cn(
                     "relative h-full rounded-3xl overflow-hidden",
                     plan.popular
-                      ? "bg-gradient-to-b from-primary to-[#5a0f1a] border-2 border-[#D4A574]/30"
+                      ? "bg-gradient-to-b from-primary to-[#5a0f1a] border-2 border-skin/30"
                       : "bg-white/5 backdrop-blur-xl border border-white/10",
                   )}
                 >
@@ -275,19 +275,19 @@ export function PricingSection() {
                     className={cn(
                       "absolute top-0 left-0 right-0 h-1 bg-gradient-to-r",
                       plan.popular
-                        ? "from-[#D4A574] via-white/50 to-[#D4A574]"
+                        ? "from-skin via-white/50 to-skin"
                         : "from-white/20 via-white/40 to-white/20",
                     )}
                   />
 
-                  <div className="p-6 lg:p-8 pt-8">
+                  <div className="p-5 sm:p-6 lg:p-8 pt-6 sm:pt-8">
                     {/* Popular Badge */}
                     {plan.popular && (
                       <motion.div
                         initial={{ scale: 0, y: -20 }}
                         animate={{ scale: 1, y: 0 }}
                         transition={{ delay: 0.5, type: "spring" }}
-                        className="inline-flex bg-gradient-to-r from-[#D4A574] to-[#c49a6a] text-primary text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-[#D4A574]/30 mb-4"
+                        className="inline-flex bg-gradient-to-r from-skin to-skin-mid text-primary text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-skin/30 mb-4"
                       >
                         {plan.highlight}
                       </motion.div>
@@ -325,7 +325,7 @@ export function PricingSection() {
                         className={cn(
                           "w-full rounded-full h-12 font-semibold transition-all",
                           plan.popular
-                            ? "bg-gradient-to-r from-[#D4A574] to-[#c49a6a] hover:from-[#e8c4a0] hover:to-[#D4A574] text-primary shadow-lg shadow-[#D4A574]/30 hover:scale-[1.02] active:scale-[0.98]"
+                            ? "bg-gradient-to-r from-skin to-skin-mid hover:from-skin-light hover:to-skin text-primary shadow-lg shadow-skin/30 hover:scale-[1.02] active:scale-[0.98]"
                             : "bg-white/10 hover:bg-white/20 text-white border border-white/20",
                         )}
                       >
@@ -347,14 +347,14 @@ export function PricingSection() {
                           <div
                             className={cn(
                               "mt-0.5 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0",
-                              plan.popular ? "bg-[#D4A574]/20" : "bg-white/10",
+                              plan.popular ? "bg-skin/20" : "bg-white/10",
                             )}
                           >
                             <Check
                               className={cn(
                                 "h-3 w-3",
                                 plan.popular
-                                  ? "text-[#D4A574]"
+                                  ? "text-skin"
                                   : "text-white/70",
                               )}
                             />
@@ -389,7 +389,7 @@ export function PricingSection() {
               key={badge.text}
               className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10"
             >
-              <badge.icon className="h-4 w-4 text-[#D4A574]" />
+              <badge.icon className="h-4 w-4 text-skin" />
               <span className="text-sm font-medium text-white/70">
                 {badge.text}
               </span>

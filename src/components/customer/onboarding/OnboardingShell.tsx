@@ -58,28 +58,28 @@ export function OnboardingShell({
   const stepText = `Step ${normalizedStep + 1} of ${totalSteps}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-accent to-muted px-4 py-6 sm:px-8 sm:py-10">
+    <div className="min-h-screen bg-gradient-to-b from-accent to-muted px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10">
       <div
         className={cn(
-          "mx-auto w-full max-w-4xl overflow-hidden rounded-sm border border-border bg-card shadow-xl",
+          "mx-auto w-full max-w-4xl md:max-w-5xl overflow-hidden rounded-sm border border-border bg-card shadow-xl",
           className,
         )}
       >
-        <header className="space-y-4 border-b border-border px-5 py-5 sm:px-8 sm:py-7">
+        <header className="space-y-4 border-b border-border px-5 py-5 sm:px-6 sm:py-6 md:px-8 md:py-7">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="space-y-1">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Onboarding</p>
-              <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">{title}</h1>
-              <p className=" text-sm text-muted-foreground">{subtitle}</p>
+              <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl md:text-[26px]">{title}</h1>
+              <p className="text-sm text-muted-foreground">{subtitle}</p>
             </div>
             <p className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{stepText}</p>
           </div>
           <Stepper items={steps.slice(0, totalSteps)} currentStep={normalizedStep} showDescriptions={false} />
         </header>
 
-        <section className="p-5 sm:p-8">{children}</section>
+        <section className="p-5 sm:p-6 md:p-8">{children}</section>
 
-        <footer className="flex flex-col gap-3 border-t border-border bg-muted/70 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <footer className="flex flex-col gap-3 border-t border-border bg-muted/70 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5 md:px-8 md:py-6">
           <div className="flex w-full items-center gap-2 sm:w-auto">
             {showBackButton ? (
               <Button

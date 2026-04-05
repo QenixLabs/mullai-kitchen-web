@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(head:*)",
+      "Bash(find:*)",
+      "Bash(cd \"C:\\\\Users\\\\jaisw\\\\OneDrive\\\\Desktop\\\\Projects\\\\QenixLabs\\\\Projects\\\\MullaiKitchen\\\\client\" && npx shadcn@latest add tabs --yes 2>&1)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(tail:*)",
+      "Bash(cd \"C:/Users/jaisw/OneDrive/Desktop/Projects/QenixLabs/Projects/MullaiKitchen/client\" && npx tsc --noEmit --pretty 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\jaisw\\\\OneDrive\\\\Desktop\\\\Projects\\\\QenixLabs\\\\Projects\\\\MullaiKitchen\\\\client\" && npx tsc --noEmit 2>&1)",
+      "mcp__playwright__browser_navigate"
+    ]
+  }
+}

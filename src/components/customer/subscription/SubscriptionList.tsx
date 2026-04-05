@@ -47,7 +47,7 @@ export function SubscriptionList({
   );
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-8 py-4 sm:py-6">
+    <div className="flex flex-col gap-5 py-4 sm:gap-6 sm:py-5 lg:gap-8 lg:py-6">
       {sorted.map((subscription) => (
         <SubscriptionCard
           key={subscription._id}

@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Sidebar } from "@/components/navigation/Sidebar";
@@ -20,6 +20,23 @@ export default function AuthenticatedLayout({
   const hasHydrated = useAuthHydrated();
   const isAuthenticated = useIsAuthenticated();
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 768px) and (max-width: 1023px)");
+
+    const applySidebarMode = (event?: MediaQueryListEvent) => {
+      const isTablet = event ? event.matches : mediaQuery.matches;
+      setSidebarOpen(!isTablet);
+    };
+
+    applySidebarMode();
+    mediaQuery.addEventListener("change", applySidebarMode);
+
+    return () => {
+      mediaQuery.removeEventListener("change", applySidebarMode);
+    };
+  }, []);
 
   useEffect(() => {
     if (hasHydrated && !isAuthenticated) {
@@ -42,7 +59,7 @@ export default function AuthenticatedLayout({
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
       <Sidebar />
       <SidebarInset className="flex flex-col min-h-svh bg-background pb-28 md:pb-0">
         <DashboardTopBar className="sticky top-0 z-30 border-b border-border" />

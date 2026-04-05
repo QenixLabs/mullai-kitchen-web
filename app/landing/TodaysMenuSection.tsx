@@ -150,7 +150,7 @@ export function TodaysMenuSection() {
           animate={floatAnimation}
           className="absolute top-0 left-1/3"
         >
-          <div className="w-96 h-96 bg-[#D4A574]/5 rounded-full blur-[120px]" />
+          <div className="w-96 h-96 bg-skin/5 rounded-full blur-[120px]" />
         </motion.div>
         <motion.div
           animate={{
@@ -182,9 +182,9 @@ export function TodaysMenuSection() {
         >
           <motion.div
             variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary to-[#5a0f1a] border border-[#D4A574]/20 mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary to-[#5a0f1a] border border-skin/20 mb-6"
           >
-            <ChefHat className="h-4 w-4 text-[#D4A574]" />
+            <ChefHat className="h-4 w-4 text-skin" />
             <span className="text-sm font-semibold text-white tracking-wide">
               Fresh from Kitchen
             </span>
@@ -195,14 +195,14 @@ export function TodaysMenuSection() {
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight"
           >
             Today&apos;s{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#e8c4a0]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-skin to-skin-light">
               Menu
             </span>
           </motion.h2>
 
           <motion.p variants={fadeInUp} className="text-lg text-white/60">
             Handpicked dishes prepared fresh today.{" "}
-            <span ref={counterRef} className="text-[#D4A574] font-semibold">
+            <span ref={counterRef} className="text-skin font-semibold">
               {itemCount}
             </span>{" "}
             items available for immediate delivery.
@@ -246,7 +246,7 @@ export function TodaysMenuSection() {
           initial="initial"
           animate={isInView ? "animate" : "initial"}
           variants={staggerContainer}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8"
         >
           <AnimatePresence mode="popLayout">
             {filteredItems.map((item) => (
@@ -266,13 +266,13 @@ export function TodaysMenuSection() {
                   {/* Glow Effect on Hover */}
                   <div
                     className={cn(
-                      "absolute -inset-1 bg-gradient-to-r from-[#D4A574]/20 to-primary/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500",
+                      "absolute -inset-1 bg-gradient-to-r from-skin/20 to-primary/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500",
                     )}
                   />
 
-                  <div className="relative h-full bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 hover:border-[#D4A574]/30 transition-all duration-300">
+                  <div className="relative h-full bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 hover:border-skin/30 transition-all duration-300">
                     {/* Gradient Top Border */}
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#D4A574] to-primary opacity-80" />
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-skin to-primary opacity-80" />
 
                     {/* Image */}
                     <div className="relative h-48 sm:h-52 overflow-hidden">
@@ -293,7 +293,7 @@ export function TodaysMenuSection() {
                             animate={{ scale: 1 }}
                             className="flex items-center gap-1 bg-gradient-to-r from-primary to-[#5a0f1a] text-white text-[10px] sm:text-xs font-semibold px-2 sm:px-3 py-1 sm:py-1.5 rounded-full shadow-lg shadow-primary/30"
                           >
-                            <Flame className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#D4A574]" />
+                            <Flame className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-skin" />
                             <span className="hidden sm:inline">Popular</span>
                             <span className="sm:hidden">Hot</span>
                           </motion.div>
@@ -342,11 +342,11 @@ export function TodaysMenuSection() {
 
                       <div className="flex items-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-white/50 mb-3 sm:mb-4">
                         <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#D4A574]/70" />
+                          <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-skin/70" />
                           {item.calories}
                         </div>
                         <div className="flex items-center gap-1">
-                          <Flame className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#D4A574]/70" />
+                          <Flame className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-skin/70" />
                           {item.spice}
                         </div>
                         <span className="text-white/40 hidden sm:inline">
@@ -365,7 +365,7 @@ export function TodaysMenuSection() {
                         </div>
                         <Button
                           size="sm"
-                          className="rounded-full bg-gradient-to-r from-[#D4A574] to-[#c49a6a] hover:from-[#e8c4a0] hover:to-[#D4A574] text-primary text-xs sm:text-sm font-semibold shadow-lg shadow-[#D4A574]/20 transition-all hover:scale-[1.02] active:scale-[0.98] px-3 sm:px-4 py-1 sm:py-2 h-auto"
+                          className="rounded-full bg-gradient-to-r from-skin to-skin-mid hover:from-skin-light hover:to-skin text-primary text-xs sm:text-sm font-semibold shadow-lg shadow-skin/20 transition-all hover:scale-[1.02] active:scale-[0.98] px-3 sm:px-4 py-1 sm:py-2 h-auto"
                         >
                           Order
                         </Button>
@@ -387,7 +387,7 @@ export function TodaysMenuSection() {
         >
           <Button
             size="lg"
-            className="h-14 px-8 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold hover:bg-white/20 hover:border-[#D4A574]/30 transition-all group"
+            className="h-14 px-8 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold hover:bg-white/20 hover:border-skin/30 transition-all group"
           >
             View Full Weekly Menu
             <ChevronRight className="h-5 w-5 ml-2 transition-transform group-hover:translate-x-1" />

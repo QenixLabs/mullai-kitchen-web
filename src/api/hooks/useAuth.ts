@@ -8,6 +8,7 @@ import { authKeys } from "@/api/query-keys";
 import { userApi } from "@/api/user.api";
 import type {
   IAuthSession,
+  ICorporateRegisterRequest,
   IForgotPasswordRequest,
   ILoginRequest,
   IRefreshTokenRequest,
@@ -47,6 +48,13 @@ export function useRegister() {
       setSession(session);
       queryClient.setQueryData(authKeys.me(), session.user);
     },
+  });
+}
+
+export function useCorporateRegister() {
+  return useMutation({
+    mutationFn: (payload: ICorporateRegisterRequest) =>
+      authApi.corporateRegister(payload),
   });
 }
 

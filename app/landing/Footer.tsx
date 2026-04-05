@@ -49,7 +49,7 @@ export function LandingFooter() {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Glow Orbs */}
         <motion.div animate={floatAnimation} className="absolute top-0 right-0">
-          <div className="w-96 h-96 bg-[#D4A574]/5 rounded-full blur-[150px]" />
+          <div className="w-96 h-96 bg-skin/5 rounded-full blur-[150px]" />
         </motion.div>
         <motion.div
           animate={{
@@ -77,7 +77,7 @@ export function LandingFooter() {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-6 group">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#D4A574] to-[#c49a6a] shadow-lg shadow-[#D4A574]/30 transition-transform group-hover:scale-110">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-skin to-skin-mid shadow-lg shadow-skin/30 transition-transform group-hover:scale-110">
                 <UtensilsCrossed className="h-5 w-5 text-primary" />
               </div>
               <span className="text-xl font-bold text-white">Mullai</span>
@@ -98,9 +98,9 @@ export function LandingFooter() {
                 <Input
                   type="email"
                   placeholder="Your email"
-                  className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-[#D4A574]/50"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-skin/50"
                 />
-                <Button className="bg-gradient-to-r from-[#D4A574] to-[#c49a6a] hover:from-[#e8c4a0] hover:to-[#D4A574] text-primary font-semibold shadow-lg shadow-[#D4A574]/20">
+                <Button className="bg-gradient-to-r from-skin to-skin-mid hover:from-skin-light hover:to-skin text-primary font-semibold shadow-lg shadow-skin/20">
                   Subscribe
                 </Button>
               </div>
@@ -116,7 +116,7 @@ export function LandingFooter() {
                 <a
                   key={i}
                   href={social.href}
-                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#D4A574] hover:border-[#D4A574] hover:text-primary transition-all"
+                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-skin hover:border-skin hover:text-primary transition-all"
                 >
                   <social.icon className="h-5 w-5" />
                 </a>
@@ -132,7 +132,7 @@ export function LandingFooter() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-white/50 hover:text-[#D4A574] transition-colors"
+                    className="text-white/50 hover:text-skin transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -149,7 +149,7 @@ export function LandingFooter() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-white/50 hover:text-[#D4A574] transition-colors"
+                    className="text-white/50 hover:text-skin transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -163,7 +163,7 @@ export function LandingFooter() {
             <h3 className="text-lg font-bold text-white mb-6">Contact Us</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-[#D4A574] mt-0.5 flex-shrink-0" />
+                <MapPin className="h-5 w-5 text-skin mt-0.5 flex-shrink-0" />
                 <span className="text-white/50 text-sm">
                   Building No. 51A, Bajanai Kovil Street,
                   <br />
@@ -173,19 +173,19 @@ export function LandingFooter() {
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-[#D4A574] flex-shrink-0" />
+                <Phone className="h-5 w-5 text-skin flex-shrink-0" />
                 <a
                   href="tel:+918428129262"
-                  className="text-white/50 hover:text-[#D4A574] transition-colors"
+                  className="text-white/50 hover:text-skin transition-colors"
                 >
                   +91 84281 29262
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-[#D4A574] flex-shrink-0" />
+                <Mail className="h-5 w-5 text-skin flex-shrink-0" />
                 <a
                   href="mailto:founder@mullai.net"
-                  className="text-white/50 hover:text-[#D4A574] transition-colors"
+                  className="text-white/50 hover:text-skin transition-colors"
                 >
                   founder@mullai.net
                 </a>
@@ -197,13 +197,13 @@ export function LandingFooter() {
               <p className="text-sm text-white/40 mb-3">Certified by</p>
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-lg border border-white/10">
-                  <Shield className="h-4 w-4 text-[#D4A574]" />
+                  <Shield className="h-4 w-4 text-skin" />
                   <span className="text-xs text-white/60 font-medium">
                     FSSAI Licensed
                   </span>
                 </div>
                 <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-lg border border-white/10">
-                  <ChefHat className="h-4 w-4 text-[#D4A574]" />
+                  <ChefHat className="h-4 w-4 text-skin" />
                   <span className="text-xs text-white/60 font-medium">
                     ISO 22000
                   </span>
@@ -224,7 +224,7 @@ export function LandingFooter() {
 
             <p className="text-white/40 text-sm flex items-center gap-1">
               Made with{" "}
-              <Heart className="h-4 w-4 text-[#D4A574] fill-[#D4A574]" /> in
+              <Heart className="h-4 w-4 text-skin fill-skin" /> in
               Chennai
             </p>
 

@@ -2,6 +2,8 @@ import { apiClient } from "@/api/client";
 import { AUTH_ROUTES } from "@/api/routes";
 import type {
   IAuthSession,
+  IChangePasswordRequest,
+  ICorporateRegisterRequest,
   IForgotPasswordRequest,
   ILoginRequest,
   IRefreshTokenRequest,
@@ -23,6 +25,13 @@ export const authApi = {
     const response = await apiClient.post<IAuthSession>(AUTH_ROUTES.REGISTER, payload);
     return response.data;
   },
+  corporateRegister: async (payload: ICorporateRegisterRequest): Promise<IAuthSession> => {
+    const response = await apiClient.post<IAuthSession>(
+      AUTH_ROUTES.CORPORATE_REGISTER,
+      payload,
+    );
+    return response.data;
+  },
   refreshToken: async (payload: IRefreshTokenRequest): Promise<IAuthSession> => {
     const response = await apiClient.post<IAuthSession>(AUTH_ROUTES.REFRESH, payload);
     return response.data;
@@ -39,6 +48,10 @@ export const authApi = {
   },
   resetPassword: async (payload: IResetPasswordRequest): Promise<void> => {
     await apiClient.post(AUTH_ROUTES.RESET_PASSWORD, payload);
+  },
+  changePassword: async (payload: IChangePasswordRequest): Promise<{ message: string }> => {
+    const response = await apiClient.post<{ message: string }>(AUTH_ROUTES.CHANGE_PASSWORD, payload);
+    return response.data;
   },
   sendSignupOtp: async (payload: ISendSignupOtpRequest): Promise<{ message: string }> => {
     const response = await apiClient.post<{ message: string }>(AUTH_ROUTES.SEND_SIGNUP_OTP, payload);

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -54,7 +55,7 @@ export function Navbar() {
               {/* Logo */}
               <div className="flex-shrink-0">
                 <Link href="/">
-                  <img src="/logo.png" alt="Mullai Kitchen" className="h-8 w-auto" />
+                  <Image src="/logo.png" alt="Mullai Kitchen" width={120} height={32} className="h-8 w-auto" priority />
                 </Link>
               </div>
 

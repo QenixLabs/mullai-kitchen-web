@@ -36,6 +36,22 @@
   --gold-light: 31 59% 82%;
   --gold-foreground: 0 0% 10%;
 
+  /* Primary color variations (similar to primary but distinct) */
+  --primary-dark: 351 69% 7%;      /* #210309 - Very dark burgundy */
+  --primary-medium: 351 28% 23%;   /* #4D2428 - Medium dark burgundy */
+  --primary-light: 350 69% 24%;    /* #58111F - Lighter burgundy */
+
+  /* Brand color aliases */
+  --skin: 31 53% 64%;              /* #D4A574 */
+  --skin-mid: 30 45% 60%;          /* #c49a6a - Mid tone */
+  --skin-light: 30 48% 82%;        /* #ECD1B4 */
+  --skin-foreground: 0 0% 10%;
+
+  /* Secondary colors */
+  --secondary-alt: 0 1% 47%;       /* #797778 - Secondary gray */
+  --secondary-light-alt: 0 0% 90%; /* #E6E7E7 - Light gray */
+  --background-alt: 0 0% 98%;      /* #FBFBFB - Off-white */
+
   /* New semantic color tokens */
   --success: 142 76% 36%;
   --success-foreground: 355 100% 97%;
@@ -111,6 +127,20 @@
   --color-gold: hsl(var(--gold));
   --color-gold-light: hsl(var(--gold-light));
   --color-gold-foreground: hsl(var(--gold-foreground));
+
+  /* Primary color variation mappings */
+  --color-primary-dark: hsl(var(--primary-dark));
+  --color-primary-medium: hsl(var(--primary-medium));
+  --color-primary-light: hsl(var(--primary-light));
+
+  /* Brand color aliases */
+  --color-skin: hsl(var(--skin));
+  --color-skin-mid: hsl(var(--skin-mid));
+  --color-skin-light: hsl(var(--skin-light));
+  --color-skin-foreground: hsl(var(--skin-foreground));
+  --color-secondary-alt: hsl(var(--secondary-alt));
+  --color-secondary-light-alt: hsl(var(--secondary-light-alt));
+  --color-background-alt: hsl(var(--background-alt));
 
   /* Spacing token mappings */
   --spacing-xs: var(--spacing-xs);
@@ -216,7 +246,7 @@ h1 {
 }
 
 .mk-onboarding-timepicker {
-  --tp-primary: #39070F;
+  --tp-primary: #44151C;
   --tp-on-primary: #ffffff;
   --tp-primary-container: #f5e8ea;
   --tp-on-primary-container: #230509;
@@ -228,7 +258,7 @@ h1 {
   --tp-text: #1f2937;
   --tp-text-secondary: #4b5563;
   --tp-outline-variant: #d1c5c8;
-  --tp-outline: #39070F;
+  --tp-outline: #44151C;
   --tp-hover-bg: #f5e8ea;
   --tp-border-radius: 18px;
 }

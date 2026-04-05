@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FaMapMarkerAlt, FaCheckCircle, FaUsers, FaChevronRight, FaSearch, FaMapPin } from "react-icons/fa";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -218,10 +219,12 @@ export function HeroSection({
         {/* Right Column - Meal Image */}
         <div className="relative hidden lg:block">
           <div className="relative h-80 w-full overflow-hidden rounded-sm shadow-xl xl:h-96">
-            <img
+            <Image
               src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80"
               alt="South Indian meal platter with traditional dishes"
-              className="h-full w-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 1280px) 50vw, 600px"
             />
             {/* Today's Special Badge */}
             <div className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1.5 shadow-lg backdrop-blur-sm sm:px-4 sm:py-2">

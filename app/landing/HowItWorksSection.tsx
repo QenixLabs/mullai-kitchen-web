@@ -47,7 +47,7 @@ export function HowItWorksSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-[#0d0205] via-[#1a0509] to-[#0d0205]" />
 
       {/* Subtle glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#D4A574]/5 rounded-full blur-[150px]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-skin/5 rounded-full blur-[150px]" />
 
       <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Section Header */}
@@ -59,9 +59,9 @@ export function HowItWorksSection() {
         >
           <motion.div
             variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-primary to-[#5a0f1a] border border-[#D4A574]/20 mb-4 sm:mb-6"
+            className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-primary to-[#5a0f1a] border border-skin/20 mb-4 sm:mb-6"
           >
-            <Sparkles className="h-4 w-4 text-[#D4A574]" />
+            <Sparkles className="h-4 w-4 text-skin" />
             <span className="text-sm font-semibold text-white tracking-wide">
               Simple Process
             </span>
@@ -72,7 +72,7 @@ export function HowItWorksSection() {
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 tracking-tight"
           >
             How{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#e8c4a0]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-skin to-skin-light">
               Mullai
             </span>{" "}
             Works
@@ -96,22 +96,22 @@ export function HowItWorksSection() {
         >
           {steps.map((step, index) => (
             <motion.div key={step.number} variants={fadeInUp} className="group">
-              <div className="relative h-full bg-white/5 rounded-2xl p-6 border border-white/10 hover:border-[#D4A574]/30 transition-all duration-300">
+              <div className="relative h-full bg-white/5 rounded-2xl p-6 border border-white/10 hover:border-skin/30 transition-all duration-300">
                 {/* Step Number */}
                 <div className="absolute -top-3 left-6">
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={isInView ? { scale: 1 } : { scale: 0 }}
                     transition={{ delay: 0.3 + index * 0.1, type: "spring" }}
-                    className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-[#D4A574] to-[#c49a6a] text-primary text-sm font-bold"
+                    className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-skin to-skin-mid text-primary text-sm font-bold"
                   >
                     {step.number}
                   </motion.div>
                 </div>
 
                 {/* Icon */}
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#D4A574]/20 to-[#c49a6a]/10 flex items-center justify-center mb-4 mt-3">
-                  <step.icon className="h-7 w-7 text-[#D4A574]" />
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-skin/20 to-skin-mid/10 flex items-center justify-center mb-4 mt-3">
+                  <step.icon className="h-7 w-7 text-skin" />
                 </div>
 
                 {/* Content */}
