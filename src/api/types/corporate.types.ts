@@ -280,7 +280,7 @@ export interface ICorporateInvoice {
     modification_amount: number;
   }[];
   subtotal: number;
-  total_reduction: number;
+  total_modification: number;
   total_amount: number;
   tax_amount: number;
   grand_total: number;

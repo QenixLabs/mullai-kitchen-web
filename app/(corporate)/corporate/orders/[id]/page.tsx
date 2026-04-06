@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, Suspense } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { format, isBefore, startOfDay } from "date-fns";
@@ -25,6 +25,7 @@ import { CancelOrderDialog } from "@/components/corporate/order-detail/CancelOrd
 import { OrderDetailHeader } from "@/components/corporate/order-detail/OrderDetailHeader";
 import { generateDeliveryDates } from "@/lib/corporate/dates";
 import { formatDate } from "@/lib/corporate/format";
+import { isBillingCycleComplete } from "@/lib/corporate/proforma";
 import type { ICorporateOrderModification } from "@/api/types/corporate.types";
 
 import { motion, AnimatePresence } from "motion/react";
@@ -100,7 +101,27 @@ function OrderDetailPage() {
   const [modReason, setModReason] = useState("");
 
   const modsList = modifications ?? [];
-  const hasFinalInvoice = !!finalInvoice;
+
+  // Auto-generate final invoice when billing cycle completes
+  useEffect(() => {
+    if (!order) return;
+    const cycleComplete = isBillingCycleComplete(order.current_billing_start, order.billing_cycle_days);
+    const isActive = order.status === "active" || order.status === "completed";
+    if (cycleComplete && !finalInvoice && isActive && !generateFinalMutation.isPending) {
+      generateFinalMutation.mutate(undefined, {
+        onSuccess: () => {
+          toast.success("Final invoice generated", {
+            description: "Your final invoice with all adjustments has been created.",
+          });
+        },
+        onError: (error: Error) => {
+          toast.error("Failed to generate invoice", {
+            description: error.message || "Please try again.",
+          });
+        },
+      });
+    }
+  }, [order, finalInvoice, generateFinalMutation.isPending]);
 
   // Build a set of dates that already have modifications
   const modifiedDatesSet = useMemo(() => {
@@ -244,22 +265,6 @@ function OrderDetailPage() {
         },
       }
     );
-  };
-
-  // Generate final invoice
-  const handleGenerateFinalInvoice = () => {
-    generateFinalMutation.mutate(undefined, {
-      onSuccess: () => {
-        toast.success("Final invoice generated", {
-          description: "Your final invoice with all adjustments has been created.",
-        });
-      },
-      onError: (error: Error) => {
-        toast.error("Failed to generate invoice", {
-          description: error.message || "Please try again.",
-        });
-      },
-    });
   };
 
   // Loading state
@@ -422,10 +427,7 @@ function OrderDetailPage() {
               order={order}
               proformaInvoice={proformaInvoice}
               finalInvoice={finalInvoice}
-              hasFinalInvoice={hasFinalInvoice}
-              isCompleted={isCompleted}
               isCancelled={isCancelled}
-              onGenerateFinalInvoice={handleGenerateFinalInvoice}
               isGeneratingFinal={generateFinalMutation.isPending}
             />
           )}

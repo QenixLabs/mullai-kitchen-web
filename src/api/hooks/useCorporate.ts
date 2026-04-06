@@ -36,6 +36,7 @@ export function useModifyCorporateOrder(orderId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: corporateKeys.order(orderId) });
       queryClient.invalidateQueries({ queryKey: corporateKeys.modifications(orderId) });
+      queryClient.invalidateQueries({ queryKey: corporateKeys.invoice(orderId, 'proforma') });
     },
   });
 }

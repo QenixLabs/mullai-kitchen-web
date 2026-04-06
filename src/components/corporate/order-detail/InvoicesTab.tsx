@@ -1,34 +1,46 @@
 "use client";
 
 import { motion } from "motion/react";
-import { IndianRupee, FileText, ArrowDown, ArrowUp } from "lucide-react";
+import {
+  IndianRupee,
+  FileText,
+  ArrowDown,
+  ArrowUp,
+  Lock,
+  Loader2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import type { ICorporateInvoice, ICorporateOrder } from "@/api/types/corporate.types";
+import { Skeleton } from "@/components/ui/skeleton";
+import type {
+  ICorporateInvoice,
+  ICorporateOrder,
+} from "@/api/types/corporate.types";
+import {
+  isBillingCycleComplete,
+  getCycleEndDisplayDate,
+  getDaysRemaining,
+} from "@/lib/corporate/proforma";
+
+// ─── Props ──────────────────────────────────────────────────────────────────
 
 interface InvoicesTabProps {
   order: ICorporateOrder;
   proformaInvoice: ICorporateInvoice | undefined;
   finalInvoice: ICorporateInvoice | undefined;
-  hasFinalInvoice: boolean;
-  isCompleted: boolean;
   isCancelled: boolean;
-  onGenerateFinalInvoice: () => void;
   isGeneratingFinal: boolean;
 }
 
+// ─── Sub-components (unchanged) ─────────────────────────────────────────────
+
 function BillingSummary({ invoice }: { invoice: ICorporateInvoice }) {
-  const hasModifications =
-    invoice.modifications && invoice.modifications.length > 0;
   const hasAdjustment = invoice.total_modification !== 0;
   const isCredit = invoice.total_modification > 0;
 
   return (
     <div className="p-6 rounded-2xl bg-[#F8F2F3] border-0 shadow-sm">
-      <h3
-        className="text-lg font-bold mb-6"
-        style={{ color: "#3D000C" }}
-      >
+      <h3 className="text-lg font-bold mb-6" style={{ color: "#3D000C" }}>
         Billing Summary
       </h3>
       <div className="space-y-4">
@@ -127,14 +139,13 @@ function ModificationRow({
   mod,
 }: {
   mod: {
-    modification_date: string;
+    date: string;
     veg_change: number;
     nonveg_change: number;
     modification_amount: number;
-    reason?: string;
   };
 }) {
-  const date = new Date(mod.modification_date).toLocaleDateString("en-US", {
+  const date = new Date(mod.date).toLocaleDateString("en-US", {
     month: "short",
     day: "2-digit",
   });
@@ -194,9 +205,6 @@ function ModificationRow({
         {isCredit ? "-" : "+"}₹
         {Math.abs(mod.modification_amount).toLocaleString("en-IN")}
       </td>
-      <td className="py-3 text-xs text-muted-foreground max-w-[150px] truncate">
-        {mod.reason || "—"}
-      </td>
     </tr>
   );
 }
@@ -204,9 +212,13 @@ function ModificationRow({
 function InvoiceDisplay({
   invoice,
   order,
+  label,
+  liveBadge,
 }: {
   invoice: ICorporateInvoice;
   order: ICorporateOrder;
+  label: string;
+  liveBadge?: boolean;
 }) {
   const hasModifications =
     invoice.modifications && invoice.modifications.length > 0;
@@ -243,9 +255,20 @@ function InvoiceDisplay({
             <FileText className="h-6 w-6" />
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              Proforma Record
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                {label}
+              </p>
+              {liveBadge && (
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                  </span>
+                  Live
+                </span>
+              )}
+            </div>
             <h3 className="text-lg font-bold text-foreground tracking-tight truncate">
               {invoice.invoice_number}
             </h3>
@@ -340,9 +363,6 @@ function InvoiceDisplay({
                     <th className="text-right py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Amount
                     </th>
-                    <th className="text-left py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      Note
-                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/30">
@@ -372,7 +392,6 @@ function InvoiceDisplay({
                           invoice.total_modification,
                         ).toLocaleString("en-IN")}
                       </td>
-                      <td />
                     </tr>
                   </tfoot>
                 )}
@@ -385,56 +404,179 @@ function InvoiceDisplay({
   );
 }
 
+// ─── Locked final invoice preview ──────────────────────────────────────────
+
+function LockedFinalInvoicePreview({
+  currentBillingStart,
+  cycleDays,
+}: {
+  currentBillingStart: string;
+  cycleDays: number;
+}) {
+  const daysRemaining = getDaysRemaining(currentBillingStart, cycleDays);
+  const endDate = getCycleEndDisplayDate(currentBillingStart, cycleDays);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2 }}
+      className="relative mt-6 rounded-2xl overflow-hidden border border-border"
+    >
+      {/* Blurred skeleton preview */}
+      <div className="filter blur-[6px] opacity-40 pointer-events-none select-none p-6 space-y-4">
+        <Skeleton className="h-5 w-40" />
+        <Skeleton className="h-px w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-px w-full" />
+        <Skeleton className="h-8 w-48 ml-auto" />
+      </div>
+
+      {/* Overlay */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-[2px]">
+        <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-3">
+          <Lock className="h-6 w-6" />
+        </div>
+        <p className="text-sm font-bold text-foreground">Final Invoice</p>
+        <p className="text-xs text-muted-foreground mt-1">
+          Available on {endDate}
+        </p>
+        <div className="mt-3 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold">
+          {daysRemaining} day{daysRemaining !== 1 ? "s" : ""} remaining
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Loading skeleton ───────────────────────────────────────────────────────
+
+function InvoiceLoadingSkeleton() {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2 rounded-2xl bg-white border border-border shadow-sm p-8 space-y-6">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-12 w-12 rounded-xl" />
+          <div className="space-y-2">
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-5 w-40" />
+          </div>
+        </div>
+        <Skeleton className="h-px w-full" />
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      </div>
+      <div className="lg:col-span-1 space-y-6">
+        <div className="p-6 rounded-2xl bg-[#F8F2F3] space-y-4">
+          <Skeleton className="h-6 w-36" />
+          <Skeleton className="h-5 w-full" />
+          <Skeleton className="h-5 w-full" />
+          <Skeleton className="h-5 w-full" />
+          <Skeleton className="h-8 w-full" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main InvoicesTab ───────────────────────────────────────────────────────
+
 export function InvoicesTab({
   order,
   proformaInvoice,
   finalInvoice,
-  hasFinalInvoice,
-  isCompleted,
   isCancelled,
-  onGenerateFinalInvoice,
   isGeneratingFinal,
 }: InvoicesTabProps) {
+  const cycleComplete = isBillingCycleComplete(
+    order.current_billing_start,
+    order.billing_cycle_days,
+  );
+
+  // Show loading if proforma hasn't loaded yet
   if (!proformaInvoice) {
+    return <InvoiceLoadingSkeleton />;
+  }
+
+  // ── State C: Cancelled order ──
+  if (isCancelled) {
     return (
       <div className="w-full">
-        <div className="p-16 rounded-2xl bg-muted/30 border border-dashed border-border text-center">
-          <FileText className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
-          <p className="text-sm font-medium text-muted-foreground">
-            No proforma invoice available for this order.
-          </p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <InvoiceDisplay
+              invoice={proformaInvoice}
+              order={order}
+              label="Invoice (Order Terminated)"
+            />
+          </div>
+          <div className="lg:col-span-1">
+            <BillingSummary invoice={proformaInvoice} />
+          </div>
         </div>
       </div>
     );
   }
 
-  const displayInvoice = finalInvoice || proformaInvoice;
+  // ── State B: Cycle complete → show final invoice ──
+  if (cycleComplete) {
+    if (isGeneratingFinal || !finalInvoice) {
+      return (
+        <div className="w-full">
+          <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Generating final invoice...
+          </div>
+          <InvoiceLoadingSkeleton />
+        </div>
+      );
+    }
 
+    return (
+      <div className="w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <InvoiceDisplay
+              invoice={finalInvoice}
+              order={order}
+              label="Final Invoice"
+            />
+          </div>
+          <div className="lg:col-span-1">
+            <BillingSummary invoice={finalInvoice} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── State A: Active cycle → live proforma + locked final invoice preview ──
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <InvoiceDisplay invoice={displayInvoice} order={order} />
+          <InvoiceDisplay
+            invoice={proformaInvoice}
+            order={order}
+            label="Live Proforma"
+            liveBadge
+          />
         </div>
         <div className="lg:col-span-1">
-          <BillingSummary invoice={displayInvoice} />
-
-          {/* Generate Final Invoice */}
-          {!hasFinalInvoice && !isCancelled && (
-            <div className="mt-6">
-              <Button
-                onClick={onGenerateFinalInvoice}
-                disabled={isGeneratingFinal || isCompleted}
-                className="w-full rounded-2xl h-12 font-bold text-xs uppercase tracking-widest bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg disabled:opacity-50"
-              >
-                {isGeneratingFinal
-                  ? "Generating..."
-                  : "Generate Final Invoice"}
-              </Button>
-            </div>
-          )}
+          <BillingSummary invoice={proformaInvoice} />
         </div>
       </div>
+
+      {/* Locked final invoice preview */}
+      <LockedFinalInvoicePreview
+        currentBillingStart={order.current_billing_start}
+        cycleDays={order.billing_cycle_days}
+      />
     </div>
   );
 }
