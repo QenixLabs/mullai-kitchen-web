@@ -2,38 +2,37 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "motion/react";
-import { MapPin, Calendar, ChefHat, Truck, Sparkles } from "lucide-react";
+import { Box, ChefHat, ClipboardList, Sparkles, Truck } from "lucide-react";
 import { fadeInUp, staggerContainer } from "./animations";
-import { cn } from "@/lib/utils";
 
 const steps = [
   {
     number: "01",
-    icon: MapPin,
-    title: "Check Your Location",
+    icon: ClipboardList,
+    title: "Preparation",
     description:
-      "Enter your pincode to see if we deliver to your area in Chennai. We cover most neighborhoods!",
+      "Ingredients are washed, sorted, and batch-measured based on the production plan and menu volume.",
   },
   {
     number: "02",
-    icon: Calendar,
-    title: "Choose Your Plan",
+    icon: ChefHat,
+    title: "Cooking",
     description:
-      "Pick from weekly or monthly subscriptions. Select meals per day and customize your preferences.",
+      "Standardized recipes and controlled temperatures ensure consistency across every corporate batch.",
   },
   {
     number: "03",
-    icon: ChefHat,
-    title: "We Cook Fresh Daily",
+    icon: Box,
+    title: "Packaging",
     description:
-      "Our chefs prepare your meals every morning with fresh, local ingredients. No preservatives, ever!",
+      "Meals are sealed in food-grade packaging with labeling, portion control, and route allocation.",
   },
   {
     number: "04",
     icon: Truck,
-    title: "Hot Delivery to Door",
+    title: "Dispatch",
     description:
-      "Meals delivered in insulated packaging within 30 minutes. Track your delivery in real-time.",
+      "Dispatch teams coordinate timed departures to deliver hot meals on committed corporate slots.",
   },
 ];
 
@@ -42,15 +41,11 @@ export function HowItWorksSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section ref={ref} className="relative py-24 overflow-hidden bg-[#0d0205]">
-      {/* Subtle gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0d0205] via-[#1a0509] to-[#0d0205]" />
+    <section ref={ref} className="relative py-24 overflow-hidden bg-[#100407]">
+      <div className="absolute inset-0 bg-linear-to-b from-[#100407] via-[#1a060a] to-[#100407]" />
+      <div className="absolute inset-0 opacity-[0.2] bg-[radial-gradient(circle_at_1px_1px,rgba(212,165,116,0.28)_1px,transparent_0)] bg-size-[34px_34px]" />
 
-      {/* Subtle glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-skin/5 rounded-full blur-[150px]" />
-
-      <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
-        {/* Section Header */}
+      <div className="relative mx-auto max-w-350 px-4 sm:px-6 lg:px-8 xl:px-12">
         <motion.div
           initial="initial"
           animate={isInView ? "animate" : "initial"}
@@ -59,11 +54,11 @@ export function HowItWorksSection() {
         >
           <motion.div
             variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-primary to-[#5a0f1a] border border-skin/20 mb-4 sm:mb-6"
+            className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-linear-to-r from-primary to-[#5a0f1a] border border-skin/20 mb-4 sm:mb-6"
           >
             <Sparkles className="h-4 w-4 text-skin" />
             <span className="text-sm font-semibold text-white tracking-wide">
-              Simple Process
+              Cooking Process
             </span>
           </motion.div>
 
@@ -71,59 +66,93 @@ export function HowItWorksSection() {
             variants={fadeInUp}
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 tracking-tight"
           >
-            How{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-skin to-skin-light">
-              Mullai
+            How We Execute{" "}
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-skin to-skin-light">
+              Large-Scale Cooking
             </span>{" "}
-            Works
+            Daily
           </motion.h2>
 
           <motion.p
             variants={fadeInUp}
             className="text-base sm:text-lg text-white/60 px-2 sm:px-0"
           >
-            Getting started takes just 2 minutes. Here&apos;s how we bring
-            home-style meals to your door.
+            A disciplined workflow from preparation to dispatch keeps every
+            meal safe, fresh, and on time.
           </motion.p>
         </motion.div>
 
-        {/* Steps Grid */}
         <motion.div
           initial="initial"
           animate={isInView ? "animate" : "initial"}
           variants={staggerContainer}
-          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+          className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] gap-6 lg:gap-10 items-center"
         >
-          {steps.map((step, index) => (
-            <motion.div key={step.number} variants={fadeInUp} className="group">
-              <div className="relative h-full bg-white/5 rounded-2xl p-6 border border-white/10 hover:border-skin/30 transition-all duration-300">
-                {/* Step Number */}
-                <div className="absolute -top-3 left-6">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={isInView ? { scale: 1 } : { scale: 0 }}
-                    transition={{ delay: 0.3 + index * 0.1, type: "spring" }}
-                    className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-skin to-skin-mid text-primary text-sm font-bold"
-                  >
-                    {step.number}
-                  </motion.div>
-                </div>
+          <motion.div variants={fadeInUp} className="relative w-full min-w-0 min-h-80 sm:min-h-115 rounded-3xl overflow-hidden border border-white/15">
+            <video
+              className="h-full w-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80"
+            >
+              <source
+                src="https://cdn.coverr.co/videos/coverr-cooking-on-a-stove-1571576837293/1080p.mp4"
+                type="video/mp4"
+              />
+            </video>
+            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/25 to-transparent" />
+            <div className="absolute left-4 right-4 sm:left-5 sm:right-5 bottom-4 sm:bottom-5 rounded-2xl border border-white/20 bg-black/40 backdrop-blur-sm p-4 text-white">
+              <p className="text-sm sm:text-base font-medium leading-snug wrap-break-word">
+                Real-time kitchen operations with process checkpoints at every stage.
+              </p>
+            </div>
+          </motion.div>
 
-                {/* Icon */}
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-skin/20 to-skin-mid/10 flex items-center justify-center mb-4 mt-3">
-                  <step.icon className="h-7 w-7 text-skin" />
-                </div>
+          <div className="relative min-w-0 w-full">
+            <div className="flex w-full gap-4 overflow-x-auto pb-2 snap-x snap-mandatory [scrollbar-width:thin] [scrollbar-color:rgba(212,165,116,0.35)_transparent]">
+            {steps.map((step, index) => {
+              const Icon = step.icon;
 
-                {/* Content */}
-                <h3 className="text-lg font-bold text-white mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-white/60 text-sm leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+              return (
+                <motion.div key={step.number} variants={fadeInUp} className="group shrink-0 snap-start w-65 sm:w-70">
+                  <div className="relative h-full rounded-2xl border border-white/15 bg-white/5 p-5 sm:p-6 backdrop-blur-sm hover:border-skin/35 transition-all duration-300">
+                    <div className="flex items-start gap-4">
+                      <div className="shrink-0">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/90 shadow-inner shadow-black/5">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-skin">
+                            <Icon className="h-5 w-5 text-primary" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-skin tracking-[0.14em] mb-1">
+                          STEP {index + 1}
+                        </p>
+                        <h3 className="text-lg sm:text-xl font-bold text-white mb-1.5">
+                          {step.title}
+                        </h3>
+                        <p className="text-white/65 text-sm sm:text-base leading-relaxed">
+                          {step.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {index < steps.length - 1 && (
+                      <div className="absolute top-1/2 -right-7 hidden sm:flex items-center pointer-events-none">
+                        <div className="w-5 border-t-2 border-dashed border-skin/45" />
+                        <div className="h-2.5 w-2.5 border-r-2 border-t-2 border-skin/70 rotate-45 -ml-0.5" />
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>
