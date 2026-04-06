@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { fadeInUp, staggerContainer } from "../animations";
 import { TextTestimonialCard } from "./TextTestimonialCard";
@@ -14,101 +14,7 @@ interface TestimonialGridProps {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Mosaic card widths - each card gets a different width for variety  */
-/* ------------------------------------------------------------------ */
-const CARD_WIDTHS = [320, 280, 340, 300, 360];
-
-function getCardWidth(index: number) {
-  return CARD_WIDTHS[index % CARD_WIDTHS.length];
-}
-
-/* ------------------------------------------------------------------ */
-/*  Infinite auto-scrolling row                                       */
-/* ------------------------------------------------------------------ */
-function MosaicScrollRow({
-  items,
-  renderItem,
-  speed = 30,
-  reverse = false,
-  className = "",
-}: {
-  items: Testimonial[];
-  renderItem: (item: Testimonial) => React.ReactNode;
-  speed?: number;
-  reverse?: boolean;
-  className?: string;
-}) {
-  const scrollerRef = useRef<HTMLDivElement>(null);
-  const [isPaused, setIsPaused] = useState(false);
-
-  // Duplicate items for seamless infinite loop
-  const duplicated = useMemo(() => [...items, ...items, ...items], [items]);
-
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el || isPaused) return;
-
-    const direction = reverse ? -1 : 1;
-    let rafId: number;
-    let lastTime: number | null = null;
-
-    const step = (timestamp: number) => {
-      if (lastTime === null) lastTime = timestamp;
-      const delta = (timestamp - lastTime) / 1000;
-      lastTime = timestamp;
-
-      el.scrollLeft += direction * speed * delta;
-
-      // When we've scrolled past one full set, snap back seamlessly
-      const oneSetWidth = el.scrollWidth / 3;
-      if (!reverse && el.scrollLeft >= oneSetWidth) {
-        el.scrollLeft -= oneSetWidth;
-      } else if (reverse && el.scrollLeft <= 0) {
-        el.scrollLeft += oneSetWidth;
-      }
-
-      rafId = requestAnimationFrame(step);
-    };
-
-    rafId = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(rafId);
-  }, [speed, reverse, isPaused, items]);
-
-  const handleMouseEnter = useCallback(() => setIsPaused(true), []);
-  const handleMouseLeave = useCallback(() => setIsPaused(false), []);
-
-  if (items.length === 0) return null;
-
-  return (
-    <div
-      className={className}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <div
-        ref={scrollerRef}
-        className="flex gap-5 overflow-hidden scrollbar-none"
-        style={{
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
-      >
-        {duplicated.map((item, i) => (
-          <div
-            key={`${item.id}-${i}`}
-            className="flex-shrink-0"
-            style={{ width: getCardWidth(i) }}
-          >
-            {renderItem(item)}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Main Mosaic Grid                                                  */
+/*  Main Grid Layout - Balanced with smaller featured video           */
 /* ------------------------------------------------------------------ */
 export function TestimonialGrid({
   testimonials,
@@ -124,14 +30,15 @@ export function TestimonialGrid({
   const regular = filtered.filter((t) => !t.featured);
 
   const renderCard = useCallback(
-    (testimonial: Testimonial) => {
+    (testimonial: Testimonial, isCompact: boolean = false) => {
       if (testimonial.type === "text") {
-        return <TextTestimonialCard testimonial={testimonial} />;
+        return <TextTestimonialCard testimonial={testimonial} isCompact={isCompact} />;
       }
       return (
         <VideoTestimonialCard
           testimonial={testimonial}
           onPlay={onPlayVideo}
+          isCompact={isCompact}
         />
       );
     },
@@ -146,44 +53,63 @@ export function TestimonialGrid({
         initial="initial"
         animate="animate"
         exit="initial"
-        className="space-y-6"
+        className="space-y-8"
       >
-        {/* Featured Testimonial - full width, static */}
+        {/* Featured Section - Smaller, balanced layout */}
         {featured && (
-          <motion.div variants={fadeInUp}>
-            {featured.type === "text" ? (
-              <TextTestimonialCard testimonial={featured} size="large" />
-            ) : (
-              <VideoTestimonialCard
-                testimonial={featured}
-                size="large"
-                onPlay={onPlayVideo}
-              />
-            )}
+          <motion.div
+            variants={fadeInUp}
+            className="grid lg:grid-cols-2 gap-6"
+          >
+            {/* Main Featured Video - Compact */}
+            <div className="lg:col-span-1">
+              {featured.type === "video" ? (
+                <VideoTestimonialCard
+                  testimonial={featured}
+                  onPlay={onPlayVideo}
+                  isCompact={false}
+                  isFeatured={true}
+                />
+              ) : (
+                <TextTestimonialCard testimonial={featured} isCompact={false} />
+              )}
+            </div>
+
+            {/* Side Content - Stats or additional info */}
+            <div className="lg:col-span-1 hidden lg:flex flex-col justify-center space-y-4">
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
+                <h3 className="text-xl font-bold text-white mb-2">
+                  Trusted by Thousands
+                </h3>
+                <p className="text-white/60 text-sm">
+                  Our customers love the authentic taste and reliable service.
+                  Join the community of happy diners.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 p-4 text-center">
+                  <p className="text-2xl font-bold text-skin">4.9</p>
+                  <p className="text-xs text-white/50">Average Rating</p>
+                </div>
+                <div className="bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 p-4 text-center">
+                  <p className="text-2xl font-bold text-skin">2K+</p>
+                  <p className="text-xs text-white/50">Reviews</p>
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
 
-        {/* Row 1: First half of regular cards, scroll right */}
+        {/* Regular Testimonials - Uniform Grid */}
         {regular.length > 0 && (
           <motion.div variants={fadeInUp}>
-            <MosaicScrollRow
-              items={regular.slice(0, Math.ceil(regular.length / 2))}
-              renderItem={renderCard}
-              speed={35}
-              reverse={false}
-            />
-          </motion.div>
-        )}
-
-        {/* Row 2: Second half, scroll left (counter-direction) */}
-        {regular.length > 2 && (
-          <motion.div variants={fadeInUp}>
-            <MosaicScrollRow
-              items={regular.slice(Math.ceil(regular.length / 2))}
-              renderItem={renderCard}
-              speed={28}
-              reverse={true}
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {regular.map((testimonial) => (
+                <div key={testimonial.id} className="h-full">
+                  {renderCard(testimonial, true)}
+                </div>
+              ))}
+            </div>
           </motion.div>
         )}
       </motion.div>

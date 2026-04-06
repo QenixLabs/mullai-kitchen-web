@@ -135,6 +135,10 @@ export function LandingNavbar() {
             </AnimatePresence>
           </motion.div>
 
+          <Link href="/individual" className="text-sm font-medium text-white/80 hover:text-white transition-all hover:translate-y-[-1px]">
+            Individual
+          </Link>
+
           {!isAuthenticated && (
             <Link href="/auth/signin" className="text-sm font-medium text-white/80 hover:text-white transition-all hover:translate-y-[-1px]">
               Login
@@ -213,6 +217,11 @@ export function LandingNavbar() {
               </div>
               
               <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
+                <Link href="/individual">
+                  <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
+                    Individual
+                  </Button>
+                </Link>
                 {!isAuthenticated && (
                   <Link href="/auth/signin">
                     <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
