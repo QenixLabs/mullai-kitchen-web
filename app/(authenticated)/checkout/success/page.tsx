@@ -3,10 +3,9 @@
 import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   CheckCircle2,
-  Home,
   RefreshCw,
   XCircle,
   Utensils,
@@ -22,7 +21,6 @@ import { format, addMonths } from "date-fns";
 
 import { usePaymentStore } from "@/hooks/usePaymentStore";
 import { useOrderStatus } from "@/api/hooks/usePayment";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -40,7 +38,6 @@ const MOCK_SUBSCRIPTION = {
 };
 
 function CheckoutSuccessContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<ConfirmationStatus>("loading");
   const [retryCount, setRetryCount] = useState(0);
@@ -50,7 +47,9 @@ function CheckoutSuccessContent() {
 
   const { data: orderStatus } = useOrderStatus(orderId || "");
 
-  const planName = searchParams.get("planName") || "Monthly Flex Plan";
+  const [displayOrderId] = useState(() =>
+    `ME-${Math.floor(1000 + Math.random() * 9000)}-${new Date().getFullYear()}`
+  );
 
   // Derive status and error from orderStatus synchronously
   const { derivedStatus, derivedError } = (() => {
@@ -108,7 +107,7 @@ function CheckoutSuccessContent() {
   };
 
   // Generate order ID for display
-  const displayOrderId = orderId || `ME-${Math.floor(1000 + Math.random() * 9000)}-${new Date().getFullYear()}`;
+  const displayOrderIdValue = orderId || displayOrderId;
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
@@ -149,7 +148,7 @@ function CheckoutSuccessContent() {
               {/* Order ID Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-[#E8E1E4] shadow-sm">
                 <span className="text-xs text-[#797778] uppercase tracking-wider">Order ID:</span>
-                <span className="font-mono font-semibold text-[#44151C]">{displayOrderId}</span>
+                <span className="font-mono font-semibold text-[#44151C]">{displayOrderIdValue}</span>
               </div>
             </motion.div>
           )}

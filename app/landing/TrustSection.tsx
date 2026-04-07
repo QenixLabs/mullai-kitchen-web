@@ -1,13 +1,10 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import {
   motion,
   useInView,
-  useMotionValue,
-  useTransform,
-  animate,
 } from "motion/react";
 import {
   MapPin,
@@ -19,7 +16,6 @@ import {
   ChefHat,
   Star,
   Users,
-  Sparkles,
 } from "lucide-react";
 import {
   fadeInUp,
@@ -27,7 +23,6 @@ import {
   scaleIn,
   floatAnimation,
 } from "./animations";
-import { cn } from "@/lib/utils";
 
 const trustSignals = [
   {
@@ -79,49 +74,6 @@ const chennaiAreas = [
   "OMR",
   "Anna Salai",
 ];
-
-// Counter animation hook
-import { useCounter } from "@/hooks/use-counter";
-
-// Animated Stat Component
-function AnimatedStat({
-  value,
-  suffix = "",
-  label,
-  icon: Icon,
-}: {
-  value: number;
-  suffix?: string;
-  label: string;
-  icon: React.ElementType;
-}) {
-  const { ref, displayValue } = useCounter(value);
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="flex items-start gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-skin/30 transition-all duration-300"
-    >
-      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-skin to-skin-mid shrink-0">
-        <Icon className="h-6 w-6 text-primary" />
-      </div>
-      <div>
-        <div className="flex items-baseline gap-1">
-          <span className="text-2xl font-bold text-white">{displayValue}</span>
-          {suffix && (
-            <span className="text-lg font-semibold text-skin">
-              {suffix}
-            </span>
-          )}
-        </div>
-        <p className="text-sm text-white/50 mt-0.5">{label}</p>
-      </div>
-    </motion.div>
-  );
-}
 
 export function TrustSection() {
   const ref = useRef(null);
@@ -203,7 +155,7 @@ export function TrustSection() {
           variants={staggerContainer}
           className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16"
         >
-          {trustSignals.map((signal, index) => (
+          {trustSignals.map((signal, _index) => (
             <motion.div
               key={signal.title}
               variants={scaleIn}

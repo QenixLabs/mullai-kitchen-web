@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { FaCheck, FaStar, FaCalendarAlt, FaArrowRight, FaClock, FaFire } from "react-icons/fa";
+import { FaCheck, FaStar, FaCalendarAlt, FaClock, FaFire } from "react-icons/fa";
 
 import type { PlanBrowseItem } from "@/api/types/customer.types";
 import { Badge } from "@/components/ui/badge";

@@ -16,10 +16,9 @@ import {
   useRenewSubscription,
   useToggleAutoRenew,
   useOptOutPeriods,
-  useCancelOptOutPeriod,
 } from "@/api/hooks/use-subscription";
-import type { Subscription, OptOutPeriod } from "@/api/types/subscription.types";
-import { FaPlus, FaExclamationCircle, FaStar, FaCalendarTimes } from "react-icons/fa";
+import type { Subscription } from "@/api/types/subscription.types";
+import { FaPlus, FaExclamationCircle, FaStar } from "react-icons/fa";
 
 export default function SubscriptionPage() {
   const router = useRouter();
@@ -39,7 +38,6 @@ export default function SubscriptionPage() {
   const cancelMutation = useCancelSubscription();
   const renewMutation = useRenewSubscription();
   const toggleAutoRenewMutation = useToggleAutoRenew();
-  const cancelOptOutMutation = useCancelOptOutPeriod();
 
   // Query opt-out periods for selected subscription
   const { data: optOutData } = useOptOutPeriods(selectedSubscription?._id || "");
@@ -71,35 +69,13 @@ export default function SubscriptionPage() {
     }
   };
 
-  const handleCancelOptOut = (subscriptionId: string, optOutId: string) => {
-    cancelOptOutMutation.mutate(
-      { id: subscriptionId, optOutId },
-      {
-        onSuccess: () => {
-          // TODO: Show success toast
-        },
-        onError: (error) => {
-          // TODO: Show error toast
-        },
-      },
-    );
-  };
-
   const handleRenew = (id: string) => {
     renewMutation.mutate(
       { id, subscription_id: id, start_date: undefined },
-      {
-        onSuccess: (data) => {
-          // TODO: Show success toast and maybe redirect to new subscription
-        },
-        onError: (error) => {
-          // TODO: Show error toast
-        },
-      },
     );
   };
 
-  const handleAddOn = (id: string) => {
+  const handleAddOn = (_id: string) => {
     router.push("/add-ons");
   };
 
@@ -108,14 +84,6 @@ export default function SubscriptionPage() {
     if (subscription) {
       toggleAutoRenewMutation.mutate(
         { id, auto_renew: !subscription.auto_renew },
-        {
-          onSuccess: (data) => {
-            // TODO: Show success toast
-          },
-          onError: (error) => {
-            // TODO: Show error toast
-          },
-        },
       );
     }
   };
@@ -153,7 +121,7 @@ export default function SubscriptionPage() {
       cancelMutation.mutate(
         { id: selectedSubscription._id, ...data },
         {
-          onSuccess: (responseData) => {
+          onSuccess: () => {
             setCancelDialogOpen(false);
             setSelectedSubscription(null);
           },

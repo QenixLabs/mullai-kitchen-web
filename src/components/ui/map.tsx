@@ -142,7 +142,7 @@ function MapController({
 function MapTileLayer({
   url,
   attribution,
-  name,
+  name: _name,
 }: {
   url?: string;
   attribution?: string;

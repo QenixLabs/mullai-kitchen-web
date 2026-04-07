@@ -1,4 +1,4 @@
-import { FaCalendarCheck, FaLeaf, FaShieldAlt, FaStar, FaCheckCircle, FaClock, FaHeart } from "react-icons/fa";
+import { FaShieldAlt, FaCheckCircle, FaClock, FaHeart } from "react-icons/fa";
 
 import { cn } from "@/lib/utils";
 

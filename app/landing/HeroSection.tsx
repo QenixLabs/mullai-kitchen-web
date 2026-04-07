@@ -6,13 +6,11 @@ import { motion, useInView } from "motion/react";
 import {
   ArrowRight,
   ChefHat,
-  CheckCircle2,
   Clock,
   Flame,
   MapPin,
   Search,
   ShieldCheck,
-  Soup,
   Truck,
   Users,
 } from "lucide-react";

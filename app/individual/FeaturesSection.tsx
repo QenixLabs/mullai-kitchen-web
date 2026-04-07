@@ -83,7 +83,7 @@ export function FeaturesSection() {
           animate={isInView ? "animate" : "initial"}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
         >
-          {features.map((feature, index) => (
+          {features.map((feature, _index) => (
             <motion.div
               key={feature.title}
               variants={fadeInUp}

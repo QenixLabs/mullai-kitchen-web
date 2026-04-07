@@ -13,6 +13,16 @@ import {
 } from "@/api/delivery-zone.api";
 import { apiClient } from "@/api/client";
 
+function extractErrorMessage(error: unknown, fallback: string): string {
+  const axiosMsg =
+    (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
+  if (axiosMsg) return axiosMsg;
+  if (typeof error === "object" && error !== null && "message" in error) {
+    return (error as { message: string }).message;
+  }
+  return fallback;
+}
+
 // Outlet interface
 interface Outlet {
   _id: string;
@@ -61,8 +71,9 @@ export default function ZonesPage() {
       queryClient.invalidateQueries({ queryKey: ZONES_QUERY_KEY });
       toast.success("Zone created successfully");
     },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to create zone");
+    onError: (error: unknown) => {
+      const msg = extractErrorMessage(error, "Failed to create zone");
+      toast.error(msg);
     },
   });
 
@@ -74,8 +85,9 @@ export default function ZonesPage() {
       queryClient.invalidateQueries({ queryKey: ZONES_QUERY_KEY });
       toast.success("Zone updated successfully");
     },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to update zone");
+    onError: (error: unknown) => {
+      const msg = extractErrorMessage(error, "Failed to update zone");
+      toast.error(msg);
     },
   });
 
@@ -86,8 +98,9 @@ export default function ZonesPage() {
       queryClient.invalidateQueries({ queryKey: ZONES_QUERY_KEY });
       toast.success("Zone deleted successfully");
     },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to delete zone");
+    onError: (error: unknown) => {
+      const msg = extractErrorMessage(error, "Failed to delete zone");
+      toast.error(msg);
     },
   });
 
@@ -99,8 +112,9 @@ export default function ZonesPage() {
       queryClient.invalidateQueries({ queryKey: ZONES_QUERY_KEY });
       toast.success("Zone status updated");
     },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to update zone status");
+    onError: (error: unknown) => {
+      const msg = extractErrorMessage(error, "Failed to update zone status");
+      toast.error(msg);
     },
   });
 

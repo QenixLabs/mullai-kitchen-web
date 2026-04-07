@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, Suspense } from "react";
+import { useState, useMemo, Suspense } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { format, isBefore, startOfDay } from "date-fns";
@@ -95,13 +95,13 @@ function OrderDetailPage() {
   // Build a set of dates that already have modifications
   const modifiedDatesSet = useMemo(() => {
     const set = new Set<string>();
-    modsList.forEach((m) => {
+    (modifications ?? []).forEach((m) => {
       if (m.status === "approved" || m.status === "pending") {
         set.add(m.modification_date);
       }
     });
     return set;
-  }, [modsList]);
+  }, [modifications]);
 
   // Delivery dates
   const deliveryDates = useMemo(() => {
@@ -268,7 +268,7 @@ function OrderDetailPage() {
     );
   }
 
-  const isCompleted = order.status === "completed";
+  const _isCompleted = order.status === "completed";
   const isCancelled = order.status === "cancelled";
 
   return (

@@ -1,19 +1,16 @@
 "use client";
 
 import { motion } from "motion/react";
-import { 
-  FileText, 
-  Pencil, 
-  X, 
-  Loader2, 
-  PlusCircle, 
+import {
+  FileText,
+  Pencil,
+  Loader2,
+  PlusCircle,
   MoreHorizontal,
-  ChevronRight,
   ShieldCheck,
   Building2,
   Trash2
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

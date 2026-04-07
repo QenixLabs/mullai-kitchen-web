@@ -1,14 +1,11 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import {
   motion,
   useInView,
   AnimatePresence,
-  useMotionValue,
-  useTransform,
-  animate,
 } from "motion/react";
 import {
   Flame,
@@ -18,13 +15,11 @@ import {
   Leaf,
   ChevronRight,
   ChefHat,
-  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   fadeInUp,
   staggerContainer,
-  scaleIn,
   floatAnimation,
 } from "./animations";
 import { cn } from "@/lib/utils";

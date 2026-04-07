@@ -8,7 +8,6 @@ import { DashboardTopBar } from "@/components/navigation/DashboardTopBar";
 import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { useAuthHydrated, useIsAuthenticated, useCurrentUser } from "@/hooks/useUserStore";
-import { cn } from "@/lib/utils";
 
 interface AuthenticatedLayoutProps {
   children: ReactNode;

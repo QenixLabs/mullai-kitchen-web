@@ -42,7 +42,7 @@ const STEPS = [
 export default function CreateOrderPage() {
   const router = useRouter();
   const createOrderMutation = useCreateCorporateOrder();
-  const { mutateAsync: checkServiceability, isPending: isCheckingServiceability } =
+  const { mutateAsync: checkServiceability } =
     useServiceability();
   const draftStore = useOrderDraftStore();
 
@@ -65,7 +65,7 @@ export default function CreateOrderPage() {
   useEffect(() => {
     draftStore.clearDraft();
     setCurrentStep(1);
-  }, []);
+  }, [draftStore]);
 
   // Reverse geocoding to auto-fill address fields from coordinates
   const reverseGeocode = async (lat: number, lng: number) => {
@@ -198,6 +198,7 @@ export default function CreateOrderPage() {
 
   // Auto-save to draft store
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/incompatible-library
     const subscription = form.watch((value) => {
       if (value.delivery_address) {
         draftStore.updateDeliveryAddress({

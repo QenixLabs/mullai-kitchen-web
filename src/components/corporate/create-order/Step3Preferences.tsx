@@ -24,7 +24,7 @@ export function Step3Preferences({
   headcount,
   vegCount,
   nonvegCount,
-  notes,
+  notes: _notes,
   errors,
   register,
   setValue,

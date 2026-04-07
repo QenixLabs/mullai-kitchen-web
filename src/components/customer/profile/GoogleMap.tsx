@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useCallback, useRef } from "react";
 import {
   GoogleMap as GoogleMapComponent,
-  LoadScript,
   Marker,
   useJsApiLoader,
 } from "@react-google-maps/api";
@@ -25,7 +24,6 @@ const defaultZoom = 14;
 export interface GoogleMapProps {
   center?: { lat: number; lng: number };
   zoom?: number;
-  onLocationChange?: (location: { lat: number; lng: number }) => void;
   className?: string;
   height?: string;
   onClick?: (e: google.maps.MapMouseEvent) => void;
@@ -35,7 +33,6 @@ export interface GoogleMapProps {
 export function GoogleMap({
   center = defaultCenter,
   zoom = defaultZoom,
-  onLocationChange,
   className,
   height = "h-48",
   onClick,
@@ -46,15 +43,7 @@ export function GoogleMap({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
   });
 
-  const [mapCenter, setMapCenter] = useState(center);
   const mapRef = useRef<google.maps.Map | null>(null);
-
-  // Sync the center prop to local state when it changes
-  useEffect(() => {
-    if (center) {
-      setMapCenter(center);
-    }
-  }, [center]);
 
   const onLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
@@ -96,7 +85,7 @@ export function GoogleMap({
     <div className={`relative ${height} rounded-lg overflow-hidden border border-slate-200 ${className}`}>
       <GoogleMapComponent
         mapContainerStyle={containerStyle}
-        center={mapCenter}
+        center={center}
         zoom={zoom}
         onLoad={onLoad}
         onUnmount={onUnmount}
@@ -116,7 +105,7 @@ export function GoogleMap({
           ],
         }}
       >
-        {children ? children : <Marker position={mapCenter} />}
+        {children ? children : <Marker position={center} />}
       </GoogleMapComponent>
 
       {/* Pin with pulse animation overlay */}

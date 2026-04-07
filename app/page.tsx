@@ -1,5 +1,4 @@
 
-import dynamic from "next/dynamic";
 import { LandingNavbar } from "./landing/Navbar";
 import { HeroSection } from "./landing/HeroSection";
 import { ScaleOfCookingSection } from "./landing/ScaleOfCookingSection";

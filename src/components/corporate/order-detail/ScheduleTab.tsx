@@ -55,7 +55,7 @@ export function ScheduleTab({
     start.setDate(start.getDate() - start.getDay());
 
     const weeks: Date[][] = [];
-    let current = new Date(start);
+    const current = new Date(start);
 
     // Generate 6 weeks to ensure we cover the full month
     while (weeks.length < 6) {

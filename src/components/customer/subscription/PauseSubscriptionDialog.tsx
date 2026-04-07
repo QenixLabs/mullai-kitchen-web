@@ -54,7 +54,9 @@ export function PauseSubscriptionDialog({
     },
   });
 
-  const selectedDates = form.watch("paused_dates") || [];
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const watchedDates = form.watch("paused_dates");
+  const selectedDates = useMemo(() => watchedDates || [], [watchedDates]);
 
   // Normalize dates for comparison
   const normalizeDate = (date: Date): Date => {

@@ -153,6 +153,7 @@ export function ProfileDetailsStep({
 
   // Sync parent with form changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/incompatible-library
     const subscription = form.watch((formValue) => {
       const dto = toDto(formValue as ProfileFormData);
       if (!areDtosEqual(dto, value ?? null)) {

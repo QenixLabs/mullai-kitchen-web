@@ -497,6 +497,7 @@ export function AddressSelectionModal({
                       <label key={type} className="flex-1 cursor-pointer">
                         <input type="radio" {...form.register("type")} value={type} className="hidden peer" />
                         <div className={`flex items-center justify-center gap-2 p-3 rounded-lg border transition-all ${
+                          // eslint-disable-next-line react-hooks/incompatible-library
                           form.watch("type") === type
                             ? "border-primary bg-primary/5 text-primary"
                             : "border-slate-200 hover:border-slate-300"

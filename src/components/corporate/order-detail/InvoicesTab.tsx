@@ -8,7 +8,6 @@ import {
   ArrowDown,
   ArrowUp,
   Lock,
-  Loader2,
   ChevronDown,
   Receipt,
   Calendar,

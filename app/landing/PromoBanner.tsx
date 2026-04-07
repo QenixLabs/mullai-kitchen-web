@@ -3,10 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, useInView, AnimatePresence } from "motion/react";
-import { Sparkles, Clock, ArrowRight, X, Gift, Zap } from "lucide-react";
+import { Sparkles, Clock, ArrowRight, X, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { fadeInUp } from "./animations";
-import { cn } from "@/lib/utils";
 
 export function PromoBanner() {
   const ref = useRef(null);

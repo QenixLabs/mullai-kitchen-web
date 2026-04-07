@@ -35,7 +35,7 @@ export function SubscriptionList({
         </div>
         <h3 className="text-lg font-semibold text-slate-900 mb-1">No subscriptions yet</h3>
         <p className="text-sm text-slate-500 text-center max-w-sm">
-          You haven't subscribed to any meal plans yet. Browse our plans to get started!
+          You haven&apos;t subscribed to any meal plans yet. Browse our plans to get started!
         </p>
       </div>
     );

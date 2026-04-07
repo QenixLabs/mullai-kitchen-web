@@ -3,7 +3,6 @@ import { subscriptionApi } from "@/api/subscription.api";
 import { subscriptionKeys, paymentKeys } from "@/api/query-keys";
 import type {
   SubscriptionListResponse,
-  SubscriptionResponse,
   SubscriptionDetailResponse,
   DailyOrdersResponse,
   PausePeriodsResponse,
