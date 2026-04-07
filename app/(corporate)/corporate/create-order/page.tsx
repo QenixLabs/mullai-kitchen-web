@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format, addDays } from "date-fns";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -18,18 +19,14 @@ import { Step1Delivery } from "@/components/corporate/create-order/Step1Delivery
 import { Step2Schedule } from "@/components/corporate/create-order/Step2Schedule";
 import { Step3Preferences } from "@/components/corporate/create-order/Step3Preferences";
 import { OrderSummarySidebar } from "@/components/corporate/create-order/OrderSummarySidebar";
-import { useCreateCorporateOrder } from "@/api/hooks/useCorporate";
+import { useCreateCorporateOrder, useCorporateOrderPricing } from "@/api/hooks/useCorporate";
 import { useServiceability } from "@/api/hooks/useCustomer";
 import { useOrderDraftStore } from "@/stores/orderDraftStore";
 import {
   createCorporateOrderSchema,
   type CreateCorporateOrderFormData,
+  type BillingCycleDays,
 } from "@/lib/validations/corporate.schema";
-import {
-  computeDeliveryDays,
-  computeEndDate,
-  computePricing,
-} from "@/lib/corporate/pricing";
 
 // Chennai default coordinates
 const DEFAULT_COORDS = { lat: 13.0827, lng: 80.2707 };
@@ -53,6 +50,7 @@ export default function CreateOrderPage() {
 
   const [serviceabilityInfo, setServiceabilityInfo] = useState<{
     isServiceable: boolean;
+    outletId?: string;
     outletName?: string;
     message: string;
   } | null>(null);
@@ -63,12 +61,11 @@ export default function CreateOrderPage() {
   const [mapCenter, setMapCenter] = useState(DEFAULT_COORDS);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
 
-  // Restore draft on mount
+  // Always start fresh when visiting the create-order page
   useEffect(() => {
-    if (draftStore.draft.step && draftStore.draft.step >= 1 && draftStore.draft.step <= 3) {
-      setCurrentStep(draftStore.draft.step as Step);
-    }
-  }, [draftStore.draft.step]);
+    draftStore.clearDraft();
+    setCurrentStep(1);
+  }, []);
 
   // Reverse geocoding to auto-fill address fields from coordinates
   const reverseGeocode = async (lat: number, lng: number) => {
@@ -166,7 +163,8 @@ export default function CreateOrderPage() {
       selected_days: draftStore.draft.selectedDays,
       meal_types: draftStore.draft.mealTypes,
       start_date: draftStore.draft.startDate,
-      duration_weeks: draftStore.draft.durationWeeks,
+      end_date: draftStore.draft.endDate || "",
+      billing_cycle_days: draftStore.draft.billingCycleDays,
       headcount: draftStore.draft.headcount || 1,
       veg_count: draftStore.draft.vegCount,
       nonveg_count: draftStore.draft.nonvegCount,
@@ -189,7 +187,8 @@ export default function CreateOrderPage() {
   const selectedDays = watch("selected_days");
   const mealTypes = watch("meal_types");
   const startDate = watch("start_date");
-  const durationWeeks = watch("duration_weeks");
+  const endDate = watch("end_date");
+  const billingCycleDays = watch("billing_cycle_days");
   const headcount = watch("headcount");
   const vegCount = watch("veg_count");
   const nonvegCount = watch("nonveg_count");
@@ -214,7 +213,8 @@ export default function CreateOrderPage() {
         selectedDays: (value.selected_days || []).filter((d): d is string => !!d),
         mealTypes: (value.meal_types || []).filter((m): m is string => !!m),
         startDate: value.start_date || "",
-        durationWeeks: value.duration_weeks || 4,
+        endDate: value.end_date || "",
+        billingCycleDays: value.billing_cycle_days || undefined,
       });
       draftStore.updatePreferences({
         headcount: value.headcount || 0,
@@ -269,8 +269,10 @@ export default function CreateOrderPage() {
 
         if (result.isServiceable) {
           const outletName = (result.outlet?.name as string) || undefined;
+          const outletId = result.outlet?._id as string | undefined;
           setServiceabilityInfo({
             isServiceable: true,
+            outletId,
             outletName,
             message: coordsToCheck
               ? "We are currently delivering to this location."
@@ -302,27 +304,52 @@ export default function CreateOrderPage() {
     };
   }, [pincodeValue, coordinates, checkServiceability, form]);
 
-  // Computed values using pricing utilities
-  const totalDeliveryDays = useMemo(
-    () => computeDeliveryDays(selectedDays, startDate, durationWeeks),
-    [selectedDays, startDate, durationWeeks],
-  );
+  // Build pricing params for backend call — uses cycle end date for per-cycle pricing
+  const pricingParams = useMemo(() => {
+    if (
+      !serviceabilityInfo?.isServiceable ||
+      !serviceabilityInfo.outletId ||
+      !startDate ||
+      !billingCycleDays ||
+      selectedDays.length === 0 ||
+      mealTypes.length === 0 ||
+      (vegCount || 0) + (nonvegCount || 0) === 0
+    ) {
+      return null;
+    }
 
-  const endDate = useMemo(
-    () => computeEndDate(startDate, durationWeeks),
-    [startDate, durationWeeks],
-  );
+    // Compute cycle end date: start_date + billing_cycle_days
+    const cycleEndDate = format(addDays(new Date(startDate), billingCycleDays), "yyyy-MM-dd");
 
-  const pricing = useMemo(
-    () =>
-      computePricing({
-        vegCount: vegCount || 0,
-        nonvegCount: nonvegCount || 0,
-        mealTypesCount: mealTypes.length,
-        totalDeliveryDays,
-      }),
-    [vegCount, nonvegCount, mealTypes.length, totalDeliveryDays],
-  );
+    return {
+      outlet_id: serviceabilityInfo.outletId,
+      veg_count: vegCount || 0,
+      nonveg_count: nonvegCount || 0,
+      meal_types: mealTypes,
+      selected_days: selectedDays,
+      start_date: startDate,
+      end_date: cycleEndDate,
+    };
+  }, [serviceabilityInfo, startDate, billingCycleDays, selectedDays, mealTypes, vegCount, nonvegCount]);
+
+  const { data: pricingResponse, isLoading: isPricingLoading, error: pricingError } = useCorporateOrderPricing(pricingParams);
+
+  // Provide zeroed defaults when pricing hasn't loaded yet
+  const pricing = useMemo(() => pricingResponse ?? {
+    veg_price_per_meal: 0,
+    nonveg_price_per_meal: 0,
+    delivery_charge_per_day: 0,
+    tax_rate: 0,
+    total_delivery_days: 0,
+    veg_meals: 0,
+    nonveg_meals: 0,
+    veg_amount: 0,
+    nonveg_amount: 0,
+    delivery_total: 0,
+    subtotal: 0,
+    tax: 0,
+    grand_total: 0,
+  }, [pricingResponse]);
 
   // Day/meal toggle handlers
   const handleDayToggle = (day: string, checked: boolean) => {
@@ -347,6 +374,10 @@ export default function CreateOrderPage() {
         { shouldValidate: true },
       );
     }
+  };
+
+  const handleBillingCycleChange = (days: BillingCycleDays) => {
+    setValue("billing_cycle_days", days, { shouldValidate: true });
   };
 
   // Step validation
@@ -376,7 +407,7 @@ export default function CreateOrderPage() {
           "selected_days",
           "meal_types",
           "start_date",
-          "duration_weeks",
+          "billing_cycle_days",
         ]);
         return scheduleValid;
       }
@@ -403,8 +434,14 @@ export default function CreateOrderPage() {
   };
 
   const onSubmit = (data: CreateCorporateOrderFormData) => {
+    // Compute cycle end date as fallback if no explicit end date
+    const cycleEndDate = data.start_date && data.billing_cycle_days
+      ? format(addDays(new Date(data.start_date), data.billing_cycle_days), "yyyy-MM-dd")
+      : undefined;
+
     const payload = {
       ...data,
+      end_date: data.end_date || cycleEndDate || "",
       delivery_address: {
         ...data.delivery_address,
         ...(coordinates
@@ -487,11 +524,13 @@ export default function CreateOrderPage() {
                   selectedDays={selectedDays}
                   mealTypes={mealTypes}
                   startDate={startDate}
-                  durationWeeks={durationWeeks}
+                  endDate={endDate}
+                  billingCycleDays={billingCycleDays}
                   errors={errors}
                   control={control}
                   onDayToggle={handleDayToggle}
                   onMealToggle={handleMealToggle}
+                  onBillingCycleChange={handleBillingCycleChange}
                 />
               )}
               {currentStep === 3 && (
@@ -522,7 +561,8 @@ export default function CreateOrderPage() {
                   selectedDays,
                   mealTypes,
                   startDate,
-                  durationWeeks,
+                  endDate,
+                  billingCycleDays,
                 } : null}
                 headcount={headcount > 0 ? {
                   total: headcount,
@@ -530,6 +570,8 @@ export default function CreateOrderPage() {
                   nonVeg: nonvegCount || 0,
                 } : null}
                 pricing={pricing}
+                isLoading={isPricingLoading}
+                error={pricingError}
               />
             </div>
           </div>

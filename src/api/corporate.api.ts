@@ -1,12 +1,16 @@
 import { apiClient } from './client';
 import { CORPORATE_ROUTES } from './routes';
 import type {
+  IAllInvoicesResponse,
   ICreateCorporateOrderRequest,
   ICreateCorporateOrderResponse,
   IModifyCorporateOrderRequest,
+  ICorporateDailyOrder,
   ICorporateOrder,
   ICorporateOrderModification,
   ICorporateInvoice,
+  ICorporatePricingParams,
+  ICorporatePricingResponse,
 } from './types/corporate.types';
 
 export const corporateApi = {
@@ -31,6 +35,18 @@ export const corporateApi = {
   cancelOrder: (id: string, payload: { reason?: string }) =>
     apiClient.post<ICorporateOrder>(CORPORATE_ROUTES.CANCEL_ORDER(id), payload).then((r) => r.data),
 
-  generateFinalInvoice: (id: string) =>
-    apiClient.post<ICorporateInvoice>(CORPORATE_ROUTES.GENERATE_FINAL_INVOICE(id)).then((r) => r.data),
+  getAllInvoices: (id: string) =>
+    apiClient.get<IAllInvoicesResponse>(CORPORATE_ROUTES.ALL_INVOICES(id)).then((r) => r.data),
+
+  getDailyOrders: (id: string, params?: Record<string, string>) =>
+    apiClient.get<{ items: ICorporateDailyOrder[]; total: number; page: number; limit: number }>(
+      CORPORATE_ROUTES.DAILY_ORDERS(id),
+      { params },
+    ).then((r) => r.data),
+
+  getUpcomingDeliveries: (id: string) =>
+    apiClient.get<ICorporateDailyOrder[]>(CORPORATE_ROUTES.UPCOMING_DELIVERIES(id)).then((r) => r.data),
+
+  getOrderPricing: (params: ICorporatePricingParams) =>
+    apiClient.get<ICorporatePricingResponse>(CORPORATE_ROUTES.ORDER_PRICING, { params }).then((r) => r.data),
 };

@@ -1,36 +1,39 @@
 "use client";
 
-import { CalendarDays, UtensilsCrossed, Calendar } from "lucide-react";
-import { Label } from "@/components/ui/label";
+import { CalendarDays, UtensilsCrossed, Calendar, CalendarClock } from "lucide-react";
 import { Controller } from "react-hook-form";
 import { format, addDays, startOfDay } from "date-fns";
 import { DatePicker } from "@/components/ui/date-picker";
 import { DaySelector } from "./DaySelector";
 import { MealTypeCard } from "./MealTypeCard";
-import { DurationPills } from "./DurationPills";
+import { BillingCycleCard } from "./BillingCycleCard";
 import type { Control, FieldErrors } from "react-hook-form";
-import type { CreateCorporateOrderFormData } from "@/lib/validations/corporate.schema";
+import type { CreateCorporateOrderFormData, BillingCycleDays } from "@/lib/validations/corporate.schema";
 
 interface Step2ScheduleProps {
   selectedDays: string[];
   mealTypes: string[];
   startDate: string;
-  durationWeeks: number;
+  endDate: string | undefined;
+  billingCycleDays: number | undefined;
   errors: FieldErrors<CreateCorporateOrderFormData>;
   control: Control<CreateCorporateOrderFormData>;
   onDayToggle: (day: string, checked: boolean) => void;
   onMealToggle: (meal: string, checked: boolean) => void;
+  onBillingCycleChange: (days: BillingCycleDays) => void;
 }
 
 export function Step2Schedule({
   selectedDays,
   mealTypes,
   startDate,
-  durationWeeks,
+  endDate,
+  billingCycleDays,
   errors,
   control,
   onDayToggle,
   onMealToggle,
+  onBillingCycleChange,
 }: Step2ScheduleProps) {
   return (
     <div className="bg-card rounded-2xl border border-border shadow-sm p-4 sm:p-6 space-y-6 sm:space-y-8">
@@ -70,7 +73,30 @@ export function Step2Schedule({
         )}
       </div>
 
-      {/* Start Date and Duration */}
+      {/* Billing Cycle */}
+      <div className="space-y-3 sm:space-y-4">
+        <div className="flex items-center gap-2">
+          <CalendarClock className="h-5 w-5 text-[#44151C]" />
+          <h3 className="text-base sm:text-lg font-semibold text-[#44151C]">Billing Cycle</h3>
+        </div>
+        <div className="flex flex-wrap gap-3 sm:gap-4">
+          {([7, 30, 90] as const).map((days) => (
+            <BillingCycleCard
+              key={days}
+              days={days}
+              selected={billingCycleDays === days}
+              onToggle={(checked) => {
+                if (checked) onBillingCycleChange(days);
+              }}
+            />
+          ))}
+        </div>
+        {errors.billing_cycle_days && (
+          <p className="text-sm text-destructive">{errors.billing_cycle_days.message}</p>
+        )}
+      </div>
+
+      {/* Start Date and End Date */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         <div className="space-y-3 sm:space-y-4">
           <div className="flex items-center gap-2">
@@ -97,20 +123,28 @@ export function Step2Schedule({
         </div>
 
         <div className="space-y-3 sm:space-y-4">
-          <h3 className="text-base sm:text-lg font-semibold text-[#44151C]">Program Duration</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-base sm:text-lg font-semibold text-[#44151C]">End Date</h3>
+            <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">Optional</span>
+          </div>
           <Controller
             control={control}
-            name="duration_weeks"
+            name="end_date"
             render={({ field }) => (
-              <DurationPills
-                value={field.value}
-                onChange={(weeks) => field.onChange(weeks)}
+              <DatePicker
+                value={field.value ? new Date(field.value) : undefined}
+                onChange={(date) => field.onChange(date ? format(date, 'yyyy-MM-dd') : '')}
+                placeholder="Select end date (optional)"
+                disabled={(date) => date < new Date(startDate)}
               />
             )}
           />
-          {errors.duration_weeks && (
-            <p className="text-sm text-destructive">{errors.duration_weeks.message}</p>
+          {errors.end_date && (
+            <p className="text-sm text-destructive">{errors.end_date.message}</p>
           )}
+          <p className="text-xs text-muted-foreground">
+            Leave blank for ongoing orders. Billing cycles will continue until cancelled.
+          </p>
         </div>
       </div>
     </div>

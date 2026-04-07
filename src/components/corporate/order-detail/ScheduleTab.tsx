@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Info, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useCorporateUpcomingDeliveries } from "@/api/hooks/useCorporate";
 import type { ICorporateOrder } from "@/api/types/corporate.types";
 
 interface ScheduleTabProps {
@@ -36,12 +37,11 @@ export function ScheduleTab({
     parseISO(order.start_date)
   );
 
-  const today = startOfDay(new Date());
+  const { data: upcomingDeliveries } = useCorporateUpcomingDeliveries(
+    order._id
+  );
 
-  // Get upcoming 5 delivery dates
-  const upcomingDates = deliveryDates
-    .filter((d) => !isBefore(d, today))
-    .slice(0, 5);
+  const today = startOfDay(new Date());
 
   // Generate calendar weeks
   const calendarWeeks = (() => {
@@ -207,8 +207,7 @@ export function ScheduleTab({
                   const past = isPastDate(dayDate);
                   const isToday = isSameDate(dayDate, today);
 
-                  // Highlight the 13th as selected (demo) or today
-                  const isSelected = dayDate.getDate() === 13 && inMonth;
+                  const isSelected = false;
 
                   return (
                     <button
@@ -322,96 +321,146 @@ export function ScheduleTab({
           {/* Run Cards */}
           <div className="space-y-6">
             <AnimatePresence>
-              {upcomingDates.map((date, index) => {
-                const dateStr = format(date, "yyyy-MM-dd");
-                const isModified = modifiedDatesSet.has(dateStr);
-                const dayName = format(date, "EEEE").toUpperCase();
-                const monthDay = format(date, "MMMM d");
-                const vegCount = order.veg_count ?? 0;
-                const nonVegCount = order.nonveg_count ?? 0;
-                const totalMeals = vegCount + nonVegCount;
-
-                return (
+              {!upcomingDeliveries ? (
+                /* Loading skeleton */
+                Array.from({ length: 3 }).map((_, index) => (
                   <motion.div
-                    key={dateStr}
+                    key={`skeleton-${index}`}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="relative p-5 rounded-xl border border-border bg-white hover:border-primary/30 transition-all"
+                    className="relative p-5 rounded-xl border border-border bg-white"
                   >
-                    {/* Modified Badge */}
-                    {isModified && (
-                      <div className="absolute top-4 right-4">
-                        <span className="px-2.5 py-1 bg-foreground text-background text-[10px] font-bold uppercase tracking-wider rounded">
-                          Modified
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="space-y-2">
+                        <div className="h-3 w-20 bg-muted rounded animate-pulse" />
+                        <div className="h-5 w-28 bg-muted rounded animate-pulse" />
+                      </div>
+                      <div className="text-right space-y-2">
+                        <div className="h-7 w-10 bg-muted rounded animate-pulse ml-auto" />
+                        <div className="h-2 w-16 bg-muted rounded animate-pulse ml-auto" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      <div className="p-3 rounded-lg bg-muted/50">
+                        <div className="h-3 w-16 bg-muted rounded animate-pulse mb-2" />
+                        <div className="h-5 w-8 bg-muted rounded animate-pulse" />
+                      </div>
+                      <div className="p-3 rounded-lg bg-muted/50">
+                        <div className="h-3 w-16 bg-muted rounded animate-pulse mb-2" />
+                        <div className="h-5 w-8 bg-muted rounded animate-pulse" />
+                      </div>
+                    </div>
+                    <div className="h-10 w-full bg-muted rounded-lg animate-pulse" />
+                  </motion.div>
+                ))
+              ) : (
+                upcomingDeliveries.map((delivery, index) => {
+                  const date = parseISO(delivery.date);
+                  const dateStr = format(date, "yyyy-MM-dd");
+                  const isModified = modifiedDatesSet.has(dateStr) || !!delivery.modification_id;
+                  const dayName = format(date, "EEEE").toUpperCase();
+                  const monthDay = format(date, "MMMM d");
+                  const vegCount = delivery.veg_count ?? 0;
+                  const nonVegCount = delivery.nonveg_count ?? 0;
+                  const totalMeals = delivery.total_meals ?? (vegCount + nonVegCount);
+
+                  const statusStyles: Record<string, string> = {
+                    planned: "bg-blue-100 text-blue-700 border-blue-200",
+                    delivered: "bg-green-100 text-green-700 border-green-200",
+                    cancelled: "bg-red-100 text-red-700 border-red-200",
+                    in_progress: "bg-yellow-100 text-yellow-700 border-yellow-200",
+                  };
+                  const statusStyle = statusStyles[delivery.status] ?? "bg-muted text-muted-foreground border-border";
+
+                  return (
+                    <motion.div
+                      key={delivery._id ?? dateStr}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="relative p-5 rounded-xl border border-border bg-white hover:border-primary/30 transition-all"
+                    >
+                      {/* Status Badge + Modified Badge */}
+                      <div className="absolute top-4 right-4 flex items-center gap-2">
+                        {isModified && (
+                          <span className="px-2.5 py-1 bg-foreground text-background text-[10px] font-bold uppercase tracking-wider rounded">
+                            Modified
+                          </span>
+                        )}
+                        <span className={cn(
+                          "px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded border",
+                          statusStyle
+                        )}>
+                          {delivery.status}
                         </span>
                       </div>
-                    )}
 
-                    {/* Date and Total */}
-                    <div className="flex justify-between items-start mb-4 pr-20">
-                      <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: '#3D000C' }}>
-                          {dayName}
-                        </p>
-                        <p className="text-lg font-bold" style={{ color: '#3D000C' }}>
-                          {monthDay}
-                        </p>
+                      {/* Date and Total */}
+                      <div className="flex justify-between items-start mb-4 pr-32">
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: '#3D000C' }}>
+                            {dayName}
+                          </p>
+                          <p className="text-lg font-bold" style={{ color: '#3D000C' }}>
+                            {monthDay}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold" style={{ color: '#3D000C' }}>
+                            {totalMeals}
+                          </p>
+                          <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#3D000C' }}>
+                            Total Meals
+                          </p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold" style={{ color: '#3D000C' }}>
-                          {totalMeals}
-                        </p>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#3D000C' }}>
-                          Total Meals
-                        </p>
-                      </div>
-                    </div>
 
-                    {/* Meal Split */}
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      <div className="p-3 rounded-lg bg-[#F8F2F3]">
-                        <p className="text-[11px] mb-1" style={{ color: '#3D000C' }}>
-                          Vegetarian
-                        </p>
-                        <p className="text-lg font-bold" style={{ color: '#3D000C' }}>
-                          {String(vegCount).padStart(2, "0")}
-                        </p>
+                      {/* Meal Split */}
+                      <div className="grid grid-cols-2 gap-3 mb-4">
+                        <div className="p-3 rounded-lg bg-[#F8F2F3]">
+                          <p className="text-[11px] mb-1" style={{ color: '#3D000C' }}>
+                            Vegetarian
+                          </p>
+                          <p className="text-lg font-bold" style={{ color: '#3D000C' }}>
+                            {String(vegCount).padStart(2, "0")}
+                          </p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-[#F8F2F3]">
+                          <p className="text-[11px] mb-1" style={{ color: '#3D000C' }}>
+                            Non-Veg
+                          </p>
+                          <p className="text-lg font-bold" style={{ color: '#3D000C' }}>
+                            {String(nonVegCount).padStart(2, "0")}
+                          </p>
+                        </div>
                       </div>
-                      <div className="p-3 rounded-lg bg-[#F8F2F3]">
-                        <p className="text-[11px] mb-1" style={{ color: '#3D000C' }}>
-                          Non-Veg
-                        </p>
-                        <p className="text-lg font-bold" style={{ color: '#3D000C' }}>
-                          {String(nonVegCount).padStart(2, "0")}
-                        </p>
-                      </div>
-                    </div>
 
-                    {/* Action Button */}
-                    {!isModified ? (
-                      <Button
-                        variant="outline"
-                        onClick={() => onDateClick(date)}
-                        className="w-full h-10 rounded-lg border border-border bg-white text-xs font-semibold uppercase tracking-wide hover:bg-gray-50 transition-all"
-                        style={{ color: '#3D000C' }}
-                      >
-                        Edit Meal Split
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => onDateClick(date)}
-                        className="w-full h-10 rounded-lg bg-primary text-primary-foreground text-xs font-semibold uppercase tracking-wide hover:bg-primary/90 transition-all"
-                      >
-                        Review Modification
-                      </Button>
-                    )}
-                  </motion.div>
-                );
-              })}
+                      {/* Action Button */}
+                      {!isModified ? (
+                        <Button
+                          variant="outline"
+                          onClick={() => onDateClick(date)}
+                          className="w-full h-10 rounded-lg border border-border bg-white text-xs font-semibold uppercase tracking-wide hover:bg-gray-50 transition-all"
+                          style={{ color: '#3D000C' }}
+                        >
+                          Edit Meal Split
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={() => onDateClick(date)}
+                          className="w-full h-10 rounded-lg bg-primary text-primary-foreground text-xs font-semibold uppercase tracking-wide hover:bg-primary/90 transition-all"
+                        >
+                          Review Modification
+                        </Button>
+                      )}
+                    </motion.div>
+                  );
+                })
+              )}
             </AnimatePresence>
 
-            {upcomingDates.length === 0 && (
+            {upcomingDeliveries && upcomingDeliveries.length === 0 && (
               <div className="p-12 rounded-xl bg-muted/30 border border-dashed border-border text-center">
                 <p className="text-sm text-muted-foreground">
                   No upcoming deliveries found for this service cycle.

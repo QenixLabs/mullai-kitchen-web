@@ -135,7 +135,7 @@ export type CorporatePaymentStatus = 'pending' | 'paid' | 'overdue';
  * Corporate Invoice Type Enum
  * Defines the type of invoice (proforma or final)
  */
-export type CorporateInvoiceType = 'proforma' | 'final';
+export type CorporateInvoiceType = 'proforma' | 'cycle';
 
 /**
  * Corporate Invoice Status Enum
@@ -165,7 +165,8 @@ export interface ICreateCorporateOrderRequest {
   selected_days: string[];
   meal_types: string[];
   start_date: string;
-  duration_weeks: number;
+  end_date: string;
+  billing_cycle_days?: number;
   headcount: number;
   veg_count: number;
   nonveg_count: number;
@@ -178,8 +179,8 @@ export interface ICreateCorporateOrderRequest {
  */
 export interface IModifyCorporateOrderRequest {
   modification_date: string;
-  veg_reduction: number;
-  nonveg_reduction: number;
+  veg_change: number;
+  nonveg_change: number;
   reason?: string;
 }
 
@@ -219,7 +220,9 @@ export interface ICorporateOrder {
   delivery_charge_per_day: number;
   tax_rate: number;
   proforma_amount: number;
-  total_reduction_amount: number;
+  total_modification_amount: number;
+  billing_cycle_days: number;
+  current_billing_start: string;
   final_amount: number;
   payment_status: CorporatePaymentStatus;
   status: CorporateOrderStatus;
@@ -236,10 +239,10 @@ export interface ICorporateOrderModification {
   _id: string;
   corporate_order_id: string;
   modification_date: string;
-  veg_reduction: number;
-  nonveg_reduction: number;
+  veg_change: number;
+  nonveg_change: number;
   reason?: string;
-  credit_amount: number;
+  modification_amount: number;
   status: string;
   created_at: string;
 }
@@ -266,15 +269,18 @@ export interface ICorporateInvoice {
   company_name: string;
   outlet_name: string;
   type: CorporateInvoiceType;
+  billing_period_start?: string;
+  billing_period_end?: string;
+  cycle_number?: number;
   line_items: ICorporateInvoiceLineItem[];
   modifications: {
     date: string;
-    veg_reduction: number;
-    nonveg_reduction: number;
-    credit: number;
+    veg_change: number;
+    nonveg_change: number;
+    modification_amount: number;
   }[];
   subtotal: number;
-  total_reduction: number;
+  total_modification: number;
   total_amount: number;
   tax_amount: number;
   grand_total: number;
@@ -285,10 +291,94 @@ export interface ICorporateInvoice {
 }
 
 /**
+ * Current Billing Cycle Info
+ * Information about the current billing cycle
+ */
+export interface ICurrentBillingCycle {
+  number: number;
+  startDate: string;
+  endDate: string;
+  daysRemaining: number;
+  isComplete: boolean;
+}
+
+/**
+ * All Invoices Response
+ * Response structure for fetching all invoices for a corporate order
+ */
+export interface IAllInvoicesResponse {
+  proforma: ICorporateInvoice | null;
+  cycles: ICorporateInvoice[];
+  currentCycle: ICurrentBillingCycle;
+  totalExpectedCycles: number;
+  orderStartDate: string;
+  orderEndDate: string;
+}
+
+/**
  * Create Corporate Order Response
  * Response structure when creating a new corporate order
  */
 export interface ICreateCorporateOrderResponse {
   order: ICorporateOrder;
   invoice: ICorporateInvoice;
+}
+
+/**
+ * Corporate Daily Order Interface
+ * Represents a single day's meal order within a corporate subscription
+ */
+export interface ICorporateDailyOrder {
+  _id: string;
+  corporate_order_id: string;
+  date: string;
+  veg_count: number;
+  nonveg_count: number;
+  total_meals: number;
+  status: string;
+  modification_id?: string;
+  delivery_route_id?: string;
+  route_sequence?: number;
+  delivery_address: ICorporateOrder['delivery_address'];
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// ===========================================
+// Corporate Order Pricing Types
+// ===========================================
+
+/**
+ * Corporate Order Pricing Query Params
+ * Query parameters for fetching real-time pricing preview
+ */
+export interface ICorporatePricingParams {
+  outlet_id: string;
+  veg_count: number;
+  nonveg_count: number;
+  meal_types: string[];
+  selected_days: string[];
+  start_date: string;
+  end_date: string;
+}
+
+/**
+ * Corporate Order Pricing Response
+ * Pricing breakdown from the backend, computed from outlet config
+ */
+export interface ICorporatePricingResponse {
+  veg_price_per_meal: number;
+  nonveg_price_per_meal: number;
+  delivery_charge_per_day: number;
+  tax_rate: number;
+  total_delivery_days: number;
+  veg_meals: number;
+  nonveg_meals: number;
+  veg_amount: number;
+  nonveg_amount: number;
+  delivery_total: number;
+  subtotal: number;
+  tax: number;
+  grand_total: number;
 }

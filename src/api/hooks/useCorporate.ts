@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { corporateApi } from '@/api/corporate.api';
 import { corporateKeys } from '@/api/query-keys';
-import type { ICreateCorporateOrderRequest, IModifyCorporateOrderRequest, ICreateCorporateOrderResponse } from '@/api/types/corporate.types';
+import type { ICreateCorporateOrderRequest, IModifyCorporateOrderRequest, ICreateCorporateOrderResponse, ICorporatePricingParams } from '@/api/types/corporate.types';
 
 export function useCreateCorporateOrder() {
   const queryClient = useQueryClient();
@@ -36,6 +36,7 @@ export function useModifyCorporateOrder(orderId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: corporateKeys.order(orderId) });
       queryClient.invalidateQueries({ queryKey: corporateKeys.modifications(orderId) });
+      queryClient.invalidateQueries({ queryKey: corporateKeys.invoice(orderId, 'proforma') });
     },
   });
 }
@@ -68,13 +69,41 @@ export function useCancelCorporateOrder(orderId: string) {
   });
 }
 
-export function useGenerateFinalInvoice(orderId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: () => corporateApi.generateFinalInvoice(orderId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: corporateKeys.order(orderId) });
-      queryClient.invalidateQueries({ queryKey: corporateKeys.invoice(orderId, 'final') });
-    },
+export function useCorporateAllInvoices(orderId: string) {
+  return useQuery({
+    queryKey: corporateKeys.allInvoices(orderId),
+    queryFn: () => corporateApi.getAllInvoices(orderId),
+    enabled: !!orderId,
+  });
+}
+
+export function useCorporateDailyOrders(orderId: string, params?: Record<string, string>) {
+  return useQuery({
+    queryKey: corporateKeys.dailyOrders(orderId, params),
+    queryFn: () => corporateApi.getDailyOrders(orderId, params),
+    enabled: !!orderId,
+  });
+}
+
+export function useCorporateUpcomingDeliveries(orderId: string) {
+  return useQuery({
+    queryKey: corporateKeys.upcomingDeliveries(orderId),
+    queryFn: () => corporateApi.getUpcomingDeliveries(orderId),
+    enabled: !!orderId,
+  });
+}
+
+export function useCorporateOrderPricing(params: ICorporatePricingParams | null) {
+  return useQuery({
+    queryKey: corporateKeys.orderPricing(params),
+    queryFn: () => corporateApi.getOrderPricing(params!),
+    enabled:
+      params !== null &&
+      !!params.outlet_id &&
+      !!params.start_date &&
+      !!params.end_date &&
+      (params.veg_count > 0 || params.nonveg_count > 0) &&
+      params.meal_types.length > 0 &&
+      params.selected_days.length > 0,
   });
 }

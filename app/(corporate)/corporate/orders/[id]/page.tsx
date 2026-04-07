@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, Suspense } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { format, isBefore, startOfDay } from "date-fns";
@@ -11,16 +11,15 @@ import {
   useCorporateOrder,
   useCorporateModifications,
   useModifyCorporateOrder,
-  useCorporateInvoice,
+  useCorporateAllInvoices,
   useCancelCorporateOrder,
-  useGenerateFinalInvoice,
 } from "@/api/hooks/useCorporate";
 import { modifyCorporateOrderSchema, type ModifyCorporateOrderFormData } from "@/lib/validations/corporate.schema";
 import { OverviewTab } from "@/components/corporate/order-detail/OverviewTab";
 import { ScheduleTab } from "@/components/corporate/order-detail/ScheduleTab";
 import { InvoicesTab } from "@/components/corporate/order-detail/InvoicesTab";
 import { ModificationsTab } from "@/components/corporate/order-detail/ModificationsTab";
-import { ModifyMealDialog, computeCredit } from "@/components/corporate/order-detail/ModifyMealDialog";
+import { ModifyMealDialog, computeModification } from "@/components/corporate/order-detail/ModifyMealDialog";
 import { CancelOrderDialog } from "@/components/corporate/order-detail/CancelOrderDialog";
 import { OrderDetailHeader } from "@/components/corporate/order-detail/OrderDetailHeader";
 import { generateDeliveryDates } from "@/lib/corporate/dates";
@@ -79,25 +78,22 @@ function OrderDetailPage() {
   // Data fetching
   const { data: order, isLoading, error } = useCorporateOrder(orderId);
   const { data: modifications } = useCorporateModifications(orderId);
-  const { data: proformaInvoice } = useCorporateInvoice(orderId, "proforma");
-  const { data: finalInvoice } = useCorporateInvoice(orderId, "final");
+  const { data: allInvoices, isLoading: isInvoicesLoading } = useCorporateAllInvoices(orderId);
 
   // Mutations
   const modifyMutation = useModifyCorporateOrder(orderId);
   const cancelMutation = useCancelCorporateOrder(orderId);
-  const generateFinalMutation = useGenerateFinalInvoice(orderId);
 
   // State
   const [modifyDialogOpen, setModifyDialogOpen] = useState(false);
   const [selectedModifyDate, setSelectedModifyDate] = useState<Date | null>(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
-  const [modVegReduction, setModVegReduction] = useState(0);
-  const [modNonvegReduction, setModNonvegReduction] = useState(0);
+  const [modVegChange, setModVegChange] = useState(0);
+  const [modNonvegChange, setModNonvegChange] = useState(0);
   const [modReason, setModReason] = useState("");
 
-  const modsList = useMemo(() => modifications ?? [], [modifications]);
-  const hasFinalInvoice = !!finalInvoice;
+  const modsList = modifications ?? [];
 
   // Build a set of dates that already have modifications
   const modifiedDatesSet = useMemo(() => {
@@ -132,26 +128,26 @@ function OrderDetailPage() {
     const existingMod = getModificationForDate(date);
     if (existingMod) {
       toast.info("This date already has a modification", {
-        description: `Veg: -${existingMod.veg_reduction}, Non-veg: -${existingMod.nonveg_reduction}`,
+        description: `Veg: ${existingMod.veg_change >= 0 ? '+' : ''}${existingMod.veg_change}, Non-veg: ${existingMod.nonveg_change >= 0 ? '+' : ''}${existingMod.nonveg_change}`,
       });
       return;
     }
 
     setSelectedModifyDate(date);
-    setModVegReduction(0);
-    setModNonvegReduction(0);
+    setModVegChange(0);
+    setModNonvegChange(0);
     setModReason("");
     setModifyDialogOpen(true);
   };
 
-  // Auto-suggest proportional split when total reduction changes
-  const handleTotalReductionChange = (totalReduction: number) => {
+  // Auto-suggest proportional split when total change changes
+  const handleTotalChange = (totalChange: number) => {
     if (!order) return;
-    const clampedTotal = Math.min(Math.max(totalReduction, 0), order.veg_count + order.nonveg_count);
+    const clampedTotal = Math.min(Math.max(totalChange, 0), order.veg_count + order.nonveg_count);
 
     if (clampedTotal === 0) {
-      setModVegReduction(0);
-      setModNonvegReduction(0);
+      setModVegChange(0);
+      setModNonvegChange(0);
       return;
     }
 
@@ -160,21 +156,21 @@ function OrderDetailPage() {
     const suggestedVeg = Math.round(clampedTotal * vegRatio);
     const suggestedNonveg = clampedTotal - suggestedVeg;
 
-    setModVegReduction(suggestedVeg);
-    setModNonvegReduction(suggestedNonveg);
+    setModVegChange(suggestedVeg);
+    setModNonvegChange(suggestedNonveg);
   };
 
-  // Compute credit for the current modification form state
-  const currentCredit = useMemo(() => {
+  // Compute modification for the current modification form state
+  const currentModification = useMemo(() => {
     if (!order) return 0;
-    return computeCredit(
-      modVegReduction,
-      modNonvegReduction,
+    return computeModification(
+      modVegChange,
+      modNonvegChange,
       order.veg_price_per_meal,
       order.nonveg_price_per_meal,
-      order.meal_types.length
+      order.meal_types.length,
     );
-  }, [modVegReduction, modNonvegReduction, order]);
+  }, [modVegChange, modNonvegChange, order]);
 
   // Submit modification
   const handleSubmitModification = () => {
@@ -182,8 +178,8 @@ function OrderDetailPage() {
 
     const formData: ModifyCorporateOrderFormData = {
       modification_date: format(selectedModifyDate, "yyyy-MM-dd"),
-      veg_reduction: modVegReduction,
-      nonveg_reduction: modNonvegReduction,
+      veg_change: modVegChange,
+      nonveg_change: modNonvegChange,
       reason: modReason || undefined,
     };
 
@@ -195,17 +191,23 @@ function OrderDetailPage() {
       return;
     }
 
-    if (modVegReduction > order.veg_count || modNonvegReduction > order.nonveg_count) {
-      toast.error("Invalid reduction", {
+    // Only validate upper bound for reductions (positive change can't exceed base)
+    if (modVegChange > order.veg_count || modNonvegChange > order.nonveg_count) {
+      toast.error("Invalid modification", {
         description: "Reduction cannot exceed current meal allocation.",
       });
       return;
     }
 
+    const isAddition = (modVegChange + modNonvegChange) < 0;
+    const successDescription = isAddition
+      ? `Meals added for ${format(selectedModifyDate, "MMM dd, yyyy")}. Additional: Rs. ${Math.abs(currentModification).toLocaleString("en-IN")}`
+      : `Meals reduced for ${format(selectedModifyDate, "MMM dd, yyyy")}. Credit: Rs. ${currentModification.toLocaleString("en-IN")}`;
+
     modifyMutation.mutate(formData, {
       onSuccess: () => {
         toast.success("Modification submitted", {
-          description: `Meals reduced for ${format(selectedModifyDate, "MMM dd, yyyy")}. Credit: Rs. ${currentCredit.toLocaleString("en-IN")}`,
+          description: successDescription,
         });
         setModifyDialogOpen(false);
       },
@@ -235,22 +237,6 @@ function OrderDetailPage() {
         },
       }
     );
-  };
-
-  // Generate final invoice
-  const handleGenerateFinalInvoice = () => {
-    generateFinalMutation.mutate(undefined, {
-      onSuccess: () => {
-        toast.success("Final invoice generated", {
-          description: "Your final invoice with all adjustments has been created.",
-        });
-      },
-      onError: (error: Error) => {
-        toast.error("Failed to generate invoice", {
-          description: error.message || "Please try again.",
-        });
-      },
-    });
   };
 
   // Loading state
@@ -410,13 +396,9 @@ function OrderDetailPage() {
           {activeTab === "invoices" && (
             <InvoicesTab
               order={order}
-              proformaInvoice={proformaInvoice}
-              finalInvoice={finalInvoice}
-              hasFinalInvoice={hasFinalInvoice}
-              isCompleted={isCompleted}
+              invoiceData={allInvoices}
+              isInvoicesLoading={isInvoicesLoading}
               isCancelled={isCancelled}
-              onGenerateFinalInvoice={handleGenerateFinalInvoice}
-              isGeneratingFinal={generateFinalMutation.isPending}
             />
           )}
           {activeTab === "modifications" && <ModificationsTab modifications={modsList} />}
@@ -431,16 +413,16 @@ function OrderDetailPage() {
           onOpenChange={setModifyDialogOpen}
           order={order}
           selectedDate={selectedModifyDate}
-          vegReduction={modVegReduction}
-          nonvegReduction={modNonvegReduction}
+          vegChange={modVegChange}
+          nonvegChange={modNonvegChange}
           reason={modReason}
-          onVegReductionChange={setModVegReduction}
-          onNonvegReductionChange={setModNonvegReduction}
+          onVegChangeChange={setModVegChange}
+          onNonvegChangeChange={setModNonvegChange}
           onReasonChange={setModReason}
-          onTotalReductionChange={handleTotalReductionChange}
+          onTotalChangeChange={handleTotalChange}
           onSubmit={handleSubmitModification}
           isPending={modifyMutation.isPending}
-          credit={currentCredit}
+          modificationAmount={currentModification}
         />
       )}
 

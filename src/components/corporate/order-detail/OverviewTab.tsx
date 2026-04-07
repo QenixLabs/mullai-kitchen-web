@@ -3,10 +3,9 @@
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { format } from "date-fns";
-import { CalendarDays, Calendar, MapPin, CreditCard } from "lucide-react";
+import { CalendarDays, Calendar, MapPin, CreditCard, CalendarClock } from "lucide-react";
 import Image from "next/image";
 import type { ICorporateOrder } from "@/api/types/corporate.types";
-import { useCurrentUser } from "@/hooks/useUserStore";
 
 interface OverviewTabProps {
   order: ICorporateOrder;
@@ -30,9 +29,16 @@ const DAY_ORDER: Record<string, number> = {
 export function OverviewTab({ order }: OverviewTabProps) {
   // Sort days by their order in the week
   const sortedDays = [...order.selected_days].sort((a, b) => (DAY_ORDER[a] || 0) - (DAY_ORDER[b] || 0));
-  const proformaAmount = Number(order.proforma_amount ?? 0);
-  const totalReductionAmount = Number(order.total_reduction_amount ?? 0);
-  const finalAmount = Number(order.final_amount ?? 0);
+
+  const getBillingCycleLabel = (days: number): string => {
+    if (days === 7) return 'Weekly';
+    if (days === 30) return 'Monthly';
+    if (days === 90) return 'Quarterly';
+    return `Every ${days} days`;
+  };
+
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 0 }).format(amount);
 
   return (
     <div className="space-y-6">
@@ -48,7 +54,21 @@ export function OverviewTab({ order }: OverviewTabProps) {
             <Calendar className="w-5 h-5 text-gray-400" />
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {/* Billing Cycle */}
+            <div>
+              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider block mb-2">BILLING CYCLE</span>
+              <div className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-blue-50 text-sm font-semibold text-blue-700">
+                <CalendarClock className="w-4 h-4" />
+                {getBillingCycleLabel(order.billing_cycle_days)}
+              </div>
+              {order.current_billing_start && (
+                <p className="text-xs text-gray-400 mt-2">
+                  Current billing period started {format(new Date(order.current_billing_start), "MMM dd, yyyy")}
+                </p>
+              )}
+            </div>
+
             {/* Delivery Period */}
             <div>
               <span className="text-xs font-medium text-gray-400 uppercase tracking-wider block mb-2">DELIVERY PERIOD</span>
@@ -172,17 +192,31 @@ export function OverviewTab({ order }: OverviewTabProps) {
           </div>
 
           <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 text-xs font-semibold text-blue-700 mb-2">
+              <CalendarClock className="w-3.5 h-3.5" />
+              Billed {getBillingCycleLabel(order.billing_cycle_days)}
+            </div>
             <div className="flex items-center justify-between py-1">
               <span className="text-sm" style={{ color: '#554243' }}>Proforma Base Amount</span>
               <span className="text-base font-semibold" style={{ color: '#554243' }}>₹ {proformaAmount.toLocaleString("en-IN")}</span>
             </div>
             <div className="flex items-center justify-between py-1">
-              <span className="text-sm" style={{ color: '#554243' }}>Credits / Reductions</span>
-              <span className="text-base font-semibold text-red-600">- ₹ {totalReductionAmount.toLocaleString("en-IN")}</span>
+              <span className="text-sm" style={{ color: '#554243' }}>Modifications</span>
+              <span
+                className={cn(
+                  'text-base font-semibold',
+                  order.total_modification_amount > 0 ? 'text-amber-600' : 'text-emerald-600',
+                )}
+              >
+                {order.total_modification_amount > 0 ? '+ ' : ''}₹ {Math.abs(order.total_modification_amount).toLocaleString("en-IN")}
+              </span>
             </div>
             <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-              <span className="text-sm font-bold uppercase tracking-wider" style={{ color: 'hsl(var(--primary))' }}>FINAL PAYABLE</span>
-              <span className="text-2xl font-bold" style={{ color: 'hsl(var(--primary))' }}>₹ {finalAmount.toLocaleString("en-IN")}</span>
+              <div>
+                <span className="text-sm font-bold uppercase tracking-wider" style={{ color: 'hsl(var(--primary))' }}>FINAL PAYABLE</span>
+                <p className="text-xs text-gray-400 mt-0.5">For the full subscription period</p>
+              </div>
+              <span className="text-2xl font-bold" style={{ color: 'hsl(var(--primary))' }}>₹ {order.final_amount.toLocaleString("en-IN")}</span>
             </div>
           </div>
         </motion.div>
