@@ -28,7 +28,7 @@ import { motion } from "motion/react";
 import { useState } from "react";
 
 const MAIN_NAV_ITEMS = [
-  { href: "/corporate", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/corporate/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/corporate/orders", icon: ClipboardList, label: "Orders" },
   { href: "/corporate/profile", icon: User, label: "Profile" },
 ] as const;
@@ -52,8 +52,8 @@ export function CorporateMobileBottomNav() {
     <div className="fixed bottom-6 left-1/2 z-50 w-full max-w-[92%] -translate-x-1/2 md:hidden">
       <nav className="relative flex items-center justify-around rounded-2xl border border-white/20 bg-background/80 px-2 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.12)] backdrop-blur-xl">
         {MAIN_NAV_ITEMS.map((item) => {
-          const isActive = item.href === "/corporate"
-            ? pathname === "/corporate"
+          const isActive = item.href === "/corporate/dashboard"
+            ? pathname === "/corporate" || pathname === "/corporate/dashboard"
             : pathname.startsWith(item.href);
           const Icon = item.icon;
 

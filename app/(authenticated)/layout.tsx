@@ -7,7 +7,7 @@ import { Sidebar } from "@/components/navigation/Sidebar";
 import { DashboardTopBar } from "@/components/navigation/DashboardTopBar";
 import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
+import { useAuthHydrated, useIsAuthenticated, useCurrentUser } from "@/hooks/useUserStore";
 import { cn } from "@/lib/utils";
 
 interface AuthenticatedLayoutProps {
@@ -19,6 +19,7 @@ export default function AuthenticatedLayout({
 }: AuthenticatedLayoutProps) {
   const hasHydrated = useAuthHydrated();
   const isAuthenticated = useIsAuthenticated();
+  const user = useCurrentUser();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -44,6 +45,13 @@ export default function AuthenticatedLayout({
     }
   }, [hasHydrated, isAuthenticated, router]);
 
+  // Redirect corporate users to corporate dashboard
+  useEffect(() => {
+    if (hasHydrated && isAuthenticated && user?.role === "corporate") {
+      router.replace("/corporate/dashboard");
+    }
+  }, [hasHydrated, isAuthenticated, user?.role, router]);
+
   if (!hasHydrated) {
     return (
       <div className="p-6 text-sm text-slate-600">Preparing session...</div>
@@ -54,6 +62,15 @@ export default function AuthenticatedLayout({
     return (
       <div className="p-6 text-sm text-slate-600">
         Redirecting to sign in...
+      </div>
+    );
+  }
+
+  // Corporate users should not access individual routes
+  if (user?.role === "corporate") {
+    return (
+      <div className="p-6 text-sm text-slate-600">
+        Redirecting to corporate dashboard...
       </div>
     );
   }

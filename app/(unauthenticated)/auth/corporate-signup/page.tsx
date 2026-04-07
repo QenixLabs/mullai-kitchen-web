@@ -122,7 +122,7 @@ function CorporateSignUpForm() {
         password: formData.password,
         acceptTerms: formData.acceptTerms,
       });
-      router.push("/corporate");
+      router.push("/corporate/dashboard");
     } catch {
       // React Query's mutation error state handles error display
       return;

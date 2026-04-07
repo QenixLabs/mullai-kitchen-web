@@ -24,7 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 const SIDEBAR_ITEMS = [
-  { href: "/corporate", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/corporate/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/corporate/orders", icon: ClipboardList, label: "Orders" },
   { href: "/corporate/profile", icon: User, label: "Profile" },
 ] as const;
@@ -61,8 +61,8 @@ export function CorporateSidebar() {
           <SidebarGroupContent>
             <SidebarMenu className="gap-2.5 group-data-[collapsible=icon]:items-center">
               {SIDEBAR_ITEMS.map((item) => {
-                const isActive = item.href === "/corporate"
-                  ? pathname === "/corporate"
+                const isActive = item.href === "/corporate/dashboard"
+                  ? pathname === "/corporate" || pathname === "/corporate/dashboard"
                   : pathname.startsWith(item.href);
 
                 return (
