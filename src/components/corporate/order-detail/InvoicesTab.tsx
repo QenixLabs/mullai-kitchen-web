@@ -637,23 +637,8 @@ function InvoicesContent({
       }
     }
 
-    // Final invoice
-    if (invoiceData.final) {
-      timelineItems.push({
-        type: "invoice",
-        key: invoiceData.final._id,
-        invoice: invoiceData.final,
-        label: "Final Invoice",
-        badge: "final",
-      });
-    } else if (!isCancelled) {
-      timelineItems.push({
-        type: "locked",
-        key: "locked-final",
-        label: "Final Invoice",
-        subtitle: `Available after subscription ends (${formatDateShort(invoiceData.orderEndDate)})`,
-      });
-    }
+    // Note: The last CYCLE invoice serves as the final settlement
+    // No separate FINAL invoice type - removed
   }
 
   return (

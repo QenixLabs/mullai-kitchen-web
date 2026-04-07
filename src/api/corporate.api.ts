@@ -35,9 +35,6 @@ export const corporateApi = {
   cancelOrder: (id: string, payload: { reason?: string }) =>
     apiClient.post<ICorporateOrder>(CORPORATE_ROUTES.CANCEL_ORDER(id), payload).then((r) => r.data),
 
-  generateFinalInvoice: (id: string) =>
-    apiClient.post<ICorporateInvoice>(CORPORATE_ROUTES.GENERATE_FINAL_INVOICE(id)).then((r) => r.data),
-
   getAllInvoices: (id: string) =>
     apiClient.get<IAllInvoicesResponse>(CORPORATE_ROUTES.ALL_INVOICES(id)).then((r) => r.data),
 

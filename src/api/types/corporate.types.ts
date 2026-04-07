@@ -135,7 +135,7 @@ export type CorporatePaymentStatus = 'pending' | 'paid' | 'overdue';
  * Corporate Invoice Type Enum
  * Defines the type of invoice (proforma or final)
  */
-export type CorporateInvoiceType = 'proforma' | 'cycle' | 'final';
+export type CorporateInvoiceType = 'proforma' | 'cycle';
 
 /**
  * Corporate Invoice Status Enum
@@ -309,7 +309,6 @@ export interface ICurrentBillingCycle {
 export interface IAllInvoicesResponse {
   proforma: ICorporateInvoice | null;
   cycles: ICorporateInvoice[];
-  final: ICorporateInvoice | null;
   currentCycle: ICurrentBillingCycle;
   totalExpectedCycles: number;
   orderStartDate: string;

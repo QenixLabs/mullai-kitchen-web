@@ -13,7 +13,6 @@ import {
   useModifyCorporateOrder,
   useCorporateAllInvoices,
   useCancelCorporateOrder,
-  useGenerateFinalInvoice,
 } from "@/api/hooks/useCorporate";
 import { modifyCorporateOrderSchema, type ModifyCorporateOrderFormData } from "@/lib/validations/corporate.schema";
 import { OverviewTab } from "@/components/corporate/order-detail/OverviewTab";
@@ -25,7 +24,6 @@ import { CancelOrderDialog } from "@/components/corporate/order-detail/CancelOrd
 import { OrderDetailHeader } from "@/components/corporate/order-detail/OrderDetailHeader";
 import { generateDeliveryDates } from "@/lib/corporate/dates";
 import { formatDate } from "@/lib/corporate/format";
-import { isBillingCycleComplete } from "@/lib/corporate/proforma";
 import type { ICorporateOrderModification } from "@/api/types/corporate.types";
 
 import { motion, AnimatePresence } from "motion/react";
@@ -88,10 +86,6 @@ function OrderDetailPage() {
   // Mutations
   const modifyMutation = useModifyCorporateOrder(orderId);
   const cancelMutation = useCancelCorporateOrder(orderId);
-  const generateFinalMutation = useGenerateFinalInvoice(orderId);
-
-  // Derived
-  const finalInvoice = allInvoices?.final ?? undefined;
 
   // State
   const [modifyDialogOpen, setModifyDialogOpen] = useState(false);
@@ -103,27 +97,6 @@ function OrderDetailPage() {
   const [modReason, setModReason] = useState("");
 
   const modsList = modifications ?? [];
-
-  // Auto-generate final invoice when billing cycle completes
-  useEffect(() => {
-    if (!order) return;
-    const cycleComplete = isBillingCycleComplete(order.current_billing_start, order.billing_cycle_days);
-    const isActive = order.status === "active" || order.status === "completed";
-    if (cycleComplete && !finalInvoice && isActive && !generateFinalMutation.isPending) {
-      generateFinalMutation.mutate(undefined, {
-        onSuccess: () => {
-          toast.success("Final invoice generated", {
-            description: "Your final invoice with all adjustments has been created.",
-          });
-        },
-        onError: (error: Error) => {
-          toast.error("Failed to generate invoice", {
-            description: error.message || "Please try again.",
-          });
-        },
-      });
-    }
-  }, [order, finalInvoice, generateFinalMutation.isPending]);
 
   // Build a set of dates that already have modifications
   const modifiedDatesSet = useMemo(() => {

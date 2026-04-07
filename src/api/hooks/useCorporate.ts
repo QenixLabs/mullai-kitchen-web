@@ -69,17 +69,6 @@ export function useCancelCorporateOrder(orderId: string) {
   });
 }
 
-export function useGenerateFinalInvoice(orderId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: () => corporateApi.generateFinalInvoice(orderId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: corporateKeys.order(orderId) });
-      queryClient.invalidateQueries({ queryKey: corporateKeys.invoice(orderId, 'final') });
-    },
-  });
-}
-
 export function useCorporateAllInvoices(orderId: string) {
   return useQuery({
     queryKey: corporateKeys.allInvoices(orderId),
