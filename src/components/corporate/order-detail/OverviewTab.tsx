@@ -198,7 +198,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
             </div>
             <div className="flex items-center justify-between py-1">
               <span className="text-sm" style={{ color: '#554243' }}>Proforma Base Amount</span>
-              <span className="text-base font-semibold" style={{ color: '#554243' }}>₹ {proformaAmount.toLocaleString("en-IN")}</span>
+              <span className="text-base font-semibold" style={{ color: '#554243' }}>₹ {order.proforma_amount.toLocaleString("en-IN")}</span>
             </div>
             <div className="flex items-center justify-between py-1">
               <span className="text-sm" style={{ color: '#554243' }}>Modifications</span>
