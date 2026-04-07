@@ -11,7 +11,7 @@ import {
   useCorporateOrder,
   useCorporateModifications,
   useModifyCorporateOrder,
-  useCorporateInvoice,
+  useCorporateAllInvoices,
   useCancelCorporateOrder,
   useGenerateFinalInvoice,
 } from "@/api/hooks/useCorporate";
@@ -83,13 +83,15 @@ function OrderDetailPage() {
   // Data fetching
   const { data: order, isLoading, error } = useCorporateOrder(orderId);
   const { data: modifications } = useCorporateModifications(orderId);
-  const { data: proformaInvoice } = useCorporateInvoice(orderId, "proforma");
-  const { data: finalInvoice } = useCorporateInvoice(orderId, "final");
+  const { data: allInvoices, isLoading: isInvoicesLoading } = useCorporateAllInvoices(orderId);
 
   // Mutations
   const modifyMutation = useModifyCorporateOrder(orderId);
   const cancelMutation = useCancelCorporateOrder(orderId);
   const generateFinalMutation = useGenerateFinalInvoice(orderId);
+
+  // Derived
+  const finalInvoice = allInvoices?.final ?? undefined;
 
   // State
   const [modifyDialogOpen, setModifyDialogOpen] = useState(false);
@@ -425,10 +427,9 @@ function OrderDetailPage() {
           {activeTab === "invoices" && (
             <InvoicesTab
               order={order}
-              proformaInvoice={proformaInvoice}
-              finalInvoice={finalInvoice}
+              invoiceData={allInvoices}
+              isInvoicesLoading={isInvoicesLoading}
               isCancelled={isCancelled}
-              isGeneratingFinal={generateFinalMutation.isPending}
             />
           )}
           {activeTab === "modifications" && <ModificationsTab modifications={modsList} />}

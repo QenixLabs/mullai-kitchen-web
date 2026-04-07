@@ -291,6 +291,32 @@ export interface ICorporateInvoice {
 }
 
 /**
+ * Current Billing Cycle Info
+ * Information about the current billing cycle
+ */
+export interface ICurrentBillingCycle {
+  number: number;
+  startDate: string;
+  endDate: string;
+  daysRemaining: number;
+  isComplete: boolean;
+}
+
+/**
+ * All Invoices Response
+ * Response structure for fetching all invoices for a corporate order
+ */
+export interface IAllInvoicesResponse {
+  proforma: ICorporateInvoice | null;
+  cycles: ICorporateInvoice[];
+  final: ICorporateInvoice | null;
+  currentCycle: ICurrentBillingCycle;
+  totalExpectedCycles: number;
+  orderStartDate: string;
+  orderEndDate: string;
+}
+
+/**
  * Create Corporate Order Response
  * Response structure when creating a new corporate order
  */

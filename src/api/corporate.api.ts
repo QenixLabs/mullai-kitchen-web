@@ -1,6 +1,7 @@
 import { apiClient } from './client';
 import { CORPORATE_ROUTES } from './routes';
 import type {
+  IAllInvoicesResponse,
   ICreateCorporateOrderRequest,
   ICreateCorporateOrderResponse,
   IModifyCorporateOrderRequest,
@@ -36,6 +37,9 @@ export const corporateApi = {
 
   generateFinalInvoice: (id: string) =>
     apiClient.post<ICorporateInvoice>(CORPORATE_ROUTES.GENERATE_FINAL_INVOICE(id)).then((r) => r.data),
+
+  getAllInvoices: (id: string) =>
+    apiClient.get<IAllInvoicesResponse>(CORPORATE_ROUTES.ALL_INVOICES(id)).then((r) => r.data),
 
   getDailyOrders: (id: string, params?: Record<string, string>) =>
     apiClient.get<{ items: ICorporateDailyOrder[]; total: number; page: number; limit: number }>(

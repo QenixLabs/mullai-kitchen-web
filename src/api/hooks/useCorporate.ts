@@ -80,6 +80,14 @@ export function useGenerateFinalInvoice(orderId: string) {
   });
 }
 
+export function useCorporateAllInvoices(orderId: string) {
+  return useQuery({
+    queryKey: corporateKeys.allInvoices(orderId),
+    queryFn: () => corporateApi.getAllInvoices(orderId),
+    enabled: !!orderId,
+  });
+}
+
 export function useCorporateDailyOrders(orderId: string, params?: Record<string, string>) {
   return useQuery({
     queryKey: corporateKeys.dailyOrders(orderId, params),
