@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { MapPin, Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,8 +24,13 @@ export function LandingNavbar() {
   const [showAreaDropdown, setShowAreaDropdown] = useState(false);
 
   const router = useRouter();
+  const pathname = usePathname();
   const isAuthenticated = useIsAuthenticated();
   const hasHydrated = useAuthHydrated();
+
+  // Determine which page we're on
+  const isCorporatePage = pathname === "/";
+  const isIndividualPage = pathname === "/individual";
 
   const handleGetStarted = () => {
     if (!hasHydrated) return;
@@ -135,9 +140,17 @@ export function LandingNavbar() {
             </AnimatePresence>
           </motion.div>
 
-          <Link href="/individual" className="text-sm font-medium text-white/80 hover:text-white transition-all hover:translate-y-[-1px]">
-            Individual
-          </Link>
+          {/* Show switch button based on current page */}
+          {isCorporatePage && (
+            <Link href="/individual" className="text-sm font-medium text-white/80 hover:text-white transition-all hover:translate-y-[-1px]">
+              Individual
+            </Link>
+          )}
+          {isIndividualPage && (
+            <Link href="/" className="text-sm font-medium text-white/80 hover:text-white transition-all hover:translate-y-[-1px]">
+              Corporate
+            </Link>
+          )}
 
           {!isAuthenticated && (
             <Link href="/auth/signin" className="text-sm font-medium text-white/80 hover:text-white transition-all hover:translate-y-[-1px]">
@@ -217,11 +230,21 @@ export function LandingNavbar() {
               </div>
               
               <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
-                <Link href="/individual">
-                  <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
-                    Individual
-                  </Button>
-                </Link>
+                {/* Show switch button based on current page */}
+                {isCorporatePage && (
+                  <Link href="/individual">
+                    <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
+                      Individual
+                    </Button>
+                  </Link>
+                )}
+                {isIndividualPage && (
+                  <Link href="/">
+                    <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
+                      Corporate
+                    </Button>
+                  </Link>
+                )}
                 {!isAuthenticated && (
                   <Link href="/auth/signin">
                     <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">

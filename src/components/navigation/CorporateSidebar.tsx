@@ -62,7 +62,7 @@ export function CorporateSidebar() {
             <SidebarMenu className="gap-2.5 group-data-[collapsible=icon]:items-center">
               {SIDEBAR_ITEMS.map((item) => {
                 const isActive = item.href === "/corporate/dashboard"
-                  ? pathname === "/corporate"
+                  ? pathname === "/corporate" || pathname === "/corporate/dashboard"
                   : pathname.startsWith(item.href);
 
                 return (
