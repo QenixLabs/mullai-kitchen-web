@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "motion/react";
 import {
   MapPin,
@@ -14,12 +13,10 @@ import {
   Heart,
   Shield,
   ChefHat,
-  Sparkles,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { floatAnimation } from "./animations";
-import { cn } from "@/lib/utils";
 
 const footerLinks = {
   explore: [

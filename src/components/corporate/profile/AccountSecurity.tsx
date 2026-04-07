@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, Laptop } from "lucide-react";
+import { Lock } from "lucide-react";
 import { ChangePasswordDialog } from "./ChangePasswordDialog";
 
 export function AccountSecurity() {

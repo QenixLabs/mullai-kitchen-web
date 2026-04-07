@@ -1,4 +1,4 @@
-import { FaCalendar, FaSpinner, FaTimesCircle, FaTag } from "react-icons/fa";
+import { FaCalendar, FaTag } from "react-icons/fa";
 import { Info, Wallet, Loader2, ArrowRight, Lock, Shield } from "lucide-react";
 import type { PricingBreakdown } from "@/lib/checkout-config";
 

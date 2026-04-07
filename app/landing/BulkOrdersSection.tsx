@@ -190,8 +190,8 @@ export function BulkOrdersSection() {
                 <div className="flex items-start gap-4">
                   <div className="w-2 h-2 rounded-full bg-skin mt-2 shrink-0 animate-pulse" />
                   <p className="text text-white/70 italic leading-relaxed">
-                    "Exceptional service for our annual event! The food was
-                    fresh and stayed hot throughout."
+                    {"\""}Exceptional service for our annual event! The food was
+                    fresh and stayed hot throughout.{"\""}
                   </p>
                 </div>
               </div>

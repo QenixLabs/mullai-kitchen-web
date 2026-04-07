@@ -77,7 +77,7 @@ export function useCreateOrder() {
 
   return useMutation<PaymentOrderResponse, Error, CreatePaymentOrderRequest>({
     mutationFn: paymentApi.createOrder,
-    onSuccess: (data) => {
+    onSuccess: (_data) => {
       // Invalidate wallet balance on successful order creation
       queryClient.invalidateQueries({ queryKey: paymentKeys.walletBalance() });
     },
@@ -92,7 +92,7 @@ export function useTopupWallet() {
 
   return useMutation<TopupWalletResponse, Error, TopupWalletRequest>({
     mutationFn: paymentApi.topupWallet,
-    onSuccess: (data) => {
+    onSuccess: (_data) => {
       // Invalidate wallet balance to reflect new amount
       queryClient.invalidateQueries({ queryKey: paymentKeys.walletBalance() });
       // Invalidate transactions to show new top-up entry

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import {
   GoogleMap,
   useJsApiLoader,
@@ -33,7 +33,6 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import {
   DeliveryZone,
   CreateZonePayload,
@@ -77,19 +76,74 @@ export function ZoneEditor({
   outlets,
   isLoading = false,
 }: ZoneEditorProps) {
-  // Form state
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [outletId, setOutletId] = useState("");
-  const [zoneType, setZoneType] = useState<ZoneType>("POLYGON");
-  const [isActive, setIsActive] = useState(true);
-  const [radiusKm, setRadiusKm] = useState(5);
+  const isEditing = !!zone;
+
+  // Compute initial form state from zone prop
+  const getInitialState = () => {
+    if (zone) {
+      const initialState: {
+        name: string;
+        description: string;
+        outletId: string;
+        zoneType: ZoneType;
+        isActive: boolean;
+        radiusKm: number;
+        polygonPaths: google.maps.LatLngLiteral[];
+        circleCenter: google.maps.LatLngLiteral | null;
+        mapCenter: google.maps.LatLngLiteral;
+      } = {
+        name: zone.name,
+        description: zone.description || "",
+        outletId: zone.outlet_id,
+        zoneType: zone.zone_type,
+        isActive: zone.is_active,
+        radiusKm: zone.radius_km || 5,
+        polygonPaths: [],
+        circleCenter: null,
+        mapCenter: DEFAULT_CENTER,
+      };
+
+      if (zone.zone_type === "POLYGON" && zone.boundary) {
+        const coords = zone.boundary.coordinates[0].map(([lng, lat]) => ({
+          lat,
+          lng,
+        }));
+        initialState.polygonPaths = coords;
+        initialState.mapCenter = coords.length > 0 ? coords[0] : DEFAULT_CENTER;
+      } else if (zone.zone_type === "CIRCLE" && zone.center) {
+        initialState.circleCenter = zone.center;
+        initialState.mapCenter = zone.center;
+      }
+
+      return initialState;
+    }
+
+    return {
+      name: "",
+      description: "",
+      outletId: "",
+      zoneType: "POLYGON" as ZoneType,
+      isActive: true,
+      radiusKm: 5,
+      polygonPaths: [] as google.maps.LatLngLiteral[],
+      circleCenter: null as google.maps.LatLngLiteral | null,
+      mapCenter: DEFAULT_CENTER,
+    };
+  };
+
+  // Form state - initialized from zone, reset via key prop on DialogContent
+  const initial = getInitialState();
+  const [name, setName] = useState(initial.name);
+  const [description, setDescription] = useState(initial.description);
+  const [outletId, setOutletId] = useState(initial.outletId);
+  const [zoneType, setZoneType] = useState<ZoneType>(initial.zoneType);
+  const [isActive, setIsActive] = useState(initial.isActive);
+  const [radiusKm, setRadiusKm] = useState(initial.radiusKm);
 
   // Map drawing state
   const [drawingMode, setDrawingMode] = useState<DrawingMode>(null);
-  const [polygonPaths, setPolygonPaths] = useState<google.maps.LatLngLiteral[]>([]);
-  const [circleCenter, setCircleCenter] = useState<google.maps.LatLngLiteral | null>(null);
-  const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
+  const [polygonPaths, setPolygonPaths] = useState<google.maps.LatLngLiteral[]>(initial.polygonPaths);
+  const [circleCenter, setCircleCenter] = useState<google.maps.LatLngLiteral | null>(initial.circleCenter);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // Refs for map instances
@@ -97,63 +151,15 @@ export function ZoneEditor({
   const circleRef = useRef<google.maps.Circle | null>(null);
   const drawingManagerRef = useRef<google.maps.drawing.DrawingManager | null>(null);
 
-  const isEditing = !!zone;
-
   // Load Google Maps
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
     libraries: GOOGLE_MAPS_LIBRARIES,
   });
 
-  // Initialize form with existing zone data when editing
-  useEffect(() => {
-    if (zone) {
-      setName(zone.name);
-      setDescription(zone.description || "");
-      setOutletId(zone.outlet_id);
-      setZoneType(zone.zone_type);
-      setIsActive(zone.is_active);
-
-      if (zone.zone_type === "POLYGON" && zone.boundary) {
-        // Convert GeoJSON coordinates to Google Maps format
-        const coords = zone.boundary.coordinates[0].map(([lng, lat]) => ({
-          lat,
-          lng,
-        }));
-        setPolygonPaths(coords);
-        if (coords.length > 0) {
-          setMapCenter(coords[0]);
-        }
-        setCircleCenter(null);
-      } else if (zone.zone_type === "CIRCLE" && zone.center) {
-        setCircleCenter(zone.center);
-        setRadiusKm(zone.radius_km || 5);
-        setMapCenter(zone.center);
-        setPolygonPaths([]);
-      }
-    } else {
-      // Reset form for new zone
-      setName("");
-      setDescription("");
-      setOutletId("");
-      setZoneType("POLYGON");
-      setIsActive(true);
-      setPolygonPaths([]);
-      setCircleCenter(null);
-      setRadiusKm(5);
-      setMapCenter(DEFAULT_CENTER);
-    }
-    setHasUnsavedChanges(false);
-    setDrawingMode(null);
-  }, [zone, isOpen]);
-
-  // Update map center when outlet changes
-  useEffect(() => {
-    const selectedOutlet = outlets.find((o) => o._id === outletId);
-    if (selectedOutlet?.location) {
-      setMapCenter(selectedOutlet.location);
-    }
-  }, [outletId, outlets]);
+  // Compute map center: outlet location takes priority, then fall back to zone center or default
+  const selectedOutlet = outlets.find((o) => o._id === outletId);
+  const mapCenter = selectedOutlet?.location ?? initial.mapCenter;
 
   const handlePolygonComplete = useCallback(
     (polygon: google.maps.Polygon) => {
@@ -274,7 +280,7 @@ export function ZoneEditor({
       await onSave(payload);
       toast.success(isEditing ? "Zone updated successfully" : "Zone created successfully");
       onClose();
-    } catch (error) {
+    } catch {
       toast.error("Failed to save zone");
     }
   };
@@ -306,7 +312,7 @@ export function ZoneEditor({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-6xl max-h-[95vh] overflow-hidden p-0">
+      <DialogContent key={zone?._id ?? "new"} className="max-w-6xl max-h-[95vh] overflow-hidden p-0">
         <DialogHeader className="px-6 pt-6 pb-2">
           <DialogTitle className="flex items-center gap-2">
             {isEditing ? "Edit Delivery Zone" : "Create Delivery Zone"}

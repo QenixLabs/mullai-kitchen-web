@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { FaCheckCircle, FaHeadset, FaLeaf, FaShieldAlt, FaStar, FaRocket } from "react-icons/fa";
+import { FaCheckCircle, FaLeaf, FaStar, FaRocket } from "react-icons/fa";
 
 import { cn } from "@/lib/utils";
 

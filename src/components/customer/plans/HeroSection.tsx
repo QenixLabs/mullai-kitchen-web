@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { FaMapMarkerAlt, FaCheckCircle, FaUsers, FaChevronRight, FaSearch, FaMapPin } from "react-icons/fa";
+import { FaSearch, FaMapPin } from "react-icons/fa";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 

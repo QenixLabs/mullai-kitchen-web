@@ -338,6 +338,7 @@ export function DeliveryAddressDialog({
                 </div>
               </div>
               <Switch
+                // eslint-disable-next-line react-hooks/incompatible-library
                 checked={form.watch("is_default")}
                 onCheckedChange={(checked) =>
                   form.setValue("is_default", checked)

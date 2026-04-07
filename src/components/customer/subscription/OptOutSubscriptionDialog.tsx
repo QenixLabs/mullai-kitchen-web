@@ -54,7 +54,7 @@ export function OptOutSubscriptionDialog({
   subscriptionId,
   subscriptionStartDate,
   subscriptionEndDate,
-  totalDeliveries,
+  totalDeliveries: _totalDeliveries,
   maxOptOutDays,
   daysAlreadyOptedOut,
   perDayPrice,
@@ -234,7 +234,7 @@ export function OptOutSubscriptionDialog({
                 <div className="h-10 w-px bg-border" />
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                    You'll Save
+                    You&apos;ll Save
                   </p>
                   <p className="text-2xl font-bold text-primary">
                     ₹{totalCredit.toLocaleString()}
@@ -258,7 +258,7 @@ export function OptOutSubscriptionDialog({
               <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-start gap-2">
                 <Info className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
                 <p className="text-sm text-destructive">
-                  You've reached the maximum opt-out limit (50% of subscription days)
+                  You&apos;ve reached the maximum opt-out limit (50% of subscription days)
                 </p>
               </div>
             )}

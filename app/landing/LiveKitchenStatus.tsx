@@ -4,9 +4,6 @@ import { useRef, useEffect, useState } from "react";
 import {
   motion,
   useInView,
-  useMotionValue,
-  useTransform,
-  animate,
 } from "motion/react";
 import dynamic from "next/dynamic";
 import {
@@ -195,8 +192,8 @@ function StatCard({
   );
 }
 
-// Map Skeleton
-function MapSkeleton() {
+// Map Skeleton (unused but kept for future use)
+function _MapSkeleton() {
   return (
     <div className="w-full h-full bg-gray-900 rounded-2xl animate-pulse flex items-center justify-center">
       <div className="text-gray-500">Loading map...</div>

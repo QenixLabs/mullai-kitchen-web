@@ -2,7 +2,6 @@ import { apiClient } from "@/api/client";
 import { SUBSCRIPTION_ROUTES } from "@/api/routes";
 import type {
   SubscriptionListResponse,
-  SubscriptionResponse,
   SubscriptionDetailResponse,
   DailyOrdersResponse,
   PausePeriodsResponse,

@@ -6,7 +6,6 @@ import { motion } from "motion/react";
 import {
   Building2,
   PlusCircle,
-  Plus,
   Pencil,
   Loader2,
 } from "lucide-react";
@@ -19,7 +18,6 @@ import {
 import { useCurrentUser } from "@/hooks/useUserStore";
 import { OrganizationDetails } from "./OrganizationDetails";
 import { BillingAddress } from "./BillingAddress";
-import { DeliveryAddresses } from "./DeliveryAddresses";
 import { AccountSecurity } from "./AccountSecurity";
 import { EditOrganizationDialog } from "./EditOrganizationDialog";
 import { DeliveryAddressDialog } from "./DeliveryAddressDialog";
@@ -32,7 +30,7 @@ export function CorporateProfileContent() {
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeliveryDialogOpen, setIsDeliveryDialogOpen] = useState(false);
-  const [editingDeliveryIndex, setEditingDeliveryIndex] = useState<
+  const [editingDeliveryIndex, _setEditingDeliveryIndex] = useState<
     number | null
   >(null);
 

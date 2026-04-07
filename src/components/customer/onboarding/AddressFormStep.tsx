@@ -1,11 +1,7 @@
 "use client";
 
 import {
-  Home,
   MapPin,
-  Trash2,
-  Building2,
-  PlusCircle,
   LocateIcon as MyLocation,
 } from "lucide-react";
 import {
@@ -136,6 +132,7 @@ export function AddressFormStep({
   const canContinue = addresses.length > 0;
   const { isValid, dirtyFields } = form.formState;
   const isFormDirty = Object.keys(dirtyFields).length > 0;
+  // eslint-disable-next-line react-hooks/incompatible-library
   const pincodeValue = form.watch("pincode");
 
   const helperMessage = useMemo(() => {
