@@ -23,6 +23,7 @@ import { ArrowRight, ChevronDown } from "lucide-react";
 import { FaCheck } from "react-icons/fa";
 import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { AddressSelectionModal } from "@/components/customer/profile/AddressSelectionModal";
 
 const normalizePincode = (value: string | null): string | null => {
@@ -256,7 +257,7 @@ export function PlansContent({
       {/* Plans Section */}
       <section className={isAuthenticated ? "mb-8 sm:mb-12" : "mb-8 sm:mb-12"}>
         {/* Page heading */}
-        <div className="mb-6">
+        <div className="mb-5 sm:mb-6">
           <h1 className="text-3xl font-black tracking-tight text-[#44151C] sm:text-4xl">
             Choose Your Perfect Plan
           </h1>
@@ -267,157 +268,163 @@ export function PlansContent({
 
         {/* ── Build Your Own Plan Banner ── */}
         {showBuildYourOwnBanner && (
-          <div className="mb-8 rounded-xl bg-card border border-border shadow-sm overflow-visible relative">
-            <div className="flex items-center gap-6 pl-6 pr-0 py-6">
-              {/* Left content */}
-              <div className="flex items-start gap-4 flex-1 py-2">
-                {/* Bell icon */}
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-muted">
-                  <Image src="/images/plans/bell.png" alt="" width={32} height={32} className="object-contain" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-foreground">Build Your Own Plan</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Choose your meals, duration, and diet — we&apos;ll price it just for you.
-                  </p>
-                  <button
-                    id="custom-plan-cta"
-                    onClick={handleCustomPlanClick}
-                    className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
-                  >
-                    Start Customizing
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
+          <div className="relative mb-9 overflow-hidden rounded-[24px] border border-[#3D000C] bg-[#3D000C] shadow-[0_14px_30px_rgba(33,0,7,0.34)]">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(110%_130%_at_0%_0%,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_62%)]" />
+
+            <div className="relative z-10 flex min-h-54 items-center px-6 py-6 sm:px-7 lg:px-8 lg:pr-88">
+              <div className="w-full max-w-107.5">
+                <h3 className="text-[44px] font-black leading-[0.95] tracking-tight text-[#FFFFFF] sm:text-[50px]">
+                  Build Your Own Plan
+                </h3>
+                <p className="mt-3 max-w-105 text-[15px] leading-relaxed text-[#FFFFFF]/80">
+                  Customize every bite. Tailor your meal frequency, portion
+                  sizes, and dietary preferences to fit your unique lifestyle
+                  perfectly.
+                </p>
+                <Button
+                  id="custom-plan-cta"
+                  onClick={handleCustomPlanClick}
+                  className="mt-5 inline-flex h-auto items-center gap-2 rounded-full bg-[#FFFFFF] px-6 py-3 text-sm font-bold text-[#3D000C] transition-colors hover:bg-[#FFFFFF]/90"
+                >
+                  Start Customizing
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
               </div>
-              {/* Right decorative image — overflows card vertically */}
-              <div className="hidden lg:block shrink-0 w-72 self-stretch relative overflow-visible">
+
+              <div className="pointer-events-none absolute bottom-0 right-2 hidden h-56 w-80 lg:block">
                 <Image
                   src="/images/plans/ownplan.png"
                   alt="Build your own meal plan"
                   fill
-                  className="h-[160%]! top-auto! bottom-0 left-1/2 -translate-x-1/2 object-contain object-bottom"
+                  className="object-contain object-bottom"
+                  priority={false}
                 />
               </div>
             </div>
           </div>
         )}
 
-        {/* Popular Plans heading */}
-        <div className="mb-5">
-          <h2 className="text-2xl font-bold text-primary sm:text-3xl">Popular Plans</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Pause anytime | Tailored for you | 5000+ meal delivered weekly
-          </p>
-        </div>
+        {/* Popular Plans heading + filters */}
+        <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <h2
+              className="text-[30px] font-bold leading-none text-[#371116]"
+              style={{ fontFamily: "var(--font-inter), sans-serif" }}
+            >
+              Popular Plans
+            </h2>
+            <p className="mt-1 text-sm text-[#7B6E72]">
+              Curated culinary journeys designed by our head chefs.
+            </p>
+          </div>
 
-        {/* ── Filter Bar ── */}
-        <div className="mb-6 flex flex-wrap items-center gap-3">
+          {/* ── Filter Bar ── */}
+          <div className="flex flex-wrap items-center gap-2.5 lg:justify-end lg:pt-1">
 
           {/* "All" pill — standalone, dark when active */}
-          <button
+          <Button variant="ghost"
             onClick={() => setDietFilter("all")}
             className={cn(
-              "rounded-full px-5 py-2 text-sm font-semibold transition-all",
+              "rounded-full px-4 py-1.5 text-xs font-semibold transition-all",
               dietFilter === "all"
-                ? "bg-primary text-primary-foreground"
-                : "bg-card text-foreground border border-border hover:bg-primary/10",
+                ? "bg-primary text-white shadow-sm"
+                : "border border-[#E8E1E4] bg-white text-[#6D6064] hover:border-[#D9CFD2]",
             )}
           >
             All
-          </button>
+          </Button>
 
           {/* Veg + Non-Veg grouped in one white pill */}
-          <div className="flex items-center overflow-hidden rounded-full border border-border bg-card">
-            <button
+          <div className="flex items-center overflow-hidden rounded-full border border-[#E8E1E4] bg-white">
+            <Button variant="ghost"
               onClick={() => setDietFilter(dietFilter === "veg" ? "all" : "veg")}
               className={cn(
-                "flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-all",
+                "flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold transition-all",
                 dietFilter === "veg"
-                  ? "bg-primary text-primary-foreground"
-                  : "text-foreground hover:bg-muted",
+                  ? "bg-primary text-white"
+                  : "text-[#6D6064] hover:bg-[#F7F3F5]",
               )}
             >
               {/* outlined circle with green dot */}
-              <span className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-success">
-                <span className="h-2 w-2 rounded-full bg-success" />
+              <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#2F9D64]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#2F9D64]" />
               </span>
               Veg
-            </button>
+            </Button>
             {/* vertical divider */}
-            <span className="h-5 w-px bg-border" />
-            <button
+            <span className="h-4 w-px bg-[#E8E1E4]" />
+            <Button variant="ghost"
               onClick={() => setDietFilter(dietFilter === "non-veg" ? "all" : "non-veg")}
               className={cn(
-                "flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-all",
+                "flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold transition-all",
                 dietFilter === "non-veg"
-                  ? "bg-primary text-primary-foreground"
-                  : "text-foreground hover:bg-muted",
+                  ? "bg-primary text-white"
+                  : "text-[#6D6064] hover:bg-[#F7F3F5]",
               )}
             >
               {/* outlined circle with red dot */}
-              <span className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-destructive">
-                <span className="h-2 w-2 rounded-full bg-destructive" />
+              <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#C93C46]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#C93C46]" />
               </span>
               Non-Veg
-            </button>
+            </Button>
           </div>
 
-          {/* Meal Type dropdown — always dark primary */}
+          {/* Meal Type dropdown */}
           <div className="relative" ref={mealTypeRef}>
-            <button
+            <Button variant="ghost"
               onClick={() => setMealTypeOpen(!mealTypeOpen)}
-              className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90"
+              className="flex items-center gap-1.5 rounded-full border border-[#E8E1E4] bg-white px-4 py-1.5 text-xs font-semibold text-[#4A3E42] transition-colors hover:border-[#D9CFD2]"
             >
               Meal Type
               <ChevronDown className="h-3.5 w-3.5" />
-            </button>
+            </Button>
             {mealTypeOpen && (
-              <div className="absolute top-full left-0 mt-1 z-20 w-40 rounded-lg bg-card border border-border shadow-md p-2">
+              <div className="absolute left-0 top-full z-20 mt-1 w-40 rounded-xl border border-[#E6DFE2] bg-white p-2 shadow-md">
                 {MEAL_TYPES.map((type) => (
-                  <button
+                  <Button variant="ghost"
                     key={type}
                     onClick={() => toggleMealType(type)}
                     className={cn(
                       "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-left transition-colors",
                       mealTypeFilters.has(type)
-                        ? "bg-primary/10 text-primary font-semibold"
-                        : "text-foreground hover:bg-muted",
+                        ? "bg-[#F7F3F5] font-semibold text-primary"
+                        : "text-[#4A3E42] hover:bg-[#F9F6F7]",
                     )}
                   >
                     {mealTypeFilters.has(type) && <FaCheck className="h-3 w-3" />}
                     {type}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Duration dropdown — always dark primary */}
+          {/* Duration dropdown */}
           <div className="relative" ref={durationRef}>
-            <button
+            <Button variant="ghost"
               onClick={() => setDurationOpen(!durationOpen)}
-              className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90"
+              className="flex items-center gap-1.5 rounded-full border border-[#E8E1E4] bg-white px-4 py-1.5 text-xs font-semibold text-[#4A3E42] transition-colors hover:border-[#D9CFD2]"
             >
               Duration
               <ChevronDown className="h-3.5 w-3.5" />
-            </button>
+            </Button>
             {durationOpen && (
-              <div className="absolute top-full left-0 mt-1 z-20 w-36 rounded-lg bg-card border border-border shadow-md p-2">
+              <div className="absolute left-0 top-full z-20 mt-1 w-36 rounded-xl border border-[#E6DFE2] bg-white p-2 shadow-md">
                 {["Weekly", "Monthly"].map((d) => (
-                  <button
+                  <Button variant="ghost"
                     key={d}
                     onClick={() => toggleDuration(d)}
                     className={cn(
                       "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-left transition-colors",
                       durationFilter.includes(d)
-                        ? "bg-primary/10 text-primary font-semibold"
-                        : "text-foreground hover:bg-muted",
+                        ? "bg-[#F7F3F5] font-semibold text-primary"
+                        : "text-[#4A3E42] hover:bg-[#F9F6F7]",
                     )}
                   >
                     {durationFilter.includes(d) && <FaCheck className="h-3 w-3" />}
                     {d}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}
@@ -425,17 +432,18 @@ export function PlansContent({
 
           {/* Clear filters */}
           {(dietFilter !== "all" || mealTypeFilters.size > 0 || durationFilter.length > 0) && (
-            <button
+            <Button variant="ghost"
               onClick={() => {
                 setDietFilter("all");
                 setMealTypeFilters(new Set());
                 setDurationFilter([]);
               }}
-              className="rounded-full border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:border-primary hover:text-primary"
+              className="rounded-full border border-[#E8E1E4] px-4 py-1.5 text-xs font-semibold text-[#7B6E72] transition-colors hover:border-[#D9CFD2] hover:text-primary"
             >
               Reset
-            </button>
+            </Button>
           )}
+        </div>
         </div>
 
         <PlanGrid
@@ -450,7 +458,7 @@ export function PlansContent({
               : undefined
           }
           selectedPlanId={selectedPlanId}
-          className=""
+          className="mt-1"
         />
       </section>
 

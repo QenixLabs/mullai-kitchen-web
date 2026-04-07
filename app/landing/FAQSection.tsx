@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { fadeInUp, staggerContainer, floatAnimation } from "./animations";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const faqCategories = [
   { id: "all", name: "All", icon: HelpCircle },
@@ -96,7 +97,7 @@ export function FAQSection() {
           animate={floatAnimation}
           className="absolute top-1/4 right-1/4"
         >
-          <div className="w-80 h-80 bg-[#D4A574]/5 rounded-full blur-[100px]" />
+          <div className="w-80 h-80 bg-skin/5 rounded-full blur-[100px]" />
         </motion.div>
         <motion.div
           animate={{
@@ -128,9 +129,9 @@ export function FAQSection() {
         >
           <motion.div
             variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary to-[#5a0f1a] border border-[#D4A574]/20 mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary to-[#5a0f1a] border border-skin/20 mb-6"
           >
-            <HelpCircle className="h-4 w-4 text-[#D4A574]" />
+            <HelpCircle className="h-4 w-4 text-skin" />
             <span className="text-sm font-semibold text-white tracking-wide">
               Got Questions?
             </span>
@@ -141,7 +142,7 @@ export function FAQSection() {
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight px-2 sm:px-0"
           >
             Frequently Asked{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#e8c4a0]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-skin to-skin-light">
               Questions
             </span>
           </motion.h2>
@@ -203,7 +204,7 @@ export function FAQSection() {
               {/* Glow Effect on Open */}
               <div
                 className={cn(
-                  "absolute -inset-1 bg-gradient-to-r from-[#D4A574]/20 to-primary/20 rounded-2xl blur-xl opacity-0 transition-opacity duration-300",
+                  "absolute -inset-1 bg-gradient-to-r from-skin/20 to-primary/20 rounded-2xl blur-xl opacity-0 transition-opacity duration-300",
                   openIndex === index && "opacity-100",
                 )}
               />
@@ -212,15 +213,17 @@ export function FAQSection() {
                 className={cn(
                   "relative border rounded-2xl overflow-hidden transition-all duration-300",
                   openIndex === index
-                    ? "bg-white/10 border-[#D4A574]/30"
+                    ? "bg-white/10 border-skin/30"
                     : "bg-white/5 border-white/10 hover:border-white/20",
                 )}
               >
-                <button
+                <Button
+                  type="button"
+                  variant="ghost"
                   onClick={() =>
                     setOpenIndex(openIndex === index ? null : index)
                   }
-                  className="w-full flex items-center justify-between p-4 sm:p-6 text-left transition-colors"
+                  className="w-full flex items-center justify-between p-4 sm:p-6 text-left transition-colors h-auto"
                 >
                   <span className="text-base sm:text-lg font-semibold text-white pr-3 sm:pr-4">
                     {faq.question}
@@ -229,7 +232,7 @@ export function FAQSection() {
                     className={cn(
                       "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300",
                       openIndex === index
-                        ? "bg-gradient-to-r from-[#D4A574] to-[#c49a6a] shadow-lg shadow-[#D4A574]/30"
+                        ? "bg-gradient-to-r from-skin to-skin-mid shadow-lg shadow-skin/30"
                         : "bg-white/10 group-hover:bg-white/20",
                     )}
                   >
@@ -239,7 +242,7 @@ export function FAQSection() {
                       <Plus className="h-5 w-5 text-white/70" />
                     )}
                   </div>
-                </button>
+                </Button>
 
                 <AnimatePresence>
                   {openIndex === index && (
@@ -272,7 +275,7 @@ export function FAQSection() {
         >
           <div className="inline-flex flex-col items-center p-8 rounded-3xl bg-white/5 border border-white/10">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-primary to-[#5a0f1a] mb-4">
-              <Sparkles className="h-6 w-6 text-[#D4A574]" />
+              <Sparkles className="h-6 w-6 text-skin" />
             </div>
             <p className="text-white/70 mb-4 text-lg">
               Still have questions? We&apos;re here to help!

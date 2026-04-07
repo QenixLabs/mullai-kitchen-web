@@ -42,12 +42,12 @@ export function OverviewTab({ order }: OverviewTabProps) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3 lg:gap-6">
         {/* Subscription Timeline - Takes 2 columns */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="lg:col-span-2 bg-white rounded-2xl p-8 border border-gray-100"
+          className="rounded-2xl border border-gray-100 bg-white p-5 sm:p-6 lg:col-span-2 lg:p-8"
         >
           <div className="flex items-center justify-between mb-8 rounded-xl" >
             <h3 className="text-lg font-medium" style={{ color: '#44151C' }}>Subscription Timeline</h3>
@@ -115,7 +115,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="rounded-2xl p-8 text-white relative overflow-hidden"
+          className="relative overflow-hidden rounded-2xl p-6 text-white sm:p-8"
           style={{ backgroundColor: '#3A070F' }}
         >
           <h3 className="text-lg font-medium mb-8 text-white">Meal Distribution</h3>
@@ -147,16 +147,16 @@ export function OverviewTab({ order }: OverviewTabProps) {
       </div>
 
       {/* Bottom Row - Delivery Hub and Financial Overview */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
         {/* Delivery Hub with Map - Horizontal Layout */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl overflow-hidden border border-gray-100 flex"
+          className="flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white sm:flex-row"
         >
           {/* Map on the left */}
-          <div className="w-40 sm:w-48 flex-shrink-0 relative">
+          <div className="relative h-48 w-full shrink-0 sm:h-auto sm:w-40 md:w-48">
             <Image
               src="/images/map.png"
               alt="Delivery Location Map"
@@ -166,7 +166,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
           </div>
 
           {/* Content on the right */}
-          <div className="p-6 flex-1">
+          <div className="flex-1 p-5 sm:p-6">
             <div className="flex items-center gap-2 mb-4">
               <MapPin className="w-4 h-4 text-primary" />
               <h3 className="text-base font-semibold" style={{ color: '#44151C' }}>Delivery Hub</h3>
@@ -183,7 +183,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="rounded-2xl p-8 border border-gray-100"
+          className="rounded-2xl border border-gray-100 p-6 sm:p-8"
           style={{ backgroundColor: '#F2ECED' }}
         >
           <div className="flex items-center gap-2 mb-8">
@@ -198,7 +198,7 @@ export function OverviewTab({ order }: OverviewTabProps) {
             </div>
             <div className="flex items-center justify-between py-1">
               <span className="text-sm" style={{ color: '#554243' }}>Proforma Base Amount</span>
-              <span className="text-base font-semibold" style={{ color: '#554243' }}>₹ {order.proforma_amount.toLocaleString("en-IN")}</span>
+              <span className="text-base font-semibold" style={{ color: '#554243' }}>₹ {proformaAmount.toLocaleString("en-IN")}</span>
             </div>
             <div className="flex items-center justify-between py-1">
               <span className="text-sm" style={{ color: '#554243' }}>Modifications</span>

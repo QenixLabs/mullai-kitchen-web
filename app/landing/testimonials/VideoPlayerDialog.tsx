@@ -70,7 +70,7 @@ export function VideoPlayerDialog({
         {/* Author Info Strip */}
         <div className="flex items-center justify-between p-4 sm:p-5 border-t border-white/10">
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-[#D4A574]/30 flex-shrink-0">
+            <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-skin/30 flex-shrink-0">
               <Image
                 src={testimonial.image}
                 alt={testimonial.name}
@@ -84,7 +84,7 @@ export function VideoPlayerDialog({
                   {testimonial.name}
                 </span>
                 {testimonial.verified && (
-                  <BadgeCheck className="h-4 w-4 text-[#D4A574] flex-shrink-0" />
+                  <BadgeCheck className="h-4 w-4 text-skin flex-shrink-0" />
                 )}
               </div>
               <p className="text-xs text-white/50">
@@ -97,7 +97,7 @@ export function VideoPlayerDialog({
             {[...Array(testimonial.rating)].map((_, i) => (
               <Star
                 key={i}
-                className="h-4 w-4 fill-[#D4A574] text-[#D4A574]"
+                className="h-4 w-4 fill-skin text-skin"
               />
             ))}
           </div>

@@ -44,11 +44,17 @@ export const FONT_SIZES = {
 export const BRAND_COLORS = {
   primary: '#44151C',
   primaryDark: '#210309',
+  primaryMedium: '#4D2428',
   primaryLight: '#58111F',
   primaryHover: '#3D0C12',
   primaryHoverLight: '#4D1A20',
+  // Skin colors (gold aliases)
+  skin: '#D4A574',
+  skinMid: '#c49a6a',
+  skinLight: '#ECD1B4',
   gold: '#D4A574',
   goldLight: '#ECD1B4',
+  // Secondary colors
   secondary: '#797778',
   secondaryLight: '#E6E7E7',
   background: '#FBFBFB',

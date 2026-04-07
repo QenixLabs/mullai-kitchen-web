@@ -16,7 +16,7 @@ import { OrderSummaryPanel } from "@/components/customer/plans/OrderSummaryPanel
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAddresses } from "@/api/hooks/useOnboarding";
-import { FaExclamationCircle, FaArrowLeft } from "react-icons/fa";
+import { FaExclamationCircle } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 
@@ -29,7 +29,6 @@ export interface CustomPlanBuilderContentProps {
 }
 
 export function CustomPlanBuilderContent({
-  showFooter = true,
   className,
 }: CustomPlanBuilderContentProps) {
   const router = useRouter();
@@ -181,30 +180,31 @@ export function CustomPlanBuilderContent({
   return (
     <div
       className={cn(
-        "mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 bg-[#f0f0f0] min-h-screen",
+        "mx-auto min-h-screen w-full max-w-305 bg-[#F5F3F4] px-4 pt-5 pb-6 sm:px-6 sm:pt-6 sm:pb-8 lg:px-8",
         isAuthenticated && "pb-32 sm:pb-16",
         className,
       )}
     >
-      {/* Back Button */}
-      <button
-        onClick={() => router.back()}
-        className="flex items-center gap-2 text-primary hover:opacity-70 transition-opacity mb-6"
-      >
-        <FaArrowLeft className="w-5 h-5" />
-      </button>
-
       {/* Header */}
-      <div className="mb-8">
-        <h1
-          className="text-3xl sm:text-4xl font-bold text-primary mb-2"
-          style={{ fontFamily: "var(--font-inter), sans-serif" }}
+      <div className="mb-7 flex items-start justify-between gap-4">
+        <div>
+          <h1
+            className="text-[36px] font-extrabold leading-none uppercase tracking-tight text-[#391219]"
+            style={{ fontFamily: "var(--font-inter), sans-serif" }}
+          >
+            BUILD YOUR PERFECT PLAN
+          </h1>
+          <p className="mt-1.5 text-[15px] text-[#6F666A]">
+            Customize your culinary journey with chef-curated nutrition.
+          </p>
+        </div>
+
+        <button
+          onClick={() => router.back()}
+          className="rounded-full px-3 py-1.5 text-sm font-bold uppercase tracking-[0.06em] text-[#4A1A24] transition-colors hover:bg-[#EEE8EA]"
         >
-          Build Your Perfect Plan
-        </h1>
-        <p className="text-base text-gray-500">
-          Customize your meals, duration, and preferences in three simple steps.
-        </p>
+          ← Back
+        </button>
       </div>
 
       {/* Error Alert */}
@@ -215,17 +215,14 @@ export function CustomPlanBuilderContent({
         </Alert>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+      <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[minmax(0,1fr)_312px] xl:grid-cols-[minmax(0,1fr)_328px] lg:gap-7">
         {/* Left Column - Configuration */}
-        <div className="lg:col-span-8 space-y-6">
+        <div className="space-y-7">
           {/* Step 1: Duration */}
-          <section className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-700 text-sm font-bold">
-                1
-              </div>
+          <section>
+            <div className="mb-4">
               <h2
-                className="text-xl font-bold text-primary"
+                className="text-[20px] font-bold leading-none text-[#3A1219]"
                 style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
                 Choose Duration
@@ -235,13 +232,10 @@ export function CustomPlanBuilderContent({
           </section>
 
           {/* Step 2: Meal Types */}
-          <section className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-700 text-sm font-bold">
-                2
-              </div>
+          <section>
+            <div className="mb-4">
               <h2
-                className="text-xl font-bold text-primary"
+                className="text-[20px] font-bold leading-none text-[#3A1219]"
                 style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
                 Select Your Meals
@@ -255,13 +249,10 @@ export function CustomPlanBuilderContent({
           </section>
 
           {/* Step 3: Food Preference */}
-          <section className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-700 text-sm font-bold">
-                3
-              </div>
+          <section>
+            <div className="mb-4">
               <h2
-                className="text-xl font-bold text-primary"
+                className="text-[20px] font-bold leading-none text-[#3A1219]"
                 style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
                 Food Preference
@@ -277,7 +268,7 @@ export function CustomPlanBuilderContent({
 
             {/* Menu Preview - Inside Food Preference section */}
             {preference && (
-              <div className="mt-6 pt-6 border-t border-gray-100">
+              <div className="mt-7">
                 <WeeklyMenuPreview params={params} preference={preference} />
               </div>
             )}
@@ -285,7 +276,7 @@ export function CustomPlanBuilderContent({
         </div>
 
         {/* Right Column - Order Summary */}
-        <div className="lg:col-span-4 h-full lg:sticky lg:top-6">
+        <div className="h-full lg:sticky lg:top-6">
           <OrderSummaryPanel
             params={params}
             onContinue={handleContinue}

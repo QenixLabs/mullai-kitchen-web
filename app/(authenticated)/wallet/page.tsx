@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 import {
-  FaArrowLeft,
-  FaCreditCard,
-  FaQuestionCircle,
   FaInfoCircle,
   FaSyncAlt,
   FaWallet,
@@ -18,17 +15,8 @@ import type { ZohoPaymentResponse, ZohoPaymentError } from "@/lib/zoho-payments"
 
 import { WalletBalanceCard } from "@/components/customer/wallet";
 import { TransactionHistory } from "@/components/customer/wallet";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -45,7 +33,6 @@ import {
 } from "@/api/hooks/usePayment";
 import { loadZohoPaymentsScript, openZohoCheckout } from "@/lib/zoho-payments";
 import { useCurrentUser } from "@/hooks/useUserStore";
-import React from "react";
 
 export default function WalletPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -68,8 +55,8 @@ export default function WalletPage() {
   });
   const user = useCurrentUser();
 
-  const handleAddFunds = () => {
-    setTopupAmount("");
+  const handleAddFunds = (amount?: number) => {
+    setTopupAmount(amount ? String(amount) : "");
     setIsAddFundsOpen(true);
   };
 
@@ -132,241 +119,52 @@ export default function WalletPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-secondary to-background">
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F4F2F3]">
+      <div className="mx-auto max-w-350 px-4 py-8 sm:px-6 lg:px-8 xl:px-12">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-7"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-end justify-between gap-4">
             <div className="space-y-1">
-              <h1 className="text-3xl font-bold text-gray-900">My Wallet</h1>
-              <p className="text-gray-600">
-                Manage your funds and view transaction history
-              </p>
+              <h1 className="text-[36px] font-black leading-none tracking-tight text-[#3B1118] sm:text-[44px] md:text-[50px] xl:text-[58px]">WALLET BALANCE</h1>
+              <p className="text-base text-[#6D6367] sm:text-lg md:text-[19px]">Available funds</p>
             </div>
-
-            <Button variant="ghost" size="icon" asChild>
-              <a href="/dashboard">
-                <FaArrowLeft className="h-5 w-5" />
-              </a>
-            </Button>
           </div>
         </motion.div>
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="grid gap-6 xl:grid-cols-[minmax(320px,0.95fr)_minmax(0,1.3fr)] 2xl:grid-cols-[minmax(320px,1fr)_minmax(0,1.45fr)]">
           {/* Main Content */}
-          <div className="space-y-6">
+          <div>
             {/* Wallet Balance Card */}
             <WalletBalanceCard
               onAddFunds={handleAddFunds}
               isTopupProcessing={isTopupProcessing}
             />
-
-            {/* Transaction History */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-              <TransactionHistory
-                data={transactionsData}
-                isLoading={transactionsLoading}
-                isFetching={transactionsFetching}
-                error={transactionsError as Error}
-                refetch={refetchTransactions}
-                limit={limit}
-                onPageChange={setCurrentPage}
-              />
-
-              {/* Pagination */}
-              {transactionsData &&
-                Math.ceil(transactionsData.total / limit) > 1 && (
-                  <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-gray-100 pt-6 sm:flex-row">
-                    <p className="text-xs text-gray-500">
-                      Showing{" "}
-                      <span className="font-medium text-gray-900">
-                        {(currentPage - 1) * limit + 1}
-                      </span>{" "}
-                      to{" "}
-                      <span className="font-medium text-gray-900">
-                        {Math.min(currentPage * limit, transactionsData.total)}
-                      </span>{" "}
-                      of{" "}
-                      <span className="font-medium text-gray-900">
-                        {transactionsData.total}
-                      </span>{" "}
-                      transactions
-                    </p>
-
-                    <Pagination className="mx-0 w-auto">
-                      <PaginationContent>
-                        <PaginationItem>
-                          <PaginationPrevious
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              if (currentPage > 1)
-                                setCurrentPage(currentPage - 1);
-                            }}
-                            className={
-                              currentPage === 1
-                                ? "pointer-events-none opacity-50"
-                                : "cursor-pointer"
-                            }
-                          />
-                        </PaginationItem>
-
-                        {/* Generate Page Numbers */}
-                        {Array.from(
-                          { length: Math.ceil(transactionsData.total / limit) },
-                          (_, i) => i + 1,
-                        )
-                          .filter((page) => {
-                            const totalPages = Math.ceil(
-                              transactionsData.total / limit,
-                            );
-                            return (
-                              page === 1 ||
-                              page === totalPages ||
-                              Math.abs(page - currentPage) <= 1
-                            );
-                          })
-                          .map((page, index, array) => {
-                            const showEllipsisBefore =
-                              index > 0 && page - array[index - 1] > 1;
-
-                            return (
-                              <React.Fragment key={page}>
-                                {showEllipsisBefore && (
-                                  <PaginationItem>
-                                    <PaginationEllipsis />
-                                  </PaginationItem>
-                                )}
-                                <PaginationItem>
-                                  <PaginationLink
-                                    href="#"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      setCurrentPage(page);
-                                    }}
-                                    isActive={currentPage === page}
-                                    className="cursor-pointer"
-                                  >
-                                    {page}
-                                  </PaginationLink>
-                                </PaginationItem>
-                              </React.Fragment>
-                            );
-                          })}
-
-                        <PaginationItem>
-                          <PaginationNext
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              const totalPages = Math.ceil(
-                                transactionsData.total / limit,
-                              );
-                              if (currentPage < totalPages)
-                                setCurrentPage(currentPage + 1);
-                            }}
-                            className={
-                              currentPage ===
-                              Math.ceil(transactionsData.total / limit)
-                                ? "pointer-events-none opacity-50"
-                                : "cursor-pointer"
-                            }
-                          />
-                        </PaginationItem>
-                      </PaginationContent>
-                    </Pagination>
-                  </div>
-                )}
-            </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Wallet Info */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900">
-                <FaInfoCircle className="h-5 w-5 text-accent" />
-                About Your Wallet
-              </h2>
-
-              <div className="space-y-4 text-sm">
-                <div className="flex gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
-                    <FaWallet className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">
-                      Secure Payment Method
-                    </p>
-                    <p className="text-gray-600">
-                      Your wallet is a secure way to pay for subscriptions and
-                      orders. All transactions are encrypted and processed
-                      securely.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent">
-                    <FaSyncAlt className="h-4 w-4 text-accent-foreground" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">
-                      Auto-Refunds on Pause
-                    </p>
-                    <p className="text-gray-600">
-                      When you pause your subscription, credits for paused days
-                      are automatically added back to your wallet.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent">
-                    <FaCreditCard className="h-4 w-4 text-accent-foreground" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">
-                      Flexible Top-up
-                    </p>
-                    <p className="text-gray-600">
-                      Add funds anytime using card, UPI, or other payment
-                      methods. No minimum balance required to maintain wallet.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Help */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 className="mb-1 text-lg font-bold text-gray-900">
-                    Need Help?
-                  </h2>
-                  <p className="text-sm text-gray-600">
-                    Have questions about your wallet?
-                  </p>
-                </div>
-                <Button variant="outline" size="icon">
-                  <FaQuestionCircle className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
+          {/* Recent Activity */}
+          <div>
+            <TransactionHistory
+              data={transactionsData}
+              isLoading={transactionsLoading}
+              isFetching={transactionsFetching}
+              error={transactionsError as Error}
+              refetch={refetchTransactions}
+              limit={limit}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </div>
       </div>
 
       {/* Add Funds Dialog */}
       <Dialog open={isAddFundsOpen} onOpenChange={setIsAddFundsOpen}>
-        <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden border-0 shadow-2xl">
+        <DialogContent className="p-0 overflow-hidden border-0 shadow-2xl sm:max-w-105">
           {/* Header with gradient */}
-          <div className="relative bg-gradient-to-br from-primary via-primary to-primary/90 px-6 py-8">
+          <div className="relative bg-linear-to-br from-primary via-primary to-primary/90 px-6 py-8">
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wOCI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
             <DialogHeader className="relative z-10 space-y-3">
               <div className="mx-auto w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 shadow-lg">

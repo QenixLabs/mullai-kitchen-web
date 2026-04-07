@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bell } from "lucide-react";
@@ -21,7 +22,6 @@ export function DashboardTopBar({ className }: { className?: string }) {
   const pathname = usePathname();
 
   const isProfilePage = pathname === "/profile" || pathname?.startsWith("/profile/");
-  const firstName = user?.name?.split(" ")[0] ?? user?.email ?? "there";
   const balance = balanceData?.balance ?? 0;
   const avatarUrl = user?.avatar_url ?? null;
   const initials = user?.name
@@ -35,19 +35,9 @@ export function DashboardTopBar({ className }: { className?: string }) {
         className,
       )}
     >
-      {/* Left — greeting (hidden on profile page) */}
-      {!isProfilePage && (
-        <div>
-          <p className="text-sm font-bold text-primary" style={{ fontFamily: "var(--font-inter), sans-serif" }}>Welcome Back,</p>
-          <p className="text-[30px] font-bold leading-tight text-primary" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-            {firstName}
-          </p>
-        </div>
-      )}
-
       {/* Right — wallet + bell + avatar (hidden on profile page) */}
       {!isProfilePage && (
-        <div className="flex items-center gap-4">
+        <div className="ml-auto flex items-center gap-4">
           {/* Wallet balance */}
           <Link
             href="/wallet"
@@ -71,9 +61,11 @@ export function DashboardTopBar({ className }: { className?: string }) {
           {/* Avatar */}
           <div className="h-9 w-9 overflow-hidden rounded-full border-2 border-border shadow-sm">
             {avatarUrl ? (
-              <img
+              <Image
                 src={avatarUrl}
                 alt={user?.name ?? "Profile"}
+                width={36}
+                height={36}
                 className="h-full w-full object-cover"
               />
             ) : (

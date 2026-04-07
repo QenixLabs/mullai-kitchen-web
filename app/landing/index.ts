@@ -1,8 +1,12 @@
 export { LandingNavbar } from "./Navbar";
 export { HeroSection } from "./HeroSection";
+export { ScaleOfCookingSection } from "./ScaleOfCookingSection";
 export { PromoBanner } from "./PromoBanner";
 export { LiveKitchenStatus } from "./LiveKitchenStatus";
 export { HowItWorksSection } from "./HowItWorksSection";
+export { SafetyMeasuresSection } from "./SafetyMeasuresSection";
+export { NutritionFocusSection } from "./NutritionFocusSection";
+export { SourcingSection } from "./SourcingSection";
 export { TodaysMenuSection } from "./TodaysMenuSection";
 export { PricingSection } from "./PricingSection";
 export { TrustSection } from "./TrustSection";

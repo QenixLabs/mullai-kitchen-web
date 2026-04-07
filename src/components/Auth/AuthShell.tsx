@@ -10,7 +10,7 @@ interface AuthShellProps {
 
 export function AuthShell({ children, side, className }: AuthShellProps) {
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-background p-4 sm:p-8">
+    <div className="relative flex min-h-screen items-center justify-center bg-background p-4 sm:p-6 md:p-8">
       {/* Decorative background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -right-40 -top-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
@@ -21,18 +21,18 @@ export function AuthShell({ children, side, className }: AuthShellProps) {
         className={cn(
           "relative w-full max-w-5xl overflow-hidden rounded-sm bg-card",
           "shadow-xl",
-          "grid lg:grid-cols-2",
+          "grid md:grid-cols-2",
           className
         )}
       >
         {/* Form Side - Left */}
-        <main className="flex flex-col justify-center p-5 sm:p-10 lg:p-16">
+        <main className="flex flex-col justify-center p-5 sm:p-8 md:p-10 lg:p-12">
           {children}
         </main>
 
         {/* Brand Side - Right */}
         {side ? (
-          <aside className="relative hidden lg:block">
+          <aside className="relative hidden md:block">
             <div className="absolute inset-0 bg-primary">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_88%,rgba(255,102,102,0.2),transparent_45%)]" />
               {/* Subtle pattern overlay */}

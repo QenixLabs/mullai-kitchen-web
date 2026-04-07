@@ -21,8 +21,8 @@ export function OrganizationDetails({ profile }: OrganizationDetailsProps) {
   const delegate = profile.delegate;
 
   return (
-    <div className="bg-white rounded-3xl p-8 shadow-[0px_20px_40px_0px_rgba(68,21,28,0.04)]">
-      <div className="flex flex-col lg:flex-row gap-8">
+    <div className="rounded-3xl bg-white p-5 shadow-[0px_20px_40px_0px_rgba(68,21,28,0.04)] sm:p-8">
+      <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
         {/* Left: Organization Info */}
         <div className="flex-1 flex flex-col gap-6 min-w-0">
           {/* Company Name */}
@@ -30,7 +30,7 @@ export function OrganizationDetails({ profile }: OrganizationDetailsProps) {
             <p className="text-xs font-bold text-[#7a4b4e] uppercase tracking-[1.2px]">
               Organization Name
             </p>
-            <h3 className="text-[32px] font-bold leading-8 text-[#1d1b1c]">
+            <h3 className="text-[24px] font-bold leading-7 text-[#1d1b1c] sm:text-[28px] lg:text-[32px] lg:leading-8">
               {profile.company_name}
             </h3>
           </div>
@@ -63,7 +63,7 @@ export function OrganizationDetails({ profile }: OrganizationDetailsProps) {
 
         {/* Right: Delegate Card */}
         {delegate && delegate.name && (
-          <div className="bg-secondary/20 border border-border/10 rounded-xl p-6 w-full lg:w-64 shrink-0 flex flex-col gap-4">
+          <div className="flex w-full shrink-0 flex-col gap-4 rounded-xl border border-border/10 bg-secondary/20 p-5 sm:p-6 lg:w-64">
             {/* Avatar + Name */}
             <div className="flex items-center gap-4">
               <div className="flex items-center justify-center w-12 h-12 rounded-full border-2 border-primary/10 overflow-hidden shrink-0">
@@ -84,7 +84,7 @@ export function OrganizationDetails({ profile }: OrganizationDetailsProps) {
             {/* Contact Button */}
             {(delegate.phone || delegate.email) && (
               <Button
-                className="w-full h-auto py-2.5 rounded-lg bg-primary !text-[--mid-secondary,#fbfbfb] text-xs font-bold hover:bg-primary/90 transition-all"
+                className="h-auto w-full rounded-lg bg-primary py-2.5 text-[--mid-secondary,#fbfbfb]! text-xs font-bold transition-all hover:bg-primary/90"
                 onClick={() => {
                   if (delegate.phone) {
                     window.open(`tel:${delegate.phone}`, "_self");

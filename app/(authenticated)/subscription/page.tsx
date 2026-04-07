@@ -165,7 +165,7 @@ export default function SubscriptionPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
+      <div className="container mx-auto max-w-350 p-4 sm:p-6 md:p-8">
         <div className="mb-6 sm:mb-8">
           <Skeleton className="h-8 sm:h-10 w-48 sm:w-64 mb-4" />
           <Skeleton className="h-4 w-64 sm:w-96" />
@@ -188,7 +188,7 @@ export default function SubscriptionPage() {
   // Error state
   if (error) {
     return (
-      <div className="container mx-auto p-4 sm:p-6 max-w-7xl flex flex-col items-center justify-center min-h-[300px] sm:min-h-[400px]">
+      <div className="container mx-auto flex min-h-75 max-w-7xl flex-col items-center justify-center p-4 sm:min-h-100 sm:p-6">
         <div className="p-4 rounded-full bg-destructive/10 text-destructive mb-6">
           <FaExclamationCircle className="h-8 w-8 sm:h-10 sm:w-10" />
         </div>
@@ -208,24 +208,24 @@ export default function SubscriptionPage() {
   return (
     <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
       {/* Page Header */}
-      <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+      <div className="mb-6 flex flex-col gap-4 sm:mb-8 md:flex-row md:items-start md:justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-[#44151C] mb-2">
-            Subscriptions
+          <h1 className="mb-1 text-[28px] font-black uppercase leading-none tracking-tight text-[#3A1018] sm:text-[32px] lg:text-[34px]">
+            SUBSCRIPTIONS
           </h1>
-          <p className="text-sm sm:text-base text-muted-foreground">
+          <p className="text-sm text-[#3B3336] sm:text-base md:text-lg">
             Control your active meal plans, track deliveries, and manage renewals in one place.
           </p>
           {/* Status count badges */}
           {subscriptions.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 mt-3">
               {subscriptions.filter(s => s.status === 'active').length > 0 && (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-2.5 sm:px-3 py-1 text-xs font-semibold text-white">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-600">
                   {subscriptions.filter(s => s.status === 'active').length} Active
                 </span>
               )}
               {subscriptions.filter(s => s.status === 'paused').length > 0 && (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400 px-2.5 sm:px-3 py-1 text-xs font-semibold text-white">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-zinc-200 px-3 py-1 text-sm font-semibold text-zinc-700">
                   {subscriptions.filter(s => s.status === 'paused').length} Paused
                 </span>
               )}
@@ -235,7 +235,7 @@ export default function SubscriptionPage() {
         <Button
           onClick={() => router.push("/plans")}
           size="lg"
-          className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-sm shrink-0 w-full sm:w-auto"
+          className="h-12 w-full shrink-0 gap-2 rounded-full bg-[#5A0F1F] px-8 text-white shadow-sm hover:bg-[#4A0C19] md:w-auto"
         >
           <FaPlus className="h-4 w-4" />
           New Subscription
@@ -243,7 +243,7 @@ export default function SubscriptionPage() {
       </div>
 
       <div className="relative">
-        <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent -z-10 h-48 sm:h-64 pointer-events-none" />
+        <div className="absolute inset-0 -z-10 h-48 bg-linear-to-b from-[#F8F4F6] to-transparent pointer-events-none sm:h-64" />
 
         {/* Subscription List */}
         {subscriptions.length === 0 ? (
@@ -266,8 +266,8 @@ export default function SubscriptionPage() {
             </Button>
           </div>
         ) : (
-          <div className="pb-8 sm:pb-12">
-            <h2 className="text-lg sm:text-xl font-bold text-primary mb-4">Active Subscriptions</h2>
+          <div className="pb-8 sm:pb-10 lg:pb-12">
+            <h2 className="mb-4 text-2xl font-bold leading-none text-[#3A1018] sm:text-[30px] lg:text-[38px]">Active Subscriptions</h2>
             <SubscriptionList
               subscriptions={subscriptions}
               onPause={handlePause}

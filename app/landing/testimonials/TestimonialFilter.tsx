@@ -35,11 +35,11 @@ export function TestimonialFilter({
           <TabsTrigger
             key={filterValue}
             value={filterValue}
-            className="rounded-lg px-4 py-2 text-sm font-medium transition-all data-[state=active]:bg-[#D4A574]/20 data-[state=active]:text-[#D4A574] text-white/50 hover:text-white/80 data-[state=active]:hover:text-[#D4A574]"
+            className="rounded-lg px-4 py-2 text-sm font-medium transition-all data-[state=active]:bg-skin/20 data-[state=active]:text-skin text-white/50 hover:text-white/80 data-[state=active]:hover:text-skin"
           >
             <Icon className="h-4 w-4 mr-1.5" />
             {label}
-            <span className="ml-1.5 text-xs bg-white/10 data-[state=active]:bg-[#D4A574]/10 px-1.5 py-0.5 rounded-full">
+            <span className="ml-1.5 text-xs bg-white/10 data-[state=active]:bg-skin/10 px-1.5 py-0.5 rounded-full">
               {counts[filterValue]}
             </span>
           </TabsTrigger>

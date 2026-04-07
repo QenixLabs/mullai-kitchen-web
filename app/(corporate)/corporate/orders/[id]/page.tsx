@@ -23,14 +23,11 @@ import { ModifyMealDialog, computeModification } from "@/components/corporate/or
 import { CancelOrderDialog } from "@/components/corporate/order-detail/CancelOrderDialog";
 import { OrderDetailHeader } from "@/components/corporate/order-detail/OrderDetailHeader";
 import { generateDeliveryDates } from "@/lib/corporate/dates";
-import { formatDate } from "@/lib/corporate/format";
 import type { ICorporateOrderModification } from "@/api/types/corporate.types";
 
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
-import {
-  ChevronLeft
-} from "lucide-react";
+
 
 
 
@@ -43,7 +40,7 @@ function OrderDetailSkeleton() {
         <Skeleton className="h-32 w-48 rounded-[2.5rem]" />
       </div>
       <Skeleton className="h-12 w-full max-w-md rounded-2xl mb-8" />
-      <Skeleton className="h-[600px] w-full rounded-[2.5rem]" />
+      <Skeleton className="h-150 w-full rounded-[2.5rem]" />
     </div>
   );
 }
@@ -249,7 +246,7 @@ function OrderDetailPage() {
 
   if (error || !order) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center min-h-[600px]">
+      <div className="mx-auto flex min-h-150 max-w-7xl flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -285,8 +282,8 @@ function OrderDetailPage() {
       <div className="mx-auto w-full max-w-7xl px-4 pt-8 pb-16 sm:px-6 sm:pt-10 sm:pb-20 lg:px-8 lg:pt-12 lg:pb-24">
       {/* Dynamic Background Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute top-0 right-0 w-[500px] h-125 bg-primary/5 rounded-full blur-[120px] -mr-64 -mt-32" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-125 bg-gold/5 rounded-full blur-[120px] -ml-64 -mb-32" />
+        <div className="absolute top-0 right-0 h-125 w-125 rounded-full bg-primary/5 blur-[120px] -mr-64 -mt-32" />
+        <div className="absolute bottom-0 left-0 h-125 w-125 rounded-full bg-gold/5 blur-[120px] -ml-64 -mb-32" />
       </div>
 
       {/* Back button */}
@@ -313,34 +310,34 @@ function OrderDetailPage() {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8"
+        className="mb-8 flex flex-col justify-between gap-4 lg:flex-row lg:items-center"
       >
         <div>
-          <h1 className="text-[32px] font-bold mb-2 tracking-tight" style={{ color: '#44151C' }}>
+          <h1 className="mb-2 text-[24px] font-bold tracking-tight text-primary sm:text-[28px] lg:text-[32px]">
             {order.company_name}
           </h1>
-          <div className="flex items-center gap-2 text-[15px] font-medium text-gray-700">
-            <span>Order ID: {order.order_id}</span>
-            <span className="text-[#D4D4D4] text-[10px] mx-1">●</span>
+          <div className="flex flex-wrap items-center gap-2 text-[13px] font-medium text-gray-700 sm:text-[15px]">
+            <span className="break-all">Order ID: {order.order_id}</span>
+            <span className="mx-1 text-[10px] text-muted-foreground/40">●</span>
             <span>Created: {format(new Date(order.created_at), "MMM dd, yyyy")}</span>
           </div>
         </div>
 
         {/* Status Badges - Pill Style */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <span
             className={cn(
-              "px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-white",
+              "rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-primary-foreground sm:px-5 sm:text-xs",
               order.status === "active"
-                ? "bg-[#00990F]"
-                : "bg-gray-100 text-gray-600"
+                ? "bg-success text-success-foreground"
+                : "bg-muted text-muted-foreground"
             )}
           >
             ACTIVE
           </span>
 
           {order.payment_status === "pending" && (
-            <span className="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-[#FF962D] text-white">
+            <span className="rounded-full bg-warning text-warning-foreground px-4 py-2 text-[11px] font-bold uppercase tracking-wider sm:px-5 sm:text-xs">
               PENDING
             </span>
           )}
@@ -349,7 +346,7 @@ function OrderDetailPage() {
 
       {/* Modern Tab System */}
       <div className="relative mb-8 border-b border-gray-200">
-        <div className="flex items-center gap-10">
+        <div className="flex items-center gap-6 overflow-x-auto whitespace-nowrap sm:gap-8 lg:gap-10">
           {TABS_CONFIG.map((tab) => {
             if (tab.value === "schedule" && order.status !== "active") return null;
             const isActive = activeTab === tab.value;
@@ -359,16 +356,15 @@ function OrderDetailPage() {
                 key={tab.value}
                 onClick={() => handleTabChange(tab.value)}
                 className={cn(
-                  "relative py-4 text-[15px] font-bold transition-colors"
+                  "relative py-4 text-[15px] font-bold transition-colors",
+                  isActive ? "text-primary" : "text-muted-foreground"
                 )}
-                style={{ color: isActive ? '#44151C' : '#8D8D8D' }}
               >
                 {tab.label}
                 {isActive && (
                   <motion.div
                     layoutId="detail-tab-indicator"
-                    className="absolute bottom-0 left-0 right-0 h-[3px] rounded-t-full"
-                    style={{ backgroundColor: '#44151C' }}
+                    className="absolute bottom-0 left-0 right-0 h-0.75 rounded-t-full bg-primary"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
@@ -386,7 +382,7 @@ function OrderDetailPage() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -20, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="min-h-[400px]"
+          className="min-h-100"
         >
           {activeTab === "overview" && <OverviewTab order={order} />}
           {activeTab === "schedule" && order.status === "active" && (

@@ -479,7 +479,7 @@ export default function CreateOrderPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="border-b border-border">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="mx-auto max-w-350 px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#44151C]">CREATE NEW ORDER</h1>
@@ -500,13 +500,13 @@ export default function CreateOrderPage() {
       </div>
 
       {/* Stepper */}
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="mx-auto max-w-350 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <Stepper items={STEPS} currentStep={currentStep - 1} className="mb-6 sm:mb-10" />
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] lg:grid-cols-[1fr_300px] gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6 lg:gap-8">
             {/* Left: Form Content */}
-            <div className="space-y-6 order-2 xl:order-1">
+            <div className="order-1 space-y-6">
               {currentStep === 1 && (
                 <Step1Delivery
                   register={register}
@@ -548,7 +548,7 @@ export default function CreateOrderPage() {
             </div>
 
             {/* Right: Order Summary Sidebar */}
-            <div className="order-1 xl:order-2">
+            <div className="order-2 xl:order-2 xl:min-w-80">
               <OrderSummarySidebar
                 deliveryAddress={deliveryAddress.address_line ? {
                   addressLine: deliveryAddress.address_line,
@@ -577,7 +577,7 @@ export default function CreateOrderPage() {
           </div>
 
           {/* Navigation Buttons */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mt-8 sm:mt-10 pt-6 border-t border-border gap-4">
+          <div className="mt-8 flex flex-col gap-4 border-t border-border pt-6 sm:mt-10 md:flex-row md:items-center md:justify-between">
             <Button
               type="button"
               variant="outline"
@@ -589,19 +589,19 @@ export default function CreateOrderPage() {
                 }
               }}
               disabled={isSubmitting}
-              className="gap-2 rounded-full px-6 order-2 sm:order-1"
+              className="order-2 gap-2 rounded-full px-6 md:order-1"
             >
               <ArrowLeft className="h-4 w-4" />
               {currentStep === 1 ? "Cancel" : "Back"}
             </Button>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 order-1 sm:order-2">
+            <div className="order-1 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center md:order-2 md:justify-end md:flex-wrap">
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleSaveDraft}
                 disabled={isSubmitting}
-                className="gap-2 rounded-full px-6"
+                className="gap-2 rounded-full px-6 md:flex-none"
               >
                 <Save className="h-4 w-4" />
                 Save Draft
@@ -611,7 +611,7 @@ export default function CreateOrderPage() {
                 <Button
                   type="button"
                   onClick={handleNext}
-                  className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6"
+                  className="gap-2 rounded-full bg-primary px-6 text-primary-foreground hover:bg-primary/90 md:flex-none"
                 >
                   Next: {STEPS[currentStep].title}
                   <ArrowRight className="h-4 w-4" />
@@ -620,7 +620,7 @@ export default function CreateOrderPage() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6"
+                  className="gap-2 rounded-full bg-primary px-6 text-primary-foreground hover:bg-primary/90 md:flex-none"
                 >
                   {isSubmitting ? (
                     <>
