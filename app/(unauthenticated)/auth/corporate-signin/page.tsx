@@ -69,7 +69,7 @@ function CorporateSignInForm() {
       return;
     }
 
-    router.push("/corporate");
+    router.push("/corporate/dashboard");
   };
 
   return (

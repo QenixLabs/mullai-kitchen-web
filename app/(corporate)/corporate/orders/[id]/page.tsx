@@ -28,9 +28,6 @@ import type { ICorporateOrderModification } from "@/api/types/corporate.types";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 
-
-
-
 function OrderDetailSkeleton() {
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
