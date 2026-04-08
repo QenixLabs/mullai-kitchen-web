@@ -70,3 +70,11 @@ export const corporateProfileKeys = {
   all: ['corporate-profile'] as const,
   profile: () => [...corporateProfileKeys.all, 'profile'] as const,
 };
+
+export const permissionKeys = {
+  all: () => ["permissions"] as const,
+  roles: () => ["permissions", "roles"] as const,
+  auditLogs: (params?: { action?: string; userId?: string; limit?: number; offset?: number }) =>
+    ["permissions", "audit", params] as const,
+  userPermissions: (userId: string) => ["permissions", "user", userId] as const,
+};
