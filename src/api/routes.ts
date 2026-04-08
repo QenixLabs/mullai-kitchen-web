@@ -10,6 +10,7 @@ export const AUTH_ROUTES = {
   VERIFY_SIGNUP_OTP: "/auth/verify-signup-otp",
   CHANGE_PASSWORD: "/auth/change-password",
   CORPORATE_REGISTER: "/auth/corporate/register",
+  PERMISSIONS: "/auth/permissions",
 } as const;
 
 export const USER_ROUTES = {

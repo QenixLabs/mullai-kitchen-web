@@ -16,6 +16,10 @@ import type {
   IVerifySignupOtpResponse,
 } from "@/api/types/auth.types";
 
+export interface IPermissionsResponse {
+  permissions: string[];
+}
+
 export const authApi = {
   login: async (payload: ILoginRequest): Promise<IAuthSession> => {
     const response = await apiClient.post<IAuthSession>(AUTH_ROUTES.LOGIN, payload);
@@ -59,6 +63,10 @@ export const authApi = {
   },
   verifySignupOtp: async (payload: IVerifySignupOtpRequest): Promise<IVerifySignupOtpResponse> => {
     const response = await apiClient.post<IVerifySignupOtpResponse>(AUTH_ROUTES.VERIFY_SIGNUP_OTP, payload);
+    return response.data;
+  },
+  getPermissions: async (): Promise<IPermissionsResponse> => {
+    const response = await apiClient.get<IPermissionsResponse>(AUTH_ROUTES.PERMISSIONS);
     return response.data;
   },
 };
