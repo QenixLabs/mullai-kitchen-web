@@ -83,3 +83,7 @@ export const CORPORATE_ROUTES = {
   UPCOMING_DELIVERIES: (id: string) => `/corporate/orders/${id}/upcoming-deliveries`,
   ORDER_PRICING: '/corporate/orders/pricing',
 } as const;
+
+export const ADMIN_ROUTES = {
+  DASHBOARD: "/admin/dashboard",
+} as const;
