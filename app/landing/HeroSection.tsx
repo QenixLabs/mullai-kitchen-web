@@ -227,7 +227,7 @@ export function HeroSection() {
                   </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-bold text-primary">18,000+</span>
+                      <span className="text-3xl font-bold text-primary">200+</span>
                       <span className="text-sm text-gray-500">meals/day</span>
                     </div>
                     <Button className="h-12 px-6 bg-linear-to-r from-primary to-[#5a0f1a] hover:from-[#4a0a15] hover:to-[#6b1020] text-white font-semibold rounded-full shadow-lg shadow-primary/30">

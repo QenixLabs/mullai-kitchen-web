@@ -127,7 +127,11 @@ const menuItems = [
 // Counter animation hook
 import { useCounter } from "@/hooks/use-counter";
 
-export function TodaysMenuSection() {
+export function TodaysMenuSection({
+  corporate = false,
+}: {
+  corporate?: boolean;
+}) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [activeCategory, setActiveCategory] = useState("All");
@@ -355,20 +359,24 @@ export function TodaysMenuSection() {
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-xl sm:text-2xl font-bold text-white">
-                            ₹{item.price}
-                          </span>
-                          <span className="text-xs sm:text-sm text-white/50">
-                            /meal
-                          </span>
-                        </div>
-                        <Button
-                          size="sm"
-                          className="rounded-full bg-gradient-to-r from-skin to-skin-mid hover:from-skin-light hover:to-skin text-primary text-xs sm:text-sm font-semibold shadow-lg shadow-skin/20 transition-all hover:scale-[1.02] active:scale-[0.98] px-3 sm:px-4 py-1 sm:py-2 h-auto"
-                        >
-                          Order
-                        </Button>
+                        {!corporate && (
+                          <>
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-xl sm:text-2xl font-bold text-white">
+                                ₹{item.price}
+                              </span>
+                              <span className="text-xs sm:text-sm text-white/50">
+                                /meal
+                              </span>
+                            </div>
+                            <Button
+                              size="sm"
+                              className="rounded-full bg-gradient-to-r from-skin to-skin-mid hover:from-skin-light hover:to-skin text-primary text-xs sm:text-sm font-semibold shadow-lg shadow-skin/20 transition-all hover:scale-[1.02] active:scale-[0.98] px-3 sm:px-4 py-1 sm:py-2 h-auto"
+                            >
+                              Order
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>

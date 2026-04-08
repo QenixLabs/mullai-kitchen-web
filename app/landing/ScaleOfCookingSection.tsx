@@ -5,7 +5,7 @@ import { Building2, ChefHat, Handshake, Soup } from "lucide-react";
 
 const stats = [
   {
-    value: "18,000+",
+    value: "5000+",
     label: "Meals cooked daily",
     icon: Soup,
   },

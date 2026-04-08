@@ -25,14 +25,14 @@ export default function LandingPage() {
       <main>
         <HeroSection />
         <ScaleOfCookingSection />
-        <PromoBanner />
-        <LiveKitchenStatus />
+        {/* <PromoBanner /> */}
         <HowItWorksSection />
+        <GallerySection />
+        {/* <LiveKitchenStatus /> */}
         <SafetyMeasuresSection />
         <NutritionFocusSection />
         <SourcingSection />
-        <TodaysMenuSection />
-        <GallerySection />
+        <TodaysMenuSection corporate />
         <BulkOrdersSection />
         <TrustSection />
         <TestimonialsSection />

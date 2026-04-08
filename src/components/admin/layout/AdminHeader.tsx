@@ -76,8 +76,8 @@ export function AdminHeader({ className }: AdminHeaderProps) {
     >
       {/* Left side - Mobile menu toggle and page title */}
       <div className="flex items-center gap-3">
-        <SidebarTrigger className="md:hidden" />
-        <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1>
+        <SidebarTrigger  />
+        {/* <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1> */}
       </div>
 
       {/* Right side - User avatar */}
