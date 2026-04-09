@@ -77,3 +77,51 @@ export const deliveryZoneApi = {
     return response.data;
   },
 };
+
+/**
+ * Admin-scoped delivery zone API — all endpoints go through
+ * /admin/outlets/:outletId/zones/...
+ */
+export const adminDeliveryZoneApi = {
+  list: async (outletId: string): Promise<DeliveryZone[]> => {
+    const response = await apiClient.get(`/admin/outlets/${outletId}/zones`);
+    return response.data;
+  },
+
+  create: async (
+    outletId: string,
+    payload: Omit<CreateZonePayload, 'outlet_id'>,
+  ): Promise<DeliveryZone> => {
+    const response = await apiClient.post(
+      `/admin/outlets/${outletId}/zones`,
+      payload,
+    );
+    return response.data;
+  },
+
+  update: async (
+    outletId: string,
+    zoneId: string,
+    payload: Partial<CreateZonePayload>,
+  ): Promise<DeliveryZone> => {
+    const response = await apiClient.put(
+      `/admin/outlets/${outletId}/zones/${zoneId}`,
+      payload,
+    );
+    return response.data;
+  },
+
+  delete: async (outletId: string, zoneId: string): Promise<void> => {
+    await apiClient.delete(`/admin/outlets/${outletId}/zones/${zoneId}`);
+  },
+
+  toggle: async (
+    outletId: string,
+    zoneId: string,
+  ): Promise<DeliveryZone> => {
+    const response = await apiClient.patch(
+      `/admin/outlets/${outletId}/zones/${zoneId}/toggle`,
+    );
+    return response.data;
+  },
+};

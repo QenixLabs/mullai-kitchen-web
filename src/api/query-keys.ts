@@ -78,3 +78,12 @@ export const permissionKeys = {
     ["permissions", "audit", params] as const,
   userPermissions: (userId: string) => ["permissions", "user", userId] as const,
 };
+
+export const outletKeys = {
+  all: ['admin', 'outlets'] as const,
+  lists: () => [...outletKeys.all, 'list'] as const,
+  list: (params?: { status?: string; search?: string; page?: number; limit?: number }) =>
+    [...outletKeys.lists(), params] as const,
+  details: () => [...outletKeys.all, 'detail'] as const,
+  detail: (id: string) => [...outletKeys.details(), id] as const,
+};
