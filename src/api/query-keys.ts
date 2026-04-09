@@ -70,3 +70,13 @@ export const corporateProfileKeys = {
   all: ['corporate-profile'] as const,
   profile: () => [...corporateProfileKeys.all, 'profile'] as const,
 };
+
+export const addOnKeys = {
+  all: () => ['add-ons'] as const,
+  available: (subscriptionId: string, params?: { delivery_date?: string; meal_type?: string }) =>
+    [...addOnKeys.all(), 'available', subscriptionId, params] as const,
+  cartSummary: (subscriptionId: string) =>
+    [...addOnKeys.all(), 'cart-summary', subscriptionId] as const,
+  activeOrders: (subscriptionId: string) =>
+    [...addOnKeys.all(), 'active-orders', subscriptionId] as const,
+};

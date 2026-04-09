@@ -82,3 +82,11 @@ export const CORPORATE_ROUTES = {
   UPCOMING_DELIVERIES: (id: string) => `/corporate/orders/${id}/upcoming-deliveries`,
   ORDER_PRICING: '/corporate/orders/pricing',
 } as const;
+
+export const ADD_ON_ROUTES = {
+  AVAILABLE: (id: string) => `/customer/subscriptions/${id}/add-ons/available`,
+  CART_SUMMARY: (id: string) => `/customer/subscriptions/${id}/add-ons/cart-summary`,
+  PREPARE_CHECKOUT: (id: string) => `/customer/subscriptions/${id}/add-ons/prepare-checkout`,
+  CREATE_ORDER: (id: string) => `/customer/subscriptions/${id}/add-ons/create-order`,
+  ACTIVE_ORDERS: (id: string) => `/customer/subscriptions/${id}/add-ons`,
+} as const;
