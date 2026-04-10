@@ -86,4 +86,15 @@ export const CORPORATE_ROUTES = {
 
 export const ADMIN_ROUTES = {
   DASHBOARD: "/admin/dashboard",
+  USERS: '/admin/users',
+  USER_DETAIL: (id: string) => `/admin/users/${id}`,
+  CREATE_ADMIN: '/admin/users/admin',
+  CREATE_HUB_OWNER: '/admin/users/hub-owner',
+  CREATE_DELIVERY_PARTNER: '/admin/users/delivery-partner',
+  USER_STATUS: (id: string) => `/admin/users/${id}/status`,
+  USER_INVOICES: (id: string) => `/admin/users/${id}/invoices`,
+  USER_SUBSCRIPTIONS: (id: string) => `/admin/users/${id}/subscriptions`,
+  USER_CORPORATE_ORDERS: (id: string) => `/admin/users/${id}/corporate-orders`,
+  USER_MARK_INVOICE_PAID: (userId: string, invoiceId: string) => `/admin/users/${userId}/invoices/${invoiceId}/mark-paid`,
+  USER_MARK_ORDER_PAID: (userId: string, orderId: string) => `/admin/users/${userId}/corporate-orders/${orderId}/mark-paid`,
 } as const;

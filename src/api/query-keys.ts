@@ -87,3 +87,22 @@ export const outletKeys = {
   details: () => [...outletKeys.all, 'detail'] as const,
   detail: (id: string) => [...outletKeys.details(), id] as const,
 };
+
+export const adminUserKeys = {
+  all: ['admin', 'users'] as const,
+  lists: () => [...adminUserKeys.all, 'list'] as const,
+  list: (params?: { role?: string; status?: string; outlet_id?: string; search?: string; page?: number; limit?: number }) =>
+    [...adminUserKeys.lists(), params] as const,
+  details: () => [...adminUserKeys.all, 'detail'] as const,
+  detail: (id: string) => [...adminUserKeys.details(), id] as const,
+};
+
+export const adminUserFinancialKeys = {
+  all: ['admin-user-financial'] as const,
+  invoices: (userId: string, params?: { status?: string; page?: number; limit?: number }) =>
+    [...adminUserFinancialKeys.all, userId, 'invoices', params] as const,
+  subscriptions: (userId: string, params?: { status?: string; page?: number; limit?: number }) =>
+    [...adminUserFinancialKeys.all, userId, 'subscriptions', params] as const,
+  corporateOrders: (userId: string) =>
+    [...adminUserFinancialKeys.all, userId, 'corporate-orders'] as const,
+};
