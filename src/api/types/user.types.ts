@@ -12,7 +12,7 @@ export enum UserRole {
 export const ADMIN_PANEL_ROLES: readonly UserRole[] = [
   UserRole.SuperAdmin,
   UserRole.Admin,
-  UserRole.HubOwner,
+  UserRole.OutletAdmin,
 ] as const;
 
 export function isAdminRole(role: string | undefined): boolean {

@@ -8,7 +8,7 @@ import { DashboardTopBar } from "@/components/navigation/DashboardTopBar";
 import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { useAuthHydrated, useIsAuthenticated, useCurrentUser } from "@/hooks/useUserStore";
-import { isAdminRole } from "@/api/types/user.types";
+import { UserRole, isAdminRole } from "@/api/types/user.types";
 import { cn } from "@/lib/utils";
 
 interface AuthenticatedLayoutProps {
@@ -46,17 +46,18 @@ export default function AuthenticatedLayout({
     }
   }, [hasHydrated, isAuthenticated, router]);
 
-  // Redirect corporate users to corporate dashboard
+  // Redirect non-customer users to their respective dashboards
   useEffect(() => {
-    if (hasHydrated && isAuthenticated && user?.role === "corporate") {
-      router.replace("/corporate/dashboard");
-    }
-  }, [hasHydrated, isAuthenticated, user?.role, router]);
-
-  // Redirect admin users to admin panel
-  useEffect(() => {
-    if (hasHydrated && isAuthenticated && isAdminRole(user?.role)) {
-      router.replace("/admin");
+    if (hasHydrated && isAuthenticated && user?.role && user.role !== UserRole.Customer) {
+      if (user.role === UserRole.Corporate) {
+        router.replace("/corporate/dashboard");
+      } else if (isAdminRole(user.role)) {
+        router.replace("/admin");
+      } else if (user.role === UserRole.DeliveryPartner) {
+        router.replace("/delivery");
+      } else {
+        router.replace("/auth/signin");
+      }
     }
   }, [hasHydrated, isAuthenticated, user?.role, router]);
 
@@ -74,20 +75,11 @@ export default function AuthenticatedLayout({
     );
   }
 
-  // Corporate users should not access individual routes
-  if (user?.role === "corporate") {
+  // Non-customer users should not access individual routes
+  if (user?.role && user.role !== UserRole.Customer) {
     return (
       <div className="p-6 text-sm text-slate-600">
-        Redirecting to corporate dashboard...
-      </div>
-    );
-  }
-
-  // Admin users should not access individual routes
-  if (isAdminRole(user?.role)) {
-    return (
-      <div className="p-6 text-sm text-slate-600">
-        Redirecting to admin panel...
+        Redirecting...
       </div>
     );
   }
