@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { PERMISSION_CATEGORIES } from '@/lib/permission-categories';
+import { useAvailablePermissions } from '@/api/hooks/usePermissions';
 import { cn } from '@/lib/utils';
 import { ShieldCheck, ShieldOff, Search } from 'lucide-react';
 
@@ -32,13 +32,16 @@ export function AddOverrideDialog({
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<string | null>(null);
 
+  const { data: availablePermissions } = useAvailablePermissions();
+  const categories = availablePermissions?.categories || [];
+
   const alreadyOverridden = useMemo(() => {
     return new Set([...existingGrants, ...existingRevokes]);
   }, [existingGrants, existingRevokes]);
 
   const filteredPermissions = useMemo(() => {
     const results: { key: string; label: string; category: string }[] = [];
-    for (const cat of PERMISSION_CATEGORIES) {
+    for (const cat of categories) {
       for (const perm of cat.permissions) {
         if (alreadyOverridden.has(perm.key)) continue;
         if (
@@ -51,7 +54,7 @@ export function AddOverrideDialog({
       }
     }
     return results;
-  }, [search, alreadyOverridden]);
+  }, [search, alreadyOverridden, categories]);
 
   const handleAdd = () => {
     if (selected) {

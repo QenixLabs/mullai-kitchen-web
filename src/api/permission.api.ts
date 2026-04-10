@@ -7,7 +7,24 @@ import type {
 
 const BASE = '/admin/permissions';
 
+export interface PermissionCategory {
+  key: string;
+  label: string;
+  order: number;
+  permissions: { key: string; label: string }[];
+}
+
+export interface AvailablePermissionsResponse {
+  permissions: string[];
+  categories: PermissionCategory[];
+}
+
 export const permissionApi = {
+  getAvailablePermissions: async (): Promise<AvailablePermissionsResponse> => {
+    const response = await apiClient.get<AvailablePermissionsResponse>(`${BASE}/available`);
+    return response.data;
+  },
+
   getRolePermissions: async (): Promise<IRolePermission[]> => {
     const response = await apiClient.get<IRolePermission[]>(`${BASE}/roles`);
     return response.data;

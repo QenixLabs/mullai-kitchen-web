@@ -23,6 +23,7 @@ import { Can } from '@/components/Auth/can';
 import { useHasPermission } from '@/hooks/useHasPermission';
 import { cn } from '@/lib/utils';
 import type { AdminUser } from '@/api/admin-user.api';
+import { UserRole } from '@/api/types/user.types';
 
 interface UserCardProps {
   user: AdminUser;
@@ -33,11 +34,11 @@ const ROLE_CONFIG: Record<
   AdminUser['role'],
   { label: string; icon: React.ElementType; color: string }
 > = {
-  superAdmin: { label: 'Super Admin', icon: Shield, color: 'text-primary' },
-  outletAdmin: { label: 'Hub Owner', icon: Store, color: 'text-blue-600' },
-  deliveryPartner: { label: 'Delivery Partner', icon: Bike, color: 'text-emerald-600' },
-  customer: { label: 'Customer', icon: Shield, color: 'text-muted-foreground' },
-  corporate: { label: 'Corporate', icon: Shield, color: 'text-muted-foreground' },
+  [UserRole.SuperAdmin]: { label: 'Super Admin', icon: Shield, color: 'text-primary' },
+  [UserRole.OutletAdmin]: { label: 'Hub Owner', icon: Store, color: 'text-blue-600' },
+  [UserRole.DeliveryPartner]: { label: 'Delivery Partner', icon: Bike, color: 'text-emerald-600' },
+  [UserRole.Customer]: { label: 'Customer', icon: Shield, color: 'text-muted-foreground' },
+  [UserRole.Corporate]: { label: 'Corporate', icon: Shield, color: 'text-muted-foreground' },
 };
 
 function getUserInitials(name: string): string {

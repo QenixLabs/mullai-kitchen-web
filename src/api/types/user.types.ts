@@ -1,9 +1,30 @@
+export enum UserRole {
+  SuperAdmin = "superAdmin",
+  Admin = "admin",
+  OutletAdmin = "outletAdmin",
+  HubOwner = "hubOwner",
+  DeliveryPartner = "deliveryPartner",
+  Customer = "customer",
+  Corporate = "corporate",
+}
+
+/** Roles that have access to the admin panel */
+export const ADMIN_PANEL_ROLES: readonly UserRole[] = [
+  UserRole.SuperAdmin,
+  UserRole.Admin,
+  UserRole.HubOwner,
+] as const;
+
+export function isAdminRole(role: string | undefined): boolean {
+  return !!role && (ADMIN_PANEL_ROLES as readonly string[]).includes(role);
+}
+
 export interface IUser {
   _id: string;
   name: string;
   email: string;
   phone: string;
-  role: string;
+  role: UserRole;
   status: string;
   avatar_url?: string;
   assigned_outlet_id?: string;

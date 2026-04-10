@@ -11,11 +11,7 @@ import {
   useIsAuthenticated,
   useCurrentUser,
 } from "@/hooks/useUserStore";
-
-/**
- * Admin roles that have access to the admin panel
- */
-const ADMIN_ROLES = ["superAdmin", "admin", "hubOwner"];
+import { isAdminRole } from "@/api/types/user.types";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -31,7 +27,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   // Handle tablet responsiveness - collapse sidebar on tablet
   useEffect(() => {
     const mediaQuery = window.matchMedia(
-      "(min-width: 768px) and (max-width: 1023px)"
+      "(min-width: 768px) and (max-width: 1023px)",
     );
 
     const applySidebarMode = (event?: MediaQueryListEvent) => {
@@ -50,7 +46,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   // Redirect non-authenticated users to auth page
   useEffect(() => {
     if (hasHydrated && !isAuthenticated) {
-      router.replace("/auth");
+      router.replace("/auth/login");
     }
   }, [hasHydrated, isAuthenticated, router]);
 
@@ -60,9 +56,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       hasHydrated &&
       isAuthenticated &&
       user?.role &&
-      !ADMIN_ROLES.includes(user.role)
+      !isAdminRole(user.role)
     ) {
-      router.replace("/");
+      router.replace("/plans");
     }
   }, [hasHydrated, isAuthenticated, user?.role, router]);
 
@@ -89,7 +85,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   // Redirect state - not an admin user
-  if (user?.role && !ADMIN_ROLES.includes(user.role)) {
+  if (user?.role && !isAdminRole(user.role)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-sm text-muted-foreground">

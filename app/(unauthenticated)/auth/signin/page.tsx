@@ -32,6 +32,8 @@ import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import { cn } from "@/lib/utils";
 import { formatAuthError, getAuthErrorTitle } from "@/lib/auth-errors";
 
+import { isAdminRole } from "@/api/types/user.types";
+
 const AUTH_ROUTES = new Set(["/auth/signin", "/auth/signup"]);
 
 const getSafeRedirectPath = (redirectTo: string | null): string | null => {
@@ -73,6 +75,16 @@ function SignInForm() {
 
     if (authenticatedUser?.onboarding_completed === false) {
       router.push("/onboarding");
+      return;
+    }
+
+    if (authenticatedUser?.role === "corporate") {
+      router.push("/corporate/dashboard");
+      return;
+    }
+
+    if (isAdminRole(authenticatedUser?.role)) {
+      router.push("/admin");
       return;
     }
 

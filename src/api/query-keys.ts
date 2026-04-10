@@ -73,6 +73,7 @@ export const corporateProfileKeys = {
 
 export const permissionKeys = {
   all: () => ["permissions"] as const,
+  available: () => ["permissions", "available"] as const,
   roles: () => ["permissions", "roles"] as const,
   auditLogs: (params?: { action?: string; userId?: string; limit?: number; offset?: number }) =>
     ["permissions", "audit", params] as const,

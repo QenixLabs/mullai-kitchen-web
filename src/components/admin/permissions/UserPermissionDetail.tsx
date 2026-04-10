@@ -8,12 +8,9 @@ import { Separator } from '@/components/ui/separator';
 import {
   useUserPermissions,
   useUpdateUserPermissions,
+  useAvailablePermissions,
 } from '@/api/hooks/usePermissions';
 import { Can } from '@/components/Auth/can';
-import {
-  getPermissionLabel,
-  PERMISSION_CATEGORIES,
-} from '@/lib/permission-categories';
 import { AddOverrideDialog } from './AddOverrideDialog';
 import {
   Loader2,
@@ -25,6 +22,7 @@ import {
   KeyRound,
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CATEGORY_ICONS } from './PermissionMatrix';
 
 interface UserPermissionDetailProps {
   userId: string;
@@ -36,6 +34,7 @@ export function UserPermissionDetail({
   userName,
 }: UserPermissionDetailProps) {
   const { data: permDetail, isLoading } = useUserPermissions(userId);
+  const { data: availablePermissions } = useAvailablePermissions();
   const updateMutation = useUpdateUserPermissions();
   const [showAddDialog, setShowAddDialog] = useState(false);
 
@@ -97,13 +96,32 @@ export function UserPermissionDetail({
     setShowAddDialog(false);
   };
 
-  // Group effective permissions by category
-  const effectiveByCategory = PERMISSION_CATEGORIES.map((cat) => ({
-    ...cat,
-    effective: cat.permissions.filter((p) =>
-      permDetail.effectivePermissions.includes(p.key),
-    ),
-  })).filter((cat) => cat.effective.length > 0);
+  // Build a label lookup from API categories
+  const permissionLabels = new Map<string, string>();
+  const categories = availablePermissions?.categories || [];
+  for (const cat of categories) {
+    for (const p of cat.permissions) {
+      permissionLabels.set(p.key, p.label);
+    }
+  }
+
+  const getPermissionLabel = (key: string): string => {
+    return permissionLabels.get(key) || key;
+  };
+
+  // Group effective permissions by category (from API)
+  const effectiveByCategory = categories
+    .map((cat) => ({
+      ...cat,
+      effective: cat.permissions.filter((p) =>
+        permDetail.effectivePermissions.includes(p.key),
+      ),
+    }))
+    .filter((cat) => cat.effective.length > 0);
+
+  // Also include any effective permissions not in any category
+  const allKnownKeys = new Set(categories.flatMap((c) => c.permissions.map((p) => p.key)));
+  const uncategorized = permDetail.effectivePermissions.filter((p) => !allKnownKeys.has(p));
 
   return (
     <div className="space-y-6">
@@ -242,7 +260,7 @@ export function UserPermissionDetail({
           </CardHeader>
           <CardContent className="space-y-4 pt-0">
             {effectiveByCategory.map((cat, index) => {
-              const Icon = cat.icon;
+              const Icon = CATEGORY_ICONS[cat.key] || Shield;
               return (
                 <motion.div
                   key={cat.key}
@@ -267,6 +285,28 @@ export function UserPermissionDetail({
                 </motion.div>
               );
             })}
+            {uncategorized.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + effectiveByCategory.length * 0.05 }}
+              >
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2 mb-2">
+                  <Shield className="h-3.5 w-3.5 text-primary/50" />
+                  Other ({uncategorized.length})
+                </h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {uncategorized.map((key) => (
+                    <span
+                      key={key}
+                      className="inline-flex items-center px-3 py-1 rounded-[9px] bg-primary/5 border border-primary/10 text-xs font-semibold text-primary"
+                    >
+                      {getPermissionLabel(key)}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+            )}
           </CardContent>
         </Card>
       </motion.div>

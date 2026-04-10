@@ -4,19 +4,50 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronRight } from 'lucide-react';
-import { PERMISSION_CATEGORIES, type PermissionCategory } from '@/lib/permission-categories';
+import {
+  ChevronDown,
+  ChevronRight,
+  Shield,
+  Users,
+  UtensilsCrossed,
+  CreditCard,
+  FileText,
+  Truck,
+  BarChart3,
+  Settings,
+  KeyRound,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+export interface PermissionCategory {
+  key: string;
+  label: string;
+  order: number;
+  permissions: { key: string; label: string }[];
+}
+
+export const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  'outlet-management': Shield,
+  'user-management': Users,
+  'menu-recipes': UtensilsCrossed,
+  'subscriptions-plans': CreditCard,
+  'invoices': FileText,
+  'orders-delivery': Truck,
+  'reports-analytics': BarChart3,
+  'system-configuration': Settings,
+  'permission-management': KeyRound,
+};
+
 interface PermissionMatrixProps {
+  categories: PermissionCategory[];
   permissions: Set<string>;
   onChange: (permissions: Set<string>) => void;
   readOnly?: boolean;
 }
 
-export function PermissionMatrix({ permissions, onChange, readOnly = false }: PermissionMatrixProps) {
+export function PermissionMatrix({ categories, permissions, onChange, readOnly = false }: PermissionMatrixProps) {
   const [openCategories, setOpenCategories] = useState<Set<string>>(
-    new Set(PERMISSION_CATEGORIES.map((c) => c.key)),
+    new Set(categories.map((c) => c.key)),
   );
 
   const toggleCategory = (key: string) => {
@@ -49,10 +80,10 @@ export function PermissionMatrix({ permissions, onChange, readOnly = false }: Pe
 
   return (
     <div className="space-y-3">
-      {PERMISSION_CATEGORIES.map((category, index) => {
+      {categories.map((category, index) => {
         const isOpen = openCategories.has(category.key);
         const allSelected = category.permissions.every((p) => permissions.has(p.key));
-        const Icon = category.icon;
+        const Icon = CATEGORY_ICONS[category.key] || Shield;
         const selectedCount = category.permissions.filter((p) => permissions.has(p.key)).length;
 
         return (

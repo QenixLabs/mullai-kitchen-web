@@ -26,6 +26,7 @@ import {
   useRolePermissions,
   useUpdateRolePermissions,
   useResetRolePermissions,
+  useAvailablePermissions,
 } from '@/api/hooks/usePermissions';
 import { useHasPermission } from '@/hooks/useHasPermission';
 import { Loader2, Save, RotateCcw, Shield } from 'lucide-react';
@@ -45,8 +46,11 @@ export function RolePermissionEditor() {
 
   const canEdit = useHasPermission(['permission:grant', 'permission:revoke']);
   const { data: rolePermissions, isLoading } = useRolePermissions();
+  const { data: availablePermissions } = useAvailablePermissions();
   const updateMutation = useUpdateRolePermissions();
   const resetMutation = useResetRolePermissions();
+
+  const categories = availablePermissions?.categories || [];
 
   const currentRoleData = rolePermissions?.find((rp) => rp.role === selectedRole);
 
@@ -198,6 +202,7 @@ export function RolePermissionEditor() {
             transition={{ duration: 0.4, delay: 0.1 }}
           >
             <PermissionMatrix
+              categories={categories}
               permissions={permissions}
               onChange={handlePermissionChange}
               readOnly={!canEdit}

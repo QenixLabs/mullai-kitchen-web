@@ -156,7 +156,7 @@ function MarkAsPaidButton({
             Mark as Paid
           </Button>
         </AlertDialogTrigger>
-        <AlertDialogContent className="rounded-2xl">
+        <AlertDialogContent className="rounded-2xl !max-w-4xl">
           <AlertDialogHeader>
             <AlertDialogTitle>Mark Invoice as Paid</AlertDialogTitle>
             <AlertDialogDescription>

@@ -8,6 +8,7 @@ import { DashboardTopBar } from "@/components/navigation/DashboardTopBar";
 import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { useAuthHydrated, useIsAuthenticated, useCurrentUser } from "@/hooks/useUserStore";
+import { isAdminRole } from "@/api/types/user.types";
 import { cn } from "@/lib/utils";
 
 interface AuthenticatedLayoutProps {
@@ -52,6 +53,13 @@ export default function AuthenticatedLayout({
     }
   }, [hasHydrated, isAuthenticated, user?.role, router]);
 
+  // Redirect admin users to admin panel
+  useEffect(() => {
+    if (hasHydrated && isAuthenticated && isAdminRole(user?.role)) {
+      router.replace("/admin");
+    }
+  }, [hasHydrated, isAuthenticated, user?.role, router]);
+
   if (!hasHydrated) {
     return (
       <div className="p-6 text-sm text-slate-600">Preparing session...</div>
@@ -71,6 +79,15 @@ export default function AuthenticatedLayout({
     return (
       <div className="p-6 text-sm text-slate-600">
         Redirecting to corporate dashboard...
+      </div>
+    );
+  }
+
+  // Admin users should not access individual routes
+  if (isAdminRole(user?.role)) {
+    return (
+      <div className="p-6 text-sm text-slate-600">
+        Redirecting to admin panel...
       </div>
     );
   }

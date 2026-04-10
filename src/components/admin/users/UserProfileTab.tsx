@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Mail, Phone, Store, Bike, Calendar, AlertCircle } from 'lucide-react';
 import { useAdminUser } from '@/api/hooks/useAdminUsers';
 import type { AdminUser } from '@/api/admin-user.api';
+import { UserRole } from '@/api/types/user.types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,11 +15,11 @@ interface UserProfileTabProps {
 }
 
 const ROLE_LABELS: Record<AdminUser['role'], string> = {
-  superAdmin: 'Super Admin',
-  outletAdmin: 'Hub Owner',
-  deliveryPartner: 'Delivery Partner',
-  customer: 'Customer',
-  corporate: 'Corporate',
+  [UserRole.SuperAdmin]: 'Super Admin',
+  [UserRole.OutletAdmin]: 'Hub Owner',
+  [UserRole.DeliveryPartner]: 'Delivery Partner',
+  [UserRole.Customer]: 'Customer',
+  [UserRole.Corporate]: 'Corporate',
 };
 
 function getInitials(name: string): string {

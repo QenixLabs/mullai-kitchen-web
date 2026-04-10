@@ -1,5 +1,6 @@
 import { apiClient } from '@/api/client';
 import { ADMIN_ROUTES } from '@/api/routes';
+import { UserRole } from '@/api/types/user.types';
 
 // Types
 export interface AdminUser {
@@ -7,7 +8,7 @@ export interface AdminUser {
   name: string;
   email: string;
   phone: string;
-  role: 'superAdmin' | 'outletAdmin' | 'deliveryPartner' | 'customer' | 'corporate';
+  role: UserRole.SuperAdmin | UserRole.OutletAdmin | UserRole.DeliveryPartner | UserRole.Customer | UserRole.Corporate;
   status: 'active' | 'inactive' | 'pending';
   assigned_outlet_id?: string;
   assigned_outlet_name?: string;

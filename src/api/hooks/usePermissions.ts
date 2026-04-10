@@ -13,6 +13,14 @@ export function useRolePermissions() {
   });
 }
 
+export function useAvailablePermissions() {
+  return useQuery({
+    queryKey: permissionKeys.available(),
+    queryFn: permissionApi.getAvailablePermissions,
+    staleTime: 1000 * 60 * 30, // 30 minutes — permissions rarely change
+  });
+}
+
 export function useUpdateRolePermissions() {
   const queryClient = useQueryClient();
 
