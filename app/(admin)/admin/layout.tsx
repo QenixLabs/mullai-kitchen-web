@@ -46,7 +46,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   // Redirect non-authenticated users to auth page
   useEffect(() => {
     if (hasHydrated && !isAuthenticated) {
-      router.replace("/auth/login");
+      router.replace("/auth/signin");
     }
   }, [hasHydrated, isAuthenticated, router]);
 

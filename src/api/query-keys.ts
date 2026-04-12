@@ -107,3 +107,35 @@ export const adminUserFinancialKeys = {
   corporateOrders: (userId: string) =>
     [...adminUserFinancialKeys.all, userId, 'corporate-orders'] as const,
 };
+
+export const recipeKeys = {
+  all: ['admin', 'recipes'] as const,
+  lists: () => [...recipeKeys.all, 'list'] as const,
+  list: (params?: { status?: string; cuisine_type?: string; search?: string; page?: number; limit?: number }) =>
+    [...recipeKeys.lists(), params] as const,
+  details: () => [...recipeKeys.all, 'detail'] as const,
+  detail: (id: string) => [...recipeKeys.details(), id] as const,
+  select: (outletId?: string) => [...recipeKeys.all, 'select', outletId] as const,
+};
+
+export const templateKeys = {
+  all: (outletId: string) => ['admin', 'outlets', outletId, 'templates'] as const,
+  lists: (outletId: string) => [...templateKeys.all(outletId), 'list'] as const,
+  list: (outletId: string, params?: unknown) =>
+    [...templateKeys.lists(outletId), params] as const,
+  grid: (outletId: string, effectiveFrom?: string) =>
+    [...templateKeys.all(outletId), 'grid', effectiveFrom] as const,
+  detail: (outletId: string, id: string) =>
+    [...templateKeys.all(outletId), 'detail', id] as const,
+};
+
+export const overrideKeys = {
+  all: (outletId: string) => ['admin', 'outlets', outletId, 'overrides'] as const,
+  lists: (outletId: string) => [...overrideKeys.all(outletId), 'list'] as const,
+  list: (outletId: string, params?: unknown) =>
+    [...overrideKeys.lists(outletId), params] as const,
+  calendar: (outletId: string, dateFrom: string, dateUntil: string) =>
+    [...overrideKeys.all(outletId), 'calendar', dateFrom, dateUntil] as const,
+  detail: (outletId: string, id: string) =>
+    [...overrideKeys.all(outletId), 'detail', id] as const,
+};

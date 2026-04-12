@@ -11,6 +11,7 @@ import {
   Shield,
   ChefHat,
   Calendar,
+  CalendarDays,
   UtensilsCrossed,
   ClipboardList,
   Route,
@@ -108,6 +109,13 @@ const ADMIN_NAV_GROUPS: NavGroup[] = [
         icon: Calendar,
         label: "Templates",
         permission: "template:manage",
+        requireAll: true,
+      },
+      {
+        href: "/admin/overrides",
+        icon: CalendarDays,
+        label: "Overrides",
+        permission: "override:manage",
         requireAll: true,
       },
       {
