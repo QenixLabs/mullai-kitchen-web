@@ -17,7 +17,7 @@ const plans = [
   {
     id: "breakfast",
     name: "Breakfast Plan",
-    description: "Start your day with wholesome South Indian breakfast",
+    description: "Start your day with wholesome South Indian breakfast.",
     weeklyPrice: 899,
     monthlyPrice: 2999,
     popular: false,
@@ -27,12 +27,13 @@ const plans = [
       "Sambar",
       "Hot coffee/tea",
     ],
-    highlight: "Morning Energy",
+    highlight: "MORNING ENERGY",
+    highlightColor: "muted",
   },
   {
     id: "lunch",
     name: "Lunch Plan",
-    description: "Complete midday meal with rice, curry, and sides",
+    description: "Complete midday meal with rice, curry, and sides.",
     weeklyPrice: 1049,
     monthlyPrice: 3499,
     popular: true,
@@ -43,12 +44,13 @@ const plans = [
       "Curd",
       "Appalam",
     ],
-    highlight: "Most Popular",
+    highlight: "MOST POPULAR",
+    highlightColor: "gold",
   },
   {
     id: "dinner",
     name: "Dinner Plan",
-    description: "Light and nutritious evening meals",
+    description: "Light and nutritious evening meals.",
     weeklyPrice: 999,
     monthlyPrice: 3299,
     popular: false,
@@ -58,12 +60,13 @@ const plans = [
       "Light tiffin items",
       "Soup",
     ],
-    highlight: "Evening Comfort",
+    highlight: "EVENING COMFORT",
+    highlightColor: "muted",
   },
   {
     id: "fullday",
     name: "Full Day Plan",
-    description: "Complete nutrition with breakfast, lunch & dinner",
+    description: "Complete nutrition with breakfast, lunch \u0026 dinner.",
     weeklyPrice: 2499,
     monthlyPrice: 7999,
     popular: false,
@@ -73,7 +76,8 @@ const plans = [
       "Priority delivery",
       "Nutrition balanced",
     ],
-    highlight: "Best Value",
+    highlight: "BEST VALUE",
+    highlightColor: "green",
   },
 ];
 
@@ -83,45 +87,8 @@ export function PlansSection() {
   const [isMonthly, setIsMonthly] = useState(true);
 
   return (
-    <section ref={ref} className="relative py-24 overflow-hidden">
-      {/* Premium Dark Background */}
-      <div className="absolute inset-0 bg-linear-to-b from-[#1a0509] via-[#0d0205] to-[#1a0509]" />
-
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Glow Orbs */}
-        <motion.div
-          animate={{
-            y: [0, -20, 0],
-            transition: { duration: 6, repeat: Infinity, ease: "easeInOut" },
-          }}
-          className="absolute top-1/4 left-1/4"
-        >
-          <div className="w-96 h-96 bg-skin/5 rounded-full blur-[120px]" />
-        </motion.div>
-        <motion.div
-          animate={{
-            y: [0, -20, 0],
-            transition: { duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 },
-          }}
-          className="absolute bottom-1/4 right-1/4"
-        >
-          <div className="w-80 h-80 bg-primary/10 rounded-full blur-[100px]" />
-        </motion.div>
-
-        {/* Subtle Grid */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(212, 165, 116, 0.5) 1px, transparent 1px),
-                           linear-gradient(90deg, rgba(212, 165, 116, 0.5) 1px, transparent 1px)`,
-            backgroundSize: "60px 60px",
-          }}
-        />
-      </div>
-
-      <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
-        {/* Section Header */}
+    <section ref={ref} className="relative py-20 sm:py-24 overflow-hidden bg-[#FAF7F2]">
+      <div className="relative mx-auto max-w-350 px-4 sm:px-6 lg:px-8 xl:px-12">
         <motion.div
           initial="initial"
           animate={isInView ? "animate" : "initial"}
@@ -130,37 +97,33 @@ export function PlansSection() {
         >
           <motion.div
             variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-primary to-[#5a0f1a] border border-skin/20 mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-white mb-5"
           >
-            <Sparkles className="h-4 w-4 text-skin" />
-            <span className="text-sm font-semibold text-white tracking-wide">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <span className="text-xs font-semibold tracking-wide text-primary uppercase">
               Individual Meal Plans
             </span>
           </motion.div>
 
           <motion.h2
             variants={fadeInUp}
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary tracking-tight"
           >
-            Choose Your{" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-skin to-skin-light">
-              Perfect Plan
-            </span>
+            Choose Your <span className="text-primary">Perfect Plan</span>
           </motion.h2>
 
-          <motion.p variants={fadeInUp} className="text-lg text-white/60 mb-8">
+          <motion.p variants={fadeInUp} className="mt-4 text-muted-foreground">
             Flexible meal plans designed for individuals. Save more with monthly subscriptions.
           </motion.p>
 
-          {/* Premium Toggle */}
           <motion.div
             variants={fadeInUp}
-            className="flex items-center justify-center gap-4"
+            className="flex items-center justify-center gap-4 mt-8"
           >
             <span
               className={cn(
-                "text-sm font-semibold transition-colors",
-                !isMonthly ? "text-skin" : "text-white/50",
+                "text-sm font-medium transition-colors",
+                !isMonthly ? "text-primary" : "text-muted-foreground",
               )}
             >
               Weekly
@@ -168,152 +131,137 @@ export function PlansSection() {
             <Switch
               checked={isMonthly}
               onCheckedChange={setIsMonthly}
-              className="data-[state=checked]:bg-linear-to-r data-[state=checked]:from-primary data-[state=checked]:to-[#5a0f1a]"
+              className="data-[state=checked]:bg-primary"
             />
             <span
               className={cn(
-                "text-sm font-semibold transition-colors",
-                isMonthly ? "text-skin" : "text-white/50",
+                "text-sm font-medium transition-colors",
+                isMonthly ? "text-primary" : "text-muted-foreground",
               )}
             >
               Monthly
             </span>
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: isMonthly ? 1 : 0 }}
-              className="bg-linear-to-r from-emerald-500 to-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg shadow-emerald-500/30"
-            >
-              Save 20%
-            </motion.span>
+            {isMonthly && (
+              <span className="bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">
+                SAVE 20%
+              </span>
+            )}
           </motion.div>
         </motion.div>
 
-        {/* Plans Grid */}
         <motion.div
           initial="initial"
           animate={isInView ? "animate" : "initial"}
           variants={staggerContainer}
-          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-6"
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"
         >
           {plans.map((plan) => (
             <motion.div
               key={plan.id}
               variants={scaleIn}
               className={cn(
-                "perspective-1000",
-                plan.popular && "lg:-mt-4 lg:mb-4",
+                "relative rounded-3xl overflow-hidden transition-all",
+                plan.popular
+                  ? "bg-primary text-white"
+                  : "bg-white border border-border/50",
               )}
             >
-              <div className="relative h-full">
-                {/* Popular Glow Effect */}
-                {plan.popular && (
-                  <div className="absolute -inset-1 bg-linear-to-r from-skin to-primary rounded-3xl opacity-50 blur-xl" />
-                )}
-
+              <div className="p-6 sm:p-6">
                 <div
                   className={cn(
-                    "relative h-full rounded-3xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1",
+                    "inline-block text-[10px] font-bold tracking-wide px-2.5 py-1 rounded mb-4",
                     plan.popular
-                      ? "bg-gradient-to-b from-primary to-[#5a0f1a] border-2 border-skin/30"
-                      : "bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20",
+                      ? "bg-skin text-primary"
+                      : plan.highlightColor === "green"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-muted text-muted-foreground",
                   )}
                 >
-                  {/* Gradient Top Border */}
-                  <div
+                  {plan.highlight}
+                </div>
+
+                <h3
+                  className={cn(
+                    "text-xl font-bold mb-2",
+                    plan.popular ? "text-white" : "text-primary",
+                  )}
+                >
+                  {plan.name}
+                </h3>
+                <p
+                  className={cn(
+                    "text-sm mb-5",
+                    plan.popular ? "text-white/70" : "text-muted-foreground",
+                  )}
+                >
+                  {plan.description}
+                </p>
+
+                <div className="mb-5">
+                  <span
                     className={cn(
-                      "absolute top-0 left-0 right-0 h-1 bg-gradient-to-r",
+                      "text-3xl font-bold",
+                      plan.popular ? "text-white" : "text-primary",
+                    )}
+                  >
+                    ₹{isMonthly ? plan.monthlyPrice : plan.weeklyPrice}
+                  </span>
+                  <span
+                    className={cn(
+                      "text-sm",
+                      plan.popular ? "text-white/60" : "text-muted-foreground",
+                    )}
+                  >
+                    /{isMonthly ? "month" : "week"}
+                  </span>
+                </div>
+
+                <Link href="/plans">
+                  <Button
+                    className={cn(
+                      "w-full rounded-full h-11 font-semibold transition-all",
                       plan.popular
-                        ? "from-skin via-white/50 to-skin"
-                        : "from-white/20 via-white/40 to-white/20",
+                        ? "bg-skin hover:bg-skin/90 text-primary"
+                        : "bg-transparent hover:bg-muted text-primary border border-primary",
                     )}
-                  />
-
-                  <div className="p-5 sm:p-6 pt-6 sm:pt-8">
-                    {/* Highlight Badge */}
+                  >
                     {plan.popular ? (
-                      <motion.div
-                        initial={{ scale: 0, y: -20 }}
-                        animate={{ scale: 1, y: 0 }}
-                        transition={{ delay: 0.5, type: "spring" }}
-                        className="inline-flex bg-gradient-to-r from-skin to-skin-mid text-primary text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-skin/30 mb-4"
-                      >
-                        {plan.highlight}
-                      </motion.div>
+                      <>
+                        <Zap className="w-4 h-4 mr-2" />
+                        Get Started
+                      </>
                     ) : (
-                      <div className="inline-flex bg-white/10 text-white/70 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
-                        {plan.highlight}
-                      </div>
+                      "Select Plan"
                     )}
+                  </Button>
+                </Link>
 
-                    {/* Plan Info */}
-                    <div className="pt-2">
-                      <h3 className="text-xl font-bold text-white mb-1">
-                        {plan.name}
-                      </h3>
-                      <p className="text-sm text-white/50">
-                        {plan.description}
-                      </p>
-                    </div>
-
-                    {/* Price */}
-                    <div className="mt-6 mb-6">
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-3xl font-bold text-white">
-                          ₹{isMonthly ? plan.monthlyPrice : plan.weeklyPrice}
-                        </span>
-                        <span className="text-white/50">
-                          /{isMonthly ? "month" : "week"}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* CTA Button */}
-                    <Link href={`/plans/${plan.id}`}>
-                      <Button
+                <div className="mt-6 space-y-3">
+                  {plan.features.map((feature) => (
+                    <div key={feature} className="flex items-start gap-3">
+                      <div
                         className={cn(
-                          "w-full rounded-full h-11 font-semibold transition-all",
-                          plan.popular
-                            ? "bg-gradient-to-r from-skin to-skin-mid hover:from-skin-light hover:to-skin text-primary shadow-lg shadow-skin/30 hover:scale-[1.02] active:scale-[0.98]"
-                            : "bg-white/10 hover:bg-white/20 text-white border border-white/20",
+                          "mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0",
+                          plan.popular ? "bg-white/10" : "bg-primary/10",
                         )}
                       >
-                        {plan.popular ? (
-                          <>
-                            <Zap className="w-4 h-4 mr-2" />
-                            Get Started
-                          </>
-                        ) : (
-                          "Select Plan"
+                        <Check
+                          className={cn(
+                            "h-3 w-3",
+                            plan.popular ? "text-skin" : "text-primary",
+                          )}
+                        />
+                      </div>
+                      <span
+                        className={cn(
+                          "text-sm",
+                          plan.popular ? "text-white/80" : "text-muted-foreground",
                         )}
-                      </Button>
-                    </Link>
-
-                    {/* Features */}
-                    <div className="mt-6 space-y-3">
-                      {plan.features.map((feature) => (
-                        <div key={feature} className="flex items-start gap-3">
-                          <div
-                            className={cn(
-                              "mt-0.5 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0",
-                              plan.popular ? "bg-skin/20" : "bg-white/10",
-                            )}
-                          >
-                            <Check
-                              className={cn(
-                                "h-3 w-3",
-                                plan.popular
-                                  ? "text-skin"
-                                  : "text-white/70",
-                              )}
-                            />
-                          </div>
-                          <span className="text-sm text-white/70">
-                            {feature}
-                          </span>
-                        </div>
-                      ))}
+                      >
+                        {feature}
+                      </span>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </motion.div>

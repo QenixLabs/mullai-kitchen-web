@@ -13,24 +13,24 @@ type MediaItem = {
 };
 
 const galleryItems: MediaItem[] = [
-  { src: "/images/food/9.jpg", title: "Kitchen Operations", type: "image" },
-  { src: "/images/food/3.jpg", title: "Corporate Lunch Setup", type: "image" },
+  { src: "/images/corporate/1.png", title: "Kitchen Operations", type: "image" },
+  { src: "/images/corporate/Catering Buffet.png", title: "Corporate Lunch Setup", type: "image" },
+  { src: "/images/food/3.jpg", title: "Office Catering", type: "image" },
   {
     src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-    poster: "/images/home/table.png",
-    title: "Meal Prep Reel",
+    poster: "/images/food/9.jpg",
+    title: "Kitchen Preparation Reel",
     type: "video",
   },
   { src: "/images/food/8.jpg", title: "Fresh Ingredients", type: "image" },
-  { src: "/images/food/6.jpg", title: "Buffet Service", type: "image" },
+  { src: "/images/corporate/2.png", title: "Gourmet Plate", type: "image" },
   {
     src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm",
-    poster: "/images/home/Container.png",
-    title: "Kitchen Service Flow",
+    poster: "/images/food/4.jpg",
+    title: "Service Team In Action",
     type: "video",
   },
   { src: "/images/food/1.jpg", title: "Traditional Thali", type: "image" },
-  { src: "/images/home/Container.png", title: "Gourmet Plate", type: "image" },
 ];
 
 export function GallerySection() {
@@ -49,7 +49,7 @@ export function GallerySection() {
     try {
       await lightboxContentRef.current.requestFullscreen();
     } catch {
-      // Ignore if browser denies fullscreen request.
+      // Ignore if the browser blocks fullscreen request.
     }
   };
 

@@ -43,7 +43,7 @@ export function CorporateSidebar() {
     <ShadcnSidebar collapsible="icon" className="w-60 border-r border-border shadow-none">
       <SidebarHeader className="border-none px-6 pt-8 pb-4 group-data-[collapsible=icon]:px-2">
         <Link
-          href="/corporate"
+          href="/corporate/dashboard"
           className="flex items-center gap-3 active:opacity-90 transition-opacity"
         >
           <Image
