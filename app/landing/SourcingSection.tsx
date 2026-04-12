@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { CalendarCheck, CheckCheck, Tractor, Truck } from "lucide-react";
+import { Tractor, Truck, CalendarCheck, CheckCheck } from "lucide-react";
 
 const sourcingFlow = [
   {
@@ -29,8 +29,8 @@ const sourcingFlow = [
 
 export function SourcingSection() {
   return (
-    <section className="relative py-20 sm:py-24 overflow-hidden bg-[#0f0306]">
-      <div className="absolute inset-0 bg-linear-to-b from-[#0f0306] via-[#18060a] to-[#0f0306]" />
+    <section className="relative py-20 sm:py-24 overflow-hidden bg-primary">
+      <div className="absolute inset-0 bg-linear-to-b from-primary via-[#2a0a10] to-primary" />
       <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(circle_at_1px_1px,rgba(212,165,116,0.6)_1px,transparent_0)] bg-size-[34px_34px]" />
 
       <div className="relative mx-auto max-w-350 px-4 sm:px-6 lg:px-8 xl:px-12">
@@ -41,11 +41,12 @@ export function SourcingSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 sm:mb-14"
         >
-          <span className="inline-flex rounded-full border border-skin/30 bg-skin/10 px-4 py-2 text-xs sm:text-sm font-semibold tracking-wide text-skin">
+          <span className="inline-flex rounded-full border border-skin/30 bg-skin/10 px-4 py-2 text-xs sm:text-sm font-semibold tracking-wide text-skin uppercase">
             Ingredient Sourcing
           </span>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
-            From Source To Kitchen, With Full Visibility
+            From Source To Kitchen,{" "}
+            <span className="text-skin">With Full Visibility</span>
           </h2>
         </motion.div>
 
@@ -55,19 +56,28 @@ export function SourcingSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6 }}
-            className="rounded-3xl border border-white/15 bg-white/5 backdrop-blur-sm p-5 sm:p-7"
+            className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 sm:p-6"
           >
             <div className="space-y-4">
               {sourcingFlow.map((item, index) => (
-                <div key={item.title} className="relative rounded-2xl bg-white/5 p-4 border border-white/15">
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-xl bg-skin/20">
+                <div
+                  key={item.title}
+                  className="relative rounded-2xl bg-white/5 p-4 border border-white/10"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="mt-0.5 flex h-11 w-11 items-center justify-center rounded-xl bg-skin/20">
                       <item.icon className="h-5 w-5 text-skin" />
                     </div>
                     <div>
-                      <p className="text-sm text-white/45 font-semibold">Step {index + 1}</p>
-                      <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-                      <p className="mt-1 text-sm text-white/70 leading-relaxed">{item.detail}</p>
+                      <p className="text-xs text-white/45 font-semibold tracking-wide">
+                        STEP {index + 1}
+                      </p>
+                      <h3 className="text-base font-semibold text-white">
+                        {item.title}
+                      </h3>
+                      <p className="mt-1 text-sm text-white/60 leading-relaxed">
+                        {item.detail}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -90,7 +100,7 @@ export function SourcingSection() {
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
-            <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/25 bg-black/35 p-4 backdrop-blur-sm">
+            <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/20 bg-black/40 p-4 backdrop-blur-sm">
               <p className="text-sm sm:text-base text-white leading-relaxed">
                 Daily sourcing ensures ingredient freshness, predictable quality, and reliable corporate meal delivery windows.
               </p>

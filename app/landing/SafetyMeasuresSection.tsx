@@ -1,48 +1,44 @@
 "use client";
 
 import { motion } from "motion/react";
-import {
-  BadgeCheck,
-  ClipboardCheck,
-  ShieldCheck,
-  Thermometer,
-  UserRoundCheck,
-} from "lucide-react";
+import { Settings, Star, ShieldCheck, Thermometer, Leaf, Timer } from "lucide-react";
 
 const safeguards = [
   {
-    icon: BadgeCheck,
-    title: "FSSAI Compliance",
-    description: "Licensed operations with documented food safety SOPs and audit-ready records.",
+    icon: Settings,
+    title: "FSSAI Certified",
+    description: "Licensed cloud kitchen following all food safety SOPs with audit-ready records.",
+  },
+  {
+    icon: Star,
+    title: "4.9 Rated Excellence",
+    description: "Trusted by 2000+ happy customers across Chennai for consistency and taste.",
   },
   {
     icon: ShieldCheck,
     title: "Sanitized Kitchen Zones",
-    description: "Structured cleaning cycles with checklist-based sanitation across prep and cook lines.",
-  },
-  {
-    icon: UserRoundCheck,
-    title: "Gloves & Hairnets",
-    description: "Mandatory protective gear protocol followed by all kitchen and packing staff.",
+    description: "Structured cleaning cycles with checklist-based sanitation across all prep lines.",
   },
   {
     icon: Thermometer,
-    title: "Temperature-Controlled Cooking",
+    title: "Temp-Controlled Cooking",
     description: "Continuous monitoring of critical temperatures during cooking, holding, and dispatch.",
   },
   {
-    icon: ClipboardCheck,
-    title: "Batch Quality Checks",
-    description: "Every production batch is checked for taste, consistency, and packaging integrity.",
+    icon: Leaf,
+    title: "Eco-Friendly & Fresh",
+    description: "Sustainable packaging made from plant materials. Meals prepared fresh daily, never frozen.",
+  },
+  {
+    icon: Timer,
+    title: "30-Min Delivery",
+    description: "Hyper-local distribution network ensuring your meal arrives hot within 30 minutes.",
   },
 ];
 
 export function SafetyMeasuresSection() {
   return (
-    <section className="relative py-20 sm:py-24 overflow-hidden bg-[#14060a]">
-      <div className="absolute inset-0 bg-linear-to-b from-[#14060a] via-primary to-[#14060a]" />
-      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_1px_1px,rgba(212,165,116,0.35)_1px,transparent_0)] bg-size-[32px_32px]" />
-
+    <section className="relative py-20 sm:py-24 overflow-hidden bg-[#FAF7F2]">
       <div className="relative mx-auto max-w-350 px-4 sm:px-6 lg:px-8 xl:px-12">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -51,15 +47,18 @@ export function SafetyMeasuresSection() {
           transition={{ duration: 0.6 }}
           className="mb-10 sm:mb-14 text-center"
         >
-          <span className="inline-flex rounded-full border border-skin/30 bg-skin/10 px-4 py-2 text-xs sm:text-sm font-semibold text-skin tracking-wide">
-            Hygiene & Safety
+          <span className="inline-flex rounded-full border border-primary/20 bg-white px-4 py-2 text-xs font-semibold tracking-wide text-primary uppercase">
+            Hygiene & Safety First
           </span>
-          <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
-            Corporate Grade Food Safety, Every Shift
+          <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold text-primary tracking-tight">
+            <span className="text-[#6B1720]">Corporate Grade</span> Food Safety, Every Shift
           </h2>
+          <p className="mt-4 text-muted-foreground">
+            From Anna Nagar to Tambaram, we bring authentic home-style South Indian meals to thousands of Chennai homes with uncompromising safety protocols.
+          </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {safeguards.map((item, index) => (
             <motion.div
               key={item.title}
@@ -67,13 +66,13 @@ export function SafetyMeasuresSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.45, delay: index * 0.08 }}
-              className="rounded-2xl border border-white/15 bg-white/5 p-5 sm:p-6 backdrop-blur-sm"
+              className="rounded-2xl border border-border bg-white p-5 sm:p-6"
             >
-              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-skin/20">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
                 <item.icon className="h-5 w-5 text-skin" />
               </div>
-              <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-              <p className="mt-2 text-sm text-white/70 leading-relaxed">
+              <h3 className="text-base font-semibold text-primary">{item.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
                 {item.description}
               </p>
             </motion.div>
