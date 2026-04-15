@@ -1,6 +1,23 @@
 import { apiClient } from '@/api/client';
 
 // Types
+export interface OutletConfigData {
+  planning_cutoff_time?: string;
+  pause_add_on_cutoff?: string;
+  kitchen_lock_time?: string;
+  delivery_start_time?: string;
+  veg_meal_price?: number;
+  nonveg_meal_price?: number;
+  delivery_charge?: number;
+  tax_rate?: number;
+  min_order_value?: number;
+  max_daily_capacity?: number;
+  max_delivery_radius_km?: number;
+  order_generation_window?: number;
+  effective_from?: string;
+  effective_until?: string;
+}
+
 export interface Outlet {
   _id: string;
   name: string;
@@ -21,6 +38,7 @@ export interface Outlet {
   manager?: string;
   established_date?: string;
   delivery_zones: string[];
+  config?: OutletConfigData;
   created_at: string;
   updated_at: string;
 }
@@ -43,6 +61,7 @@ export interface CreateOutletPayload {
   kitchen_capacity?: number;
   manager?: string;
   established_date?: string;
+  config?: OutletConfigData;
 }
 
 export interface OutletListParams {

@@ -57,6 +57,7 @@ export function OutletCreationWizard() {
         kitchen_capacity: formData.kitchen_capacity ?? undefined,
         manager: formData.manager || undefined,
         established_date: formData.established_date || undefined,
+        config: formData.config?.planning_cutoff_time ? formData.config : undefined,
       };
 
       const outlet = await outletApi.create(payload);
@@ -124,6 +125,7 @@ export function OutletCreationWizard() {
             delivery_zones: [],
             created_at: '',
             updated_at: '',
+            config: formData.config,
           } : undefined}
         />
         {/* Next button */}
