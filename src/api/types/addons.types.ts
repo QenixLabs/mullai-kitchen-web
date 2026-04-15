@@ -76,6 +76,7 @@ export interface CheckoutPrepareResponse {
   coupon_discount?: number;
   wallet_applied: number;
   amount_to_pay: number;
+  currency?: string;                    // Currency code (e.g., "INR")
   payment_session_id?: string;       // Zoho / Razorpay payment session ID
   razorpay_order_id?: string;
   provider_account_id?: string;      // Zoho account ID for payment widget

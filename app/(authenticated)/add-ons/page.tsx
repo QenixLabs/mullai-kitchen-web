@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -41,15 +41,9 @@ export default function AddOnsPage() {
   const [activeCategory, setActiveCategory] = useState<AddOnCategoryTab>("ALL");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [deliveryDate, setDeliveryDate] = useState<string>("");
-
-  // Set default delivery date to today on mount
-  useEffect(() => {
-    if (!deliveryDate) {
-      const today = new Date();
-      setDeliveryDate(today.toISOString().split("T")[0]);
-    }
-  }, [deliveryDate]);
+  const [deliveryDate, setDeliveryDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
 
   // Fetch ALL available add-ons (no subscription filter)
   const { data: addOnsData, isLoading: isLoadingAddOns, error: addOnsError } =
@@ -63,17 +57,18 @@ export default function AddOnsPage() {
 
   // Filter items by category
   const filteredItems = useMemo(() => {
-    if (!addOnsData?.items) return [];
+    const items = addOnsData?.items;
+    if (!items) return [];
 
     if (activeCategory === "ALL") {
-      return addOnsData.items;
+      return items;
     }
 
     const allowedCategories = categoryMapping[activeCategory];
-    return addOnsData.items.filter((item) =>
+    return items.filter((item) =>
       allowedCategories.includes(item.category)
     );
-  }, [addOnsData?.items, activeCategory]);
+  }, [addOnsData, activeCategory]);
 
   // Cart operations - meal_type is assigned a default; user picks final meal type at checkout
   const resolveMealType = (itemMealTypes?: MealType[]): MealType => {
@@ -228,7 +223,7 @@ export default function AddOnsPage() {
         <CategoryTabs
           activeCategory={activeCategory}
           onCategoryChange={setActiveCategory}
-          subscriptionMealTypes={mealTypes}
+          _subscriptionMealTypes={mealTypes}
         />
       </div>
 

@@ -8,7 +8,7 @@ export type AddOnCategoryTab = "ALL" | "MEALS" | "SNACKS" | "BEVERAGES";
 interface CategoryTabsProps {
   activeCategory: AddOnCategoryTab;
   onCategoryChange: (category: AddOnCategoryTab) => void;
-  subscriptionMealTypes: MealType[];
+  _subscriptionMealTypes: MealType[];
 }
 
 const tabs: { value: AddOnCategoryTab; label: string }[] = [
@@ -21,7 +21,7 @@ const tabs: { value: AddOnCategoryTab; label: string }[] = [
 export function CategoryTabs({
   activeCategory,
   onCategoryChange,
-  subscriptionMealTypes,
+  _subscriptionMealTypes,
 }: CategoryTabsProps) {
   // Filter tabs based on subscription meal types - only "ALL" is always shown
   // Other tabs depend on if user has those meal types in subscription
