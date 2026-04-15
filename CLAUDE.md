@@ -292,6 +292,34 @@ import { useUserStore } from '@/hooks/useUserStore';
 import { useCheckout } from '@/hooks/use-checkout';
 ```
 
+## API Client — Response Interceptor Gotcha
+
+The axios instance in `src/api/client.ts` has a response interceptor that **unwraps** the backend's standard envelope:
+
+```
+Backend returns:  { success: true, message: "...", data: { ... } }
+Interceptor →     response.data = { ... }  (inner data only)
+```
+
+**Rule: Never check `result.success` or `result.message` on mutation results.** Those fields were on the outer wrapper that got stripped by the interceptor. If `mutateAsync` didn't throw, the request succeeded.
+
+```tsx
+// ❌ Wrong — success/message were on the outer wrapper
+const result = await createOrder.mutateAsync(payload);
+if (result.success) { ... }
+
+// ✅ Correct — no throw = success
+try {
+  const result = await createOrder.mutateAsync(payload);
+  // result is the inner data object (has order_id, etc.)
+  toast.success("Order placed!");
+} catch (err) {
+  toast.error("Order failed");
+}
+```
+
+This applies to ALL mutations going through `apiClient` (prepare checkout, create order, etc.).
+
 ## Brand Colors
 
 The primary brand color is **Burgundy** (`#39070F`).
