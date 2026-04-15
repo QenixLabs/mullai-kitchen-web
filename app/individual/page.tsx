@@ -1,12 +1,16 @@
 import { LandingNavbar } from "../landing/Navbar";
 import { LandingFooter } from "../landing/Footer";
-import { TestimonialsSection } from "../landing/TestimonialsSection";
+import { PromoBanner } from "../landing/PromoBanner";
 import { HeroSection } from "./HeroSection";
-import { FeaturesSection } from "./FeaturesSection";
 import { PlansSection } from "./PlansSection";
 import { HowItWorksSection } from "./HowItWorksSection";
+import { SafetyMeasuresSection } from "../landing/SafetyMeasuresSection";
+import { TodaysMenuSection } from "./TodaysMenuSection";
 import { GallerySection } from "./GallerySection";
+import { TestimonialsSection } from "./TestimonialsSection";
+import { FAQSection } from "./FAQSection";
 import { CTASection } from "./CTASection";
+import { TrustedCompaniesSection } from "../corporate/TrustedCompaniesSection";
 
 export default function IndividualPage() {
   return (
@@ -15,15 +19,19 @@ export default function IndividualPage() {
 
       <main>
         <HeroSection />
-        <FeaturesSection />
         <PlansSection />
         <HowItWorksSection />
+        <SafetyMeasuresSection />
+        <TodaysMenuSection />
         <GallerySection />
         <TestimonialsSection />
+        <FAQSection />
         <CTASection />
       </main>
 
       <LandingFooter />
+      <TrustedCompaniesSection />
+      <PromoBanner />
     </div>
   );
 }
