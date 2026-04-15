@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -193,11 +194,20 @@ export default function AddOnsPage() {
               Enhance your meals with delicious add-ons delivered with your subscription.
             </p>
           </div>
-          <ViewCartButton
-            itemCount={cartItemCount}
-            onClick={() => setIsCheckoutOpen(true)}
-            disabled={cartItemCount === 0}
-          />
+          <div className="flex items-center gap-2">
+            <Link
+              href="/add-ons/orders"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-border bg-muted/50 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+            >
+              <FaShoppingBag className="h-3.5 w-3.5" />
+              Order History
+            </Link>
+            <ViewCartButton
+              itemCount={cartItemCount}
+              onClick={() => setIsCheckoutOpen(true)}
+              disabled={cartItemCount === 0}
+            />
+          </div>
         </div>
 
         {/* Date Selector */}

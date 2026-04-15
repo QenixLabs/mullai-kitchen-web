@@ -12,6 +12,8 @@ import type {
   AvailableAddOnsIndependentData,
   MealTypesResponse,
   MealType,
+  AddOnOrderHistoryResponse,
+  AddOnOrderHistoryParams,
 } from "@/api/types/addons.types";
 
 // ──────────────────────────────────────────────────────────────
@@ -62,6 +64,17 @@ export function useMealTypes(options?: { enabled?: boolean }) {
     queryKey: addOnKeys.mealTypes(),
     queryFn: () => addOnsApi.getMealTypes(),
     enabled: options?.enabled ?? true,
+    staleTime: 60_000,
+  });
+}
+
+/**
+ * Fetch paginated add-on order history for the current user across all subscriptions.
+ */
+export function useAddOnOrderHistory(params?: AddOnOrderHistoryParams) {
+  return useQuery<AddOnOrderHistoryResponse>({
+    queryKey: addOnKeys.orderHistory(params),
+    queryFn: () => addOnsApi.getAddOnOrderHistory(params),
     staleTime: 60_000,
   });
 }

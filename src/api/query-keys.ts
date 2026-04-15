@@ -78,6 +78,8 @@ export const addOnKeys = {
     [...addOnKeys.all(), 'available-independent', params] as const,
   mealTypes: () =>
     [...addOnKeys.all(), 'meal-types'] as const,
+  orderHistory: (params?: { page?: number; limit?: number; status?: string }) =>
+    [...addOnKeys.all(), 'order-history', params] as const,
   // Legacy subscription-scoped keys
   available: (subscriptionId: string, params?: { delivery_date?: string; meal_type?: string }) =>
     [...addOnKeys.all(), 'available', subscriptionId, params] as const,

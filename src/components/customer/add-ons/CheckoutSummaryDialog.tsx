@@ -8,7 +8,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { UtensilsCrossed, X, AlertCircle, Wallet, CreditCard } from "lucide-react";
+import Image from "next/image";
+import { X, AlertCircle, Wallet, CreditCard } from "lucide-react";
 import { FaCalendarAlt } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import { loadZohoPaymentsScript, openZohoCheckout } from "@/lib/zoho-payments";
@@ -321,9 +322,15 @@ export function CheckoutSummaryDialog({
             <div className="space-y-4 py-4">
               {localCartItems.map((item) => (
                 <div key={item.item_id} className="flex items-center gap-3 pb-4 border-b border-gray-100 last:border-0">
-                  {/* Icon */}
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100">
-                    <UtensilsCrossed className="h-5 w-5 text-gray-600" />
+                  {/* Thumbnail */}
+                  <div className="relative h-10 w-10 shrink-0 rounded-xl overflow-hidden bg-gray-100">
+                    <Image
+                      src={item.image || "/images/addon/add-on.png"}
+                      alt={item.name}
+                      fill
+                      className="object-cover"
+                      sizes="40px"
+                    />
                   </div>
 
                   {/* Item Info */}

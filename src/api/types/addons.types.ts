@@ -115,3 +115,28 @@ export interface ActiveAddOnOrder {
   status: AddOnOrderStatus;
   created_at: string;
 }
+
+export interface AddOnOrderHistoryOrder extends Omit<ActiveAddOnOrder, 'items'> {
+  meal_type: MealType;
+  items: {
+    item_id: string;
+    name: string;
+    quantity: number;
+    price: number;
+    subtotal: number;
+    image?: string | null;
+  }[];
+}
+
+export interface AddOnOrderHistoryResponse {
+  orders: AddOnOrderHistoryOrder[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface AddOnOrderHistoryParams {
+  page?: number;
+  limit?: number;
+  status?: string;
+}

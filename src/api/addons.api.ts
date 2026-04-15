@@ -11,6 +11,8 @@ import type {
   AvailableAddOnsIndependentData,
   MealTypesResponse,
   MealType,
+  AddOnOrderHistoryResponse,
+  AddOnOrderHistoryParams,
 } from "@/api/types/addons.types";
 
 export interface AvailableAddOnsResponse {
@@ -84,6 +86,19 @@ export const addOnsApi = {
     const response = await apiClient.post<CreateAddOnOrderResponseType>(
       ADD_ON_ROUTES.CREATE_ORDER_INDEPENDENT,
       payload
+    );
+    return response.data;
+  },
+
+  /**
+   * Gets paginated order history for the user across all subscriptions
+   */
+  getAddOnOrderHistory: async (
+    params?: AddOnOrderHistoryParams
+  ): Promise<AddOnOrderHistoryResponse> => {
+    const response = await apiClient.get<AddOnOrderHistoryResponse>(
+      ADD_ON_ROUTES.ORDER_HISTORY,
+      { params }
     );
     return response.data;
   },

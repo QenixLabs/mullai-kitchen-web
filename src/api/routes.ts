@@ -87,6 +87,7 @@ export const ADD_ON_ROUTES = {
   // Independent endpoints (no subscription ID required)
   AVAILABLE_INDEPENDENT: '/customer/subscriptions/addons/available',
   MEAL_TYPES: '/customer/subscriptions/addons/meal-types',
+  ORDER_HISTORY: '/customer/subscriptions/addons/orders',
   PREPARE_CHECKOUT_INDEPENDENT: '/customer/subscriptions/addons/prepare-checkout',
   CREATE_ORDER_INDEPENDENT: '/customer/subscriptions/addons/create-order',
   // Legacy subscription-scoped endpoints (kept for backward compatibility)
