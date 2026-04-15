@@ -73,6 +73,12 @@ export const corporateProfileKeys = {
 
 export const addOnKeys = {
   all: () => ['add-ons'] as const,
+  // Independent keys (no subscription ID)
+  availableIndependent: (params?: { delivery_date?: string }) =>
+    [...addOnKeys.all(), 'available-independent', params] as const,
+  mealTypes: () =>
+    [...addOnKeys.all(), 'meal-types'] as const,
+  // Legacy subscription-scoped keys
   available: (subscriptionId: string, params?: { delivery_date?: string; meal_type?: string }) =>
     [...addOnKeys.all(), 'available', subscriptionId, params] as const,
   cartSummary: (subscriptionId: string) =>

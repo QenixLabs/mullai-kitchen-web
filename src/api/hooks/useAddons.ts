@@ -9,10 +9,19 @@ import type {
   CreateAddOnOrderRequest,
   CreateAddOnOrderResponse,
   ActiveAddOnOrder,
+  AvailableAddOnsIndependentData,
+  MealTypesResponse,
   MealType,
 } from "@/api/types/addons.types";
 
-// Query return types
+// ──────────────────────────────────────────────────────────────
+// Independent query return types (no subscription context)
+// ──────────────────────────────────────────────────────────────
+
+// ──────────────────────────────────────────────────────────────
+// Legacy query return types (subscription-scoped)
+// ──────────────────────────────────────────────────────────────
+
 interface AvailableAddOnsData {
   items: AddOnItem[];
   subscription_id: string;
@@ -26,7 +35,81 @@ interface ActiveAddOnsData {
   total: number;
 }
 
-// Queries
+// ──────────────────────────────────────────────────────────────
+// Independent Queries (no subscription ID required)
+// ──────────────────────────────────────────────────────────────
+
+/**
+ * Fetch ALL available add-ons without subscription-level filtering.
+ * The server resolves meal types from the user's active subscriptions.
+ */
+export function useAvailableAddOnsIndependent(
+  params?: { delivery_date?: string }
+) {
+  return useQuery<AvailableAddOnsIndependentData>({
+    queryKey: addOnKeys.availableIndependent(params),
+    queryFn: () => addOnsApi.getAvailableAddOnsIndependent(params),
+    staleTime: 60_000, // 1 minute
+  });
+}
+
+/**
+ * Fetch the meal types available from the user's active subscriptions.
+ * Used at checkout to determine which meal types the user can order for.
+ */
+export function useMealTypes(options?: { enabled?: boolean }) {
+  return useQuery<MealTypesResponse>({
+    queryKey: addOnKeys.mealTypes(),
+    queryFn: () => addOnsApi.getMealTypes(),
+    enabled: options?.enabled ?? true,
+    staleTime: 60_000,
+  });
+}
+
+// ──────────────────────────────────────────────────────────────
+// Independent Mutations (no subscription ID required)
+// ──────────────────────────────────────────────────────────────
+
+/**
+ * Prepare checkout using meal_type — subscription is resolved server-side.
+ * Returns payment details including Zoho / Razorpay session info.
+ */
+export function usePrepareCheckoutIndependent() {
+  return useMutation<
+    CheckoutPrepareResponse,
+    Error,
+    CheckoutPrepareRequest
+  >({
+    mutationFn: (data) => addOnsApi.prepareCheckoutIndependent(data),
+  });
+}
+
+/**
+ * Create an add-on order using meal_type — subscription is resolved server-side.
+ * Accepts optional payment_id, payments_session_id, and razorpay_order_id for Zoho / Razorpay confirmation.
+ */
+export function useCreateAddOnOrderIndependent() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    CreateAddOnOrderResponse,
+    Error,
+    CreateAddOnOrderRequest
+  >({
+    mutationFn: (data) => addOnsApi.createAddOnOrderIndependent(data),
+    onSuccess: () => {
+      // Invalidate all add-on queries and wallet caches
+      queryClient.invalidateQueries({ queryKey: addOnKeys.all() });
+      queryClient.invalidateQueries({ queryKey: paymentKeys.walletBalance() });
+      queryClient.invalidateQueries({ queryKey: paymentKeys.walletTransactions() });
+    },
+  });
+}
+
+// ──────────────────────────────────────────────────────────────
+// Legacy Queries (subscription-scoped — kept for backward compat)
+// ──────────────────────────────────────────────────────────────
+
 export function useAvailableAddOns(
   subscriptionId: string,
   params?: { delivery_date?: string; meal_type?: MealType }
@@ -66,7 +149,10 @@ export function useActiveAddOnOrders(subscriptionId: string) {
   });
 }
 
-// Mutations
+// ──────────────────────────────────────────────────────────────
+// Legacy Mutations (subscription-scoped — kept for backward compat)
+// ──────────────────────────────────────────────────────────────
+
 export function usePrepareCheckout() {
   return useMutation<
     CheckoutPrepareResponse,

@@ -6,7 +6,10 @@ import type {
   CheckoutPrepareRequest,
   CheckoutPrepareResponse,
   CreateAddOnOrderRequest,
+  CreateAddOnOrderResponse as CreateAddOnOrderResponseType,
   ActiveAddOnOrder,
+  AvailableAddOnsIndependentData,
+  MealTypesResponse,
   MealType,
 } from "@/api/types/addons.types";
 
@@ -31,6 +34,64 @@ export interface CreateAddOnOrderResponse {
 }
 
 export const addOnsApi = {
+  // ──────────────────────────────────────────────────────────────
+  // Independent endpoints (no subscription ID required)
+  // ──────────────────────────────────────────────────────────────
+
+  /**
+   * Gets ALL available add-ons without subscription-level filtering.
+   * Meal types are resolved server-side from the user's active subscriptions.
+   */
+  getAvailableAddOnsIndependent: async (
+    params?: { delivery_date?: string }
+  ): Promise<AvailableAddOnsIndependentData> => {
+    const response = await apiClient.get<AvailableAddOnsIndependentData>(
+      ADD_ON_ROUTES.AVAILABLE_INDEPENDENT,
+      { params }
+    );
+    return response.data;
+  },
+
+  /**
+   * Gets available meal types from the user's active subscriptions
+   */
+  getMealTypes: async (): Promise<MealTypesResponse> => {
+    const response = await apiClient.get<MealTypesResponse>(
+      ADD_ON_ROUTES.MEAL_TYPES
+    );
+    return response.data;
+  },
+
+  /**
+   * Prepares checkout using meal_type (subscription resolved server-side)
+   */
+  prepareCheckoutIndependent: async (
+    payload: CheckoutPrepareRequest
+  ): Promise<CheckoutPrepareResponse> => {
+    const response = await apiClient.post<CheckoutPrepareResponse>(
+      ADD_ON_ROUTES.PREPARE_CHECKOUT_INDEPENDENT,
+      payload
+    );
+    return response.data;
+  },
+
+  /**
+   * Creates an add-on order using meal_type (subscription resolved server-side)
+   */
+  createAddOnOrderIndependent: async (
+    payload: CreateAddOnOrderRequest
+  ): Promise<CreateAddOnOrderResponseType> => {
+    const response = await apiClient.post<CreateAddOnOrderResponseType>(
+      ADD_ON_ROUTES.CREATE_ORDER_INDEPENDENT,
+      payload
+    );
+    return response.data;
+  },
+
+  // ──────────────────────────────────────────────────────────────
+  // Legacy subscription-scoped endpoints (kept for backward compat)
+  // ──────────────────────────────────────────────────────────────
+
   /**
    * Gets available add-ons for a subscription
    */
@@ -63,7 +124,7 @@ export const addOnsApi = {
   },
 
   /**
-   * Prepares checkout with payment details
+   * Prepares checkout with payment details (subscription-scoped)
    */
   prepareCheckout: async (
     subscriptionId: string,
@@ -77,13 +138,13 @@ export const addOnsApi = {
   },
 
   /**
-   * Creates an add-on order
+   * Creates an add-on order (subscription-scoped)
    */
   createAddOnOrder: async (
     subscriptionId: string,
     payload: CreateAddOnOrderRequest
-  ): Promise<CreateAddOnOrderResponse> => {
-    const response = await apiClient.post<CreateAddOnOrderResponse>(
+  ): Promise<CreateAddOnOrderResponseType> => {
+    const response = await apiClient.post<CreateAddOnOrderResponseType>(
       ADD_ON_ROUTES.CREATE_ORDER(subscriptionId),
       payload
     );

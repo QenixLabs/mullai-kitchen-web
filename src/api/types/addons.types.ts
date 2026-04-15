@@ -1,6 +1,6 @@
 export type AddOnCategory = 'Beverage' | 'Dessert' | 'Side Dish' | 'Extra Main';
 
-export type MealType = 'BREAKFAST' | 'LUNCH' | 'DINNER';
+export type MealType = 'Breakfast' | 'Lunch' | 'Dinner';
 
 export type AddOnOrderStatus = 'PENDING' | 'CONFIRMED' | 'PREPARING' | 'READY' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED';
 
@@ -18,6 +18,18 @@ export interface AddOnItem {
   meal_type?: MealType[];
   max_quantity_per_order?: number;
   outlet_restriction?: string;
+}
+
+// Response for independent add-on fetching (no subscription context)
+export interface AvailableAddOnsIndependentData {
+  items: AddOnItem[];
+  delivery_date?: string;
+  grouped_by_category?: Record<AddOnCategory, AddOnItem[]>;
+}
+
+// Response for meal types endpoint
+export interface MealTypesResponse {
+  mealTypes: MealType[];
 }
 
 export interface CartItem {
@@ -41,7 +53,8 @@ export interface CartSummary {
 }
 
 export interface CheckoutPrepareRequest {
-  subscription_id: string;
+  meal_type?: MealType;             // Required for independent flow; legacy flow derives from subscription
+  subscription_id?: string;         // Required for legacy flow; independent flow resolves server-side
   items: { item_id: string; quantity: number; meal_type: MealType }[];
   delivery_date: string;
   apply_wallet: boolean;
@@ -63,15 +76,21 @@ export interface CheckoutPrepareResponse {
   coupon_discount?: number;
   wallet_applied: number;
   amount_to_pay: number;
-  payment_session_id?: string;
+  payment_session_id?: string;       // Zoho / Razorpay payment session ID
   razorpay_order_id?: string;
+  provider_account_id?: string;      // Zoho account ID for payment widget
+  provider?: 'zoho' | 'razorpay';   // Payment provider used
   full_wallet_payment: boolean;
 }
 
 export interface CreateAddOnOrderRequest {
-  subscription_id: string;
+  meal_type?: MealType;              // Required for independent flow; legacy flow derives from subscription
+  subscription_id?: string;          // Required for legacy flow; independent flow resolves server-side
   items: { item_id: string; quantity: number; meal_type: MealType }[];
   delivery_date: string;
+  payment_id?: string;               // Zoho payment ID
+  payments_session_id?: string;      // Zoho payments session ID (note 's' in 'payments')
+  razorpay_order_id?: string;        // Razorpay order ID
 }
 
 export interface CreateAddOnOrderResponse {
