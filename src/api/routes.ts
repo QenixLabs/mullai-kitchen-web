@@ -124,4 +124,13 @@ export const ADMIN_ROUTES = {
   OUTLET_OVERRIDES: (outletId: string) => `/admin/outlets/${outletId}/overrides`,
   OUTLET_OVERRIDE_CALENDAR: (outletId: string) => `/admin/outlets/${outletId}/overrides/calendar`,
   OUTLET_OVERRIDE_DETAIL: (outletId: string, id: string) => `/admin/outlets/${outletId}/overrides/${id}`,
+  PLANS: '/admin/plans',
+  PLAN_DETAIL: (id: string) => `/admin/plans/${id}`,
+  PLAN_STATUS: (id: string) => `/admin/plans/${id}/status`,
+  ADMIN_SUBSCRIPTIONS: '/admin/subscriptions',
+  ADMIN_SUBSCRIPTION_DETAIL: (id: string) => `/admin/subscriptions/${id}`,
+  ADMIN_SUBSCRIPTION_PAUSE: (id: string) => `/admin/subscriptions/${id}/pause`,
+  ADMIN_SUBSCRIPTION_RESUME: (id: string) => `/admin/subscriptions/${id}/resume`,
+  ADMIN_SUBSCRIPTION_SKIP_DATES: (id: string) => `/admin/subscriptions/${id}/skip-dates`,
+  ADMIN_SUBSCRIPTION_ACTIVITY: (id: string) => `/admin/subscriptions/${id}/activity`,
 } as const;

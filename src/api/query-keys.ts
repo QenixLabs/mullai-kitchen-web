@@ -157,3 +157,22 @@ export const overrideKeys = {
   detail: (outletId: string, id: string) =>
     [...overrideKeys.all(outletId), 'detail', id] as const,
 };
+
+export const planKeys = {
+  all: ['admin', 'plans'] as const,
+  lists: () => [...planKeys.all, 'list'] as const,
+  list: (params?: { status?: string; plan_type?: string; duration?: string; outlet_id?: string; search?: string; page?: number; limit?: number }) =>
+    [...planKeys.lists(), params] as const,
+  details: () => [...planKeys.all, 'detail'] as const,
+  detail: (id: string) => [...planKeys.details(), id] as const,
+};
+
+export const adminSubscriptionKeys = {
+  all: ['admin', 'subscriptions'] as const,
+  lists: () => [...adminSubscriptionKeys.all, 'list'] as const,
+  list: (params?: { outlet_id?: string; status?: string; plan_id?: string; search?: string; page?: number; limit?: number }) =>
+    [...adminSubscriptionKeys.lists(), params] as const,
+  details: () => [...adminSubscriptionKeys.all, 'detail'] as const,
+  detail: (id: string) => [...adminSubscriptionKeys.details(), id] as const,
+  activity: (id: string) => [...adminSubscriptionKeys.all, 'activity', id] as const,
+};

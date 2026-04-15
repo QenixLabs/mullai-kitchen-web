@@ -19,6 +19,8 @@ import {
   Settings,
   LogOut,
   ChevronRight,
+  CreditCard,
+  CalendarCheck,
 } from "lucide-react";
 
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
@@ -131,6 +133,25 @@ const ADMIN_NAV_GROUPS: NavGroup[] = [
         label: "Orders",
         permission: "order:view:outlet",
         requireAll: true,
+      },
+    ],
+  },
+  {
+    label: "Subscriptions",
+    items: [
+      {
+        href: "/admin/plans",
+        icon: CreditCard,
+        label: "Plans",
+        permission: ["subscription:view:any", "subscription:view:outlet"],
+        requireAll: false,
+      },
+      {
+        href: "/admin/subscriptions",
+        icon: CalendarCheck,
+        label: "Subscriptions",
+        permission: ["subscription:view:any", "subscription:view:outlet"],
+        requireAll: false,
       },
     ],
   },
