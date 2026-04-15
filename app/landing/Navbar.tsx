@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import { MapPin, Menu, X, ChevronDown } from "lucide-react";
+import { MapPin, Menu, X, ChevronDown, User2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fadeInDown } from "./animations";
 import { cn } from "@/lib/utils";
@@ -28,9 +28,11 @@ export function LandingNavbar() {
   const isAuthenticated = useIsAuthenticated();
   const hasHydrated = useAuthHydrated();
 
-  // Determine which page we're on
-  const isCorporatePage = pathname === "/";
+  const isCorporatePage = pathname === "/" || pathname === "/corporate";
   const isIndividualPage = pathname === "/individual";
+  const isCorporateOnlyPage = pathname === "/corporate";
+  const aboutLink = isCorporateOnlyPage ? "/corporate#who-mullai-is" : "/#who-mullai-is";
+  const contactLink = isCorporateOnlyPage ? "/corporate#faq" : "/#faq";
 
   const handleGetStarted = () => {
     if (!hasHydrated) return;
@@ -51,52 +53,43 @@ export function LandingNavbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        "sticky top-0 left-0 right-0 z-50 transition-all duration-300",
         isScrolled
-          ? "bg-[#1a0509]/95 backdrop-blur-lg shadow-lg border-b border-white/10"
-          : "bg-transparent"
+          ? "bg-[linear-gradient(96deg,#4e0d1a_0%,#7a1127_56%,#4e0d1a_100%)] shadow-xl"
+          : "bg-[linear-gradient(96deg,#5d101d_0%,#7a1127_56%,#5d101d_100%)]"
       )}
     >
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 flex items-center justify-between h-20">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <Image
-            src="/logo-tranparent.png"
-            alt="Mullai Kitchen Logo"
-            width={250}
-            height={250}
-            className="object-contain"
-          />
-          {/* <div className="flex flex-col">
-            <span className="text-xl font-bold text-white tracking-tight leading-tight">
-              Mullai
-            </span>
-            <span className="text-xs text-skin/80 tracking-wide">
-              your everyday meal partner
-            </span>
-          </div> */}
-        </Link>
+      <div className="mx-auto max-w-350 px-4 sm:px-6 lg:px-8 xl:px-12 flex items-center justify-between h-20 lg:h-20">
+        <div className="flex items-center gap-3 lg:gap-4 min-w-0">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3 group shrink-0">
+            <Image
+              src="/logo-tranparent.png"
+              alt="Mullai Kitchen Logo"
+              width={140}
+              height={40}
+              className="object-contain h-8 lg:h-9 w-auto"
+            />
+          </Link>
 
-        {/* Desktop Location Pill & Nav Items */}
-        <div className="hidden md:flex items-center gap-8">
+          {/* Desktop/Tablet Location Selector */}
           <motion.div
             variants={fadeInDown}
             initial="initial"
             animate="animate"
-            className="relative"
+            className="relative hidden xl:flex"
           >
-            <div className="flex items-center gap-3 rounded-full bg-white/10 backdrop-blur-xl px-5 py-2.5 border border-white/20 hover:border-skin/40 transition-all">
-              <span className="text-xs font-medium text-white/60 uppercase tracking-widest">Delivering to</span>
-              <div className="w-px h-4 bg-white/20" />
+            <div className="flex items-center gap-1.5 rounded-full bg-white px-4 py-2.5 hover:bg-white/95 transition-all shadow-lg">
+              <MapPin className="h-4 w-4 text-primary shrink-0" />
+              <span className="text-sm font-medium text-foreground/75">Delivering to:</span>
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => setShowAreaDropdown(!showAreaDropdown)}
-                className="flex items-center gap-2 text-sm font-semibold text-white hover:text-skin transition-colors h-auto p-0"
+                className="flex items-center gap-1 text-base font-semibold text-primary hover:text-primary/80 transition-colors h-auto p-0"
                 aria-expanded={showAreaDropdown}
               >
-                <MapPin className="h-4 w-4 text-skin" />
-                {selectedArea}, Chennai
+                <span className="max-w-44 lg:max-w-none truncate">{selectedArea}, Chennai</span>
                 <ChevronDown className={cn(
                   "h-4 w-4 transition-transform duration-300",
                   showAreaDropdown && "rotate-180"
@@ -104,17 +97,16 @@ export function LandingNavbar() {
               </Button>
             </div>
 
-            {/* Area Dropdown */}
             <AnimatePresence>
               {showAreaDropdown && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full mt-3 right-0 w-64 bg-[#1a0509]/98 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-2 z-50"
+                  className="absolute top-full mt-3 left-0 w-64 bg-white border border-border rounded-2xl shadow-2xl overflow-hidden py-2 z-50"
                   onMouseLeave={() => setShowAreaDropdown(false)}
                 >
-                  <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+                  <div className="max-h-75 overflow-y-auto custom-scrollbar">
                     {chennaiAreas.map((area) => (
                       <Button
                         key={area}
@@ -127,8 +119,8 @@ export function LandingNavbar() {
                         className={cn(
                           "w-full text-left px-4 py-2.5 text-sm transition-colors h-auto justify-start rounded-none",
                           selectedArea === area
-                            ? "text-skin bg-white/5 font-semibold hover:bg-white/5"
-                            : "text-white/70 hover:text-white hover:bg-white/10"
+                            ? "text-primary bg-muted font-semibold hover:bg-muted"
+                            : "text-foreground/70 hover:text-foreground hover:bg-muted/50"
                         )}
                       >
                         {area}
@@ -139,44 +131,47 @@ export function LandingNavbar() {
               )}
             </AnimatePresence>
           </motion.div>
+        </div>
+
+        {/* Desktop Location Pill & Nav Items */}
+        <div className="hidden xl:flex items-center gap-7">
+          <Link href={aboutLink} className="text-base tracking-wide font-bold uppercase text-white/95 hover:text-white transition-colors">
+            About
+          </Link>
+
+          <Link href={contactLink} className="text-base tracking-wide font-bold uppercase text-white/95 hover:text-white transition-colors">
+            Contact
+          </Link>
 
           {/* Show switch button based on current page */}
           {isCorporatePage && (
-            <Link href="/individual" className="text-sm font-medium text-white/80 hover:text-white transition-all hover:translate-y-[-1px]">
+            <Link href="/individual" className="inline-flex items-center gap-2 text-base tracking-wide font-bold uppercase text-skin hover:text-skin/85 transition-colors">
+              <User2 className="h-4 w-4" />
               Individual
             </Link>
           )}
           {isIndividualPage && (
-            <Link href="/" className="text-sm font-medium text-white/80 hover:text-white transition-all hover:translate-y-[-1px]">
+            <Link href="/corporate" className="inline-flex items-center gap-2 text-base tracking-wide font-bold uppercase text-skin hover:text-skin/85 transition-colors">
+              <User2 className="h-4 w-4" />
               Corporate
             </Link>
           )}
 
-          {!isAuthenticated && (
-            <Link href="/auth/signin" className="text-sm font-medium text-white/80 hover:text-white transition-all hover:translate-y-[-1px]">
-              Login
-            </Link>
-          )}
-
-          <Button onClick={handleGetStarted} className="bg-skin hover:bg-[#C39463] text-[#1a0509] font-bold rounded-full px-8 shadow-lg shadow-skin/20 hover:shadow-skin/30 transition-all active:scale-95">
-            {isAuthenticated ? "Dashboard" : "Get Started"}
+          <Button asChild className="bg-white hover:bg-white/90 text-primary font-bold rounded-full px-7 h-11 text-base tracking-wide shadow-lg transition-all active:scale-95">
+            <Link href="/auth/signin">LOGIN</Link>
           </Button>
         </div>
 
         {/* Mobile menu button */}
-        <div className="flex md:hidden items-center gap-3">
-          {/* Login Button - Visible on mobile when not authenticated */}
-          {!isAuthenticated && (
-            <Link href="/auth/signin">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white/80 hover:text-white hover:bg-white/10 rounded-full px-4"
-              >
-                Login
-              </Button>
-            </Link>
-          )}
+        <div className="flex xl:hidden items-center gap-3">
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="text-white/80 hover:text-white hover:bg-white/10 rounded-full px-4"
+          >
+            <Link href="/auth/signin">Login</Link>
+          </Button>
 
           <Button
             type="button"
@@ -198,7 +193,7 @@ export function LandingNavbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#1a0509] border-t border-white/10 overflow-hidden"
+            className="xl:hidden bg-primary border-t border-white/10 overflow-hidden"
           >
             <div className="px-4 py-8 space-y-8">
               <div className="space-y-4">
@@ -206,7 +201,7 @@ export function LandingNavbar() {
                   <MapPin className="h-4 w-4" />
                   <span className="text-sm">Select Delivery Area</span>
                 </div>
-                <div className="grid grid-cols-2 gap-2 p-2 bg-white/5 rounded-2xl max-h-[250px] overflow-y-auto">
+                <div className="grid grid-cols-2 gap-2 p-2 bg-white/5 rounded-2xl max-h-62.5 overflow-y-auto">
                   {chennaiAreas.map((area) => (
                     <Button
                       key={area}
@@ -219,7 +214,7 @@ export function LandingNavbar() {
                       className={cn(
                         "text-left px-3 py-2.5 text-xs rounded-lg transition-all h-auto justify-start",
                         selectedArea === area
-                          ? "bg-skin text-[#1a0509] font-bold hover:bg-skin"
+                          ? "bg-skin text-primary font-bold hover:bg-skin"
                           : "text-white/60 hover:text-white hover:bg-white/10"
                       )}
                     >
@@ -228,8 +223,19 @@ export function LandingNavbar() {
                   ))}
                 </div>
               </div>
-              
+
               <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
+                <Link href={aboutLink} onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
+                    About
+                  </Button>
+                </Link>
+                <Link href={contactLink} onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
+                    Contact
+                  </Button>
+                </Link>
+
                 {/* Show switch button based on current page */}
                 {isCorporatePage && (
                   <Link href="/individual">
@@ -239,20 +245,16 @@ export function LandingNavbar() {
                   </Link>
                 )}
                 {isIndividualPage && (
-                  <Link href="/">
+                  <Link href="/corporate">
                     <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
                       Corporate
                     </Button>
                   </Link>
                 )}
-                {!isAuthenticated && (
-                  <Link href="/auth/signin">
-                    <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
-                      Login to Account
-                    </Button>
-                  </Link>
-                )}
-                <Button onClick={handleGetStarted} className="bg-skin hover:bg-[#C39463] text-[#1a0509] w-full font-bold rounded-xl h-12 shadow-lg shadow-skin/20">
+                <Button asChild variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
+                  <Link href="/auth/signin">Login to Account</Link>
+                </Button>
+                <Button onClick={handleGetStarted} className="bg-skin hover:bg-[#C39463] text-primary w-full font-bold rounded-xl h-12 shadow-lg shadow-skin/20">
                   {isAuthenticated ? "Dashboard" : "Get Started Now"}
                 </Button>
               </div>

@@ -14,9 +14,7 @@ import type {
   IRefreshTokenRequest,
   IRegisterRequest,
   IResetPasswordRequest,
-  ISendSignupOtpRequest,
   IVerifyResetOtpRequest,
-  IVerifySignupOtpRequest,
 } from "@/api/types/auth.types";
 import type { IUser } from "@/api/types/user.types";
 import { useUserStore } from "@/providers/user-store-provider";
@@ -136,8 +134,12 @@ export function useDeleteAccount() {
       queryClient.clear();
       toast.success("Account deleted successfully");
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to delete account");
+    onError: (error: unknown) => {
+      const message =
+        typeof error === 'object' && error !== null && 'message' in error
+          ? (error as { message: string }).message
+          : "Failed to delete account";
+      toast.error(message);
     },
   });
 }

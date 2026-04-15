@@ -63,7 +63,7 @@ export function CustomPlanBuilderDialog({
   open,
   onOpenChange,
   onPlanCreated,
-  checkedPincode,
+  checkedPincode: _checkedPincode,
 }: CustomPlanBuilderDialogProps) {
   const [step, setStep] = useState(0);
 
@@ -99,7 +99,11 @@ export function CustomPlanBuilderDialog({
   function toggleMeal(meal: MealType) {
     setMeals((prev) => {
       const next = new Set(prev);
-      next.has(meal) ? next.delete(meal) : next.add(meal);
+      if (next.has(meal)) {
+        next.delete(meal);
+      } else {
+        next.add(meal);
+      }
       return next;
     });
   }

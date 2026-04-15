@@ -5,7 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 
 import { PlanCard } from "./PlanCard";
-import { FaSearch, FaSpinner } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 
 interface PlanGridProps {
   plans: PlanBrowseItem[];
@@ -63,13 +63,6 @@ const NoPlansFound = ({ className }: { className?: string }) => (
     <p className="mt-2 text-sm text-gray-600">
       Try adjusting your search or check back later for new meal plans.
     </p>
-  </div>
-);
-
-// Loading spinner for inline loading states
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center py-12">
-      <FaSpinner className="h-8 w-8 animate-spin text-primary" />
   </div>
 );
 

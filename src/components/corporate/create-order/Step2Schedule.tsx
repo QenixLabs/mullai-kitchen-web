@@ -27,7 +27,7 @@ export function Step2Schedule({
   selectedDays,
   mealTypes,
   startDate,
-  endDate,
+  endDate: _endDate,
   billingCycleDays,
   errors,
   control,

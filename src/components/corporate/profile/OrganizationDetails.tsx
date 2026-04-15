@@ -1,6 +1,5 @@
 "use client";
 
-import { Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ICorporateProfile } from "@/api/types/corporate.types";
 

@@ -90,6 +90,7 @@ export function ChangePasswordDialog({
     },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const newPassword = form.watch("new_password");
 
   const requirements = [
@@ -139,9 +140,11 @@ export function ChangePasswordDialog({
           toast.success(data.message || "Password changed successfully");
           onOpenChange(false);
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
           const message =
-            error?.response?.data?.message || error?.message || "Failed to change password";
+            (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+            (error as { message?: string })?.message ||
+            "Failed to change password";
           toast.error(message);
         },
       },

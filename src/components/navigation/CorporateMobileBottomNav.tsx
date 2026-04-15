@@ -141,7 +141,7 @@ export function CorporateMobileBottomNav() {
 
               <div className="grid grid-cols-1 gap-2">
                 <MenuLink
-                  href="/corporate"
+                  href="/corporate/dashboard"
                   icon={LayoutDashboard}
                   label="Dashboard"
                   onClick={() => setIsOpen(false)}

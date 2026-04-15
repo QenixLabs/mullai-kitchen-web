@@ -37,6 +37,7 @@ export interface ZohoPaymentOptions {
   business?: string;
   description?: string;
   invoice_number?: string;
+  reference_number?: string;
   address?: {
     name?: string;
     email?: string;
@@ -103,7 +104,7 @@ export async function openZohoCheckout(config: {
   console.log("[Zoho] Payment Session ID:", config.paymentSessionId);
 
   // Initialize Zoho Payments with account_id, domain, and API key (required for India)
-  const zohoConfig: any = {
+  const zohoConfig: ZohoConfig = {
     account_id: config.accountId,
     domain: "IN",
   };
@@ -124,7 +125,7 @@ export async function openZohoCheckout(config: {
 
   try {
     // Build options matching Zoho India documentation format
-    const options: any = {
+    const options: ZohoPaymentOptions = {
       amount: String(config.amount),
       currency_code: config.currency,
       payments_session_id: config.paymentSessionId,
@@ -141,18 +142,20 @@ export async function openZohoCheckout(config: {
 
     console.log("[Zoho] Calling requestPaymentMethod with:", options);
 
-    const result = await (instance as any).requestPaymentMethod(options);
+    const result = await instance.requestPaymentMethod(options);
 
     console.log("[Zoho] Payment result:", result);
     config.onSuccess(result);
-  } catch (err: any) {
+  } catch (_error) {
+    const err = _error instanceof Error ? _error : new Error(String(_error));
     console.error("[Zoho] Error:", err);
 
-    if (err.code === "widget_closed") {
+    const code = "code" in err && typeof err.code === "string" ? err.code : "PAYMENT_ERROR";
+    if (code === "widget_closed") {
       return;
     }
     config.onFailure({
-      code: err.code || "PAYMENT_ERROR",
+      code,
       message: err.message || "Payment failed",
     });
   } finally {
@@ -196,7 +199,7 @@ export async function pollPaymentStatus(
       } else {
         onFailure("Payment confirmation timeout");
       }
-    } catch (error) {
+    } catch {
       if (attempts < maxAttempts) {
         setTimeout(poll, pollInterval);
       } else {

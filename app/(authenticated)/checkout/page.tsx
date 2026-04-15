@@ -30,15 +30,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 import { CheckoutDialogs } from "@/components/customer/checkout/CheckoutDialogs";
-import { CouponSelector } from "@/components/customer/checkout/CouponSelector";
 import { GoogleMap } from "@/components/customer/profile/GoogleMap";
-
-// Payment method icons
-const PaymentMethodIcons = {
-  wallet: Wallet,
-  upi: QrCode,
-  card: CreditCard,
-};
 
 interface PaymentMethodOptionProps {
   id: string;
@@ -52,7 +44,7 @@ interface PaymentMethodOptionProps {
 }
 
 function PaymentMethodOption({
-  id,
+  id: _id,
   title,
   subtitle,
   icon,
@@ -115,11 +107,7 @@ export default function CheckoutPage() {
     plan,
     planId,
     addresses,
-    addressesLoading,
     walletBalance,
-    walletLoading,
-    walletError,
-    refetchWallet,
     paymentStatus,
     createOrderMutation,
     state,
@@ -128,16 +116,11 @@ export default function CheckoutPage() {
     handlePaymentSuccess,
     handlePaymentFailure,
     setSelectedPayment,
-    setApplyWallet,
     setOptOutDates,
     toggleAddressDialog,
     toggleWalletInfo,
     toggleOptOutDialog,
-    setAppliedCoupon,
     previewPricingMutation,
-    setSelectedMealType,
-    setMealAddressMapping,
-    getMealAddressMapping,
   } = useCheckout();
 
   // Show toast when pricing preview fails
@@ -241,7 +224,6 @@ export default function CheckoutPage() {
     state.optOutDates,
     state.mealAddressMappings,
     plan?.name,
-    plan?.duration,
     user?.name,
     user?.email,
     user?.phone,

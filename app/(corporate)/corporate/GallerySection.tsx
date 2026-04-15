@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useInView, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { X, ChevronLeft, ChevronRight, ImageIcon } from "lucide-react";
 
 const galleryItems = [
@@ -18,7 +18,6 @@ const galleryItems = [
 
 export function GallerySection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [selectedItem, setSelectedItem] = useState<(typeof galleryItems)[0] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 

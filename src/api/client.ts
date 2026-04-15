@@ -5,7 +5,6 @@ import axios, {
 } from "axios";
 
 import { AUTH_ROUTES } from "@/api/routes";
-import type { ApiResponse } from "@/api/types/api-response.types";
 import type { IAuthSession } from "@/api/types/auth.types";
 import { getApiBaseUrl } from "@/lib/env";
 import {

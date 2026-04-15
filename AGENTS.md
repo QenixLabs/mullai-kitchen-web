@@ -683,6 +683,28 @@ className={cn(
 
 ## Important Design Rules
 
+### API Response Interceptor — Never Check `.success`
+
+The axios client in `src/api/client.ts` unwraps backend responses:
+- Backend sends: `{ success, message, data: { ... } }`
+- Interceptor returns only the inner `data` object
+
+**Never check `result.success`** on mutation/API results — that field was stripped. If `mutateAsync` didn't throw, it succeeded.
+
+```tsx
+// ❌ Broken
+if (orderResult.success) { toast.success("OK"); }
+else { toast.error("Failed"); }  // always hits this!
+
+// ✅ Correct
+try {
+  const result = await mutation.mutateAsync(payload);
+  toast.success("OK");
+} catch { toast.error("Failed"); }
+```
+
+---
+
 ### DO NOT Use Hardcoded Values
 
 ```tsx

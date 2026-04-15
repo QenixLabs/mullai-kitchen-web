@@ -70,7 +70,7 @@ export const deliveryZoneApi = {
   checkServiceability: async (
     lat: number,
     lng: number,
-  ): Promise<{ isServiceable: boolean; outlet: any | null }> => {
+  ): Promise<{ isServiceable: boolean; outlet: DeliveryZone | null }> => {
     const response = await apiClient.get('/delivery-zones/check/serviceability', {
       params: { lat, lng },
     });

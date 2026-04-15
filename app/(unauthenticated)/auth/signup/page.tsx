@@ -194,7 +194,7 @@ function SignUpForm() {
     sendSignupOtpMutation.reset();
     try {
       await sendSignupOtpMutation.mutateAsync({ phone: `+91${formData.phone}` });
-    } catch (err) {
+    } catch {
       return;
     }
     setCurrentStep(2);
@@ -211,7 +211,7 @@ function SignUpForm() {
       });
       setFormData((prev) => ({ ...prev, signup_token: result.signup_token }));
       setCurrentStep(3);
-    } catch (err) {
+    } catch {
       // React Query's mutation error state already handles the error display
       // just return to prevent step advance
       return;
@@ -267,13 +267,14 @@ function SignUpForm() {
       }
 
       router.push("/plans");
-    } catch (err) {
+    } catch {
       // React Query's mutation error state already handles the error display
       // just return to prevent step advance
       return;
     }
   };
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const profileValues = form.watch();
   const canContinueFromProfile =
     profileValues.name.trim().length > 1 &&

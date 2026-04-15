@@ -84,6 +84,21 @@ export const CORPORATE_ROUTES = {
   ORDER_PRICING: '/corporate/orders/pricing',
 } as const;
 
+export const ADD_ON_ROUTES = {
+  // Independent endpoints (no subscription ID required)
+  AVAILABLE_INDEPENDENT: '/customer/subscriptions/addons/available',
+  MEAL_TYPES: '/customer/subscriptions/addons/meal-types',
+  ORDER_HISTORY: '/customer/subscriptions/addons/orders',
+  PREPARE_CHECKOUT_INDEPENDENT: '/customer/subscriptions/addons/prepare-checkout',
+  CREATE_ORDER_INDEPENDENT: '/customer/subscriptions/addons/create-order',
+  // Legacy subscription-scoped endpoints (kept for backward compatibility)
+  AVAILABLE: (id: string) => `/customer/subscriptions/${id}/add-ons/available`,
+  CART_SUMMARY: (id: string) => `/customer/subscriptions/${id}/add-ons/cart-summary`,
+  PREPARE_CHECKOUT: (id: string) => `/customer/subscriptions/${id}/add-ons/prepare-checkout`,
+  CREATE_ORDER: (id: string) => `/customer/subscriptions/${id}/add-ons/create-order`,
+  ACTIVE_ORDERS: (id: string) => `/customer/subscriptions/${id}/add-ons`,
+} as const;
+
 export const ADMIN_ROUTES = {
   DASHBOARD: "/admin/dashboard",
   USERS: '/admin/users',

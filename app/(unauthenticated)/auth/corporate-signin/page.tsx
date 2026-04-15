@@ -59,7 +59,7 @@ function CorporateSignInForm() {
   });
 
   const handleSubmit = async (values: SignInFormData) => {
-    const session = await loginMutation.mutateAsync(values);
+    await loginMutation.mutateAsync(values);
 
     const redirectTo = getSafeRedirectPath(
       new URLSearchParams(window.location.search).get("redirect"),

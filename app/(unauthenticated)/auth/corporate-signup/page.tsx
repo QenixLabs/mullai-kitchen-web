@@ -133,6 +133,7 @@ function CorporateSignUpForm() {
     setCurrentStep((step) => Math.max(0, step - 1));
   };
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const companyValues = form.watch();
   const canContinueFromCompany =
     companyValues.email?.trim().length > 0 &&

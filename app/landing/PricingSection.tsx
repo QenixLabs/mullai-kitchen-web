@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import {
   motion,
@@ -8,7 +8,6 @@ import {
   useMotionValue,
   useTransform,
   useSpring,
-  animate,
 } from "motion/react";
 import { Check, Sparkles, Shield, Clock, Leaf, Flame, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -80,18 +79,13 @@ const plans = [
   },
 ];
 
-// Counter animation hook
-import { useCounter } from "@/hooks/use-counter";
-
 // Tilt Card Component
 function TiltCard({
   children,
   className,
-  popular,
 }: {
   children: React.ReactNode;
   className?: string;
-  popular?: boolean;
 }) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -256,7 +250,7 @@ export function PricingSection() {
                 plan.popular && "lg:-mt-4 lg:mb-4",
               )}
             >
-              <TiltCard popular={plan.popular} className="relative h-full">
+              <TiltCard className="relative h-full">
                 {/* Popular Glow Effect */}
                 {plan.popular && (
                   <div className="absolute -inset-0.5 bg-linear-to-r from-skin to-primary rounded-2xl opacity-40 blur-lg" />

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import { useForgotPassword, useResetPassword, useVerifyResetOtp } from "@/api/hooks/useAuth";
 import { AuthFooterLinks, AuthFormCard, AuthHeader, AuthHighlights, AuthShell } from "@/components/Auth";
@@ -27,31 +27,27 @@ export default function ForgotPasswordPage() {
   const [newPassword, setNewPassword] = useState("");
 
   // Resend timer
-  const [countdown, setCountdown] = useState(60);
+  const [countdown, setCountdown] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const forgotMutation = useForgotPassword();
   const verifyOtpMutation = useVerifyResetOtp();
   const resetMutation = useResetPassword();
 
-  // Start countdown when entering OTP step
-  useEffect(() => {
-    if (step === "otp") {
-      setCountdown(60);
-      timerRef.current = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timerRef.current!);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [step]);
+  // Start/resume countdown timer
+  const startCountdown = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setCountdown(60);
+    timerRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current!);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
 
   // Step 1: Send OTP
   const handlePhoneSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -59,23 +55,14 @@ export default function ForgotPasswordPage() {
     forgotMutation.reset();
     await forgotMutation.mutateAsync({ phone: `+91${phone}` });
     setStep("otp");
+    startCountdown();
   };
 
   // Resend OTP
   const handleResend = async () => {
     try {
       await forgotMutation.mutateAsync({ phone: `+91${phone}` });
-      if (timerRef.current) clearInterval(timerRef.current);
-      setCountdown(60);
-      timerRef.current = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timerRef.current!);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+      startCountdown();
     } catch {
       // error is shown via forgotMutation.isError
     }
