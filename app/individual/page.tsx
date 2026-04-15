@@ -5,6 +5,7 @@ import { HeroSection } from "./HeroSection";
 import { PlansSection } from "./PlansSection";
 import { HowItWorksSection } from "./HowItWorksSection";
 import { SafetyMeasuresSection } from "../landing/SafetyMeasuresSection";
+import { SourcingSection } from "../landing/SourcingSection";
 import { TodaysMenuSection } from "./TodaysMenuSection";
 import { GallerySection } from "./GallerySection";
 import { TestimonialsSection } from "./TestimonialsSection";
@@ -20,10 +21,11 @@ export default function IndividualPage() {
       <main>
         <HeroSection />
         <PlansSection />
-        <HowItWorksSection />
-        <SafetyMeasuresSection />
         <TodaysMenuSection />
+        <HowItWorksSection />
         <GallerySection />
+        <SafetyMeasuresSection />
+        <SourcingSection />
         <TestimonialsSection />
         <FAQSection />
         <CTASection />

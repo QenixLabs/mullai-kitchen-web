@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import { MapPin, Menu, X, ChevronDown, User2 } from "lucide-react";
+import { MapPin, Menu, X, ChevronDown, User2, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fadeInDown } from "./animations";
 import { cn } from "@/lib/utils";
@@ -152,7 +152,7 @@ export function LandingNavbar() {
           )}
           {isIndividualPage && (
             <Link href="/corporate" className="inline-flex items-center gap-2 text-base tracking-wide font-bold uppercase text-skin hover:text-skin/85 transition-colors">
-              <User2 className="h-4 w-4" />
+              <Building2 className="h-4 w-4" />
               Corporate
             </Link>
           )}
@@ -240,6 +240,7 @@ export function LandingNavbar() {
                 {isCorporatePage && (
                   <Link href="/individual">
                     <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
+                      <User2 className="h-4 w-4 mr-2" />
                       Individual
                     </Button>
                   </Link>
@@ -247,6 +248,7 @@ export function LandingNavbar() {
                 {isIndividualPage && (
                   <Link href="/corporate">
                     <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
+                      <Building2 className="h-4 w-4 mr-2" />
                       Corporate
                     </Button>
                   </Link>

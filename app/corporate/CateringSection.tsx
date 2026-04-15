@@ -32,7 +32,7 @@ export function CateringSection() {
 
   return (
     <section ref={ref} className="relative bg-[#FAF7F2] py-16 sm:py-20 overflow-hidden">
-      <div className="relative mx-auto max-w-350 px-4 sm:px-6 lg:px-8 xl:px-12">
+      <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <motion.div
             initial="initial"
@@ -49,23 +49,23 @@ export function CateringSection() {
 
             <motion.h2
               variants={fadeInUp}
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary tracking-tight leading-[1.1]"
+              className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-primary tracking-tight leading-[1.1]"
             >
-              Large Scale Catering for Special Occasions
+              <span className="brand-wine-text">Large Scale Catering</span> for Special Occasions
             </motion.h2>
 
-            <motion.p variants={fadeInUp} className="text-muted-foreground leading-relaxed">
+            <motion.p variants={fadeInUp} className="individual-copy-slate leading-relaxed text-base sm:text-lg">
               Whether it&apos;s a daily corporate lunch arrangement or a one-time grand celebration, Mullai provides authentic, high-quality South Indian catering services tailored to your scale.
             </motion.p>
 
             <div className="space-y-4">
-              {services.map((service, index) => (
+              {services.map((service) => (
                 <motion.div
                   key={service.title}
                   variants={fadeInUp}
                   className="flex items-start gap-4 p-4 bg-white rounded-xl border border-border/50"
                 >
-                  <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                  <div className="mt-0.5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 shrink-0">
                     <service.icon className="h-5 w-5 text-primary" />
                   </div>
                   <div>
@@ -76,7 +76,7 @@ export function CateringSection() {
               ))}
             </div>
 
-            <motion.div variants={fadeInUp} className="flex flex-row flex-wrap items-center gap-3">
+            <motion.div variants={fadeInUp} className="flex flex-row flex-wrap items-center gap-3 pt-2">
               <Link href="/auth/corporate-signup">
                 <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-full px-6 h-11">
                   <ClipboardList className="h-4 w-4 mr-2" />
@@ -98,7 +98,7 @@ export function CateringSection() {
             variants={slideInRight}
             className="relative"
           >
-            <div className="relative rounded-3xl overflow-hidden aspect-4/3 lg:aspect-3/4">
+            <div className="relative rounded-[2rem] overflow-hidden aspect-[4/5]">
               <Image
                 src="/images/corporate/Catering Buffet.png"
                 alt="Large scale catering buffet"
@@ -110,18 +110,18 @@ export function CateringSection() {
 
             <motion.div
               variants={fadeInUp}
-              className="absolute top-4 right-4 bg-white rounded-xl shadow-lg p-3 border border-border/50"
+              className="absolute top-4 right-4 bg-white rounded-2xl shadow-lg px-4 py-3 border border-border/50"
             >
               <div className="text-center">
                 <CalendarDays className="h-5 w-5 text-primary mx-auto mb-1" />
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Bookings for</p>
-                <p className="text-sm font-bold text-primary">2026</p>
+                <p className="text-xl font-bold text-primary">2026</p>
               </div>
             </motion.div>
 
             <motion.div
               variants={fadeInUp}
-              className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl shadow-lg p-4 border border-border/50"
+              className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-4 border border-border/50"
             >
               <div className="flex items-center gap-3 mb-2">
                 <div className="flex -space-x-2">
