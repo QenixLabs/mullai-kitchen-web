@@ -82,7 +82,7 @@ export function HowItWorksSection() {
           className="relative grid sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-6"
         >
           {/* Dotted connecting line - hidden on mobile */}
-          <div className="hidden lg:block absolute top-[52px] left-[12.5%] right-[12.5%] h-0 border-t-2 border-dashed border-white/20" />
+          <div className="hidden lg:block absolute top-9 left-[12.5%] right-[12.5%] h-0 border-t-2 border-dashed border-white/20" />
 
           {steps.map((step) => {
             const Icon = step.icon;
