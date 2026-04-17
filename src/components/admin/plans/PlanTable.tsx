@@ -74,7 +74,7 @@ export function PlanTable({ data, isLoading, page, totalPages, onPageChange, onD
                 <TableCell>
                   {plan.image_url ? (
                     <div className="relative h-10 w-10 overflow-hidden rounded-md">
-                      <Image src={plan.image_url} alt={plan.name} fill className="object-cover" sizes="40px" />
+                      <Image src={plan.image_url} alt={plan.name} fill unoptimized className="object-cover" sizes="40px" />
                     </div>
                   ) : (
                     <div className="flex h-10 w-10 items-center justify-center rounded-md bg-muted text-xs text-muted-foreground">

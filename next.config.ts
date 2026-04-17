@@ -15,6 +15,16 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "i.pravatar.cc",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "5000",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3005",
+      },
     ],
   },
 };

@@ -25,6 +25,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useCreatePlan, useUpdatePlan } from '@/api/hooks/usePlans';
+import { ImageUploadField } from './ImageUploadField';
 import { PlanDuration, PlanStatus, MealType } from '@/api/types/admin-subscription.types';
 import type { Plan } from '@/api/types/admin-subscription.types';
 
@@ -102,10 +103,15 @@ export function PlanForm({ plan }: PlanFormProps) {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            {/* Basic Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField control={form.control} name="name" render={({ field }) => (
-                <FormItem><FormLabel>Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem>
+                  <FormLabel>Plan Name</FormLabel>
+                  <FormControl><Input {...field} placeholder="e.g. Monthly Veg Plan" /></FormControl>
+                  <FormMessage />
+                </FormItem>
               )} />
               <FormField control={form.control} name="duration" render={({ field }) => (
                 <FormItem>
@@ -124,54 +130,106 @@ export function PlanForm({ plan }: PlanFormProps) {
             </div>
 
             <FormField control={form.control} name="description" render={({ field }) => (
-              <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
-            )} />
-
-            <FormField control={form.control} name="image_url" render={({ field }) => (
-              <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input {...field} placeholder="https://example.com/plan-image.jpg" /></FormControl><FormMessage /></FormItem>
-            )} />
-
-            <FormField control={form.control} name="meals_included" render={() => (
               <FormItem>
-                <FormLabel>Meals Included</FormLabel>
-                <div className="flex gap-4">
-                  {mealOptions.map((meal) => (
-                    <FormField key={meal.value} control={form.control} name="meals_included" render={({ field }) => (
-                      <FormItem className="flex items-center space-x-2">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(meal.value)}
-                            onCheckedChange={(checked) => {
-                              const current = field.value || [];
-                              field.onChange(checked ? [...current, meal.value] : current.filter((v: MealType) => v !== meal.value));
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal">{meal.label}</FormLabel>
-                      </FormItem>
-                    )} />
-                  ))}
-                </div>
+                <FormLabel>Description</FormLabel>
+                <FormControl><Textarea {...field} placeholder="Describe what this plan includes..." rows={3} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
 
-            <FormField control={form.control} name="price" render={({ field }) => (
-              <FormItem><FormLabel>Price (₹)</FormLabel><FormControl><Input type="number" value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} /></FormControl><FormMessage /></FormItem>
-            )} />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField control={form.control} name="valid_from" render={({ field }) => (
-                <FormItem><FormLabel>Valid From</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
-              <FormField control={form.control} name="valid_until" render={({ field }) => (
-                <FormItem><FormLabel>Valid Until</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
+            {/* Image Upload */}
+            <div className="space-y-3">
+              <FormField control={form.control} name="image_url" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Plan Image</FormLabel>
+                  <FormControl>
+                    <ImageUploadField value={field.value} onChange={field.onChange} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )} />
             </div>
 
+            {/* Meals & Pricing */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">Meals & Pricing</h3>
+              <FormField control={form.control} name="meals_included" render={() => (
+                <FormItem>
+                  <FormLabel>Meals Included</FormLabel>
+                  <div className="flex flex-wrap gap-6">
+                    {mealOptions.map((meal) => (
+                      <FormField key={meal.value} control={form.control} name="meals_included" render={({ field }) => (
+                        <FormItem className="flex items-center space-x-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(meal.value)}
+                              onCheckedChange={(checked) => {
+                                const current = field.value || [];
+                                field.onChange(checked ? [...current, meal.value] : current.filter((v: MealType) => v !== meal.value));
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="text-sm font-normal">{meal.label}</FormLabel>
+                        </FormItem>
+                      )} />
+                    ))}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )} />
+
+              <FormField control={form.control} name="price" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Price (₹)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      value={field.value ?? ''}
+                      onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
+                      placeholder="0.00"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            </div>
+
+            {/* Validity */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">Validity</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField control={form.control} name="valid_from" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Valid From</FormLabel>
+                    <FormControl><Input type="date" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="valid_until" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Valid Until</FormLabel>
+                    <FormControl><Input type="date" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </div>
+            </div>
+
+            {/* Limits & Status */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField control={form.control} name="max_subscribers" render={({ field }) => (
-                <FormItem><FormLabel>Max Subscribers</FormLabel><FormControl><Input type="number" value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))} /></FormControl><FormMessage /></FormItem>
+                <FormItem>
+                  <FormLabel>Max Subscribers</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      value={field.value ?? ''}
+                      onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))}
+                      placeholder="Unlimited"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )} />
               {plan && (
                 <FormField control={form.control} name="status" render={({ field }) => (
@@ -191,8 +249,9 @@ export function PlanForm({ plan }: PlanFormProps) {
               )}
             </div>
 
-            <div className="flex gap-3">
-              <Button type="submit" disabled={isPending}>
+            {/* Actions */}
+            <div className="flex gap-3 pt-2">
+              <Button type="submit" disabled={isPending} className="min-w-[120px]">
                 {isPending ? 'Saving...' : plan ? 'Update Plan' : 'Create Plan'}
               </Button>
               <Button type="button" variant="outline" onClick={() => router.push('/admin/plans')}>
