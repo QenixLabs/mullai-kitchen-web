@@ -61,7 +61,7 @@ export function TestimonialsSection() {
             What Our Customers Say
           </motion.h2>
 
-          <motion.p variants={fadeInUp} className="mt-3 text-muted-foreground">
+          <motion.p variants={fadeInUp} className="individual-copy-slate mt-3">
             Join 2,000+ happy customers enjoying fresh, home-style meals every day.
           </motion.p>
         </motion.div>

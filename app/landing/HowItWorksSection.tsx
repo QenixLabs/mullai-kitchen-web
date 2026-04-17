@@ -41,12 +41,12 @@ export function HowItWorksSection() {
       <div className="absolute inset-0 bg-linear-to-b from-primary via-[#2a0a10] to-primary" />
       <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(circle_at_1px_1px,rgba(212,165,116,0.6)_1px,transparent_0)] bg-size-[34px_34px]" />
 
-      <div className="relative mx-auto max-w-350 px-4 sm:px-6 lg:px-8 xl:px-12">
+      <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
         <motion.div
           initial="initial"
           animate={isInView ? "animate" : "initial"}
           variants={staggerContainer}
-          className="text-center mb-12 sm:mb-16"
+          className="text-center mb-16 sm:mb-20"
         >
           <motion.div
             variants={fadeInUp}
@@ -59,15 +59,15 @@ export function HowItWorksSection() {
 
           <motion.h2
             variants={fadeInUp}
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight"
+            className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-white tracking-tight"
           >
             How We Execute{" "}
-            <span className="text-skin">Large-Scale Cooking</span> Daily
+            <span className="text-skin">Large-Scale</span> Cooking Daily
           </motion.h2>
 
           <motion.p
             variants={fadeInUp}
-            className="mt-4 text-base sm:text-lg text-white/60"
+            className=" mx-auto"
           >
             A disciplined workflow from preparation to dispatch keeps every meal safe, fresh, and on time.
           </motion.p>
@@ -77,28 +77,30 @@ export function HowItWorksSection() {
           initial="initial"
           animate={isInView ? "animate" : "initial"}
           variants={staggerContainer}
-          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5"
+          className="relative grid sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-6"
         >
-          {steps.map((step, index) => {
+          {/* Dotted connecting line - hidden on mobile */}
+          <div className="hidden lg:block absolute top-9 left-[12.5%] right-[12.5%] h-0 border-t-2 border-dashed border-white/20" />
+
+          {steps.map((step) => {
             const Icon = step.icon;
             return (
               <motion.div
                 key={step.title}
                 variants={fadeInUp}
-                className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm hover:border-white/20 transition-all"
+                className="relative flex flex-col items-center text-center"
               >
-                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10">
-                  <Icon className="h-6 w-6 text-skin" />
+                <div className="relative z-10 mb-5 flex h-[72px] w-[72px] items-center justify-center rounded-full bg-[#F5E8EA]">
+                  <Icon className="h-6 w-6 text-primary" />
                 </div>
-                <p className="text-xs font-semibold text-skin/80 tracking-[0.14em] mb-2">
-                  STEP {index + 1}
-                </p>
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-sm text-white/60 leading-relaxed">
-                  {step.description}
-                </p>
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm w-full">
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="text-sm text-white/60 leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
               </motion.div>
             );
           })}

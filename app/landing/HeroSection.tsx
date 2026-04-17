@@ -48,7 +48,7 @@ export function HeroSection() {
         >
           <motion.h1
             variants={fadeInUp}
-            className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-primary tracking-tight leading-tight font-(family-name:--font-manrope)"
+            className="text-[clamp(2rem,2vw,2.5rem)]! font-bold text-primary tracking-tight leading-[1.05]"
           >
             <span className="text-[#6B1720]">Fresh, Home-Style Meals.</span>
             <br />

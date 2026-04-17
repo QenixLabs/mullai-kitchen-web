@@ -65,7 +65,7 @@ export function FAQSection() {
             FREQUENTLY ASKED QUESTIONS
           </motion.h2>
 
-          <motion.p variants={fadeInUp} className="mt-4 text-muted-foreground text-lg">
+          <motion.p variants={fadeInUp} className="individual-copy-mauve mt-4 text-lg">
             Everything you need to know about Mullai Elite&apos;s culinary concierge service.
           </motion.p>
         </motion.div>
