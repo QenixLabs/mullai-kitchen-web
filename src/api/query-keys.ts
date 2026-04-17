@@ -1,3 +1,5 @@
+import type { AdminOrderListParams } from '@/api/types/admin-order.types';
+
 export const authKeys = {
   all: () => ["auth"] as const,
   me: () => ["auth", "me"] as const,
@@ -175,4 +177,24 @@ export const adminSubscriptionKeys = {
   details: () => [...adminSubscriptionKeys.all, 'detail'] as const,
   detail: (id: string) => [...adminSubscriptionKeys.details(), id] as const,
   activity: (id: string) => [...adminSubscriptionKeys.all, 'activity', id] as const,
+};
+
+export const adminKitchenKeys = {
+  all: ['admin', 'kitchen'] as const,
+  report: (outletId: string, date?: string) =>
+    [...adminKitchenKeys.all, 'report', outletId, date] as const,
+};
+
+export const adminOrderKeys = {
+  all: ['admin', 'orders'] as const,
+  lists: () => [...adminOrderKeys.all, 'list'] as const,
+  list: (params?: AdminOrderListParams) => [...adminOrderKeys.lists(), params] as const,
+  details: () => [...adminOrderKeys.all, 'detail'] as const,
+  detail: (id: string) => [...adminOrderKeys.details(), id] as const,
+};
+
+export const adminRouteKeys = {
+  all: (outletId: string) => ['admin', 'outlets', outletId, 'routes'] as const,
+  lists: (outletId: string) => [...adminRouteKeys.all(outletId), 'list'] as const,
+  list: (outletId: string, params?: { date?: string }) => [...adminRouteKeys.lists(outletId), params] as const,
 };
