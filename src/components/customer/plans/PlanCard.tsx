@@ -36,11 +36,12 @@ export function PlanCard({
 
   const recommendedImage = "/images/plans/recommended%20meal.png";
   const bestValueImage = "/images/plans/best-value.png";
-  const preferredImage = /best\s*-?\s*value|value/i.test(plan.badge ?? "")
+  const badgeBasedImage = /best\s*-?\s*value|value/i.test(plan.badge ?? "")
     ? bestValueImage
     : recommendedImage;
   const fallbackImage = recommendedImage;
-  const imageSrc = imageLoadFailed ? fallbackImage : preferredImage;
+  const primaryImage = plan.image_url || badgeBasedImage;
+  const imageSrc = imageLoadFailed ? fallbackImage : primaryImage;
   const isFallback = imageSrc === fallbackImage;
   const isWeekly = plan.duration.toLowerCase().includes("week");
   const periodLabel = isWeekly ? "week" : "month";

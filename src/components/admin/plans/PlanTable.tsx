@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { MoreHorizontal, Pencil, Trash2, Eye } from 'lucide-react';
 import {
@@ -57,6 +58,7 @@ export function PlanTable({ data, isLoading, page, totalPages, onPageChange, onD
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-16">Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Duration</TableHead>
               <TableHead>Meals</TableHead>
@@ -69,6 +71,17 @@ export function PlanTable({ data, isLoading, page, totalPages, onPageChange, onD
           <TableBody>
             {data.map((plan) => (
               <TableRow key={plan._id}>
+                <TableCell>
+                  {plan.image_url ? (
+                    <div className="relative h-10 w-10 overflow-hidden rounded-md">
+                      <Image src={plan.image_url} alt={plan.name} fill className="object-cover" sizes="40px" />
+                    </div>
+                  ) : (
+                    <div className="flex h-10 w-10 items-center justify-center rounded-md bg-muted text-xs text-muted-foreground">
+                      —
+                    </div>
+                  )}
+                </TableCell>
                 <TableCell className="font-medium">
                   <Link href={`/admin/plans/${plan._id}`} className="hover:underline">
                     {plan.name}

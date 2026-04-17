@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -9,8 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
@@ -28,7 +25,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useCreatePlan, useUpdatePlan } from '@/api/hooks/usePlans';
-import { PlanDuration, PlanStatus, PlanType, MealType } from '@/api/types/admin-subscription.types';
+import { PlanDuration, PlanStatus, MealType } from '@/api/types/admin-subscription.types';
 import type { Plan } from '@/api/types/admin-subscription.types';
 
 const mealOptions = [
@@ -40,6 +37,7 @@ const mealOptions = [
 const planSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
+  image_url: z.string().optional(),
   duration: z.nativeEnum(PlanDuration),
   meals_included: z.array(z.nativeEnum(MealType)).min(1, 'At least one meal is required'),
   price: z.number().min(0, 'Price must be positive'),
@@ -48,10 +46,6 @@ const planSchema = z.object({
   valid_from: z.string().min(1, 'Valid from date is required'),
   valid_until: z.string().optional(),
   max_subscribers: z.number().int().min(0).optional(),
-  plan_type: z.nativeEnum(PlanType).optional(),
-  veg_price: z.number().min(0).optional(),
-  nonveg_price: z.number().min(0).optional(),
-  uses_outlet_pricing: z.boolean().optional(),
 });
 
 type PlanFormValues = z.infer<typeof planSchema>;
@@ -64,13 +58,13 @@ export function PlanForm({ plan }: PlanFormProps) {
   const router = useRouter();
   const createPlan = useCreatePlan();
   const updatePlan = useUpdatePlan();
-  const [usesOutletPricing, setUsesOutletPricing] = useState(plan?.uses_outlet_pricing ?? false);
 
   const form = useForm({
     resolver: zodResolver(planSchema),
     defaultValues: plan ? {
       name: plan.name,
       description: plan.description || '',
+      image_url: plan.image_url || '',
       duration: plan.duration,
       meals_included: plan.meals_included,
       price: plan.price,
@@ -79,14 +73,9 @@ export function PlanForm({ plan }: PlanFormProps) {
       valid_from: plan.valid_from ? new Date(plan.valid_from).toISOString().split('T')[0] : '',
       valid_until: plan.valid_until ? new Date(plan.valid_until).toISOString().split('T')[0] : '',
       max_subscribers: plan.max_subscribers,
-      plan_type: plan.plan_type,
-      veg_price: plan.veg_price,
-      nonveg_price: plan.nonveg_price,
-      uses_outlet_pricing: plan.uses_outlet_pricing,
     } : {
       meals_included: [],
       price: 0,
-      uses_outlet_pricing: false,
     },
   });
 
@@ -138,6 +127,10 @@ export function PlanForm({ plan }: PlanFormProps) {
               <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
             )} />
 
+            <FormField control={form.control} name="image_url" render={({ field }) => (
+              <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input {...field} placeholder="https://example.com/plan-image.jpg" /></FormControl><FormMessage /></FormItem>
+            )} />
+
             <FormField control={form.control} name="meals_included" render={() => (
               <FormItem>
                 <FormLabel>Meals Included</FormLabel>
@@ -163,27 +156,9 @@ export function PlanForm({ plan }: PlanFormProps) {
               </FormItem>
             )} />
 
-            <div className="flex items-center gap-3">
-              <Switch
-                checked={usesOutletPricing}
-                onCheckedChange={(checked) => { setUsesOutletPricing(checked); form.setValue('uses_outlet_pricing', checked); }}
-              />
-              <Label>Uses Outlet Pricing</Label>
-            </div>
-
-            {!usesOutletPricing && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <FormField control={form.control} name="price" render={({ field }) => (
-                  <FormItem><FormLabel>Base Price (₹)</FormLabel><FormControl><Input type="number" value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="veg_price" render={({ field }) => (
-                  <FormItem><FormLabel>Veg Price (₹)</FormLabel><FormControl><Input type="number" value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="nonveg_price" render={({ field }) => (
-                  <FormItem><FormLabel>Non-Veg Price (₹)</FormLabel><FormControl><Input type="number" value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} /></FormControl><FormMessage /></FormItem>
-                )} />
-              </div>
-            )}
+            <FormField control={form.control} name="price" render={({ field }) => (
+              <FormItem><FormLabel>Price (₹)</FormLabel><FormControl><Input type="number" value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} /></FormControl><FormMessage /></FormItem>
+            )} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField control={form.control} name="valid_from" render={({ field }) => (

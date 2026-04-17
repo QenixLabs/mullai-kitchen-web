@@ -51,6 +51,7 @@ export interface Plan {
   _id: string;
   name: string;
   description?: string;
+  image_url?: string;
   duration: PlanDuration;
   meals_included: MealType[];
   price: number;
@@ -61,9 +62,9 @@ export interface Plan {
   max_subscribers?: number;
   current_subscribers: number;
   plan_type: PlanType;
-  veg_price: number;
-  nonveg_price: number;
-  uses_outlet_pricing: boolean;
+  veg_price?: number;
+  nonveg_price?: number;
+  uses_outlet_pricing?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -71,6 +72,7 @@ export interface Plan {
 export interface CreatePlanPayload {
   name: string;
   description?: string;
+  image_url?: string;
   duration: PlanDuration;
   meals_included: MealType[];
   price: number;
@@ -80,9 +82,6 @@ export interface CreatePlanPayload {
   valid_until?: string;
   max_subscribers?: number;
   plan_type?: PlanType;
-  veg_price?: number;
-  nonveg_price?: number;
-  uses_outlet_pricing?: boolean;
 }
 
 export interface UpdatePlanPayload extends Partial<CreatePlanPayload> {}
