@@ -25,10 +25,6 @@ export interface DeliveryRoute {
   updated_at: string;
 }
 
-export interface RouteListResponse {
-  data: DeliveryRoute[];
-}
-
 export interface GenerateRoutesPayload {
   date: string;
 }
@@ -38,8 +34,8 @@ export interface AssignPartnerPayload {
 }
 
 export const adminRouteApi = {
-  list: async (outletId: string, date?: string): Promise<RouteListResponse> => {
-    const response = await apiClient.get<RouteListResponse>(`/admin/outlets/${outletId}/routes`, { params: { date } });
+  list: async (outletId: string, date?: string): Promise<DeliveryRoute[]> => {
+    const response = await apiClient.get<DeliveryRoute[]>(`/admin/outlets/${outletId}/routes`, { params: { date } });
     return response.data;
   },
 

@@ -132,7 +132,7 @@ export default function RoutesPage() {
 
       {/* Route List */}
       <RouteList
-        routes={routesData?.data || []}
+        routes={routesData || []}
         outletId={selectedOutletId ?? ''}
         isLoading={routesLoading}
       />
