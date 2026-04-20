@@ -113,12 +113,12 @@ function TableSkeleton() {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center py-16">
+    <div className="flex flex-col items-center justify-center px-4 py-16">
       <div className="rounded-full bg-[#f8f5f5] p-4 mb-4">
         <Users className="h-6 w-6" style={{ color: '#44151c' }} />
       </div>
-      <p className="text-lg font-semibold" style={{ color: '#3d000c' }}>No users found</p>
-      <p className="text-sm mt-1" style={{ color: '#554243' }}>
+      <p className="text-lg font-semibold text-center" style={{ color: '#3d000c' }}>No users found</p>
+      <p className="text-sm mt-1 text-center" style={{ color: '#554243' }}>
         Try adjusting your filters or search query
       </p>
     </div>
@@ -224,7 +224,7 @@ export function UserTable({ users, isLoading = false, onStatusChange }: UserTabl
 
                   {/* Actions */}
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-0.5 sm:gap-1">
                       <Can permission={['user:view:any', 'user:view:outlet']} requireAll={false}>
                         <Link href={`/admin/users/${user._id}`}>
                           <Button

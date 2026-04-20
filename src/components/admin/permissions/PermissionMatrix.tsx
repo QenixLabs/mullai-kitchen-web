@@ -95,7 +95,7 @@ export function PermissionMatrix({
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: category.order * 0.05 }}
-        className="flex flex-col gap-5 rounded-3xl bg-white p-6"
+        className="flex flex-col gap-5 rounded-xl bg-white p-6"
         style={{ border: '1px solid rgba(219,192,193,0.2)' }}
       >
         {/* Card Header */}
@@ -151,17 +151,21 @@ export function PermissionMatrix({
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Standard cards - 3 columns */}
+      {/* Standard cards - 1 col mobile, 2 tablet, 3 desktop */}
       {standardCards.length > 0 && (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {standardCards.map((cat) => renderCard(cat, false))}
         </div>
       )}
 
-      {/* Wide cards - full width */}
+      {/* Wide cards - full width, scroll on mobile */}
       {wideCards.length > 0 && (
         <div className="flex flex-col gap-5">
-          {wideCards.map((cat) => renderCard(cat, true))}
+          {wideCards.map((cat) => (
+            <div key={cat.key} className="overflow-x-auto">
+              {renderCard(cat, true)}
+            </div>
+          ))}
         </div>
       )}
     </div>

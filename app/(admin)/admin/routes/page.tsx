@@ -100,19 +100,19 @@ export default function RoutesPage() {
         className="rounded-3xl border p-4"
         style={{ borderColor: 'rgba(219,192,193,0.2)', backgroundColor: 'rgba(255,255,255,0.6)' }}
       >
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
           {/* Outlet Selector - only for users who can view any outlet */}
           {canViewAnyOutlet && (
-            <div className="flex items-center gap-3">
-              <Building2 className="h-4 w-4 text-muted-foreground" />
+            <div className="flex w-full items-center gap-3 sm:w-auto">
+              <Building2 className="h-4 w-4 shrink-0 text-muted-foreground" />
               {outletsLoading ? (
-                <Skeleton className="h-10 w-64" />
+                <Skeleton className="h-10 w-full sm:w-64" />
               ) : (
                 <Select
                   value={selectedOutletId ?? ''}
                   onValueChange={handleOutletChange}
                 >
-                  <SelectTrigger className="w-64 rounded-xl border-border/60 bg-white">
+                  <SelectTrigger className="w-full rounded-xl border-border/60 bg-white sm:w-64">
                     <SelectValue placeholder="Select an outlet" />
                   </SelectTrigger>
                   <SelectContent>
@@ -132,7 +132,7 @@ export default function RoutesPage() {
             date={selectedDate}
             onDateChange={setSelectedDate}
             placeholder="Select date"
-            className="w-56"
+            className="w-full sm:w-56"
           />
         </div>
       </div>

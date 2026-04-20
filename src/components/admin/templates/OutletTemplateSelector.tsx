@@ -58,12 +58,12 @@ export function OutletTemplateSelector({ onOutletChange }: OutletTemplateSelecto
   // SUPER_ADMIN: show outlet dropdown
   return (
     <div className="flex items-center gap-3">
-      <Building2 className="h-4 w-4 text-muted-foreground" />
+      <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
       {isLoading ? (
-        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-10 w-full sm:w-64" />
       ) : (
         <Select value={selectedOutletId} onValueChange={handleOutletChange}>
-          <SelectTrigger className="w-64">
+          <SelectTrigger className="w-full sm:w-64">
             <SelectValue placeholder="Select an outlet" />
           </SelectTrigger>
           <SelectContent>

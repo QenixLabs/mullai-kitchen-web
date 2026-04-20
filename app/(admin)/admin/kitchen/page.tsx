@@ -107,29 +107,29 @@ export default function KitchenPage() {
       <>
         <div className="space-y-6">
           {/* Header with inline controls */}
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <AdminPageHeader
               title="KITCHEN REPORT"
               subtitle="Today's meal preparation summary"
             />
 
             {/* Top Controls */}
-            <div className="flex flex-wrap items-center gap-3 print:hidden">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center print:hidden">
               {/* Date Picker */}
-              <div className="flex items-center gap-2 rounded-xl border border-[rgba(219,192,193,0.3)] bg-white px-3 py-2">
-                <CalendarDays className="h-4 w-4 text-[#554243]" />
+              <div className="flex items-center gap-2 rounded-3xl border border-[rgba(219,192,193,0.3)] bg-white px-3 py-2">
+                <CalendarDays className="h-4 w-4 text-[#554243] shrink-0" />
                 <DatePicker
                   date={selectedDate}
                   onDateChange={setSelectedDate}
                   placeholder="Select date"
-                  className="w-36 border-0 bg-transparent p-0 shadow-none"
+                  className="w-full border-0 bg-transparent p-0 shadow-none sm:w-36"
                 />
               </div>
 
               {/* Outlet Selector */}
               {canViewAnyOutlet && (
-                <div className="flex items-center gap-2 rounded-xl border border-[rgba(219,192,193,0.3)] bg-white px-3 py-2">
-                  <Store className="h-4 w-4 text-[#554243]" />
+                <div className="flex items-center gap-2 rounded-3xl border border-[rgba(219,192,193,0.3)] bg-white px-3 py-2">
+                  <Store className="h-4 w-4 text-[#554243] shrink-0" />
                   {outletsLoading ? (
                     <Skeleton className="h-4 w-40" />
                   ) : (
@@ -137,7 +137,7 @@ export default function KitchenPage() {
                       value={selectedOutletId ?? ''}
                       onValueChange={handleOutletChange}
                     >
-                      <SelectTrigger className="w-48 border-0 bg-transparent p-0 shadow-none">
+                      <SelectTrigger className="w-full border-0 bg-transparent p-0 shadow-none sm:w-48">
                         <SelectValue placeholder="Select outlet" />
                       </SelectTrigger>
                       <SelectContent>

@@ -82,7 +82,7 @@ export function TemplateEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-[95vw] sm:max-w-md p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>{isEditing ? 'Edit Template' : 'Add Template'}</DialogTitle>
           <DialogDescription>

@@ -311,15 +311,13 @@ export function OutletCreationMap({
     return (
       <div className="flex flex-col h-full">
         {/* Header */}
-        <header className="flex items-center justify-between px-6 py-4 border-b border-border/40 bg-white">
-          <div>
-            <h1
-              className="text-base font-semibold text-primary"
-              style={{ fontFamily: 'Inter, sans-serif' }}
-            >
-              Set Location &amp; Zones — {outletName}
-            </h1>
-          </div>
+        <header className="flex flex-col gap-3 px-4 py-3 border-b border-border/40 bg-white sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+          <h1
+            className="text-sm font-semibold text-primary sm:text-base"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            Set Location &amp; Zones — {outletName}
+          </h1>
         </header>
 
         <div className="flex-1 flex items-center justify-center bg-muted">
@@ -332,8 +330,8 @@ export function OutletCreationMap({
         </div>
 
         {/* Footer */}
-        <footer className="flex items-center justify-between px-6 py-4 border-t border-border/40 bg-white">
-          <Button variant="outline" onClick={onBack} disabled={isLoading}>
+        <footer className="flex flex-col-reverse gap-3 px-4 py-3 border-t border-border/40 bg-white sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+          <Button variant="outline" onClick={onBack} disabled={isLoading} className="w-full sm:w-auto">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Details
           </Button>
@@ -347,15 +345,13 @@ export function OutletCreationMap({
     return (
       <div className="flex flex-col h-full">
         {/* Header */}
-        <header className="flex items-center justify-between px-6 py-4 border-b border-border/40 bg-white">
-          <div>
-            <h1
-              className="text-base font-semibold text-primary"
-              style={{ fontFamily: 'Inter, sans-serif' }}
-            >
-              Set Location &amp; Zones — {outletName}
-            </h1>
-          </div>
+        <header className="flex flex-col gap-3 px-4 py-3 border-b border-border/40 bg-white sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+          <h1
+            className="text-sm font-semibold text-primary sm:text-base"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            Set Location &amp; Zones — {outletName}
+          </h1>
         </header>
 
         <div className="flex-1 flex items-center justify-center bg-muted">
@@ -368,8 +364,8 @@ export function OutletCreationMap({
         </div>
 
         {/* Footer */}
-        <footer className="flex items-center justify-between px-6 py-4 border-t border-border/40 bg-white">
-          <Button variant="outline" onClick={onBack} disabled={isLoading}>
+        <footer className="flex flex-col-reverse gap-3 px-4 py-3 border-t border-border/40 bg-white sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+          <Button variant="outline" onClick={onBack} disabled={isLoading} className="w-full sm:w-auto">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Details
           </Button>
@@ -386,29 +382,27 @@ export function OutletCreationMap({
       {/* ------------------------------------------------------------------ */}
       {/* Header                                                             */}
       {/* ------------------------------------------------------------------ */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-border/40 bg-white">
-        <div className="flex items-center gap-6">
-          <h1 className="text-base font-semibold text-primary">
-            Set Location &amp; Zones — {outletName}
-          </h1>
+      <header className="flex flex-col gap-3 px-4 py-3 border-b border-border/40 bg-white sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+        <h1 className="text-sm font-semibold text-primary sm:text-base">
+          Set Location &amp; Zones — {outletName}
+        </h1>
 
-          {/* Step indicator */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5">
-              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-muted-foreground text-xs font-semibold">
-                1
-              </span>
-              <span className="text-xs text-muted-foreground">Details</span>
-            </div>
+        {/* Step indicator */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-muted-foreground text-xs font-semibold">
+              1
+            </span>
+            <span className="text-xs text-muted-foreground">Details</span>
+          </div>
 
-            <div className="w-6 h-px bg-border" />
+          <div className="w-6 h-px bg-border" />
 
-            <div className="flex items-center gap-1.5">
-              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-semibold">
-                2
-              </span>
-              <span className="text-xs text-primary font-medium">Location &amp; Zones</span>
-            </div>
+          <div className="flex items-center gap-1.5">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-semibold">
+              2
+            </span>
+            <span className="text-xs text-primary font-medium">Location &amp; Zones</span>
           </div>
         </div>
       </header>
@@ -416,17 +410,17 @@ export function OutletCreationMap({
       {/* ------------------------------------------------------------------ */}
       {/* Main content: Sidebar + Map                                        */}
       {/* ------------------------------------------------------------------ */}
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 min-h-0 flex-col lg:flex-row">
         {/* -------------------------------------------------------------- */}
         {/* Sidebar                                                        */}
         {/* -------------------------------------------------------------- */}
-        <aside className="w-80 flex flex-col border-r border-border/40 bg-white overflow-y-auto">
+        <aside className="w-full lg:w-80 flex flex-col border-r border-border/40 bg-white overflow-y-auto">
           {/* Outlet Location card */}
           <div className="p-4">
             <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-3">
               Outlet Location
             </p>
-            <div className="rounded-2xl bg-white border border-border/40 shadow-sm p-4">
+            <div className="rounded-xl bg-white border border-border/40 shadow-sm p-4">
               <div className="flex items-center gap-2 mb-3">
                 <MapPin className="h-4 w-4 text-primary" />
                 <span className="text-sm font-medium text-foreground">
@@ -475,7 +469,7 @@ export function OutletCreationMap({
               {zones.map((zone) => (
                 <div
                   key={zone.id}
-                  className="rounded-2xl bg-white border border-border/40 shadow-sm p-3 flex items-center justify-between"
+                  className="rounded-xl bg-white border border-border/40 shadow-sm p-3 flex items-center justify-between"
                 >
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-foreground truncate">{zone.name}</p>
@@ -507,7 +501,7 @@ export function OutletCreationMap({
 
             {/* Add Zone inline form */}
             {isAddingZone ? (
-              <div className="mt-3 rounded-2xl bg-white border border-border/40 shadow-sm p-3 space-y-3">
+              <div className="mt-3 rounded-xl bg-white border border-border/40 shadow-sm p-3 space-y-3">
                 <div className="space-y-1.5">
                   <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                     Zone Name
@@ -716,7 +710,7 @@ export function OutletCreationMap({
 
               {/* Drawing controls overlay (top-left) */}
               {isAddingZone && !drawingMode && (
-                <div className="absolute top-4 left-4 flex gap-2">
+                <div className="absolute top-4 left-4 flex flex-col gap-2 sm:flex-row">
                   <Button
                     type="button"
                     variant={newZoneType === 'POLYGON' ? 'default' : 'secondary'}
@@ -785,8 +779,8 @@ export function OutletCreationMap({
       {/* ------------------------------------------------------------------ */}
       {/* Footer                                                             */}
       {/* ------------------------------------------------------------------ */}
-      <footer className="flex items-center justify-between px-6 py-4 border-t border-border/40 bg-white">
-        <Button variant="outline" onClick={onBack} disabled={isLoading}>
+      <footer className="flex flex-col-reverse gap-3 px-4 py-3 border-t border-border/40 bg-white sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+        <Button variant="outline" onClick={onBack} disabled={isLoading} className="w-full sm:w-auto">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Details
         </Button>
@@ -794,7 +788,7 @@ export function OutletCreationMap({
         <Button
           onClick={onCreateOutlet}
           disabled={isLoading || !outletLocation}
-          className="rounded-full bg-primary text-white hover:bg-primary/90"
+          className="w-full sm:w-auto rounded-full bg-primary text-white hover:bg-primary/90"
         >
           {isLoading ? (
             <>

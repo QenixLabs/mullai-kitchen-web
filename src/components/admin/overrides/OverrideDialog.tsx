@@ -85,7 +85,7 @@ export function OverrideDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{isEditing ? 'Edit Override' : 'Add Override'}</DialogTitle>
           <DialogDescription>{date}</DialogDescription>

@@ -60,7 +60,7 @@ export function AuditLogViewer() {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="rounded-3xl overflow-hidden" style={{ backgroundColor: '#F8F2F3' }}>
+        <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#F8F2F3' }}>
           <div className="p-6 space-y-4">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="flex items-center gap-4">
@@ -107,7 +107,7 @@ export function AuditLogViewer() {
       transition={{ duration: 0.4 }}
       className="space-y-4"
     >
-      <div className="rounded-3xl overflow-hidden" style={{ backgroundColor: '#F8F2F3' }}>
+      <div className="rounded-xl overflow-x-auto" style={{ backgroundColor: '#F8F2F3' }}>
         <Table>
           <TableHeader>
             <TableRow style={{ backgroundColor: '#FFFFFF' }}>
@@ -153,7 +153,7 @@ export function AuditLogViewer() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="max-h-40 overflow-auto rounded-2xl bg-white/80 p-4 m-2"
+                        className="max-h-40 overflow-auto rounded-xl bg-white/80 p-4 m-2"
                       >
                         <pre className="text-xs font-mono text-primary/70 whitespace-pre-wrap">
                           {JSON.stringify(log.metadata, null, 2)}

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { MapPin, Pencil, ChefHat, Flame, Bike, Cookie } from 'lucide-react';
+import { MapPin, Pencil, Map, ChefHat, Flame, Bike, Cookie } from 'lucide-react';
 import type { Outlet } from '@/api/outlet.api';
 
 const ICONS = [ChefHat, Flame, Bike, Cookie];
@@ -17,7 +17,7 @@ export function OutletCard({ outlet, index }: OutletCardProps) {
 
   return (
     <div
-      className="flex flex-col gap-4 rounded-3xl bg-white p-5"
+      className="flex flex-col gap-4 rounded-xl bg-white p-5"
       style={{ border: '1px solid rgba(219,192,193,0.2)' }}
     >
       {/* Top Row: Icon + Status */}
@@ -42,9 +42,9 @@ export function OutletCard({ outlet, index }: OutletCardProps) {
       </div>
 
       {/* Name + Address */}
-      <div>
+      <div className="min-w-0">
         <h3
-          className="text-xl font-bold"
+          className="truncate text-xl font-bold"
           style={{ color: '#3d000c', lineHeight: '28px' }}
         >
           {outlet.name}
@@ -87,18 +87,31 @@ export function OutletCard({ outlet, index }: OutletCardProps) {
         </div>
       </div>
 
-      {/* Manage Button */}
-      <Link
-        href={`/admin/outlets/${outlet._id}`}
-        className="flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-colors hover:opacity-90"
-        style={{
-          backgroundColor: 'rgba(68,21,28,0.06)',
-          color: '#44151c',
-        }}
-      >
-        <Pencil className="h-4 w-4" />
-        Manage Outlet
-      </Link>
+      {/* Action Buttons */}
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <Link
+          href={`/admin/outlets/${outlet._id}`}
+          className="flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-colors hover:opacity-90"
+          style={{
+            backgroundColor: 'rgba(68,21,28,0.06)',
+            color: '#44151c',
+          }}
+        >
+          <Pencil className="h-4 w-4" />
+          Manage Outlet
+        </Link>
+        <Link
+          href={`/admin/outlets/${outlet._id}/zones`}
+          className="flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-colors hover:opacity-90"
+          style={{
+            backgroundColor: '#44151c',
+            color: '#ffffff',
+          }}
+        >
+          <Map className="h-4 w-4" />
+          Set Location & Zones
+        </Link>
+      </div>
     </div>
   );
 }

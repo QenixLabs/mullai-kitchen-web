@@ -93,9 +93,9 @@ export function RecipeDetail({ recipe, onDelete, onStatusChange }: RecipeDetailP
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative w-full overflow-hidden rounded-3xl"
+        className="relative w-full overflow-hidden rounded-xl"} >
       >
-        <div className="relative h-72 md:h-[420px] w-full">
+        <div className="relative h-56 sm:h-72 md:h-[420px] w-full">
           <img
             src={heroImage}
             alt={recipe.name}
@@ -141,14 +141,14 @@ export function RecipeDetail({ recipe, onDelete, onStatusChange }: RecipeDetailP
       </motion.div>
 
       {/* ===== TWO COLUMN: INGREDIENTS + PREPARATION ===== */}
-      <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] lg:grid-cols-[340px_1fr] gap-8">
         {/* Left: Ingredients */}
         {recipe.ingredients && recipe.ingredients.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="rounded-3xl bg-white p-6 md:p-8 h-fit"
+            className="rounded-xl bg-white p-6 md:p-8 h-fit"
             style={{ border: '1px solid rgba(219,192,193,0.2)' }}
           >
             <div className="flex items-center gap-2.5 mb-6">
@@ -257,7 +257,7 @@ export function RecipeDetail({ recipe, onDelete, onStatusChange }: RecipeDetailP
 
                       {/* Step image on some steps */}
                       {showImage && (
-                        <div className="mt-3 overflow-hidden rounded-2xl">
+                        <div className="mt-3 overflow-hidden rounded-xl">
                           <img
                             src={stepImg}
                             alt={`Step ${i + 1}`}
@@ -279,7 +279,7 @@ export function RecipeDetail({ recipe, onDelete, onStatusChange }: RecipeDetailP
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.25 }}
-        className="rounded-3xl bg-white p-6 md:p-8"
+        className="rounded-xl bg-white p-6 md:p-8"
         style={{ border: '1px solid rgba(219,192,193,0.2)' }}
       >
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -381,7 +381,7 @@ export function RecipeDetail({ recipe, onDelete, onStatusChange }: RecipeDetailP
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent
-                className="rounded-2xl"
+                className="rounded-xl"
                 style={{ border: '1px solid rgba(219,192,193,0.2)' }}
               >
                 <AlertDialogHeader>

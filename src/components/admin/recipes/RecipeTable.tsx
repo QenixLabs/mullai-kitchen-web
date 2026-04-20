@@ -55,7 +55,7 @@ function CardSkeleton() {
   return (
     <>
       {[1, 2, 3, 4].map((i) => (
-        <Card key={i} className="overflow-hidden rounded-2xl border border-[rgba(219,192,193,0.2)]">
+        <Card key={i} className="overflow-hidden rounded-xl border border-[rgba(219,192,193,0.2)]">
           <Skeleton className="h-48 w-full" />
           <CardContent className="p-5 space-y-3">
             <Skeleton className="h-5 w-3/4 rounded-lg" />
@@ -98,7 +98,7 @@ export function RecipeTable({ recipes, isLoading = false, onDelete, onStatusChan
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {isLoading ? (
           <CardSkeleton />
         ) : recipes.length === 0 ? (
@@ -107,7 +107,7 @@ export function RecipeTable({ recipes, isLoading = false, onDelete, onStatusChan
           recipes.map((recipe) => (
             <Card
               key={recipe._id}
-              className="group overflow-hidden rounded-2xl border border-[rgba(219,192,193,0.2)] bg-white shadow-sm transition-shadow hover:shadow-md"
+              className="group overflow-hidden rounded-xl border border-[rgba(219,192,193,0.2)] bg-white shadow-sm transition-shadow hover:shadow-md"
             >
               {/* Image */}
               <div className="relative h-52 w-full overflow-hidden bg-[#f8f2f3]">
@@ -192,7 +192,7 @@ export function RecipeTable({ recipes, isLoading = false, onDelete, onStatusChan
       </div>
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}>
-        <AlertDialogContent className="rounded-2xl border-[rgba(219,192,193,0.2)]">
+        <AlertDialogContent className="rounded-xl border-[rgba(219,192,193,0.2)]">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-lg font-bold text-[#44151c]">Delete Recipe</AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-[#554243]">

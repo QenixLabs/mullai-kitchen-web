@@ -45,13 +45,13 @@ export function OrderCard({ order, onViewDetail, onUpdateStatus }: OrderCardProp
       style={{ border: '1px solid rgba(219,192,193,0.2)' }}
     >
       {/* Top Row: Order ID + Badge + Outlet */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-bold" style={{ color: '#3d000c' }}>
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-sm font-bold truncate" style={{ color: '#3d000c' }}>
             #{order._id.toUpperCase().replace('ORD-', 'ORD-')}
           </span>
           <span
-            className="rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
+            className="shrink-0 rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
             style={{
               backgroundColor: 'rgba(68,21,28,0.08)',
               color: '#44151c',
@@ -60,7 +60,7 @@ export function OrderCard({ order, onViewDetail, onUpdateStatus }: OrderCardProp
             {order.meal_type}
           </span>
         </div>
-        <div className="text-right">
+        <div className="text-left sm:text-right">
           <span className="block text-[10px] font-medium uppercase tracking-wide" style={{ color: '#554243' }}>
             Outlet
           </span>
@@ -98,7 +98,7 @@ export function OrderCard({ order, onViewDetail, onUpdateStatus }: OrderCardProp
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-auto flex gap-3">
+      <div className="mt-auto flex flex-col gap-2 sm:flex-row sm:gap-3">
         <Button
           variant="outline"
           className="flex-1 rounded-full border-[rgba(219,192,193,0.3)] bg-[#f8f5f5] text-sm font-semibold hover:bg-[#f0eaea]"

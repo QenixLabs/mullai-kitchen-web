@@ -10,8 +10,8 @@ export function NewTemplateCard({ onClick }: NewTemplateCardProps) {
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed p-8 transition-colors hover:bg-[#f8f5f5]"
-      style={{ borderColor: 'rgba(219,192,193,0.4)', minHeight: '280px' }}
+      className="flex flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed p-6 sm:p-8 transition-colors hover:bg-[#f8f5f5]"
+      style={{ borderColor: 'rgba(219,192,193,0.4)', minHeight: '220px' }}
     >
       <div
         className="flex h-12 w-12 items-center justify-center rounded-full"

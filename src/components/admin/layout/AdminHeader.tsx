@@ -45,7 +45,7 @@ export function AdminHeader({ className, onMenuClick }: AdminHeaderProps) {
           <Menu className="h-5 w-5" style={{ color: "#44151c" }} />
         </button>
         <h1
-          className="text-base font-bold lg:text-lg"
+          className="text-sm font-bold lg:text-xl"
           style={{
             fontFamily: "Manrope, sans-serif",
             color: "#3d000c",

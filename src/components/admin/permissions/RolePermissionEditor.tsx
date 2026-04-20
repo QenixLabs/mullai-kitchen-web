@@ -159,7 +159,7 @@ export function RolePermissionEditor() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="rounded-3xl bg-white p-6"
+              className="rounded-xl bg-white p-6"
               style={{ border: '1px solid rgba(219,192,193,0.2)' }}
             >
               <div className="flex items-center gap-3">
@@ -202,7 +202,7 @@ export function RolePermissionEditor() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3, delay: 0.2 }}
-          className="flex items-center justify-end gap-4 pt-2"
+          className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-2"
         >
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -214,7 +214,7 @@ export function RolePermissionEditor() {
                 Reset Changes
               </button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="rounded-2xl">
+            <AlertDialogContent className="rounded-xl">
               <AlertDialogHeader>
                 <AlertDialogTitle
                   className="text-xl font-bold"

@@ -218,7 +218,7 @@ export const OutletForm = forwardRef<OutletFormHandle, OutletFormProps>(function
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="rounded-2xl bg-white border border-border/40 shadow-sm">
+        <Card className="rounded-xl bg-white border border-border/40 shadow-sm">
           <CardHeader>
             <CardTitle
               className="flex items-center gap-2 text-base font-semibold text-primary"
@@ -307,7 +307,7 @@ export const OutletForm = forwardRef<OutletFormHandle, OutletFormProps>(function
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.05 }}
         >
-          <Card className="rounded-2xl bg-white border border-border/40 shadow-sm">
+          <Card className="rounded-xl bg-white border border-border/40 shadow-sm">
             <CardHeader>
               <CardTitle
                 className="flex items-center gap-2 text-base font-semibold text-primary"
@@ -357,7 +357,7 @@ export const OutletForm = forwardRef<OutletFormHandle, OutletFormProps>(function
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.05 }}
       >
-        <Card className="rounded-2xl bg-white border border-border/40 shadow-sm">
+        <Card className="rounded-xl bg-white border border-border/40 shadow-sm">
           <CardHeader>
             <CardTitle
               className="flex items-center gap-2 text-base font-semibold text-primary"
@@ -414,7 +414,7 @@ export const OutletForm = forwardRef<OutletFormHandle, OutletFormProps>(function
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.15 }}
       >
-        <Card className="rounded-2xl bg-white border border-border/40 shadow-sm">
+        <Card className="rounded-xl bg-white border border-border/40 shadow-sm">
           <CardHeader>
             <CardTitle
               className="flex items-center gap-2 text-base font-semibold text-primary"
@@ -476,7 +476,7 @@ export const OutletForm = forwardRef<OutletFormHandle, OutletFormProps>(function
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
       >
-        <Card className="rounded-2xl bg-white border border-border/40 shadow-sm">
+        <Card className="rounded-xl bg-white border border-border/40 shadow-sm">
           <CardHeader>
             <CardTitle
               className="flex items-center gap-2 text-base font-semibold text-primary"
@@ -534,7 +534,7 @@ export const OutletForm = forwardRef<OutletFormHandle, OutletFormProps>(function
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.25 }}
       >
-        <Card className="rounded-2xl bg-white border border-border/40 shadow-sm">
+        <Card className="rounded-xl bg-white border border-border/40 shadow-sm">
           <CardHeader>
             <CardTitle
               className="flex items-center gap-2 text-base font-semibold text-primary"

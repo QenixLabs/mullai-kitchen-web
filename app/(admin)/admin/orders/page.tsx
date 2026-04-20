@@ -316,121 +316,123 @@ export default function OrdersPage() {
 
         {/* Filters Row */}
         <div
-          className="flex flex-wrap items-center gap-3 rounded-3xl border p-4"
+          className="flex flex-col gap-3 rounded-3xl border p-4 sm:flex-row sm:flex-wrap sm:items-center"
           style={{
             borderColor: 'rgba(219,192,193,0.2)',
             backgroundColor: 'rgba(255,255,255,0.6)',
           }}
         >
-          <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide" style={{ color: '#554243' }}>
+          <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide shrink-0" style={{ color: '#554243' }}>
             <ListFilter className="h-4 w-4" />
             FILTERS
           </div>
 
-          {/* Outlet Selector */}
-          {canViewAnyOutlet && (
-            <>
-              {outletsLoading ? (
-                <Skeleton className="h-10 w-40" />
-              ) : (
-                <Select value={selectedOutletId} onValueChange={handleOutletChange}>
-                  <SelectTrigger
-                    className="w-40 rounded-xl border-[rgba(219,192,193,0.3)] bg-white text-sm"
-                  >
-                    <SelectValue placeholder="All Outlets" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Outlets</SelectItem>
-                    {(outletsData?.data || []).map((outlet) => (
-                      <SelectItem key={outlet._id} value={outlet._id}>
-                        {outlet.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </>
-          )}
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            {/* Outlet Selector */}
+            {canViewAnyOutlet && (
+              <>
+                {outletsLoading ? (
+                  <Skeleton className="h-10 w-full sm:w-40" />
+                ) : (
+                  <Select value={selectedOutletId} onValueChange={handleOutletChange}>
+                    <SelectTrigger
+                      className="w-full rounded-3xl border-[rgba(219,192,193,0.3)] bg-white text-sm sm:w-40"
+                    >
+                      <SelectValue placeholder="All Outlets" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Outlets</SelectItem>
+                      {(outletsData?.data || []).map((outlet) => (
+                        <SelectItem key={outlet._id} value={outlet._id}>
+                          {outlet.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </>
+            )}
 
-          {/* Meal Type Select */}
-          <Select
-            value={mealType}
-            onValueChange={(v) => {
-              setMealType(v === 'all' ? '' : v);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-40 rounded-xl border-[rgba(219,192,193,0.3)] bg-white text-sm">
-              <SelectValue placeholder="All Meal Types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Meal Types</SelectItem>
-              <SelectItem value={MealType.BREAKFAST}>Breakfast</SelectItem>
-              <SelectItem value={MealType.LUNCH}>Lunch</SelectItem>
-              <SelectItem value={MealType.DINNER}>Dinner</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Date Picker styled as select */}
-          <DatePicker
-            date={selectedDate}
-            onDateChange={(d) => {
-              setSelectedDate(d);
-              setPage(1);
-            }}
-            placeholder="Time Window: Now"
-            className="w-48 rounded-xl border border-[rgba(219,192,193,0.3)] bg-white text-sm"
-          />
-
-          {/* Status Select */}
-          <Select
-            value={status}
-            onValueChange={(v) => {
-              setStatus(v === 'all' ? '' : v);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-36 rounded-xl border-[rgba(219,192,193,0.3)] bg-white text-sm">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="planned">Planned</SelectItem>
-              <SelectItem value="locked">Locked</SelectItem>
-              <SelectItem value="out_for_delivery">Out for Delivery</SelectItem>
-              <SelectItem value="delivered">Delivered</SelectItem>
-              <SelectItem value="missed">Missed</SelectItem>
-              <SelectItem value="paused">Paused</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-              <SelectItem value="opted_out">Opted Out</SelectItem>
-              <SelectItem value="Pending">Pending</SelectItem>
-              <SelectItem value="Confirmed">Confirmed</SelectItem>
-              <SelectItem value="Preparing">Preparing</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Search */}
-          <div className="relative flex-1 min-w-0 max-w-xs">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#554243]" />
-            <Input
-              placeholder="Search orders..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
+            {/* Meal Type Select */}
+            <Select
+              value={mealType}
+              onValueChange={(v) => {
+                setMealType(v === 'all' ? '' : v);
                 setPage(1);
               }}
-              className="pl-9 rounded-xl border-[rgba(219,192,193,0.3)] bg-white text-sm"
-            />
-          </div>
+            >
+              <SelectTrigger className="w-full rounded-3xl border-[rgba(219,192,193,0.3)] bg-white text-sm sm:w-40">
+                <SelectValue placeholder="All Meal Types" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Meal Types</SelectItem>
+                <SelectItem value={MealType.BREAKFAST}>Breakfast</SelectItem>
+                <SelectItem value={MealType.LUNCH}>Lunch</SelectItem>
+                <SelectItem value={MealType.DINNER}>Dinner</SelectItem>
+              </SelectContent>
+            </Select>
 
-          {/* Apply Filter Button */}
-          <Button
-            className="rounded-full px-6 text-sm font-semibold"
-            style={{ backgroundColor: '#44151c', color: '#fff' }}
-            onClick={() => setPage(1)}
-          >
-            Apply Filter
-          </Button>
+            {/* Date Picker styled as select */}
+            <DatePicker
+              date={selectedDate}
+              onDateChange={(d) => {
+                setSelectedDate(d);
+                setPage(1);
+              }}
+              placeholder="Time Window: Now"
+              className="w-full rounded-3xl border border-[rgba(219,192,193,0.3)] bg-white text-sm sm:w-48"
+            />
+
+            {/* Status Select */}
+            <Select
+              value={status}
+              onValueChange={(v) => {
+                setStatus(v === 'all' ? '' : v);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-full rounded-3xl border-[rgba(219,192,193,0.3)] bg-white text-sm sm:w-36">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="planned">Planned</SelectItem>
+                <SelectItem value="locked">Locked</SelectItem>
+                <SelectItem value="out_for_delivery">Out for Delivery</SelectItem>
+                <SelectItem value="delivered">Delivered</SelectItem>
+                <SelectItem value="missed">Missed</SelectItem>
+                <SelectItem value="paused">Paused</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectItem value="opted_out">Opted Out</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
+                <SelectItem value="Confirmed">Confirmed</SelectItem>
+                <SelectItem value="Preparing">Preparing</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Search */}
+            <div className="relative w-full min-w-0 sm:max-w-xs">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#554243]" />
+              <Input
+                placeholder="Search orders..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+                className="pl-9 rounded-3xl border-[rgba(219,192,193,0.3)] bg-white text-sm"
+              />
+            </div>
+
+            {/* Apply Filter Button */}
+            <Button
+              className="w-full rounded-full px-6 text-sm font-semibold sm:w-auto"
+              style={{ backgroundColor: '#44151c', color: '#fff' }}
+              onClick={() => setPage(1)}
+            >
+              Apply Filter
+            </Button>
+          </div>
         </div>
 
         {/* Order Cards Grid */}
@@ -479,7 +481,7 @@ export default function OrdersPage() {
 
         {/* Pagination */}
         {(data?.totalPages ?? 1) > 1 && (
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
             <p className="text-sm" style={{ color: '#554243' }}>
               Page {page} of {data?.totalPages ?? 1}
             </p>
@@ -489,7 +491,7 @@ export default function OrdersPage() {
                 size="sm"
                 disabled={page <= 1}
                 onClick={() => setPage(page - 1)}
-                className="rounded-xl border-[rgba(219,192,193,0.3)]"
+                className="rounded-3xl border-[rgba(219,192,193,0.3)]"
               >
                 Previous
               </Button>
@@ -498,7 +500,7 @@ export default function OrdersPage() {
                 size="sm"
                 disabled={page >= (data?.totalPages ?? 1)}
                 onClick={() => setPage(page + 1)}
-                className="rounded-xl border-[rgba(219,192,193,0.3)]"
+                className="rounded-3xl border-[rgba(219,192,193,0.3)]"
               >
                 Next
               </Button>

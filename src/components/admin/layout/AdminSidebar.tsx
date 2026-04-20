@@ -205,7 +205,7 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
               alt="Mullai Kitchen Admin"
               width={211}
               height={85}
-              className="h-auto w-[211px] object-cover"
+              className="h-auto w-full max-w-[211px] object-cover"
               priority
             />
           </Link>

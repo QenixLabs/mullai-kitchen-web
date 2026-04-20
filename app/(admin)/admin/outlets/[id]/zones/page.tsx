@@ -209,7 +209,7 @@ export default function OutletZonesPage({
       permission="outlet:zones"
       fallback={
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12 flex flex-col items-center justify-center min-h-[400px]">
-          <div className="p-5 rounded-2xl bg-destructive/10 mb-6">
+          <div className="p-5 rounded-xl bg-destructive/10 mb-6">
             <Store className="h-10 w-10 text-destructive" />
           </div>
           <h2
@@ -298,7 +298,7 @@ export default function OutletZonesPage({
         </motion.div>
 
         {isLoadingOutlet ? (
-          <div className="rounded-sm border border-border bg-card p-6 shadow-sm">
+          <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
             <Skeleton className="mb-4 h-8 w-64" />
             <Skeleton className="mb-6 h-4 w-96 max-w-full" />
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -315,7 +315,7 @@ export default function OutletZonesPage({
               transition={{ duration: 0.4, delay: 0.1 }}
               className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
             >
-              <Card className="rounded-sm border-border shadow-sm">
+              <Card className="rounded-xl border-border shadow-sm">
                 <CardContent className="p-4">
                   <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     Total Zones
@@ -325,7 +325,7 @@ export default function OutletZonesPage({
                   </p>
                 </CardContent>
               </Card>
-              <Card className="rounded-sm border-border shadow-sm">
+              <Card className="rounded-xl border-border shadow-sm">
                 <CardContent className="p-4">
                   <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     Active
@@ -335,7 +335,7 @@ export default function OutletZonesPage({
                   </p>
                 </CardContent>
               </Card>
-              <Card className="rounded-sm border-border shadow-sm">
+              <Card className="rounded-xl border-border shadow-sm">
                 <CardContent className="p-4">
                   <p className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     <Square className="h-3.5 w-3.5" />
@@ -346,7 +346,7 @@ export default function OutletZonesPage({
                   </p>
                 </CardContent>
               </Card>
-              <Card className="rounded-sm border-border shadow-sm">
+              <Card className="rounded-xl border-border shadow-sm">
                 <CardContent className="p-4">
                   <p className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     <Circle className="h-3.5 w-3.5" />

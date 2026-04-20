@@ -208,7 +208,7 @@ export function CreateUserForm() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <Card className="rounded-2xl bg-card border border-border/40 shadow-sm">
+          <Card className="rounded-3xl bg-card border border-border/40 shadow-sm">
             <CardHeader>
               <CardTitle
                 className="flex items-center gap-2 text-base font-semibold text-primary"
@@ -260,7 +260,7 @@ export function CreateUserForm() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.05 }}
       >
-        <Card className="rounded-2xl bg-card border border-border/40 shadow-sm">
+        <Card className="rounded-3xl bg-card border border-border/40 shadow-sm">
           <CardHeader>
             <CardTitle
               className="flex items-center gap-2 text-base font-semibold text-primary"
@@ -345,7 +345,7 @@ export function CreateUserForm() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
-        <Card className="rounded-2xl bg-card border border-border/40 shadow-sm">
+        <Card className="rounded-3xl bg-card border border-border/40 shadow-sm">
           <CardHeader>
             <CardTitle
               className="flex items-center gap-2 text-base font-semibold text-primary"
@@ -393,7 +393,7 @@ export function CreateUserForm() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.15 }}
         >
-          <Card className="rounded-2xl bg-card border border-border/40 shadow-sm">
+          <Card className="rounded-3xl bg-card border border-border/40 shadow-sm">
             <CardHeader>
               <CardTitle
                 className="flex items-center gap-2 text-base font-semibold text-primary"
@@ -447,7 +447,7 @@ export function CreateUserForm() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
         >
-          <Card className="rounded-2xl bg-card border border-border/40 shadow-sm">
+          <Card className="rounded-3xl bg-card border border-border/40 shadow-sm">
             <CardHeader>
               <CardTitle
                 className="flex items-center gap-2 text-base font-semibold text-primary"
@@ -521,12 +521,12 @@ export function CreateUserForm() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.25 }}
-        className="flex items-center justify-end gap-4 pt-2"
+        className="flex flex-col-reverse items-stretch gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end"
       >
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-full bg-primary px-8 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+          className="w-full rounded-full bg-primary px-8 text-sm font-semibold text-white hover:bg-primary/90 transition-colors sm:w-auto"
         >
           {isSubmitting ? (
             <>

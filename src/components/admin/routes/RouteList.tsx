@@ -124,7 +124,7 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
                     </div>
 
                     {/* Action buttons */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center">
                       {route.status === 'DRAFT' && (
                         <>
                           <Can permission="route:assign">
@@ -132,6 +132,7 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
                               size="sm"
                               variant="outline"
                               onClick={() => setAssignDialogRouteId(route._id)}
+                              className="w-full sm:w-auto"
                             >
                               <UserPlus className="mr-1.5 h-3.5 w-3.5" />
                               Assign Partner
@@ -143,6 +144,7 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
                               variant="destructive"
                               onClick={() => setDeleteConfirmId(route._id)}
                               disabled={deleteRoute.isPending}
+                              className="w-full sm:w-auto"
                             >
                               <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                               Delete
@@ -156,6 +158,7 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
                             size="sm"
                             onClick={() => startRoute.mutate(route._id)}
                             disabled={startRoute.isPending}
+                            className="w-full sm:w-auto"
                           >
                             <Play className="mr-1.5 h-3.5 w-3.5" />
                             Start Route
@@ -168,7 +171,7 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
                             size="sm"
                             onClick={() => setCompleteConfirmId(route._id)}
                             disabled={completeRoute.isPending}
-                            className="bg-success text-success-foreground hover:bg-success/90"
+                            className="w-full sm:w-auto bg-success text-success-foreground hover:bg-success/90"
                           >
                             <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
                             Complete Route

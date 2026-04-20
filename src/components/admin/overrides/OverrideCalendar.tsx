@@ -124,7 +124,7 @@ export function OverrideCalendar({ outletId, year, month, onDateClick }: Overrid
             <div
               key={idx}
               className={cn(
-                'min-h-[100px] border-b border-r p-2 cursor-pointer transition-colors hover:bg-[rgba(68,21,28,0.03)] last:border-r-0',
+                'min-h-[80px] sm:min-h-[100px] border-b border-r p-1.5 sm:p-2 cursor-pointer transition-colors hover:bg-[rgba(68,21,28,0.03)] last:border-r-0',
                 !dayInfo.isCurrentMonth && 'opacity-30',
                 hasAnyOverride && 'bg-[rgba(68,21,28,0.02)]',
               )}

@@ -53,11 +53,11 @@ export function BatchUpdateBar({
   };
 
   return (
-    <div className="flex items-center gap-3 p-3 bg-muted/50 border rounded-md">
+    <div className="flex flex-col gap-3 p-3 bg-muted/50 border rounded-md sm:flex-row sm:items-center">
       <span className="text-sm font-medium">
         {totalSelected} order{totalSelected !== 1 ? 's' : ''} selected
       </span>
-      <div className="flex gap-2 ml-auto">
+      <div className="flex flex-col gap-2 sm:flex-row sm:ml-auto">
         <Button
           size="sm"
           variant="outline"

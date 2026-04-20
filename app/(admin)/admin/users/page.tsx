@@ -208,9 +208,9 @@ export default function UsersPage() {
         title="MANAGE USERS"
         subtitle="Track, edit and oversee all registered platform users."
       >
-        <div className="flex items-center gap-3">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
           <button
-            className="flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-white/80"
+            className="flex items-center justify-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-white/80"
             style={{
               borderColor: 'rgba(219,192,193,0.4)',
               color: '#44151c',
@@ -224,9 +224,9 @@ export default function UsersPage() {
             permission={['user:create:admin', 'user:create:hub', 'user:create:delivery']}
             requireAll={false}
           >
-            <Link href="/admin/users/create">
+            <Link href="/admin/users/create" className="w-full sm:w-auto">
               <Button
-                className="rounded-full px-6 text-sm font-semibold text-white shadow-md h-11 transition-colors hover:opacity-90"
+                className="w-full rounded-full px-6 text-sm font-semibold text-white shadow-md h-11 transition-colors hover:opacity-90 sm:w-auto"
                 style={{ backgroundColor: '#44151c' }}
               >
                 <Plus className="mr-2 h-4 w-4" />
@@ -246,13 +246,13 @@ export default function UsersPage() {
         style={{ borderColor: 'rgba(219,192,193,0.2)', backgroundColor: 'rgba(255,255,255,0.6)' }}
       >
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-          <div className="relative flex-1 min-w-0">
+          <div className="relative w-full sm:flex-1 sm:min-w-0">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#554243]" />
             <Input
               placeholder="Filter by name, ID or email..."
               value={search}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-9 rounded-xl border-[rgba(219,192,193,0.3)] bg-white text-sm"
+              className="w-full pl-9 rounded-xl border-[rgba(219,192,193,0.3)] bg-white text-sm"
             />
           </div>
 

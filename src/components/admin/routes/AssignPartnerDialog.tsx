@@ -67,7 +67,7 @@ export function AssignPartnerDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Assign Delivery Partner</DialogTitle>
           <DialogDescription>

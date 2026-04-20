@@ -114,7 +114,7 @@ export default function OverridesPage() {
           <>
             {/* Month Navigation */}
             <div
-              className="rounded-3xl border p-4 flex items-center justify-between"
+              className="rounded-3xl border p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
               style={{ borderColor: 'rgba(219,192,193,0.2)', backgroundColor: 'rgba(255,255,255,0.6)' }}
             >
               <div className="flex items-center gap-2">

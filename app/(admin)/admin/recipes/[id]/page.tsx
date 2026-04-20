@@ -32,7 +32,7 @@ export default function RecipeDetailPage() {
       permission="recipe:view"
       fallback={
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12 flex flex-col items-center justify-center min-h-[400px]">
-          <div className="p-5 rounded-2xl bg-destructive/10 mb-6">
+          <div className="p-5 rounded-xl bg-destructive/10 mb-6">
             <ChefHat className="h-10 w-10 text-destructive" />
           </div>
           <h2
@@ -82,25 +82,25 @@ export default function RecipeDetailPage() {
         {/* Content */}
         {isLoading ? (
           <div className="space-y-6">
-            <div className="rounded-2xl bg-white border border-border/40 p-6 space-y-4">
+            <div className="rounded-xl bg-white border border-border/40 p-6 space-y-4">
               <Skeleton className="h-6 w-48 rounded-xl" />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Skeleton className="h-11 rounded-xl" />
                 <Skeleton className="h-11 rounded-xl" />
               </div>
               <Skeleton className="h-11 rounded-xl" />
             </div>
-            <div className="rounded-2xl bg-white border border-border/40 p-6 space-y-4">
+            <div className="rounded-xl bg-white border border-border/40 p-6 space-y-4">
               <Skeleton className="h-6 w-48 rounded-xl" />
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <Skeleton className="h-11 rounded-xl" />
                 <Skeleton className="h-11 rounded-xl" />
                 <Skeleton className="h-11 rounded-xl" />
               </div>
             </div>
-            <div className="rounded-2xl bg-white border border-border/40 p-6 space-y-4">
+            <div className="rounded-xl bg-white border border-border/40 p-6 space-y-4">
               <Skeleton className="h-6 w-48 rounded-xl" />
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <Skeleton className="h-11 rounded-xl" />
                 <Skeleton className="h-11 rounded-xl" />
                 <Skeleton className="h-11 rounded-xl" />
@@ -114,7 +114,7 @@ export default function RecipeDetailPage() {
             transition={{ duration: 0.4 }}
             className="flex flex-col items-center justify-center py-20"
           >
-            <div className="p-5 rounded-2xl bg-destructive/10 mb-6">
+            <div className="p-5 rounded-xl bg-destructive/10 mb-6">
               <ChefHat className="h-10 w-10 text-destructive" />
             </div>
             <h2

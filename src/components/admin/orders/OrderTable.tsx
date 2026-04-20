@@ -63,23 +63,23 @@ export function OrderTable({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border">
+      <div className="overflow-x-auto rounded-3xl border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Customer</TableHead>
-              <TableHead>Meal Type</TableHead>
-              <TableHead>Items</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Address</TableHead>
+              <TableHead className="min-w-[120px]">Customer</TableHead>
+              <TableHead className="min-w-[80px]">Meal</TableHead>
+              <TableHead className="min-w-[160px]">Items</TableHead>
+              <TableHead className="min-w-[100px]">Status</TableHead>
+              <TableHead className="min-w-[180px]">Address</TableHead>
               <TableHead className="w-20">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.map((order) => (
               <TableRow key={order._id}>
-                <TableCell className="font-medium">{order.customer_name}</TableCell>
-                <TableCell>{order.meal_type}</TableCell>
+                <TableCell className="font-medium whitespace-nowrap">{order.customer_name}</TableCell>
+                <TableCell className="whitespace-nowrap">{order.meal_type}</TableCell>
                 <TableCell className="max-w-[200px] truncate">{getItemsDisplay(order)}</TableCell>
                 <TableCell>
                   <OrderStatusBadge status={order.status} />
@@ -114,7 +114,7 @@ export function OrderTable({
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
           <p className="text-sm text-muted-foreground">
             Page {page} of {totalPages}
           </p>

@@ -23,27 +23,27 @@ export default function AdminDashboard() {
   if (isLoading) {
     return (
       <div className="space-y-8">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
           <div className="flex-1 space-y-2">
-            <Skeleton className="h-10 w-96" />
-            <Skeleton className="h-6 w-80" />
+            <Skeleton className="h-10 w-full max-w-[384px]" />
+            <Skeleton className="h-6 w-full max-w-[320px]" />
           </div>
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex w-full flex-wrap shrink-0 items-center gap-3 sm:w-auto">
             <Skeleton className="h-10 w-32 rounded-full" />
             <Skeleton className="h-10 w-40 rounded-full" />
           </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Skeleton className="h-36 rounded-3xl" />
-          <Skeleton className="h-36 rounded-3xl" />
-          <Skeleton className="h-36 rounded-3xl" />
-          <Skeleton className="h-36 rounded-3xl" />
+          <Skeleton className="h-36 rounded-2xl" />
+          <Skeleton className="h-36 rounded-2xl" />
+          <Skeleton className="h-36 rounded-2xl" />
+          <Skeleton className="h-36 rounded-2xl" />
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
-          <Skeleton className="h-80 rounded-3xl" />
+          <Skeleton className="h-80 rounded-2xl" />
           <div className="space-y-6">
-            <Skeleton className="h-40 rounded-3xl" />
-            <Skeleton className="h-40 rounded-3xl" />
+            <Skeleton className="h-40 rounded-2xl" />
+            <Skeleton className="h-40 rounded-2xl" />
           </div>
         </div>
       </div>
@@ -118,7 +118,7 @@ export default function AdminDashboard() {
       {/* Bottom Section: Outlet Performance + Quick Actions / System Alerts */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Outlet Performance */}
-        <div className="rounded-3xl border border-[rgba(219,192,193,0.2)] bg-white p-6">
+        <div className="rounded-2xl border border-[rgba(219,192,193,0.2)] bg-white p-6">
           <h2
             className="mb-5 text-lg font-bold"
             style={{ color: "#44151c", lineHeight: "24px" }}
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
           </h2>
           <div className="space-y-4">
             {/* Downtown Central Kitchen */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold text-[#44151c]">
                   Downtown Central Kitchen
@@ -135,7 +135,7 @@ export default function AdminDashboard() {
                 <p className="text-xs font-medium text-[#554243]">452 Orders</p>
               </div>
               <span
-                className="rounded-full px-3 py-1 text-xs font-bold"
+                className="self-start rounded-full px-3 py-1 text-xs font-bold sm:self-auto"
                 style={{
                   backgroundColor: "rgba(0,153,15,0.22)",
                   color: "#00990f",
@@ -145,7 +145,7 @@ export default function AdminDashboard() {
               </span>
             </div>
             {/* Brooklyn East Hub */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold text-[#44151c]">
                   Brooklyn East Hub
@@ -153,7 +153,7 @@ export default function AdminDashboard() {
                 <p className="text-xs font-medium text-[#554243]">0 Orders</p>
               </div>
               <span
-                className="rounded-full px-3 py-1 text-xs font-bold"
+                className="self-start rounded-full px-3 py-1 text-xs font-bold sm:self-auto"
                 style={{
                   backgroundColor: "#fef3c7",
                   color: "#d97706",
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
               </span>
             </div>
             {/* Queens Industrial Point */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold text-[#44151c]">
                   Queens Industrial Point
@@ -173,7 +173,7 @@ export default function AdminDashboard() {
                 </p>
               </div>
               <span
-                className="rounded-full px-3 py-1 text-xs font-bold"
+                className="self-start rounded-full px-3 py-1 text-xs font-bold sm:self-auto"
                 style={{
                   backgroundColor: "rgba(255,0,4,0.17)",
                   color: "#ff0004",
@@ -183,7 +183,7 @@ export default function AdminDashboard() {
               </span>
             </div>
             {/* Jersey Shore Annex */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold text-[#44151c]">
                   Jersey Shore Annex
@@ -191,7 +191,7 @@ export default function AdminDashboard() {
                 <p className="text-xs font-medium text-[#554243]">112 Orders</p>
               </div>
               <span
-                className="rounded-full px-3 py-1 text-xs font-bold"
+                className="self-start rounded-full px-3 py-1 text-xs font-bold sm:self-auto"
                 style={{
                   backgroundColor: "rgba(0,153,15,0.22)",
                   color: "#00990f",
@@ -206,7 +206,7 @@ export default function AdminDashboard() {
         {/* Right Column: Quick Actions + System Alerts */}
         <div className="space-y-6">
           {/* Quick Actions */}
-          <div className="rounded-3xl border border-[rgba(219,192,193,0.2)] bg-white p-6">
+          <div className="rounded-2xl border border-[rgba(219,192,193,0.2)] bg-white p-6">
             <h2
               className="mb-5 text-lg font-bold"
               style={{ color: "#44151c", lineHeight: "24px" }}
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
 
           {/* System Alerts - Super Admin only */}
           <Can permission="config:system">
-            <div className="rounded-3xl border border-[rgba(219,192,193,0.2)] bg-white p-6">
+            <div className="rounded-2xl border border-[rgba(219,192,193,0.2)] bg-white p-6">
               <h2
                 className="mb-5 flex items-center gap-2 text-lg font-bold"
                 style={{ color: "#44151c", lineHeight: "24px" }}
@@ -231,7 +231,7 @@ export default function AdminDashboard() {
                   data.alerts.map((alert) => (
                     <div
                       key={alert.id}
-                      className={`flex items-start gap-3 rounded-2xl p-4 ${
+                      className={`flex flex-col items-start gap-2 rounded-2xl p-4 sm:flex-row sm:items-start sm:gap-3 ${
                         alert.type === "error"
                           ? "bg-[rgba(255,0,4,0.08)]"
                           : alert.type === "warning"
@@ -240,7 +240,7 @@ export default function AdminDashboard() {
                       }`}
                     >
                       <span
-                        className="mt-0.5 shrink-0 text-xs font-bold uppercase"
+                        className="shrink-0 text-xs font-bold uppercase sm:mt-0.5"
                         style={{
                           color:
                             alert.type === "error"
@@ -260,16 +260,16 @@ export default function AdminDashboard() {
                 ) : (
                   <>
                     {/* Hard-coded Figma alerts for design match */}
-                    <div className="flex items-start gap-3 rounded-2xl bg-[rgba(255,0,4,0.08)] p-4">
-                      <span className="mt-0.5 shrink-0 text-xs font-bold uppercase text-[#ff0004]">
+                    <div className="flex flex-col items-start gap-2 rounded-2xl bg-[rgba(255,0,4,0.08)] p-4 sm:flex-row sm:items-start sm:gap-3">
+                      <span className="shrink-0 text-xs font-bold uppercase text-[#ff0004] sm:mt-0.5">
                         Error
                       </span>
                       <span className="flex-1 text-sm font-medium text-[#44151c]">
                         Failed Payments
                       </span>
                     </div>
-                    <div className="flex items-start gap-3 rounded-2xl bg-[rgba(217,119,6,0.08)] p-4">
-                      <span className="mt-0.5 shrink-0 text-xs font-bold uppercase text-[#d97706]">
+                    <div className="flex flex-col items-start gap-2 rounded-2xl bg-[rgba(217,119,6,0.08)] p-4 sm:flex-row sm:items-start sm:gap-3">
+                      <span className="shrink-0 text-xs font-bold uppercase text-[#d97706] sm:mt-0.5">
                         Warning
                       </span>
                       <span className="flex-1 text-sm font-medium text-[#44151c]">

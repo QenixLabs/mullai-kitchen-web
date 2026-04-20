@@ -129,7 +129,7 @@ export function OutletCreationWizard() {
           } : undefined}
         />
         {/* Next button */}
-        <div className="mx-auto w-full max-w-7xl mt-5 px-4 pb-8 sm:px-6 lg:px-8 flex items-center justify-end">
+        <div className="mx-auto w-full max-w-7xl mt-5 px-4 pb-8 sm:px-6 lg:px-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end">
           <button
             onClick={handleNext}
             className="rounded-full bg-primary px-8 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors inline-flex items-center gap-2"

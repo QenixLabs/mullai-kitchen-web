@@ -23,7 +23,7 @@ export default function SettingsPage() {
           <h3 className="text-lg font-semibold text-foreground mb-1">
             Coming Soon
           </h3>
-          <p className="text-sm text-muted-foreground max-w-sm">
+          <p className="text-lg text-muted-foreground leading-relaxed">
             This feature is currently under development. Check back soon for updates.
           </p>
         </div>

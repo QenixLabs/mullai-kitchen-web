@@ -197,7 +197,7 @@ export default function OutletsPage() {
 
       {/* Filters */}
       <div
-        className="rounded-3xl border p-4"
+        className="rounded-xl border p-4"
         style={{ borderColor: 'rgba(219,192,193,0.2)', backgroundColor: 'rgba(255,255,255,0.6)' }}
       >
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -226,7 +226,7 @@ export default function OutletsPage() {
 
       {/* Content */}
       {isError ? (
-        <Card className="rounded-3xl border-[rgba(219,192,193,0.2)]">
+        <Card className="rounded-xl border-[rgba(219,192,193,0.2)]">
           <CardContent className="flex flex-col items-center justify-center py-16">
             <div className="rounded-full bg-destructive/10 p-4 mb-4">
               <AlertCircle className="h-6 w-6 text-destructive" />
@@ -247,7 +247,7 @@ export default function OutletsPage() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="rounded-3xl bg-white p-5"
+              className="rounded-xl bg-white p-5"
               style={{ border: '1px solid rgba(219,192,193,0.2)' }}
             >
               <div className="flex items-start justify-between">

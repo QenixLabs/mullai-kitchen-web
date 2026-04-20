@@ -41,7 +41,7 @@ export function UserPermissionDetail({
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="rounded-3xl bg-white border border-border/40 p-6 space-y-4">
+        <div className="rounded-xl bg-white border border-border/40 p-6 space-y-4">
           <Skeleton className="h-8 w-48 rounded-2xl" />
           <div className="flex flex-wrap gap-2">
             {[1, 2, 3].map((i) => (
@@ -131,9 +131,9 @@ export function UserPermissionDetail({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="rounded-3xl bg-white border border-border/40 shadow-sm overflow-hidden">
+        <Card className="rounded-xl bg-white border border-border/40 shadow-sm overflow-hidden">
           <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-primary/5">
                   <Shield className="h-5 w-5 text-primary" />
@@ -154,7 +154,7 @@ export function UserPermissionDetail({
                 <Button
                   size="sm"
                   onClick={() => setShowAddDialog(true)}
-                  className="rounded-full bg-primary px-5 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+                  className="rounded-full bg-primary px-5 text-sm font-semibold text-white hover:bg-primary/90 transition-colors self-start sm:self-auto"
                 >
                   <Plus className="h-4 w-4 mr-1" /> Add Override
                 </Button>
@@ -169,7 +169,7 @@ export function UserPermissionDetail({
                 Granted ({grants.size})
               </h4>
               {grants.size === 0 ? (
-                <div className="flex flex-col items-center py-6 rounded-2xl bg-muted/30">
+                <div className="flex flex-col items-center py-6 rounded-xl bg-muted/30">
                   <ShieldCheck className="h-6 w-6 text-muted-foreground/40 mb-2" />
                   <p className="text-sm text-muted-foreground">No individual grants</p>
                 </div>
@@ -204,7 +204,7 @@ export function UserPermissionDetail({
                 Revoked ({revokes.size})
               </h4>
               {revokes.size === 0 ? (
-                <div className="flex flex-col items-center py-6 rounded-2xl bg-muted/30">
+                <div className="flex flex-col items-center py-6 rounded-xl bg-muted/30">
                   <ShieldOff className="h-6 w-6 text-muted-foreground/40 mb-2" />
                   <p className="text-sm text-muted-foreground">No individual revokes</p>
                 </div>
@@ -239,7 +239,7 @@ export function UserPermissionDetail({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
-        <Card className="rounded-3xl bg-white border border-border/40 shadow-sm overflow-hidden">
+        <Card className="rounded-xl bg-white border border-border/40 shadow-sm overflow-hidden">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-xl bg-primary/5">

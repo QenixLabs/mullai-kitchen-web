@@ -143,7 +143,7 @@ export default function ReportsPage() {
               Reports Coming Soon
             </h3>
             <p
-              className="text-sm max-w-md leading-relaxed"
+              className="text-lg text-muted-foreground leading-relaxed"
               style={{ color: '#554243' }}
             >
               Our analytics dashboard is currently under development. Soon you

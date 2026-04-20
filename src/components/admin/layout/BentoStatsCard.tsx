@@ -79,8 +79,8 @@ export function BentoStatsCard({
       </div>
       <div className="mt-4">
         <div
-          className={cn("text-[30px] font-bold", valueColor)}
-          style={{ lineHeight: "36px" }}
+          className={cn("text-2xl font-bold sm:text-[30px]", valueColor)}
+          style={{ lineHeight: "1.2" }}
         >
           {value}
         </div>

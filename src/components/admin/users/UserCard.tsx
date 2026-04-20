@@ -55,11 +55,11 @@ export function UserCard({ user, onStatusToggle }: UserCardProps) {
       <div className="p-5 pb-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="h-12 w-12 shrink-0 rounded-full border border-[rgba(219,192,193,0.3)] bg-[#f8f5f5] text-[#44151c] font-bold text-sm flex items-center justify-center">
+            <div className="h-10 w-10 sm:h-12 sm:w-12 shrink-0 rounded-full border border-[rgba(219,192,193,0.3)] bg-[#f8f5f5] text-[#44151c] font-bold text-xs sm:text-sm flex items-center justify-center">
               {getUserInitials(user.name)}
             </div>
             <div className="min-w-0">
-              <h3 className="font-semibold text-[#3d000c] truncate text-base" style={{ fontFamily: 'Inter, sans-serif' }}>
+              <h3 className="font-semibold text-[#3d000c] truncate text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>
                 {user.name}
               </h3>
               <p className="text-xs text-[#554243] truncate">ID: {user._id.slice(-8)}</p>
@@ -69,7 +69,7 @@ export function UserCard({ user, onStatusToggle }: UserCardProps) {
           <Badge
             variant="secondary"
             className={cn(
-              'text-[11px] font-bold px-2.5 py-0.5 rounded-full border-0',
+              'text-[10px] sm:text-[11px] font-bold px-2 py-0.5 sm:px-2.5 rounded-full border-0 shrink-0',
               user.status === 'active' && 'bg-[rgba(0,153,15,0.22)] text-[#00990f] hover:bg-[rgba(0,153,15,0.22)]',
               user.status === 'inactive' && 'bg-[rgba(255,0,4,0.17)] text-[#ff0004] hover:bg-[rgba(255,0,4,0.17)]',
               user.status === 'pending' && 'bg-amber-500/15 text-amber-600 hover:bg-amber-500/20',
@@ -104,7 +104,7 @@ export function UserCard({ user, onStatusToggle }: UserCardProps) {
       <div className="mx-5 border-t border-[rgba(219,192,193,0.2)]" />
 
       {/* Footer */}
-      <div className="px-5 py-3 flex items-center justify-between gap-2">
+      <div className="px-5 py-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-xs text-[#554243] min-w-0">
           {user.vehicle_number ? (
             <span className="inline-flex items-center gap-1.5 bg-[#f8f5f5] px-2.5 py-1 rounded-full truncate text-[11px] font-semibold">
@@ -117,7 +117,7 @@ export function UserCard({ user, onStatusToggle }: UserCardProps) {
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 justify-end">
           <Can permission={['user:view:any', 'user:view:outlet']} requireAll={false}>
             <Link href={`/admin/users/${user._id}`}>
               <Button

@@ -64,7 +64,7 @@ export function AddOverrideDialog({
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="max-w-lg rounded-2xl p-0 overflow-hidden">
+      <DialogContent className="max-w-lg w-[calc(100%-2rem)] rounded-xl p-0 overflow-hidden">
         <DialogHeader className="px-6 pt-6 pb-2">
           <DialogTitle
             className="text-xl font-bold text-primary"
@@ -117,7 +117,7 @@ export function AddOverrideDialog({
           </div>
 
           {/* Scrollable permission list */}
-          <div className="h-[300px] overflow-y-auto rounded-2xl border border-border/30 bg-muted/20">
+          <div className="h-[300px] overflow-y-auto rounded-xl border border-border/30 bg-muted/20">
             <div className="p-2 space-y-1">
               {filteredPermissions.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12">

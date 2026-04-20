@@ -22,7 +22,7 @@ export function OrderDetailModal({ orderId, open, onOpenChange }: OrderDetailMod
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Order Details</DialogTitle>
           <DialogDescription className="sr-only">View order details including customer info, items, and delivery information.</DialogDescription>
@@ -38,7 +38,7 @@ export function OrderDetailModal({ orderId, open, onOpenChange }: OrderDetailMod
           </div>
         ) : order ? (
           <div className="space-y-4">
-            <div className="grid grid-cols-[120px_1fr] gap-y-3 text-sm">
+            <div className="grid grid-cols-1 gap-y-3 text-sm sm:grid-cols-[120px_1fr]">
               <span className="text-muted-foreground">Customer</span>
               <span className="font-medium">{order.customer_name}</span>
 

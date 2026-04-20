@@ -18,7 +18,7 @@ export function AdminPageHeader({
   return (
     <div
       className={cn(
-        "mb-8 flex items-start justify-between gap-4",
+        "mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-start",
         className
       )}
     >
@@ -44,7 +44,7 @@ export function AdminPageHeader({
         )}
       </div>
       {children && (
-        <div className="flex shrink-0 items-center gap-3">{children}</div>
+        <div className="flex w-full flex-wrap shrink-0 items-center gap-3 sm:w-auto">{children}</div>
       )}
     </div>
   );

@@ -133,7 +133,7 @@ export function OutletTable({
 
   return (
     <>
-      <Card className="overflow-hidden border-border shadow-md">
+      <Card className="overflow-hidden rounded-xl border-border shadow-md">
         <CardContent className="p-0">
           <div className="relative w-full overflow-auto">
             <Table>

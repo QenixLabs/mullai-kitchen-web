@@ -57,7 +57,7 @@ function InfoRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="grid grid-cols-[120px_1fr] gap-y-3 items-center">
+    <div className="flex flex-col gap-1 sm:grid sm:grid-cols-[120px_1fr] sm:gap-y-3 sm:items-center">
       <div className="flex items-center gap-2">
         <Icon className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm font-medium text-muted-foreground">{label}</span>
@@ -122,13 +122,13 @@ export function UserProfileTab({ userId }: UserProfileTabProps) {
   return (
     <div className="space-y-6">
       {/* Header Section */}
-      <div className="flex items-center gap-4">
-        <div className="h-16 w-16 rounded-full bg-primary/10 text-primary font-bold text-xl flex items-center justify-center">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div className="h-16 w-16 shrink-0 rounded-full bg-primary/10 text-primary font-bold text-xl flex items-center justify-center">
           {getInitials(user.name)}
         </div>
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">{user.name}</h2>
-          <div className="flex items-center gap-2 mt-1">
+        <div className="min-w-0">
+          <h2 className="text-xl font-bold text-foreground sm:text-2xl">{user.name}</h2>
+          <div className="flex flex-wrap items-center gap-2 mt-1">
             <Badge variant="secondary" className="bg-primary/10 text-primary">
               {ROLE_LABELS[user.role] || user.role}
             </Badge>

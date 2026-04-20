@@ -51,7 +51,7 @@ export default function RecipesPage() {
         <Can permission="recipe:create:global">
           <Button
             asChild
-            className="rounded-full text-white px-6 shadow-md"
+            className="rounded-full text-white px-6 shadow-md self-start sm:self-auto"
             style={{
               background: 'linear-gradient(135deg, #3d000c 0%, #5d101d 100%)',
             }}
@@ -64,7 +64,7 @@ export default function RecipesPage() {
       </AdminPageHeader>
 
       <div
-        className="rounded-3xl border p-4"
+        className="rounded-xl border p-4"
         style={{ borderColor: 'rgba(219,192,193,0.2)', backgroundColor: 'rgba(255,255,255,0.6)' }}
       >
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">

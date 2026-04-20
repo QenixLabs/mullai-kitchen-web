@@ -66,7 +66,7 @@ function RecipeSlot({
     return (
       <button
         onClick={() => onEdit(day, meal, template)}
-        className="flex h-full min-h-[100px] w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed transition-colors hover:bg-[#f8f5f5]"
+        className="flex h-full min-h-[100px] w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed transition-colors hover:bg-[#f8f5f5]"
         style={{ borderColor: 'rgba(219,192,193,0.4)' }}
       >
         <div
@@ -89,7 +89,7 @@ function RecipeSlot({
 
   return (
     <div
-      className="relative flex h-full min-h-[100px] items-start gap-3 rounded-2xl border p-3 transition-colors hover:bg-[#f8f5f5]"
+      className="relative flex h-full min-h-[100px] items-start gap-3 rounded-xl border p-3 transition-colors hover:bg-[#f8f5f5]"
       style={{ borderColor: 'rgba(219,192,193,0.15)' }}
     >
       {/* Food image */}
@@ -154,11 +154,11 @@ export function WeeklyGrid({ outletId, effectiveFrom, onEdit }: WeeklyGridProps)
     return (
       <div className="space-y-4">
         {DAYS.slice(0, 3).map((day) => (
-          <div key={day} className="grid grid-cols-4 gap-3">
-            <Skeleton className="h-24 rounded-2xl" />
-            <Skeleton className="h-24 rounded-2xl" />
-            <Skeleton className="h-24 rounded-2xl" />
-            <Skeleton className="h-24 rounded-2xl" />
+          <div key={day} className="grid grid-cols-1 gap-3 sm:grid-cols-4">
+            <Skeleton className="h-24 rounded-xl" />
+            <Skeleton className="h-24 rounded-xl" />
+            <Skeleton className="h-24 rounded-xl" />
+            <Skeleton className="h-24 rounded-xl" />
           </div>
         ))}
       </div>
@@ -167,8 +167,8 @@ export function WeeklyGrid({ outletId, effectiveFrom, onEdit }: WeeklyGridProps)
 
   return (
     <div className="space-y-1">
-      {/* Header Row */}
-      <div className="grid grid-cols-4 gap-3 px-3 pb-2">
+      {/* Header Row - hidden on mobile, shown on sm+ */}
+      <div className="hidden sm:grid sm:grid-cols-4 gap-3 px-3 pb-2">
         <span
           className="text-xs font-bold uppercase tracking-wide"
           style={{ color: '#554243' }}
@@ -190,12 +190,12 @@ export function WeeklyGrid({ outletId, effectiveFrom, onEdit }: WeeklyGridProps)
       {DAYS.map((day) => (
         <div
           key={day}
-          className="grid grid-cols-4 items-start gap-3 rounded-2xl bg-white p-3"
+          className="flex flex-col gap-3 rounded-xl bg-white p-3 sm:grid sm:grid-cols-4 sm:items-start"
           style={{ border: '1px solid rgba(219,192,193,0.1)' }}
         >
           {/* Day label */}
-          <div className="flex h-full items-center py-4">
-            <span className="text-lg font-bold" style={{ color: '#3d000c' }}>
+          <div className="flex items-center py-2 sm:h-full sm:py-4">
+            <span className="text-base font-bold sm:text-lg" style={{ color: '#3d000c' }}>
               {DAY_LABELS[day]}
             </span>
           </div>
@@ -209,14 +209,18 @@ export function WeeklyGrid({ outletId, effectiveFrom, onEdit }: WeeklyGridProps)
             const recipeName = vegName || nonvegName;
 
             return (
-              <RecipeSlot
-                key={key}
-                day={day}
-                meal={meal}
-                template={template}
-                recipeName={recipeName}
-                onEdit={onEdit}
-              />
+              <div key={key} className="flex flex-col gap-1">
+                <span className="text-[10px] font-bold uppercase tracking-wide text-[#554243] sm:hidden">
+                  {MEAL_LABELS[meal]}
+                </span>
+                <RecipeSlot
+                  day={day}
+                  meal={meal}
+                  template={template}
+                  recipeName={recipeName}
+                  onEdit={onEdit}
+                />
+              </div>
             );
           })}
         </div>

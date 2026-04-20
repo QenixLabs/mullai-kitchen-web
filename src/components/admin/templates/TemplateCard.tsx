@@ -44,11 +44,11 @@ export function TemplateCard({
 
   return (
     <div
-      className="flex flex-col gap-4 rounded-3xl bg-white p-5"
+      className="flex flex-col gap-4 rounded-xl bg-white p-5"
       style={{ border: '1px solid rgba(219,192,193,0.2)' }}
     >
       {/* Top Row: Badge + Actions */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-2">
         <span
           className="rounded-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide"
           style={{
@@ -62,7 +62,7 @@ export function TemplateCard({
         >
           {template.status === 'active' ? 'ACTIVE' : 'DRAFT'}
         </span>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={handleCopy}
             className="flex h-8 w-8 items-center justify-center rounded-lg text-[#554243] transition-colors hover:bg-[#f8f5f5]"
@@ -109,20 +109,20 @@ export function TemplateCard({
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-sm" style={{ color: '#554243' }}>
           <Building2 className="h-4 w-4 shrink-0" />
-          <span>{template.scope}</span>
+          <span className="truncate">{template.scope}</span>
         </div>
         <div className="flex items-center gap-2 text-sm" style={{ color: '#554243' }}>
           <UtensilsCrossed className="h-4 w-4 shrink-0" />
-          <span>{template.mealsMapped} Meals Mapped</span>
+          <span className="truncate">{template.mealsMapped} Meals Mapped</span>
         </div>
         <div className="flex items-center gap-2 text-sm" style={{ color: '#554243' }}>
           <Clock className="h-4 w-4 shrink-0" />
-          <span>Updated: {template.updatedAt}</span>
+          <span className="truncate">Updated: {template.updatedAt}</span>
         </div>
       </div>
 
       {/* Actions */}
-      <div className="mt-auto flex items-center justify-between pt-2">
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
         <div className="flex items-center gap-4">
           <button
             onClick={() => onView(template._id)}

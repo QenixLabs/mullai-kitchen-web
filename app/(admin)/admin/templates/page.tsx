@@ -173,7 +173,7 @@ export default function TemplatesPage() {
       {viewMode === 'list' ? (
         <div className="space-y-6">
           {/* Header */}
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <AdminPageHeader
               title="WEEKLY TEMPLATES"
               subtitle="Manage weekly meal schedules and nutritional distributions"
@@ -190,14 +190,14 @@ export default function TemplatesPage() {
 
           {/* Filter Bar */}
           <div
-            className="flex flex-wrap items-center gap-3 rounded-3xl border p-4"
+            className="flex flex-col gap-3 rounded-xl border p-4 sm:flex-row sm:flex-wrap sm:items-center"
             style={{
               borderColor: 'rgba(219,192,193,0.2)',
               backgroundColor: 'rgba(255,255,255,0.6)',
             }}
           >
             {/* Search */}
-            <div className="relative flex-1 min-w-0 max-w-md">
+            <div className="relative w-full min-w-0 sm:flex-1 sm:max-w-md">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#554243]" />
               <Input
                 placeholder="Search templates by name or keyword..."
@@ -207,38 +207,40 @@ export default function TemplatesPage() {
               />
             </div>
 
-            {/* Outlet Filter */}
-            <Select value={outletFilter} onValueChange={setOutletFilter}>
-              <SelectTrigger className="w-36 rounded-xl border-[rgba(219,192,193,0.3)] bg-white text-sm">
-                <SelectValue placeholder="All Outlets" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Outlets</SelectItem>
-                <SelectItem value="Global">Global</SelectItem>
-                <SelectItem value="Chennai Central">Chennai Central</SelectItem>
-                <SelectItem value="Anna Nagar">Anna Nagar</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Outlet Filter */}
+              <Select value={outletFilter} onValueChange={setOutletFilter}>
+                <SelectTrigger className="w-full rounded-xl border-[rgba(219,192,193,0.3)] bg-white text-sm sm:w-36">
+                  <SelectValue placeholder="All Outlets" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Outlets</SelectItem>
+                  <SelectItem value="Global">Global</SelectItem>
+                  <SelectItem value="Chennai Central">Chennai Central</SelectItem>
+                  <SelectItem value="Anna Nagar">Anna Nagar</SelectItem>
+                </SelectContent>
+              </Select>
 
-            {/* Status Filter */}
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-36 rounded-xl border-[rgba(219,192,193,0.3)] bg-white text-sm">
-                <SelectValue placeholder="All Statuses" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="draft">Draft</SelectItem>
-              </SelectContent>
-            </Select>
+              {/* Status Filter */}
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full rounded-xl border-[rgba(219,192,193,0.3)] bg-white text-sm sm:w-36">
+                  <SelectValue placeholder="All Statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="draft">Draft</SelectItem>
+                </SelectContent>
+              </Select>
 
-            {/* Filter icon button */}
-            <button
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-[rgba(219,192,193,0.3)] bg-white text-[#554243] transition-colors hover:bg-[#f8f5f5]"
-              title="More filters"
-            >
-              <SlidersHorizontal className="h-4 w-4" />
-            </button>
+              {/* Filter icon button */}
+              <button
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[rgba(219,192,193,0.3)] bg-white text-[#554243] transition-colors hover:bg-[#f8f5f5]"
+                title="More filters"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
           {/* Template Cards Grid */}
@@ -260,7 +262,7 @@ export default function TemplatesPage() {
         /* Detail / Edit View */
         <div className="space-y-6">
           {/* Header */}
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <button
                 onClick={handleBackToList}
@@ -274,7 +276,7 @@ export default function TemplatesPage() {
                 subtitle="Manage weekly meal schedules and nutritional distributions"
               />
             </div>
-            <div className="flex shrink-0 items-center gap-3">
+            <div className="flex shrink-0 flex-col gap-3 sm:flex-row sm:items-center">
               <Button
                 variant="outline"
                 className="rounded-full border-[rgba(219,192,193,0.3)] bg-white px-6 text-sm font-semibold"
@@ -293,10 +295,10 @@ export default function TemplatesPage() {
 
           {/* Template Metadata Card */}
           <div
-            className="rounded-3xl border p-6"
+            className="rounded-xl border p-4 sm:p-6"
             style={{ borderColor: 'rgba(219,192,193,0.2)', backgroundColor: 'rgba(255,255,255,0.6)' }}
           >
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
               {/* Template Name */}
               <div className="space-y-2">
                 <label
@@ -400,18 +402,18 @@ export default function TemplatesPage() {
 
           {/* Weekly Schedule */}
           <div
-            className="rounded-3xl bg-white p-6"
+            className="rounded-xl bg-white p-4 sm:p-6"
             style={{ border: '1px solid rgba(219,192,193,0.2)' }}
           >
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-4">
+            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                 <h3
                   className="text-sm font-bold uppercase tracking-wide"
                   style={{ color: '#3d000c' }}
                 >
                   WEEKLY SCHEDULE
                 </h3>
-                <div className="h-4 w-px bg-[rgba(219,192,193,0.4)]" />
+                <div className="hidden h-4 w-px bg-[rgba(219,192,193,0.4)] sm:block" />
                 <button
                   className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:opacity-70"
                   style={{ color: '#44151c' }}
@@ -427,7 +429,7 @@ export default function TemplatesPage() {
                   Copy Entire Week
                 </button>
               </div>
-              <div className="relative w-full max-w-xs sm:w-auto">
+              <div className="relative w-full sm:w-auto sm:max-w-xs">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#554243]" />
                 <Input
                   placeholder="Quick find recipe..."

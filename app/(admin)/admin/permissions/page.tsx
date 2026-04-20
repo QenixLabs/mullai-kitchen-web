@@ -26,7 +26,7 @@ export default function PermissionsPage() {
 
       <Tabs defaultValue="roles" className="space-y-6">
         <TabsList
-          className="rounded-full bg-white/60 p-1"
+          className="flex flex-wrap h-auto rounded-full bg-white/60 p-1 gap-1"
           style={{ border: '1px solid rgba(219,192,193,0.2)' }}
         >
           <TabsTrigger
@@ -51,7 +51,7 @@ export default function PermissionsPage() {
 
         <TabsContent value="audit">
           <div
-            className="rounded-3xl bg-white p-6"
+            className="rounded-xl bg-white p-6"
             style={{ border: '1px solid rgba(219,192,193,0.2)' }}
           >
             <AuditLogViewer />

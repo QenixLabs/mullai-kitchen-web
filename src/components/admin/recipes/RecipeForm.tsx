@@ -161,7 +161,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0 }}
-        className="flex items-center justify-between"
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <h1
           className="text-4xl font-extrabold uppercase tracking-tight text-[#44151c]"
@@ -195,7 +195,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.05 }}
-          className="rounded-2xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8 space-y-5"
+          className="rounded-xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8 space-y-5"
         >
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 rounded-xl bg-[#f8f2f3]">
@@ -288,7 +288,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="rounded-2xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8"
+            className="rounded-xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-xl bg-[#f8f2f3]">
@@ -336,7 +336,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.15 }}
-            className="rounded-2xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8"
+            className="rounded-xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -434,7 +434,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
-        className="rounded-2xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8"
+        className="rounded-xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8"
       >
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -511,7 +511,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.25 }}
-        className="rounded-2xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8"
+        className="rounded-xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8"
       >
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2 rounded-xl bg-[#f8f2f3]">
@@ -548,7 +548,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
-        className="flex items-center justify-end gap-3"
+        className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3"
       >
         <Button
           type="button"

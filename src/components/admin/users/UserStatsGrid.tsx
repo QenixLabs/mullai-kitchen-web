@@ -9,7 +9,7 @@ export function UserStatsGrid() {
   const stats = useUserStats();
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
       <BentoStatsCard
         label="TOTAL USERS"
         value={stats.isLoading ? <Skeleton className="h-9 w-20 rounded-xl" /> : stats.totalStaff?.toLocaleString() ?? '0'}

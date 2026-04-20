@@ -238,7 +238,7 @@ function KitchenTimeline() {
   ];
 
   return (
-    <div className="rounded-3xl bg-white p-6" style={{ border: '1px solid rgba(219,192,193,0.2)' }}>
+    <div className="rounded-3xl bg-white p-4 sm:p-6 overflow-x-auto" style={{ border: '1px solid rgba(219,192,193,0.2)' }}>
       <div className="flex items-center justify-between mb-8">
         <h3 className="text-lg font-bold" style={{ color: '#3d000c' }}>
           Kitchen Timeline
@@ -254,7 +254,7 @@ function KitchenTimeline() {
         </div>
       </div>
 
-      <div className="relative flex items-start justify-between px-2">
+      <div className="relative flex items-start justify-between px-2 min-w-[500px]">
         {/* Connecting line */}
         <div className="absolute left-8 right-8 top-5 h-0.5" style={{ backgroundColor: 'rgba(219,192,193,0.25)' }} />
         <div
@@ -574,14 +574,14 @@ export function KitchenItemsTable({ items, loading }: KitchenItemsTableProps) {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <MealCard {...mealCards[0]} loading />
           <MealCard {...mealCards[1]} loading />
           <MealCard {...mealCards[2]} loading />
         </div>
         <Skeleton className="h-40 rounded-3xl" />
         <Skeleton className="h-10 w-64 rounded-full" />
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Skeleton className="h-32 rounded-3xl" />
           <Skeleton className="h-32 rounded-3xl" />
         </div>
@@ -592,7 +592,7 @@ export function KitchenItemsTable({ items, loading }: KitchenItemsTableProps) {
   return (
     <div className="space-y-6">
       {/* Meal Cards */}
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {mealCards.map((card) => (
           <MealCard key={card.title} {...card} />
         ))}
@@ -643,41 +643,43 @@ export function KitchenItemsTable({ items, loading }: KitchenItemsTableProps) {
       </div>
 
       {/* Content */}
-      {viewMode === 'recipes' ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {items && items.length > 0 ? (
-            items.map((item, idx) => <RecipeCard key={`${item.recipe_name}-${idx}`} item={item} />)
-          ) : (
-            <div className="col-span-full flex flex-col items-center justify-center py-16">
-              <div
-                className="flex h-14 w-14 items-center justify-center rounded-full mb-4"
-                style={{ background: 'linear-gradient(135deg, #3d000c 0%, #5d101d 100%)' }}
-              >
-                <ChefHat className="h-6 w-6 text-white" />
+      <div className="overflow-x-auto">
+        {viewMode === 'recipes' ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 min-w-0">
+            {items && items.length > 0 ? (
+              items.map((item, idx) => <RecipeCard key={`${item.recipe_name}-${idx}`} item={item} />)
+            ) : (
+              <div className="col-span-full flex flex-col items-center justify-center py-16">
+                <div
+                  className="flex h-14 w-14 items-center justify-center rounded-full mb-4"
+                  style={{ background: 'linear-gradient(135deg, #3d000c 0%, #5d101d 100%)' }}
+                >
+                  <ChefHat className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-[#3d000c] mb-1">No recipes found</h3>
+                <p className="text-sm text-[#554243]">Try selecting a different date or outlet.</p>
               </div>
-              <h3 className="text-lg font-semibold text-[#3d000c] mb-1">No recipes found</h3>
-              <p className="text-sm text-[#554243]">Try selecting a different date or outlet.</p>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {items && items.length > 0 ? (
-            items.map((item, idx) => <OrderCard key={`order-${idx}`} item={item} />)
-          ) : (
-            <div className="col-span-full flex flex-col items-center justify-center py-16">
-              <div
-                className="flex h-14 w-14 items-center justify-center rounded-full mb-4"
-                style={{ background: 'linear-gradient(135deg, #3d000c 0%, #5d101d 100%)' }}
-              >
-                <ChefHat className="h-6 w-6 text-white" />
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 min-w-0">
+            {items && items.length > 0 ? (
+              items.map((item, idx) => <OrderCard key={`order-${idx}`} item={item} />)
+            ) : (
+              <div className="col-span-full flex flex-col items-center justify-center py-16">
+                <div
+                  className="flex h-14 w-14 items-center justify-center rounded-full mb-4"
+                  style={{ background: 'linear-gradient(135deg, #3d000c 0%, #5d101d 100%)' }}
+                >
+                  <ChefHat className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-[#3d000c] mb-1">No orders found</h3>
+                <p className="text-sm text-[#554243]">Try selecting a different date or outlet.</p>
               </div>
-              <h3 className="text-lg font-semibold text-[#3d000c] mb-1">No orders found</h3>
-              <p className="text-sm text-[#554243]">Try selecting a different date or outlet.</p>
-            </div>
-          )}
-        </div>
-      )}
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
