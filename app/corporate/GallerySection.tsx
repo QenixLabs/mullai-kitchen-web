@@ -51,7 +51,7 @@ export function GallerySection() {
   const closeLightbox = () => setSelectedImage(null);
 
   return (
-    <section ref={ref} className="relative py-20 sm:py-24 overflow-hidden bg-[#FAF7F2]">
+    <section id="gallery" ref={ref} className="relative py-20 sm:py-24 overflow-hidden bg-[#FAF7F2]">
       <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -71,52 +71,52 @@ export function GallerySection() {
           </p>
         </motion.div>
 
-        {/* Masonry-style 4-column grid matching Figma */}
+        {/* Masonry-style 4-column grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5">
           {/* Column 1 */}
           <div className="flex flex-col gap-4 sm:gap-5">
             <GalleryImageItem
-              src="/images/corporate/jason-briscoe-GliaHAJ3_5A-unsplash.jpg"
-              title="Kitchen Operations"
+              src="/images/corporate/h1.png"
+              title="Fresh Meals"
               aspect="square"
               delay={0}
-              onClick={() => openLightbox("/images/corporate/jason-briscoe-GliaHAJ3_5A-unsplash.jpg", "Kitchen Operations")}
+              onClick={() => openLightbox("/images/corporate/h1.png", "Fresh Meals")}
             />
             <GalleryImageItem
-              src="/images/food/9.jpg"
-              title="Fresh Ingredients"
+              src="/images/corporate/4CCBF73A-73F3-41C5-8297-5F4B788673B7_4_5005_c.jpeg"
+              title="Corporate Lunch"
               aspect="tall"
               delay={0.1}
-              onClick={() => openLightbox("/images/food/9.jpg", "Fresh Ingredients")}
+              onClick={() => openLightbox("/images/corporate/4CCBF73A-73F3-41C5-8297-5F4B788673B7_4_5005_c.jpeg", "Corporate Lunch")}
             />
           </div>
 
           {/* Column 2 — offset down */}
           <div className="flex flex-col gap-4 sm:gap-5 mt-6 sm:mt-8">
             <GalleryImageItem
-              src="/images/corporate/Catering Buffet.png"
-              title="Corporate Lunch Setup"
+              src="/images/corporate/h2.jpeg"
+              title="Daily Preparation"
               aspect="tall"
               delay={0.05}
-              onClick={() => openLightbox("/images/corporate/Catering Buffet.png", "Corporate Lunch Setup")}
+              onClick={() => openLightbox("/images/corporate/h2.jpeg", "Daily Preparation")}
             />
             <GalleryImageItem
-              src="/images/food/8.jpg"
-              title="Fresh Produce"
+              src="/images/food/2.jpg"
+              title="South Indian Dish"
               aspect="square"
               delay={0.15}
-              onClick={() => openLightbox("/images/food/8.jpg", "Fresh Produce")}
+              onClick={() => openLightbox("/images/food/2.jpg", "South Indian Dish")}
             />
           </div>
 
           {/* Column 3 */}
           <div className="flex flex-col gap-4 sm:gap-5">
             <GalleryImageItem
-              src="/images/home/table.png"
-              title="Office Catering"
+              src="/images/corporate/Container (1).png"
+              title="Meal Box"
               aspect="square"
               delay={0.1}
-              onClick={() => openLightbox("/images/home/table.png", "Office Catering")}
+              onClick={() => openLightbox("/images/corporate/Container (1).png", "Meal Box")}
             />
             <GalleryImageItem
               src="/images/food/1.jpg"
@@ -130,18 +130,18 @@ export function GallerySection() {
           {/* Column 4 — offset down */}
           <div className="flex flex-col gap-4 sm:gap-5 mt-6 sm:mt-8">
             <GalleryImageItem
-              src="/images/corporate/kam-idris-hYb7kbu4x7E-unsplash.jpg"
-              title="Kitchen Team"
+              src="/images/corporate/Catering Buffet.png"
+              title="Buffet Setup"
               aspect="square"
               delay={0.15}
-              onClick={() => openLightbox("/images/corporate/kam-idris-hYb7kbu4x7E-unsplash.jpg", "Kitchen Team")}
+              onClick={() => openLightbox("/images/corporate/Catering Buffet.png", "Buffet Setup")}
             />
             <GalleryImageItem
-              src="/images/corporate/524E481C-D3A0-43C6-82DC-0DAD42403024.png"
-              title="Gourmet Plate"
+              src="/images/food/3.jpg"
+              title="Fresh Curry"
               aspect="square"
               delay={0.25}
-              onClick={() => openLightbox("/images/corporate/524E481C-D3A0-43C6-82DC-0DAD42403024.png", "Gourmet Plate")}
+              onClick={() => openLightbox("/images/food/3.jpg", "Fresh Curry")}
             />
           </div>
         </div>
