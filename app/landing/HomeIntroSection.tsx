@@ -11,16 +11,18 @@ export function HomeIntroSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-120px" }}
           transition={{ duration: 0.5 }}
-          className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary leading-tight tracking-tight"
+          className="mt-4 text-[clamp(1.9rem,4.6vw,4.8rem)]! font-bold text-primary tracking-tight leading-[1.1]"
         >
-          Fresh, Home-Style Meals. Delivered Every Day.
+          <span className="whitespace-nowrap">Fresh, Home-Style Meals.</span>
+          <br />
+          Delivered Every Day.
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-120px" }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="mt-5 text-base sm:text-lg text-muted-foreground leading-relaxed"
+          className="text-lg text-muted-foreground leading-relaxed"
         >
           Subscription meal plans for individuals and companies across Chennai. No preservatives. No compromises. Just honest food.
         </motion.p>

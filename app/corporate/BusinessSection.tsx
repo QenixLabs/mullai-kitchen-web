@@ -4,11 +4,11 @@ import { useRef } from "react";
 import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import { fadeInUp, staggerContainer } from "../landing/animations";
-import { CheckCircle2, UtensilsCrossed, Sliders, Users, Eye } from "lucide-react";
+import { ClipboardCheck, UtensilsCrossed, Users, Eye } from "lucide-react";
 
 const features = [
   {
-    icon: CheckCircle2,
+    icon: ClipboardCheck,
     title: "End-to-End Management",
     description: "Procurement, cooking, serving, cleanup — all handled.",
   },
@@ -35,17 +35,17 @@ export function BusinessSection() {
 
   return (
     <section id="who-mullai-is" ref={ref} className="relative bg-[#FAF7F2] py-16 sm:py-20 overflow-hidden scroll-mt-32">
-      <div className="relative mx-auto max-w-350 px-4 sm:px-6 lg:px-8 xl:px-12">
+      <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6 }}
-            className="relative rounded-3xl overflow-hidden aspect-4/3 lg:aspect-auto lg:h-112"
+            className="relative rounded-[2rem] overflow-hidden aspect-[4/3] lg:aspect-auto lg:h-[480px]"
           >
             <Image
-              src="/images/corporate/Catering Buffet.png"
+              src="/images/corporate/524E481C-D3A0-43C6-82DC-0DAD42403024.png"
               alt="Gourmet corporate meal"
               fill
               className="object-cover"
@@ -68,12 +68,12 @@ export function BusinessSection() {
 
             <motion.h2
               variants={fadeInUp}
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary tracking-tight leading-[1.1]"
+              className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-primary tracking-tight leading-[1.1]"
             >
-              A Meal Partner Built for Business
+              A <span className="brand-wine-text">Meal Partner</span> Built for Business
             </motion.h2>
 
-            <motion.p variants={fadeInUp} className="text-muted-foreground leading-relaxed">
+            <motion.p variants={fadeInUp} className="individual-copy-mauve leading-relaxed text-base sm:text-lg">
               Managing food for a workforce is expensive and distracting. Mullai removes that burden. Whether you need 50 meals or 5,000, we scale to your needs with zero compromise on quality.
             </motion.p>
 
@@ -84,7 +84,7 @@ export function BusinessSection() {
                   variants={fadeInUp}
                   className="flex items-start gap-4"
                 >
-                  <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                  <div className="mt-0.5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 shrink-0">
                     <feature.icon className="h-5 w-5 text-primary" />
                   </div>
                   <div>

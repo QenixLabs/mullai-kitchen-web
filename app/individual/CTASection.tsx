@@ -48,8 +48,8 @@ export function CTASection() {
             <span className="text-skin">YOUR DAILY MEALS?</span>
           </motion.h2>
 
-          <motion.p variants={fadeInUp} className="text-lg text-muted-foreground leading-relaxed">
-            Join thousands of happy customers enjoying healthy, home-style South Indian meals every day. Start with your first meal FREE!
+          <motion.p variants={fadeInUp} className="individual-copy-mauve text-lg leading-relaxed">
+            Join thousands of happy customers enjoying healthy, home-style South Indian meals every day. Start with your first <span className="individual-copy-free">meal FREE</span>!
           </motion.p>
 
           <motion.div variants={scaleIn} className="mt-8 inline-flex items-center gap-4 bg-white/5 backdrop-blur-sm rounded-2xl px-5 py-4 border border-white/10">

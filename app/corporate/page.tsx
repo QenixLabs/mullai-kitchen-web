@@ -23,11 +23,11 @@ export default function CorporateLandingPage() {
         <HeroSection />
         <NutritionFocusSection />
         <BusinessSection />
-        <HowItWorksSection />
-        <SafetyMeasuresSection />
-        <SourcingSection />
-        <CateringSection />
         <GallerySection />
+        <SourcingSection />
+        <SafetyMeasuresSection />
+        <HowItWorksSection />
+        <CateringSection />
         <FAQSection />
       </main>
 

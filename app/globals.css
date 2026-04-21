@@ -52,6 +52,13 @@
   --secondary-light-alt: 0 0% 90%; /* #E6E7E7 - Light gray */
   --background-alt: 0 0% 98%;      /* #FBFBFB - Off-white */
 
+  /* Individual page copy colors */
+  --copy-blush: 0 100% 93%;
+  --copy-slate: 215 19% 35%;
+  --copy-mauve: 358 13% 30%;
+  --copy-free: 357 94% 87%;
+  --copy-white: 0 0% 100%;
+
   /* New semantic color tokens */
   --success: 142 76% 36%;
   --success-foreground: 355 100% 97%;
@@ -381,5 +388,36 @@ select::-webkit-scrollbar-thumb:hover {
   }
   .rounded-sm {
     border-radius: 0.5rem;
+  }
+}
+
+@layer components {
+  .brand-wine-text {
+    color: #6B1720;
+  }
+
+  .individual-hero-copy {
+    color: hsl(var(--copy-mauve));
+  }
+
+  .individual-copy-blush {
+    color: hsl(var(--copy-blush));
+  }
+
+  .individual-copy-slate {
+    color: hsl(var(--copy-slate));
+  }
+
+  .individual-copy-mauve {
+    color: hsl(var(--copy-mauve));
+  }
+
+  .individual-copy-free {
+    color: hsl(var(--copy-free));
+    font-weight: 700;
+  }
+
+  .individual-copy-white {
+    color: hsl(var(--copy-white));
   }
 }

@@ -61,11 +61,11 @@ export function FAQSection() {
             <span className="text-xs font-semibold tracking-wide uppercase">Got Questions?</span>
           </motion.div>
 
-          <motion.h2 variants={fadeInUp} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary tracking-tight">
-            FREQUENTLY ASKED QUESTIONS
+          <motion.h2 variants={fadeInUp} className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-primary tracking-tight">
+            FREQUENTLY ASKED <span className="brand-wine-text">QUESTIONS</span>
           </motion.h2>
 
-          <motion.p variants={fadeInUp} className="mt-4 text-muted-foreground text-lg">
+          <motion.p variants={fadeInUp} className="mt-4 text-muted-foreground text-base sm:text-lg">
             Everything you need to know about Mullai Elite&apos;s culinary concierge service.
           </motion.p>
         </motion.div>
