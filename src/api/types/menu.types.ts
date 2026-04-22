@@ -151,6 +151,15 @@ export interface BulkCopyPayload {
   day_of_week?: WeekDay;
 }
 
+export interface TemplateSummary {
+  _id: string;
+  name: string;
+  status: 'active' | 'draft';
+  scope: string;
+  mealsMapped: number;
+  updatedAt: string;
+}
+
 // ===========================================
 // Meal Roster Override Types
 // ===========================================

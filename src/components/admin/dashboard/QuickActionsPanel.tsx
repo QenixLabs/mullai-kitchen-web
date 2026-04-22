@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Plus,
   Shield,
-  Route,
-  UtensilsCrossed,
+  FileText,
 } from "lucide-react";
 
 interface QuickAction {
@@ -18,7 +17,7 @@ interface QuickAction {
 
 const QUICK_ACTIONS: QuickAction[] = [
   {
-    label: "+ New Outlet",
+    label: "New Outlet",
     href: "/admin/outlets/create",
     icon: Plus,
     permission: "outlet:create",
@@ -30,23 +29,17 @@ const QUICK_ACTIONS: QuickAction[] = [
     permission: "permission:view",
   },
   {
-    label: "Generate Routes",
-    href: "/admin/routes",
-    icon: Route,
-    permission: "route:generate",
-  },
-  {
-    label: "Kitchen Report",
-    href: "/admin/kitchen",
-    icon: UtensilsCrossed,
-    permission: "order:kitchen",
+    label: "View Reports",
+    href: "/admin/reports",
+    icon: FileText,
+    permission: "report:view",
   },
 ];
 
 export function QuickActionsPanel() {
   return (
     <div className="flex flex-wrap gap-3">
-    {QUICK_ACTIONS.map((action) => (
+      {QUICK_ACTIONS.map((action) => (
         <Can
           key={action.label}
           permission={action.permission}
@@ -54,9 +47,7 @@ export function QuickActionsPanel() {
         >
           <Link href={action.href}>
             <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#3d000c] to-[#5d101d] px-5 py-2 text-sm font-semibold text-white hover:opacity-95"
             >
               <action.icon className="h-4 w-4" />
               {action.label}

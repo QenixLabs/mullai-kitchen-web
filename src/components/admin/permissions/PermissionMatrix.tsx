@@ -1,12 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
 import {
-  ChevronDown,
-  ChevronRight,
   Shield,
   Users,
   UtensilsCrossed,
@@ -16,8 +12,10 @@ import {
   BarChart3,
   Settings,
   KeyRound,
+  Store,
+  ClipboardList,
+  ScrollText,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 export interface PermissionCategory {
   key: string;
@@ -26,16 +24,31 @@ export interface PermissionCategory {
   permissions: { key: string; label: string }[];
 }
 
-export const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  'outlet-management': Shield,
+export const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
+  'outlet-management': Store,
   'user-management': Users,
   'menu-recipes': UtensilsCrossed,
   'subscriptions-plans': CreditCard,
   'invoices': FileText,
-  'orders-delivery': Truck,
+  'orders-delivery': ClipboardList,
   'reports-analytics': BarChart3,
   'system-configuration': Settings,
   'permission-management': KeyRound,
+};
+
+const CATEGORY_META: Record<
+  string,
+  { icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>; subtitle: string }
+> = {
+  'outlet-management': { icon: Store, subtitle: 'Manage kitchen locations' },
+  'user-management': { icon: Users, subtitle: 'Identity & Access' },
+  'menu-recipes': { icon: UtensilsCrossed, subtitle: 'Menu & Recipes' },
+  'subscriptions-plans': { icon: CreditCard, subtitle: 'Billing & Plans' },
+  'invoices': { icon: FileText, subtitle: 'Invoicing' },
+  'orders-delivery': { icon: ClipboardList, subtitle: 'Flow & Execution' },
+  'reports-analytics': { icon: BarChart3, subtitle: 'Data visibility thresholds' },
+  'system-configuration': { icon: Settings, subtitle: 'System settings' },
+  'permission-management': { icon: KeyRound, subtitle: 'Access control' },
 };
 
 interface PermissionMatrixProps {
@@ -45,20 +58,12 @@ interface PermissionMatrixProps {
   readOnly?: boolean;
 }
 
-export function PermissionMatrix({ categories, permissions, onChange, readOnly = false }: PermissionMatrixProps) {
-  const [openCategories, setOpenCategories] = useState<Set<string>>(
-    new Set(categories.map((c) => c.key)),
-  );
-
-  const toggleCategory = (key: string) => {
-    setOpenCategories((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  };
-
+export function PermissionMatrix({
+  categories,
+  permissions,
+  onChange,
+  readOnly = false,
+}: PermissionMatrixProps) {
   const togglePermission = (key: string) => {
     if (readOnly) return;
     const next = new Set(permissions);
@@ -67,140 +72,142 @@ export function PermissionMatrix({ categories, permissions, onChange, readOnly =
     onChange(next);
   };
 
-  const toggleAllInCategory = (category: PermissionCategory) => {
-    if (readOnly) return;
-    const allSelected = category.permissions.every((p) => permissions.has(p.key));
-    const next = new Set(permissions);
-    category.permissions.forEach((p) => {
-      if (allSelected) next.delete(p.key);
-      else next.add(p.key);
-    });
-    onChange(next);
+  const sorted = [...categories].sort((a, b) => a.order - b.order);
+
+  // Determine which cards span full width (reports-analytics or cards with > 4 permissions)
+  const standardCards = sorted.filter(
+    (c) => c.key !== 'reports-analytics' && c.permissions.length <= 4,
+  );
+  const wideCards = sorted.filter(
+    (c) => c.key === 'reports-analytics' || c.permissions.length > 4,
+  );
+
+  const renderCard = (category: PermissionCategory, isWide: boolean) => {
+    const meta = CATEGORY_META[category.key] || {
+      icon: Shield,
+      subtitle: category.label,
+    };
+    const Icon = meta.icon;
+
+    return (
+      <motion.div
+        key={category.key}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: category.order * 0.05 }}
+        className="flex flex-col gap-5 rounded-3xl bg-white p-6"
+        style={{ border: '1px solid rgba(219,192,193,0.2)' }}
+      >
+        {/* Card Header */}
+        <div className="flex items-center gap-3">
+          <div
+            className="flex h-11 w-11 items-center justify-center rounded-xl"
+            style={{ backgroundColor: 'rgba(68,21,28,0.06)' }}
+          >
+            <Icon className="h-5 w-5" style={{ color: '#44151c' }} />
+          </div>
+          <div>
+            <h3
+              className="text-base font-bold"
+              style={{ color: '#3d000c', lineHeight: '22px' }}
+            >
+              {category.label}
+            </h3>
+            <p className="text-xs" style={{ color: '#554243' }}>
+              {meta.subtitle}
+            </p>
+          </div>
+        </div>
+
+        {/* Permissions */}
+        <div
+          className={isWide ? 'grid grid-cols-1 gap-3 sm:grid-cols-2' : 'flex flex-col gap-3'}
+        >
+          {category.permissions.map((perm) => {
+            const isChecked = permissions.has(perm.key);
+            return (
+              <label
+                key={perm.key}
+                className="flex cursor-pointer items-center justify-between gap-3 rounded-xl px-1 py-1 transition-colors hover:bg-[rgba(68,21,28,0.03)]"
+              >
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: isChecked ? '#3d000c' : '#554243' }}
+                >
+                  {perm.label}
+                </span>
+                <CustomCheckbox
+                  checked={isChecked}
+                  onCheckedChange={() => togglePermission(perm.key)}
+                  disabled={readOnly}
+                />
+              </label>
+            );
+          })}
+        </div>
+      </motion.div>
+    );
   };
 
   return (
-    <div className="space-y-3">
-      {categories.map((category, index) => {
-        const isOpen = openCategories.has(category.key);
-        const allSelected = category.permissions.every((p) => permissions.has(p.key));
-        const Icon = CATEGORY_ICONS[category.key] || Shield;
-        const selectedCount = category.permissions.filter((p) => permissions.has(p.key)).length;
+    <div className="flex flex-col gap-5">
+      {/* Standard cards - 3 columns */}
+      {standardCards.length > 0 && (
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {standardCards.map((cat) => renderCard(cat, false))}
+        </div>
+      )}
 
-        return (
-          <motion.div
-            key={category.key}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.05 }}
-            whileHover={{ y: -2 }}
-            className="rounded-2xl bg-white border border-border/40 shadow-sm overflow-hidden"
-          >
-            <div
-              className="flex items-center gap-3 px-5 py-4 cursor-pointer select-none"
-              onClick={() => toggleCategory(category.key)}
-            >
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0 hover:bg-muted/60"
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  {isOpen ? (
-                    <motion.div
-                      key="down"
-                      initial={{ rotate: -90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: -90, opacity: 0 }}
-                      transition={{ duration: 0.15 }}
-                    >
-                      <ChevronDown className="h-4 w-4 text-primary" />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="right"
-                      initial={{ rotate: 90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: 90, opacity: 0 }}
-                      transition={{ duration: 0.15 }}
-                    >
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </Button>
-              <div className="p-1.5 rounded-lg bg-primary/5">
-                <Icon className="h-4 w-4 text-primary" />
-              </div>
-              <span
-                className="flex-1 font-semibold text-primary"
-                style={{ fontFamily: 'Inter, sans-serif' }}
-              >
-                {category.label}
-              </span>
-              <span className="text-sm font-medium text-muted-foreground mr-2">
-                {selectedCount}/{category.permissions.length}
-              </span>
-              {!readOnly && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-7 rounded-full text-xs font-semibold border-border/60 hover:bg-muted/60"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleAllInCategory(category);
-                  }}
-                >
-                  {allSelected ? 'Deselect All' : 'Select All'}
-                </Button>
-              )}
-            </div>
-            <AnimatePresence initial={false}>
-              {isOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2, ease: 'easeInOut' }}
-                  className="overflow-hidden"
-                >
-                  <div className="grid grid-cols-1 gap-1.5 border-t border-border/30 px-5 py-3 md:grid-cols-2 lg:grid-cols-3">
-                    {category.permissions.map((perm) => {
-                      const isChecked = permissions.has(perm.key);
-                      return (
-                        <label
-                          key={perm.key}
-                          className={cn(
-                            'flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm transition-all duration-150',
-                            readOnly ? 'cursor-default' : 'cursor-pointer',
-                            isChecked
-                              ? 'bg-primary/5 border border-primary/10'
-                              : 'hover:bg-muted/40 border border-transparent',
-                          )}
-                        >
-                          <Checkbox
-                            checked={isChecked}
-                            onCheckedChange={() => togglePermission(perm.key)}
-                            disabled={readOnly}
-                            className={cn(isChecked && 'border-primary')}
-                          />
-                          <span
-                            className={cn(
-                              'font-medium',
-                              isChecked ? 'text-primary' : 'text-primary/70',
-                            )}
-                          >
-                            {perm.label}
-                          </span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        );
-      })}
+      {/* Wide cards - full width */}
+      {wideCards.length > 0 && (
+        <div className="flex flex-col gap-5">
+          {wideCards.map((cat) => renderCard(cat, true))}
+        </div>
+      )}
     </div>
+  );
+}
+
+/* Custom checkbox matching Figma dark burgundy style */
+function CustomCheckbox({
+  checked,
+  onCheckedChange,
+  disabled,
+}: {
+  checked: boolean;
+  onCheckedChange: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      role="checkbox"
+      aria-checked={checked}
+      disabled={disabled}
+      onClick={onCheckedChange}
+      className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#44151c] focus-visible:ring-offset-2"
+      style={{
+        backgroundColor: checked ? '#44151c' : 'transparent',
+        border: checked ? '2px solid #44151c' : '2px solid rgba(219,192,193,0.5)',
+      }}
+    >
+      {checked && (
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M2.5 6L5 8.5L9.5 3.5"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
+    </button>
   );
 }

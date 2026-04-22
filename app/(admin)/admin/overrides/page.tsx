@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Can } from '@/components/Auth/can';
+import { AdminPageHeader } from '@/components/admin/layout/AdminPageHeader';
 import { OutletOverrideSelector } from '@/components/admin/overrides/OutletOverrideSelector';
 import { OverrideCalendar } from '@/components/admin/overrides/OverrideCalendar';
 import { OverrideList } from '@/components/admin/overrides/OverrideList';
@@ -83,75 +84,121 @@ export default function OverridesPage() {
     <Can permission="override:manage">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Meal Overrides</h1>
-            <p className="text-sm text-muted-foreground">
-              Manage date-specific meal overrides, closures, and special menus.
-            </p>
-          </div>
-          <Button onClick={handleAdd} size="sm">
+        <AdminPageHeader
+          title="Meal Overrides"
+          subtitle="Manage date-specific meal overrides, closures, and special menus."
+        >
+          <Button
+            onClick={handleAdd}
+            size="sm"
+            className="rounded-full text-white px-5 shadow-md"
+            style={{
+              background: 'linear-gradient(135deg, #3d000c 0%, #5d101d 100%)',
+            }}
+          >
             <Plus className="mr-1.5 h-4 w-4" />
             Add Override
           </Button>
-        </div>
+        </AdminPageHeader>
 
         {/* Outlet Selector */}
-        <OutletOverrideSelector onOutletChange={setOutletId} />
+        <div
+          className="rounded-3xl border p-4"
+          style={{ borderColor: 'rgba(219,192,193,0.2)', backgroundColor: 'rgba(255,255,255,0.6)' }}
+        >
+          <OutletOverrideSelector onOutletChange={setOutletId} />
+        </div>
 
-        {/* Month Navigation */}
+        {/* Month Navigation + Calendar + List */}
         {outletId && (
           <>
-            <div className="flex items-center justify-between">
+            {/* Month Navigation */}
+            <div
+              className="rounded-3xl border p-4 flex items-center justify-between"
+              style={{ borderColor: 'rgba(219,192,193,0.2)', backgroundColor: 'rgba(255,255,255,0.6)' }}
+            >
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="icon" className="h-8 w-8" onClick={handlePrevMonth}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-full"
+                  onClick={handlePrevMonth}
+                >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <span className="text-sm font-semibold min-w-[160px] text-center">
+                <span
+                  className="text-sm font-semibold min-w-[160px] text-center"
+                  style={{ color: '#44151c' }}
+                >
                   {MONTHS[month]} {year}
                 </span>
-                <Button variant="outline" size="icon" className="h-8 w-8" onClick={handleNextMonth}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-full"
+                  onClick={handleNextMonth}
+                >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
-              <Button variant="ghost" size="sm" onClick={handleToday}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleToday}
+                className="rounded-full"
+              >
                 Today
               </Button>
             </div>
 
             {/* Calendar */}
-            <OverrideCalendar
-              outletId={outletId}
-              year={year}
-              month={month}
-              onDateClick={handleDateClick}
-            />
+            <div
+              className="rounded-3xl bg-white p-6"
+              style={{ border: '1px solid rgba(219,192,193,0.2)' }}
+            >
+              <OverrideCalendar
+                outletId={outletId}
+                year={year}
+                month={month}
+                onDateClick={handleDateClick}
+              />
+            </div>
 
             {/* Override List */}
             <div className="space-y-3">
-              <h2 className="text-lg font-semibold tracking-tight">Override List</h2>
-              <OverrideList
-                outletId={outletId}
-                dateFrom={dateFrom}
-                dateUntil={dateUntil}
-                onEdit={handleEdit}
-              />
+              <h2
+                className="text-lg font-semibold tracking-tight"
+                style={{ color: '#44151c' }}
+              >
+                Override List
+              </h2>
+              <div
+                className="rounded-3xl bg-white p-6"
+                style={{ border: '1px solid rgba(219,192,193,0.2)' }}
+              >
+                <OverrideList
+                  outletId={outletId}
+                  dateFrom={dateFrom}
+                  dateUntil={dateUntil}
+                  onEdit={handleEdit}
+                />
+              </div>
             </div>
           </>
         )}
-      </div>
 
-      {/* Override Dialog */}
-      {outletId && (
-        <OverrideDialog
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
-          outletId={outletId}
-          date={dialogDate}
-          mealType={dialogMealType}
-          existing={dialogExisting}
-        />
-      )}
+        {/* Override Dialog */}
+        {outletId && (
+          <OverrideDialog
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+            outletId={outletId}
+            date={dialogDate}
+            mealType={dialogMealType}
+            existing={dialogExisting}
+          />
+        )}
+      </div>
     </Can>
   );
 }

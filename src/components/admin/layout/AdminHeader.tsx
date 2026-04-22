@@ -1,62 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { Bell, Menu } from "lucide-react";
 
 import { useCurrentUser } from "@/hooks/useUserStore";
 import { cn } from "@/lib/utils";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-
-/**
- * Get the page title based on the current pathname
- */
-function getPageTitle(pathname: string): string {
-  const segments = pathname.split("/").filter(Boolean);
-
-  // Handle /admin or /admin/ -> Dashboard
-  if (segments.length <= 1) {
-    return "Dashboard";
-  }
-
-  // Get the last meaningful segment
-  const lastSegment = segments[segments.length - 1];
-
-  // Map common paths to friendly names
-  const titleMap: Record<string, string> = {
-    outlets: "Outlets",
-    users: "Users",
-    permissions: "Permissions",
-    recipes: "Recipes",
-    templates: "Templates",
-    kitchen: "Kitchen Report",
-    orders: "Orders",
-    routes: "Routes",
-    reports: "Reports",
-    settings: "Settings",
-  };
-
-  return titleMap[lastSegment] || formatTitle(lastSegment);
-}
-
-/**
- * Format a slug into a title case string
- */
-function formatTitle(slug: string): string {
-  return slug
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
 
 interface AdminHeaderProps {
   className?: string;
+  onMenuClick?: () => void;
 }
 
-export function AdminHeader({ className }: AdminHeaderProps) {
+export function AdminHeader({ className, onMenuClick }: AdminHeaderProps) {
   const user = useCurrentUser();
-  const pathname = usePathname();
 
-  const pageTitle = getPageTitle(pathname);
   const avatarUrl = user?.avatar_url ?? null;
   const initials = user?.name
     ? user.name
@@ -70,32 +27,63 @@ export function AdminHeader({ className }: AdminHeaderProps) {
   return (
     <header
       className={cn(
-        "flex items-center justify-between bg-background px-4 py-3 md:px-6 border-b border-border",
+        "fixed left-0 right-0 top-0 z-40 flex items-center justify-between px-4 py-3 backdrop-blur-md lg:left-64 lg:px-8 lg:py-4",
         className
       )}
+      style={{
+        backgroundColor: "rgba(230,230,230,0.85)",
+        boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05)",
+      }}
     >
-      {/* Left side - Mobile menu toggle and page title */}
+      {/* Left side - Mobile toggle + Role title */}
       <div className="flex items-center gap-3">
-        <SidebarTrigger  />
-        {/* <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1> */}
+        {/* Mobile hamburger */}
+        <button
+          onClick={onMenuClick}
+          className="flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-black/5 lg:hidden"
+        >
+          <Menu className="h-5 w-5" style={{ color: "#44151c" }} />
+        </button>
+        <h1
+          className="text-base font-bold lg:text-lg"
+          style={{
+            fontFamily: "Manrope, sans-serif",
+            color: "#3d000c",
+          }}
+        >
+          SUPER ADMIN
+        </h1>
       </div>
 
-      {/* Right side - User avatar */}
-      <div className="flex items-center gap-3">
-        <div className="h-9 w-9 overflow-hidden rounded-full border-2 border-border shadow-sm">
-          {avatarUrl ? (
-            <Image
-              src={avatarUrl}
-              alt={user?.name ?? "Profile"}
-              width={36}
-              height={36}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-primary text-xs font-bold text-primary-foreground">
-              {initials}
-            </div>
-          )}
+      {/* Right side - Notification and avatar */}
+      <div className="flex items-center gap-3 lg:gap-4">
+        <button className="relative flex items-center justify-center rounded-full p-1.5 transition-colors hover:bg-black/5">
+          <Bell className="h-5 w-5 lg:h-[22px] lg:w-[22px]" style={{ color: "#44151c" }} />
+          {/* Notification dot */}
+          <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500" />
+        </button>
+
+        <div
+          className="flex items-center justify-center overflow-hidden rounded-full border-2 p-0.5"
+          style={{ borderColor: "rgba(61,0,12,0.1)" }}
+        >
+          <div
+            className="relative h-8 w-8 overflow-hidden rounded-full border lg:h-9 lg:w-9"
+            style={{ borderColor: "#44151c" }}
+          >
+            {avatarUrl ? (
+              <Image
+                src={avatarUrl}
+                alt={user?.name ?? "Profile"}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-primary text-xs font-bold text-primary-foreground">
+                {initials}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

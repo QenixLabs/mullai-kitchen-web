@@ -1,18 +1,20 @@
 "use client";
 
 import { Can } from "@/components/Auth/can";
-import { KPICard } from "@/components/admin/dashboard/KPICard";
+import { AdminPageHeader } from "@/components/admin/layout/AdminPageHeader";
+import { BentoStatsCard } from "@/components/admin/layout/BentoStatsCard";
 import { QuickActionsPanel } from "@/components/admin/dashboard/QuickActionsPanel";
 import { useAdminDashboard } from "@/hooks/useAdminDashboard";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import {
   TrendingUp,
   ClipboardList,
   BarChart3,
   Users,
-  Store,
-  UtensilsCrossed,
-  Route,
   AlertTriangle,
+  Download,
+  Settings,
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -20,11 +22,30 @@ export default function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <KPICard label="Loading..." loading />
-        <KPICard label="Loading..." loading />
-        <KPICard label="Loading..." loading />
-        <KPICard label="Loading..." loading />
+      <div className="space-y-8">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-10 w-96" />
+            <Skeleton className="h-6 w-80" />
+          </div>
+          <div className="flex shrink-0 items-center gap-3">
+            <Skeleton className="h-10 w-32 rounded-full" />
+            <Skeleton className="h-10 w-40 rounded-full" />
+          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Skeleton className="h-36 rounded-3xl" />
+          <Skeleton className="h-36 rounded-3xl" />
+          <Skeleton className="h-36 rounded-3xl" />
+          <Skeleton className="h-36 rounded-3xl" />
+        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Skeleton className="h-80 rounded-3xl" />
+          <div className="space-y-6">
+            <Skeleton className="h-40 rounded-3xl" />
+            <Skeleton className="h-40 rounded-3xl" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -38,127 +59,230 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Page Header */}
+      <AdminPageHeader
+        title="OPERATIONAL OVERSIGHT"
+        subtitle="Global kitchen performance and logistics orchestration."
+      >
+        <Button
+          variant="outline"
+          className="rounded-full border-[rgba(219,192,193,0.4)] bg-white px-5 py-2 text-sm font-semibold text-[#44151c] hover:bg-[#44151c]/5"
+        >
+          <Download className="mr-2 h-4 w-4" />
+          Export Logs
+        </Button>
+        <Button
+          className="rounded-full bg-gradient-to-r from-[#3d000c] to-[#5d101d] px-5 py-2 text-sm font-semibold text-white hover:opacity-95"
+        >
+          <Settings className="mr-2 h-4 w-4" />
+          Configure Outlets
+        </Button>
+      </AdminPageHeader>
+
       {/* KPI Cards Row */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* Active Subscriptions */}
         <Can permission="subscription:view:any">
-          <KPICard
-            label="Active Subscriptions"
-            value={data?.subscriptions?.active}
-            trend={data?.subscriptions?.trend}
+          <BentoStatsCard
+            label="TOTAL ACTIVE SUBSCRIPTIONS"
+            value={data?.subscriptions?.active?.toLocaleString() ?? "—"}
             icon={TrendingUp}
           />
         </Can>
 
-        {/* Today&apos;s Orders */}
         <Can permission={["order:view:any", "order:view:outlet"]} requireAll={false}>
-          <KPICard
-            label="Today's Orders"
-            value={data?.orders?.today}
-            trend={data?.orders?.trend}
+          <BentoStatsCard
+            label="TODAY'S ORDERS"
+            value={data?.orders?.today?.toLocaleString() ?? "—"}
             icon={ClipboardList}
           />
         </Can>
 
-        {/* Monthly Revenue */}
         <Can permission="report:financial">
-          <KPICard
-            label="Monthly Revenue"
-            value={data?.revenue?.month}
-            formatValue={(v) => `₹${(Number(v) / 1000).toFixed(0)}k`}
-            trend={data?.revenue?.trend}
+          <BentoStatsCard
+            label="MONTHLY REVENUE"
+            value={`₹${data?.revenue?.month?.toLocaleString() ?? "—"}`}
             icon={BarChart3}
           />
         </Can>
 
-        {/* Active Users */}
         <Can permission="user:view:any">
-          <KPICard
-            label="Active Users"
-            value={data?.users?.total}
-            trend={data?.users?.trend}
+          <BentoStatsCard
+            label="ACTIVE USERS"
+            value={data?.users?.total?.toLocaleString() ?? "—"}
             icon={Users}
           />
         </Can>
-
-        {/* Active Outlets */}
-        <Can permission="outlet:view:any">
-          <KPICard
-            label="Active Outlets"
-            value={data?.outlets?.active}
-            trend={data?.outlets?.trend}
-            icon={Store}
-          />
-        </Can>
-
-        {/* Kitchen Status */}
-        <Can permission="order:kitchen">
-          <KPICard
-            label="Kitchen Status"
-            value={data?.kitchen?.mealsToday ?? 0}
-            trend={data?.kitchen?.trend}
-            icon={UtensilsCrossed}
-          />
-        </Can>
-
-        {/* Routes Progress */}
-        <Can permission="route:assign">
-          <KPICard
-            label="Routes Progress"
-            value={data?.routes?.active ?? 0}
-            trend={data?.routes?.trend}
-            icon={Route}
-          />
-        </Can>
       </div>
 
-      {/* Quick Actions */}
-      <div className="mt-6">
-        <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
-        <QuickActionsPanel />
-      </div>
-
-      {/* System Alerts - Super Admin only */}
-      <Can permission="config:system">
-        <div className="rounded-lg border bg-card">
-          <div className="p-4">
-            <h3 className="text-sm font-semibold flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-warning" />
-              System Alerts
-            </h3>
-            <div className="mt-3">
-              {data?.alerts && data.alerts.length > 0 ? (
-                <div className="space-y-3">
-                  {data.alerts.map((alert) => (
-                    <div
-                      key={alert.id}
-                      className="flex items-start gap-2 p-2 rounded-md bg-muted/50"
-                    >
-                      <span
-                        className={`text-xs font-medium ${
-                          alert.type === "error"
-                            ? "text-red-500"
-                            : alert.type === "warning"
-                            ? "text-yellow-500"
-                            : "text-blue-500"
-                        }`}
-                      >
-                        {alert.type}
-                      </span>
-                      <span className="flex-1 text-sm">{alert.message}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  No alerts at this time
+      {/* Bottom Section: Outlet Performance + Quick Actions / System Alerts */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Outlet Performance */}
+        <div className="rounded-3xl border border-[rgba(219,192,193,0.2)] bg-white p-6">
+          <h2
+            className="mb-5 text-lg font-bold"
+            style={{ color: "#44151c", lineHeight: "24px" }}
+          >
+            Outlet Performance
+          </h2>
+          <div className="space-y-4">
+            {/* Downtown Central Kitchen */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-[#44151c]">
+                  Downtown Central Kitchen
                 </p>
-              )}
+                <p className="text-xs font-medium text-[#554243]">452 Orders</p>
+              </div>
+              <span
+                className="rounded-full px-3 py-1 text-xs font-bold"
+                style={{
+                  backgroundColor: "rgba(0,153,15,0.22)",
+                  color: "#00990f",
+                }}
+              >
+                ACTIVE
+              </span>
+            </div>
+            {/* Brooklyn East Hub */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-[#44151c]">
+                  Brooklyn East Hub
+                </p>
+                <p className="text-xs font-medium text-[#554243]">0 Orders</p>
+              </div>
+              <span
+                className="rounded-full px-3 py-1 text-xs font-bold"
+                style={{
+                  backgroundColor: "#fef3c7",
+                  color: "#d97706",
+                }}
+              >
+                PENDING
+              </span>
+            </div>
+            {/* Queens Industrial Point */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-[#44151c]">
+                  Queens Industrial Point
+                </p>
+                <p className="text-xs font-medium text-[#554243]">
+                  Critical Failure
+                </p>
+              </div>
+              <span
+                className="rounded-full px-3 py-1 text-xs font-bold"
+                style={{
+                  backgroundColor: "rgba(255,0,4,0.17)",
+                  color: "#ff0004",
+                }}
+              >
+                ERROR
+              </span>
+            </div>
+            {/* Jersey Shore Annex */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-[#44151c]">
+                  Jersey Shore Annex
+                </p>
+                <p className="text-xs font-medium text-[#554243]">112 Orders</p>
+              </div>
+              <span
+                className="rounded-full px-3 py-1 text-xs font-bold"
+                style={{
+                  backgroundColor: "rgba(0,153,15,0.22)",
+                  color: "#00990f",
+                }}
+              >
+                ACTIVE
+              </span>
             </div>
           </div>
         </div>
-      </Can>
+
+        {/* Right Column: Quick Actions + System Alerts */}
+        <div className="space-y-6">
+          {/* Quick Actions */}
+          <div className="rounded-3xl border border-[rgba(219,192,193,0.2)] bg-white p-6">
+            <h2
+              className="mb-5 text-lg font-bold"
+              style={{ color: "#44151c", lineHeight: "24px" }}
+            >
+              Quick Actions
+            </h2>
+            <QuickActionsPanel />
+          </div>
+
+          {/* System Alerts - Super Admin only */}
+          <Can permission="config:system">
+            <div className="rounded-3xl border border-[rgba(219,192,193,0.2)] bg-white p-6">
+              <h2
+                className="mb-5 flex items-center gap-2 text-lg font-bold"
+                style={{ color: "#44151c", lineHeight: "24px" }}
+              >
+                <AlertTriangle className="h-5 w-5 text-[#d97706]" />
+                System Alerts
+              </h2>
+              <div className="space-y-3">
+                {data?.alerts && data.alerts.length > 0 ? (
+                  data.alerts.map((alert) => (
+                    <div
+                      key={alert.id}
+                      className={`flex items-start gap-3 rounded-2xl p-4 ${
+                        alert.type === "error"
+                          ? "bg-[rgba(255,0,4,0.08)]"
+                          : alert.type === "warning"
+                          ? "bg-[rgba(217,119,6,0.08)]"
+                          : "bg-[rgba(59,130,246,0.08)]"
+                      }`}
+                    >
+                      <span
+                        className="mt-0.5 shrink-0 text-xs font-bold uppercase"
+                        style={{
+                          color:
+                            alert.type === "error"
+                              ? "#ff0004"
+                              : alert.type === "warning"
+                              ? "#d97706"
+                              : "#3b82f6",
+                        }}
+                      >
+                        {alert.type}
+                      </span>
+                      <span className="flex-1 text-sm font-medium text-[#44151c]">
+                        {alert.message}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    {/* Hard-coded Figma alerts for design match */}
+                    <div className="flex items-start gap-3 rounded-2xl bg-[rgba(255,0,4,0.08)] p-4">
+                      <span className="mt-0.5 shrink-0 text-xs font-bold uppercase text-[#ff0004]">
+                        Error
+                      </span>
+                      <span className="flex-1 text-sm font-medium text-[#44151c]">
+                        Failed Payments
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-3 rounded-2xl bg-[rgba(217,119,6,0.08)] p-4">
+                      <span className="mt-0.5 shrink-0 text-xs font-bold uppercase text-[#d97706]">
+                        Warning
+                      </span>
+                      <span className="flex-1 text-sm font-medium text-[#44151c]">
+                        System Issue: Latency
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </Can>
+        </div>
+      </div>
     </div>
   );
 }

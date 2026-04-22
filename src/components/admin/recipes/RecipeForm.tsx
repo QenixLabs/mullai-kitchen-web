@@ -6,11 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
-import { Loader2, Plus, Trash2, ChefHat, ListChecks, Clock, Flame } from 'lucide-react';
+import { Loader2, Plus, Trash2, ChefHat, ListChecks, Clock, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
@@ -21,6 +22,7 @@ import {
 import { Can } from '@/components/Auth/can';
 import { useOutlets } from '@/api/hooks/useOutlets';
 import type { CreateRecipePayload, Recipe } from '@/api/types/menu.types';
+import { RecipeStatus } from '@/api/types/menu.types';
 
 const ingredientSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -43,6 +45,7 @@ const recipeSchema = z.object({
   carbs: z.string().optional(),
   image_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   outlet_restriction: z.string().nullable().optional(),
+  status: z.enum(['draft', 'published', 'archived']).optional(),
 });
 
 type RecipeFormData = z.infer<typeof recipeSchema>;
@@ -83,6 +86,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
       carbs: initialData?.nutrition?.carbs || '',
       image_url: initialData?.image_url || '',
       outlet_restriction: initialData?.outlet_restriction || null,
+      status: initialData?.status || 'draft',
     },
   });
 
@@ -107,11 +111,14 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
       } else if (initialData.outlet_restriction === null) {
         setValue('outlet_restriction', null);
       }
+      if (initialData.status) setValue('status', initialData.status);
     }
   }, [initialData, setValue]);
 
   const difficultyValue = watch('difficulty') || '';
   const outletRestrictionValue = watch('outlet_restriction') || 'global';
+  const statusValue = watch('status') || 'draft';
+  const imageUrlValue = watch('image_url') || '';
 
   const handleFormSubmit = async (data: RecipeFormData) => {
     setIsSubmitting(true);
@@ -142,68 +149,103 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
     }
   };
 
+  const inputClass =
+    'h-11 rounded-lg border-[rgba(219,192,193,0.3)] bg-[#f8f2f3] px-4 text-sm text-[#44151c] placeholder:text-[#554243]/50 transition-colors focus-visible:border-[#44151c] focus-visible:ring-[#44151c]/20';
+  const labelClass =
+    'text-[11px] font-bold uppercase tracking-wider text-[#554243]';
+
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
-      {/* Basic Info */}
+      {/* Top Row: Title + Status Toggle */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.05 * 0 }}
-        className="rounded-2xl bg-white border border-border/40 shadow-sm"
+        transition={{ duration: 0.4, delay: 0 }}
+        className="flex items-center justify-between"
       >
-        <div className="p-6 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-primary/5">
-              <ChefHat className="h-4 w-4 text-primary" />
-            </div>
-            <h3 className="text-base font-semibold text-primary">Basic Information</h3>
-          </div>
+        <h1
+          className="text-4xl font-extrabold uppercase tracking-tight text-[#44151c]"
+          style={{ fontFamily: 'Inter, sans-serif', letterSpacing: '-0.9px', lineHeight: '40px' }}
+        >
+          Recipes
+        </h1>
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-semibold text-[#554243]">Status</span>
+          <Switch
+            checked={statusValue === 'published'}
+            onCheckedChange={(checked) =>
+              setValue('status', checked ? 'published' : 'draft')
+            }
+            className="data-[state=checked]:bg-[#44151c]"
+          />
+          <span
+            className={`text-xs font-bold uppercase tracking-wider ${
+              statusValue === 'published' ? 'text-[#44151c]' : 'text-[#554243]/60'
+            }`}
+          >
+            {statusValue === 'published' ? 'Active' : 'Draft'}
+          </span>
         </div>
-        <div className="px-6 pb-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Recipe Name *</Label>
-              <Input
-                id="name"
-                {...register('name')}
-                placeholder="Enter recipe name"
-                className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
-              />
-              {errors.name && (
-                <p className="text-xs text-destructive">
-                  {errors.name.message}
-                </p>
-              )}
+      </motion.div>
+
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left: Basic Details */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.05 }}
+          className="rounded-2xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8 space-y-5"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 rounded-xl bg-[#f8f2f3]">
+              <ChefHat className="h-4 w-4 text-[#44151c]" />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="cuisine_type" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Cuisine Type</Label>
-              <Input
-                id="cuisine_type"
-                {...register('cuisine_type')}
-                placeholder="e.g., South Indian, North Indian"
-                className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
-              />
-            </div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[#44151c]">
+              Basic Details
+            </h3>
           </div>
+
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Description</Label>
+            <Label htmlFor="name" className={labelClass}>
+              Recipe Name *
+            </Label>
+            <Input id="name" {...register('name')} placeholder="Enter recipe name" className={inputClass} />
+            {errors.name && <p className="text-xs text-red-600">{errors.name.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description" className={labelClass}>
+              Description
+            </Label>
             <Textarea
               id="description"
               {...register('description')}
               placeholder="Describe the recipe..."
               rows={3}
-              className="rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
+              className="rounded-lg border-[rgba(219,192,193,0.3)] bg-[#f8f2f3] px-4 text-sm text-[#44151c] placeholder:text-[#554243]/50 transition-colors focus-visible:border-[#44151c] focus-visible:ring-[#44151c]/20"
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-2">
-              <Label htmlFor="difficulty" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Difficulty</Label>
-              <Select
-                value={difficultyValue}
-                onValueChange={(v) => setValue('difficulty', v)}
-              >
-                <SelectTrigger className="h-11 rounded-xl border-border/60 bg-white text-sm">
-                  <SelectValue placeholder="Select difficulty" />
+              <Label htmlFor="cuisine_type" className={labelClass}>
+                Category
+              </Label>
+              <Input
+                id="cuisine_type"
+                {...register('cuisine_type')}
+                placeholder="e.g., Mediterranean"
+                className={inputClass}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="difficulty" className={labelClass}>
+                Cuisine Type
+              </Label>
+              <Select value={difficultyValue} onValueChange={(v) => setValue('difficulty', v)}>
+                <SelectTrigger className={inputClass}>
+                  <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Easy">Easy</SelectItem>
@@ -212,31 +254,18 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="image_url" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Image URL</Label>
-              <Input
-                id="image_url"
-                {...register('image_url')}
-                placeholder="https://..."
-                className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
-              />
-              {errors.image_url && (
-                <p className="text-xs text-destructive">
-                  {errors.image_url.message}
-                </p>
-              )}
-            </div>
           </div>
+
           <Can permission="recipe:create:global">
             <div className="space-y-2">
-              <Label htmlFor="outlet_restriction" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Outlet Restriction</Label>
+              <Label htmlFor="outlet_restriction" className={labelClass}>
+                Outlet Restriction
+              </Label>
               <Select
                 value={outletRestrictionValue}
-                onValueChange={(v) =>
-                  setValue('outlet_restriction', v === 'global' ? null : v)
-                }
+                onValueChange={(v) => setValue('outlet_restriction', v === 'global' ? null : v)}
               >
-                <SelectTrigger className="h-11 rounded-xl border-border/60 bg-white text-sm">
+                <SelectTrigger className={inputClass}>
                   <SelectValue placeholder="Select scope" />
                 </SelectTrigger>
                 <SelectContent>
@@ -250,167 +279,230 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
               </Select>
             </div>
           </Can>
-        </div>
-      </motion.div>
+        </motion.div>
 
-      {/* Ingredients */}
+        {/* Right: Image + Preparation */}
+        <div className="space-y-8">
+          {/* Image Upload Area */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="rounded-2xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-xl bg-[#f8f2f3]">
+                <Upload className="h-4 w-4 text-[#44151c]" />
+              </div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[#44151c]">
+                Recipe Image
+              </h3>
+            </div>
+
+            {imageUrlValue ? (
+              <div className="relative rounded-xl overflow-hidden mb-4">
+                <img src={imageUrlValue} alt="Preview" className="w-full h-48 object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setValue('image_url', '')}
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-[rgba(219,192,193,0.4)] bg-[#f8f2f3] p-8 mb-4">
+                <Upload className="h-8 w-8 text-[#554243]/40 mb-2" />
+                <p className="text-sm text-[#554243]">Paste an image URL below</p>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="image_url" className={labelClass}>
+                Image URL
+              </Label>
+              <Input
+                id="image_url"
+                {...register('image_url')}
+                placeholder="https://..."
+                className={inputClass}
+              />
+              {errors.image_url && <p className="text-xs text-red-600">{errors.image_url.message}</p>}
+            </div>
+          </motion.div>
+
+          {/* Preparation */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.15 }}
+            className="rounded-2xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-[#f8f2f3]">
+                  <Clock className="h-4 w-4 text-[#44151c]" />
+                </div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-[#44151c]">
+                  Preparation
+                </h3>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => appendInstruction({ value: '' })}
+                className="rounded-full border-[rgba(219,192,193,0.3)] text-[#44151c] hover:bg-[#f8f2f3]"
+              >
+                <Plus className="mr-1 h-3.5 w-3.5" />
+                Add Step
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+              <div className="space-y-2">
+                <Label htmlFor="prep_time" className={labelClass}>
+                  Prep Time
+                </Label>
+                <Input
+                  id="prep_time"
+                  {...register('prep_time')}
+                  placeholder="e.g., 15 mins"
+                  className={inputClass}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="cook_time" className={labelClass}>
+                  Cook Time
+                </Label>
+                <Input
+                  id="cook_time"
+                  {...register('cook_time')}
+                  placeholder="e.g., 30 mins"
+                  className={inputClass}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="servings" className={labelClass}>
+                  Servings
+                </Label>
+                <Input
+                  id="servings"
+                  type="number"
+                  {...register('servings')}
+                  placeholder="4"
+                  className={inputClass}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {instructionFields.map((field, index) => (
+                <div key={field.id} className="flex items-start gap-3">
+                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-[#44151c] text-white text-xs flex items-center justify-center font-bold mt-1">
+                    {index + 1}
+                  </span>
+                  <Textarea
+                    {...register(`instructions.${index}.value`)}
+                    placeholder={`Step ${index + 1}`}
+                    rows={2}
+                    className="flex-1 rounded-lg border-[rgba(219,192,193,0.3)] bg-[#f8f2f3] px-4 text-sm text-[#44151c] placeholder:text-[#554243]/50 transition-colors focus-visible:border-[#44151c] focus-visible:ring-[#44151c]/20"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 shrink-0 mt-1 rounded-full hover:bg-red-50 text-red-600"
+                    onClick={() => removeInstruction(index)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              {instructionFields.length === 0 && (
+                <p className="text-sm text-[#554243]/60 text-center py-4">
+                  No steps added yet. Click "Add Step" to begin.
+                </p>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Ingredients List */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.05 * 1 }}
-        className="rounded-2xl bg-white border border-border/40 shadow-sm"
+        transition={{ duration: 0.4, delay: 0.2 }}
+        className="rounded-2xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8"
       >
-        <div className="p-6 pb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-primary/5">
-                <ListChecks className="h-4 w-4 text-primary" />
-              </div>
-              <h3 className="text-base font-semibold text-primary">Ingredients</h3>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-[#f8f2f3]">
+              <ListChecks className="h-4 w-4 text-[#44151c]" />
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                appendIngredient({ name: '', quantity: '', unit: '' })
-              }
-              className="rounded-full"
-            >
-              <Plus className="mr-1 h-3.5 w-3.5" />
-              Add
-            </Button>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[#44151c]">
+              Ingredients List
+            </h3>
           </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => appendIngredient({ name: '', quantity: '', unit: '' })}
+            className="rounded-full border-[rgba(219,192,193,0.3)] text-[#44151c] hover:bg-[#f8f2f3]"
+          >
+            <Plus className="mr-1 h-3.5 w-3.5" />
+            Add Row
+          </Button>
         </div>
-        <div className="px-6 pb-6 space-y-3">
+
+        <div className="space-y-3">
           {ingredientFields.length === 0 && (
-            <p className="text-sm text-muted-foreground text-center py-4">
-              No ingredients added yet
+            <p className="text-sm text-[#554243]/60 text-center py-4">
+              No ingredients added yet. Click "Add Row" to begin.
             </p>
           )}
           {ingredientFields.map((field, index) => (
-            <div key={field.id} className="flex items-end gap-2 p-3 rounded-xl bg-muted/20 border border-border/30">
-              <div className="flex-1 space-y-1">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Name</Label>
+            <div
+              key={field.id}
+              className="flex items-end gap-3 p-4 rounded-xl bg-[#f8f2f3] border border-[rgba(219,192,193,0.15)]"
+            >
+              <div className="flex-1 space-y-1.5">
+                <Label className={labelClass}>Name</Label>
                 <Input
                   {...register(`ingredients.${index}.name`)}
                   placeholder="Ingredient name"
-                  className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
+                  className={inputClass}
                 />
               </div>
-              <div className="w-24 space-y-1">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Qty</Label>
+              <div className="w-28 space-y-1.5">
+                <Label className={labelClass}>Qty</Label>
                 <Input
                   {...register(`ingredients.${index}.quantity`)}
                   placeholder="100"
-                  className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
+                  className={inputClass}
                 />
               </div>
-              <div className="w-24 space-y-1">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Unit</Label>
+              <div className="w-28 space-y-1.5">
+                <Label className={labelClass}>Unit</Label>
                 <Input
                   {...register(`ingredients.${index}.unit`)}
                   placeholder="gms"
-                  className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
+                  className={inputClass}
                 />
               </div>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 shrink-0"
+                className="h-11 w-11 shrink-0 rounded-full hover:bg-red-50 text-red-600"
                 onClick={() => removeIngredient(index)}
               >
-                <Trash2 className="h-4 w-4 text-destructive" />
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           ))}
-        </div>
-      </motion.div>
-
-      {/* Cooking Details */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.05 * 2 }}
-        className="rounded-2xl bg-white border border-border/40 shadow-sm"
-      >
-        <div className="p-6 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-primary/5">
-              <Clock className="h-4 w-4 text-primary" />
-            </div>
-            <h3 className="text-base font-semibold text-primary">Cooking Details</h3>
-          </div>
-        </div>
-        <div className="px-6 pb-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="space-y-2">
-              <Label htmlFor="prep_time" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Prep Time</Label>
-              <Input
-                id="prep_time"
-                {...register('prep_time')}
-                placeholder="e.g., 15 mins"
-                className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="cook_time" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Cook Time</Label>
-              <Input
-                id="cook_time"
-                {...register('cook_time')}
-                placeholder="e.g., 30 mins"
-                className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="servings" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Servings</Label>
-              <Input
-                id="servings"
-                type="number"
-                {...register('servings')}
-                placeholder="4"
-                className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
-              />
-            </div>
-          </div>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Instructions</Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => appendInstruction({ value: '' })}
-                className="rounded-full"
-              >
-                <Plus className="mr-1 h-3.5 w-3.5" />
-                Add Step
-              </Button>
-            </div>
-            {instructionFields.map((field, index) => (
-              <div key={field.id} className="flex items-start gap-2">
-                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center font-semibold mt-1">
-                  {index + 1}
-                </span>
-                <Textarea
-                  {...register(`instructions.${index}.value`)}
-                  placeholder={`Step ${index + 1}`}
-                  rows={2}
-                  className="flex-1 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 shrink-0 mt-1"
-                  onClick={() => removeInstruction(index)}
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              </div>
-            ))}
-          </div>
         </div>
       </motion.div>
 
@@ -418,47 +510,35 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.05 * 3 }}
-        className="rounded-2xl bg-white border border-border/40 shadow-sm"
+        transition={{ duration: 0.4, delay: 0.25 }}
+        className="rounded-2xl bg-white border border-[rgba(219,192,193,0.2)] shadow-sm p-6 md:p-8"
       >
-        <div className="p-6 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-primary/5">
-              <Flame className="h-4 w-4 text-primary" />
-            </div>
-            <h3 className="text-base font-semibold text-primary">Nutrition</h3>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 rounded-xl bg-[#f8f2f3]">
+            <ChefHat className="h-4 w-4 text-[#44151c]" />
           </div>
+          <h3 className="text-sm font-bold uppercase tracking-wider text-[#44151c]">
+            Nutrition
+          </h3>
         </div>
-        <div className="px-6 pb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="space-y-2">
-              <Label htmlFor="calories" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Calories</Label>
-              <Input
-                id="calories"
-                type="number"
-                {...register('calories')}
-                placeholder="350"
-                className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="protein" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Protein</Label>
-              <Input
-                id="protein"
-                {...register('protein')}
-                placeholder="e.g., 12g"
-                className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="carbs" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Carbs</Label>
-              <Input
-                id="carbs"
-                {...register('carbs')}
-                placeholder="e.g., 45g"
-                className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
-              />
-            </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="space-y-2">
+            <Label htmlFor="calories" className={labelClass}>
+              Calories
+            </Label>
+            <Input id="calories" type="number" {...register('calories')} placeholder="350" className={inputClass} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="protein" className={labelClass}>
+              Protein
+            </Label>
+            <Input id="protein" {...register('protein')} placeholder="e.g., 12g" className={inputClass} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="carbs" className={labelClass}>
+              Carbs
+            </Label>
+            <Input id="carbs" {...register('carbs')} placeholder="e.g., 45g" className={inputClass} />
           </div>
         </div>
       </motion.div>
@@ -467,24 +547,25 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.05 * 4 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
         className="flex items-center justify-end gap-3"
       >
         <Button
           type="button"
           variant="outline"
           onClick={() => router.push('/admin/recipes')}
-          className="rounded-full px-8 text-sm font-semibold"
+          className="rounded-full px-8 text-sm font-semibold border-[rgba(219,192,193,0.3)] text-[#44151c] hover:bg-[#f8f2f3]"
         >
           Cancel
         </Button>
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-full bg-primary px-8 text-sm font-semibold text-white hover:bg-primary/90"
+          className="rounded-full px-8 text-sm font-semibold text-white hover:opacity-90"
+          style={{ background: 'linear-gradient(135deg, #44151c 0%, #5e1f2a 100%)' }}
         >
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {mode === 'create' ? 'Create Recipe' : 'Update Recipe'}
+          {mode === 'create' ? 'Save Recipe' : 'Save Recipe'}
         </Button>
       </motion.div>
     </form>

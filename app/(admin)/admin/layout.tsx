@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 
 import { AdminSidebar } from "@/components/admin/layout/AdminSidebar";
 import { AdminHeader } from "@/components/admin/layout/AdminHeader";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import {
   useAuthHydrated,
   useIsAuthenticated,
@@ -22,26 +21,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const isAuthenticated = useIsAuthenticated();
   const user = useCurrentUser();
   const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-
-  // Handle tablet responsiveness - collapse sidebar on tablet
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(
-      "(min-width: 768px) and (max-width: 1023px)",
-    );
-
-    const applySidebarMode = (event?: MediaQueryListEvent) => {
-      const isTablet = event ? event.matches : mediaQuery.matches;
-      setSidebarOpen(!isTablet);
-    };
-
-    applySidebarMode();
-    mediaQuery.addEventListener("change", applySidebarMode);
-
-    return () => {
-      mediaQuery.removeEventListener("change", applySidebarMode);
-    };
-  }, []);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   // Redirect non-authenticated users to auth page
   useEffect(() => {
@@ -96,12 +76,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
-      <AdminSidebar />
-      <SidebarInset className="flex flex-col min-h-svh bg-background">
-        <AdminHeader className="sticky top-0 z-30 border-b border-border" />
-        <main className="flex-1 p-4 md:p-6">{children}</main>
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="min-h-screen" style={{ backgroundColor: "#e6e6e6" }}>
+      <AdminSidebar
+        mobileOpen={mobileSidebarOpen}
+        onMobileClose={() => setMobileSidebarOpen(false)}
+      />
+      <AdminHeader onMenuClick={() => setMobileSidebarOpen(true)} />
+      <main
+        className="min-h-screen pt-[72px] pb-14 px-4 transition-all duration-300 lg:pl-[288px] lg:pr-8 lg:pt-[88px]"
+        style={{ backgroundColor: "#e6e6e6" }}
+      >
+        <div className="max-w-[1400px] mx-auto">
+          {children}
+        </div>
+      </main>
+    </div>
   );
 }

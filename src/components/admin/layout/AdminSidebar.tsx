@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo } from "react";
 import {
   LayoutDashboard,
   Store,
@@ -26,24 +25,6 @@ import {
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
 import { useLogout } from "@/api/hooks/useAuth";
 import { cn } from "@/lib/utils";
-import {
-  Sidebar as ShadcnSidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-} from "@/components/ui/sidebar";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
 import { PermissionNavItem } from "./PermissionNavItem";
 
 interface NavItem {
@@ -183,7 +164,12 @@ const ADMIN_NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  mobileOpen: boolean;
+  onMobileClose: () => void;
+}
+
+export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const hasHydrated = useAuthHydrated();
   const isAuthenticated = useIsAuthenticated();
@@ -191,120 +177,119 @@ export function AdminSidebar() {
 
   const handleLogout = () => logoutMutation.mutate();
 
-  // Find which group contains the active route
-  const activeGroupIndex = useMemo(() => {
-    return ADMIN_NAV_GROUPS.findIndex((group) =>
-      group.items.some((item) =>
-        item.href === "/admin"
-          ? pathname === "/admin"
-          : pathname.startsWith(item.href)
-      )
-    );
-  }, [pathname]);
-
   if (!hasHydrated || !isAuthenticated) return null;
 
   return (
-    <ShadcnSidebar
-      collapsible="icon"
-      className="w-60 border-r border-border shadow-none"
-    >
-      <SidebarHeader className="border-none px-6 pt-8 pb-4 group-data-[collapsible=icon]:px-2">
-        <Link
-          href="/admin"
-          className="flex items-center gap-3 active:opacity-90 transition-opacity"
-        >
-          <Image
-            src="/logo-tranparent.png"
-            alt="Mullai Kitchen Admin"
-            width={150}
-            height={40}
-            className="h-auto w-full rounded group-data-[collapsible=icon]:hidden"
-            priority
-          />
-        </Link>
-      </SidebarHeader>
+    <>
+      {/* Mobile overlay backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm lg:hidden"
+          onClick={onMobileClose}
+        />
+      )}
 
-      <SidebarContent className="flex flex-col h-full overflow-y-auto gap-0">
-        {ADMIN_NAV_GROUPS.map((group, groupIdx) => (
-          <Collapsible
-            key={group.label}
-            defaultOpen={groupIdx === activeGroupIndex}
-          >
-            <SidebarGroup className="px-3 py-1">
-              <CollapsibleTrigger asChild>
-                <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden cursor-pointer select-none text-sidebar-foreground/40 text-xs font-semibold uppercase tracking-wider px-2 mb-1 hover:text-sidebar-foreground/70 transition-colors [&>svg]:transition-transform [&>svg]:duration-200">
-                  <span>{group.label}</span>
-                  <ChevronRight className="ml-auto h-3 w-3 group-data-[state=open]/collapsible:rotate-90" />
-                </SidebarGroupLabel>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarGroupContent>
-                  <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center">
-                    {group.items.map((item) => {
-                      const isActive =
-                        item.href === "/admin"
-                          ? pathname === "/admin"
-                          : pathname.startsWith(item.href);
-
-                      return (
-                        <PermissionNavItem
-                          key={item.href}
-                          permission={item.permission}
-                          requireAll={item.requireAll}
-                        >
-                          <SidebarMenuItem>
-                            <SidebarMenuButton
-                              asChild
-                              isActive={isActive}
-                              tooltip={item.label}
-                              className={cn(
-                                "h-10 w-full rounded-lg px-3 flex items-center gap-3 transition-all duration-200 group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:px-0",
-                                isActive
-                                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold"
-                                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
-                              )}
-                            >
-                              <Link
-                                href={item.href}
-                                className="flex w-full items-center gap-3 group-data-[collapsible=icon]:justify-center"
-                              >
-                                <item.icon className="h-[18px] w-[18px] shrink-0" />
-                                <span className="text-sm font-medium whitespace-nowrap group-data-[collapsible=icon]:hidden">
-                                  {item.label}
-                                </span>
-                              </Link>
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        </PermissionNavItem>
-                      );
-                    })}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </CollapsibleContent>
-            </SidebarGroup>
-          </Collapsible>
-        ))}
-
-        <div className="mt-auto px-4 pb-6">
-          <Button
-            variant="ghost"
-            onClick={handleLogout}
-            disabled={logoutMutation.isPending}
-            className={cn(
-              "w-full h-10 justify-start gap-3 px-3 rounded-lg group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0",
-              "text-sidebar-foreground/60 hover:text-destructive hover:bg-destructive/10",
-              "transition-all duration-200 text-sm font-medium"
-            )}
-          >
-            <LogOut className="h-[18px] w-[18px] shrink-0" />
-            <span className="group-data-[collapsible=icon]:hidden">
-              {logoutMutation.isPending ? "Logging out..." : "Log out"}
-            </span>
-          </Button>
+      <aside
+        className={cn(
+          "fixed left-0 top-0 z-50 flex h-screen w-64 flex-col overflow-hidden rounded-br-[9px] rounded-tr-[9px] px-4 py-1 transition-transform duration-300 ease-in-out",
+          "lg:translate-x-0",
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+        style={{ backgroundColor: "#44151c" }}
+      >
+        {/* Logo */}
+        <div className="flex h-[85px] shrink-0 items-start pb-10 pt-2">
+          <Link href="/admin" className="block w-full" onClick={onMobileClose}>
+            <Image
+              src="/logo-tranparent.png"
+              alt="Mullai Kitchen Admin"
+              width={211}
+              height={85}
+              className="h-auto w-[211px] object-cover"
+              priority
+            />
+          </Link>
         </div>
-      </SidebarContent>
-      <SidebarRail />
-    </ShadcnSidebar>
+
+        {/* Navigation */}
+        <nav className="flex flex-1 flex-col overflow-y-auto">
+          {ADMIN_NAV_GROUPS.map((group) => (
+            <div key={group.label} className="mb-1">
+              {/* Group Label */}
+              <div className="flex h-6 items-center rounded-lg px-2.5 py-3">
+                <div className="flex flex-1 items-center justify-between">
+                  <span
+                    className="text-[11px] font-semibold uppercase tracking-[1.1px]"
+                    style={{ color: "rgba(251,251,251,0.54)" }}
+                  >
+                    {group.label}
+                  </span>
+                  <ChevronRight
+                    className="h-3 w-3 shrink-0"
+                    style={{ color: "rgba(251,251,251,0.54)" }}
+                  />
+                </div>
+              </div>
+
+              {/* Group Items */}
+              <div className="flex flex-col gap-0.5">
+                {group.items.map((item) => {
+                  const isActive =
+                    item.href === "/admin"
+                      ? pathname === "/admin"
+                      : pathname.startsWith(item.href);
+
+                  return (
+                    <PermissionNavItem
+                      key={item.href}
+                      permission={item.permission}
+                      requireAll={item.requireAll}
+                    >
+                      <Link
+                        href={item.href}
+                        onClick={onMobileClose}
+                        className={cn(
+                          "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200",
+                          isActive
+                            ? "bg-white font-semibold shadow-sm"
+                            : "hover:bg-white/10"
+                        )}
+                        style={
+                          isActive
+                            ? { color: "#44151c" }
+                            : { color: "rgba(251,251,251,0.76)" }
+                        }
+                      >
+                        <item.icon className="h-[18px] w-[18px] shrink-0" />
+                        <span className="whitespace-nowrap">{item.label}</span>
+                      </Link>
+                    </PermissionNavItem>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+
+          {/* Logout */}
+          <div className="mt-auto pb-4 pt-2">
+            <div
+              className="mb-2 border-t"
+              style={{ borderColor: "rgba(251,251,251,0.5)" }}
+            />
+            <button
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
+              className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 hover:bg-white/10"
+              style={{ color: "rgba(251,251,251,0.76)" }}
+            >
+              <LogOut className="h-[18px] w-[18px] shrink-0" />
+              <span>
+                {logoutMutation.isPending ? "Logging out..." : "Log out"}
+              </span>
+            </button>
+          </div>
+        </nav>
+      </aside>
+    </>
   );
 }
