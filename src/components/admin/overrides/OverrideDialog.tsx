@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -85,17 +85,33 @@ export function OverrideDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+<<<<<<< HEAD
       <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
+=======
+      <DialogContent className="sm:max-w-md rounded-xl">
+>>>>>>> 831ebf2 (admin pages ui changes)
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'Edit Override' : 'Add Override'}</DialogTitle>
-          <DialogDescription>{date}</DialogDescription>
+          <DialogTitle className="text-lg font-bold"
+          >
+            {isEditing ? 'Edit Override' : 'Add Override'}
+          </DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground"
+          >
+            {date}
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-2">
-          <div className="space-y-2">
-            <Label>Meal Type</Label>
-            <Select value={mealType} onValueChange={(v) => setMealType(v as MealType)} disabled={isEditing}>
-              <SelectTrigger>
+        <div className="space-y-4 py-2"
+        >
+          {/* Meal Type */}
+          <div className="space-y-2"
+          >
+            <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
+            >Meal Type</Label>
+            <Select value={mealType} onValueChange={(v) => setMealType(v as MealType)} disabled={isEditing}
+            >
+              <SelectTrigger className="h-10 rounded-lg border-border/40 bg-muted/30 text-sm"
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -106,17 +122,28 @@ export function OverrideDialog({
             </Select>
           </div>
 
-          <div className="flex items-center justify-between">
-            <Label htmlFor="is_closed">Close this meal</Label>
+          {/* Close Toggle */}
+          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/20"
+          >
+            <Label htmlFor="is_closed" className="text-sm font-medium cursor-pointer"
+            >Close this meal</Label>
             <Switch id="is_closed" checked={isClosed} onCheckedChange={setIsClosed} />
           </div>
 
+          {/* Recipe Selects */}
           {!isClosed && (
-            <>
-              <div className="space-y-2">
-                <Label>Veg Recipe</Label>
-                <Select value={vegRecipeId} onValueChange={setVegRecipeId}>
-                  <SelectTrigger><SelectValue placeholder="Select veg recipe" /></SelectTrigger>
+            <div className="space-y-3"
+            >
+              <div className="space-y-2"
+              >
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
+                >Veg Recipe</Label>
+                <Select value={vegRecipeId} onValueChange={setVegRecipeId}
+                >
+                  <SelectTrigger className="h-10 rounded-lg border-border/40 bg-muted/30 text-sm"
+                  >
+                    <SelectValue placeholder="Select veg recipe" />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">None</SelectItem>
                     {recipeOptions.map((r) => (
@@ -126,10 +153,16 @@ export function OverrideDialog({
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label>Non-Veg Recipe</Label>
-                <Select value={nonvegRecipeId} onValueChange={setNonvegRecipeId}>
-                  <SelectTrigger><SelectValue placeholder="Select non-veg recipe" /></SelectTrigger>
+              <div className="space-y-2"
+              >
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
+                >Non-Veg Recipe</Label>
+                <Select value={nonvegRecipeId} onValueChange={setNonvegRecipeId}
+                >
+                  <SelectTrigger className="h-10 rounded-lg border-border/40 bg-muted/30 text-sm"
+                  >
+                    <SelectValue placeholder="Select non-veg recipe" />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">None</SelectItem>
                     {recipeOptions.map((r) => (
@@ -138,30 +171,46 @@ export function OverrideDialog({
                   </SelectContent>
                 </Select>
               </div>
-            </>
+            </div>
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="reason">Reason (optional)</Label>
+          {/* Reason */}
+          <div className="space-y-2"
+          >
+            <Label htmlFor="reason" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
+            >Reason (optional)</Label>
             <Textarea
               id="reason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="e.g., Holiday, kitchen maintenance..."
               rows={2}
+              className="rounded-lg border-border/40 bg-muted/30 text-sm resize-none"
             />
           </div>
         </div>
 
-        <DialogFooter className="gap-2">
+        {/* Footer */}
+        <DialogFooter className="gap-2"
+        >
           {isEditing && (
-            <Button variant="destructive" onClick={handleDelete} disabled={deleteOverride.isPending}>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteOverride.isPending}
+              className="rounded-full h-9"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
               Delete
             </Button>
           )}
           <div className="flex-1" />
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting}>
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-full h-9"
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} disabled={isSubmitting} className="rounded-full h-9 bg-primary hover:bg-primary/90"
+          >
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isEditing ? 'Update' : 'Create'}
           </Button>

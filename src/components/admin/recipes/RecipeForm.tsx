@@ -76,10 +76,14 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
       description: initialData?.description || '',
       cuisine_type: initialData?.cuisine_type || '',
       difficulty: initialData?.difficulty || '',
+<<<<<<< HEAD
       ingredients: initialData?.ingredients || [],
       prep_time: initialData?.cooking_details?.prep_time || '',
       cook_time: initialData?.cooking_details?.cook_time || '',
       servings: initialData?.cooking_details?.servings || ('' as any),
+=======
+      ingredients: initialData?.ingredients?.length ? initialData.ingredients : [],
+>>>>>>> 831ebf2 (admin pages ui changes)
       instructions: initialData?.cooking_details?.instructions?.map((s) => ({ value: s })) || [],
       calories: initialData?.nutrition?.calories || ('' as any),
       protein: initialData?.nutrition?.protein || '',
@@ -155,6 +159,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
     'text-[11px] font-bold uppercase tracking-wider text-[#554243]';
 
   return (
+<<<<<<< HEAD
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
       {/* Top Row: Title + Status Toggle */}
       <motion.div
@@ -200,12 +205,52 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 rounded-xl bg-[#f8f2f3]">
               <ChefHat className="h-4 w-4 text-[#44151c]" />
+=======
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6"
+    >
+      {/* Status Toggle */}
+      <div className="flex items-center justify-end gap-3"
+      >
+        <span className="text-sm text-muted-foreground"
+        >Status:</span>
+        <Switch
+          checked={isActive}
+          onCheckedChange={(v) => setValue('is_active', v)}
+        />
+        <span
+          className={cn(
+            'text-sm font-bold uppercase tracking-wider',
+            isActive ? 'text-primary' : 'text-muted-foreground'
+          )}
+        >
+          {isActive ? 'ACTIVE' : 'INACTIVE'}
+        </span>
+      </div>
+
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5"
+      >
+        {/* Left Column */}
+        <div className="space-y-5"
+        >
+          {/* Basic Details */}
+          <div className="bg-white rounded-xl border border-border/40 shadow-sm p-5"
+          >
+            <div className="flex items-center gap-2 mb-5"
+            >
+              <UtensilsCrossed className="h-4 w-4 text-foreground" />
+              <h3 className="text-sm font-bold text-foreground"
+              >
+                Basic Details
+              </h3>
+>>>>>>> 831ebf2 (admin pages ui changes)
             </div>
             <h3 className="text-sm font-bold uppercase tracking-wider text-[#44151c]">
               Basic Details
             </h3>
           </div>
 
+<<<<<<< HEAD
           <div className="space-y-2">
             <Label htmlFor="name" className={labelClass}>
               Recipe Name *
@@ -345,20 +390,122 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
                 </div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-[#44151c]">
                   Preparation
+=======
+            <div className="space-y-5"
+            >
+              {/* Recipe Name */}
+              <div className="space-y-2"
+              >
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
+                >
+                  Recipe Name
+                </Label>
+                <Input
+                  {...register('name')}
+                  placeholder="e.g. Pan-Seared Chilean Sea Bass"
+                  className="h-11 rounded-lg border-border/40 bg-muted/30 px-4 text-sm focus-visible:border-primary focus-visible:ring-primary/20"
+                />
+                {errors.name && (
+                  <p className="text-xs text-destructive">{errors.name.message}</p>
+                )}
+              </div>
+
+              {/* Description */}
+              <div className="space-y-2"
+              >
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
+                >
+                  Description
+                </Label>
+                <Textarea
+                  {...register('description')}
+                  placeholder="Describe the flavor profile and presentation guidelines..."
+                  rows={3}
+                  className="rounded-lg border-border/40 bg-muted/30 px-4 text-sm resize-none focus-visible:border-primary focus-visible:ring-primary/20"
+                />
+              </div>
+
+              {/* Category + Cuisine */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+              >
+                <div className="space-y-2"
+                >
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
+                  >
+                    Category
+                  </Label>
+                  <Select
+                    value={watch('difficulty') || ''}
+                    onValueChange={(v) => setValue('difficulty', v)}
+                  >
+                    <SelectTrigger className="h-11 rounded-lg border-border/40 bg-muted/30 text-sm"
+                    >
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CATEGORIES.map((c) => (
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2"
+                >
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
+                  >
+                    Cuisine Type
+                  </Label>
+                  <Select
+                    value={watch('cuisine_type') || ''}
+                    onValueChange={(v) => setValue('cuisine_type', v)}
+                  >
+                    <SelectTrigger className="h-11 rounded-lg border-border/40 bg-muted/30 text-sm"
+                    >
+                      <SelectValue placeholder="Select cuisine" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CUISINES.map((c) => (
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Ingredients List */}
+          <div className="bg-white rounded-xl border border-border/40 shadow-sm p-5"
+          >
+            <div className="flex items-center justify-between mb-5"
+            >
+              <div className="flex items-center gap-2"
+              >
+                <ClipboardList className="h-4 w-4 text-foreground" />
+                <h3 className="text-sm font-bold text-foreground"
+                >
+                  Ingredients List
+>>>>>>> 831ebf2 (admin pages ui changes)
                 </h3>
               </div>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
+<<<<<<< HEAD
                 onClick={() => appendInstruction({ value: '' })}
                 className="rounded-full border-[rgba(219,192,193,0.3)] text-[#44151c] hover:bg-[#f8f2f3]"
+=======
+                onClick={() => appendIngredient({ name: '', quantity: '', unit: 'Grams' })}
+                className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-primary/5 h-8"
+>>>>>>> 831ebf2 (admin pages ui changes)
               >
                 <Plus className="mr-1 h-3.5 w-3.5" />
                 Add Step
               </Button>
             </div>
 
+<<<<<<< HEAD
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
               <div className="space-y-2">
                 <Label htmlFor="prep_time" className={labelClass}>
@@ -407,18 +554,62 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
                     placeholder={`Step ${index + 1}`}
                     rows={2}
                     className="flex-1 rounded-lg border-[rgba(219,192,193,0.3)] bg-[#f8f2f3] px-4 text-sm text-[#44151c] placeholder:text-[#554243]/50 transition-colors focus-visible:border-[#44151c] focus-visible:ring-[#44151c]/20"
+=======
+            <div className="space-y-3"
+            >
+              {ingredientFields.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4"
+                >
+                  No ingredients added yet. Click &quot;Add Row&quot; to start.
+                </p>
+              )}
+              {ingredientFields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className="flex items-center gap-2.5 p-2.5 rounded-lg bg-muted/30"
+                >
+                  <Input
+                    {...register(`ingredients.${index}.quantity`)}
+                    placeholder="200"
+                    className="w-16 h-9 rounded-md border-border/40 bg-white text-sm text-center px-2"
+                  />
+                  <Select
+                    value={watch(`ingredients.${index}.unit`) || 'Grams'}
+                    onValueChange={(v) => setValue(`ingredients.${index}.unit`, v)}
+                  >
+                    <SelectTrigger className="w-28 h-9 rounded-md border-border/40 bg-white text-sm px-2"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {UNITS.map((u) => (
+                        <SelectItem key={u} value={u}>{u}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    {...register(`ingredients.${index}.name`)}
+                    placeholder="Chilean Sea Bass Fillet"
+                    className="flex-1 h-9 rounded-md border-border/40 bg-white text-sm px-3"
+>>>>>>> 831ebf2 (admin pages ui changes)
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
+<<<<<<< HEAD
                     className="h-9 w-9 shrink-0 mt-1 rounded-full hover:bg-red-50 text-red-600"
                     onClick={() => removeInstruction(index)}
+=======
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"
+                    onClick={() => removeIngredient(index)}
+>>>>>>> 831ebf2 (admin pages ui changes)
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               ))}
+<<<<<<< HEAD
               {instructionFields.length === 0 && (
                 <p className="text-sm text-[#554243]/60 text-center py-4">
                   No steps added yet. Click "Add Step" to begin.
@@ -549,20 +740,101 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
         className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3"
+=======
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-5"
+        >
+          {/* Image Upload */}
+          <div className="bg-white rounded-xl border border-border/40 shadow-sm overflow-hidden"
+          >
+            <div className="relative aspect-[4/3] bg-muted"
+            >
+              <Image
+                src={imagePreview || DEFAULT_RECIPE_IMAGE}
+                alt="Recipe preview"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40"
+              >
+                <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center mb-2"
+                >
+                  <Camera className="h-5 w-5 text-white" />
+                </div>
+                <p className="text-xs font-bold text-white uppercase tracking-wider"
+                >
+                  UPDATE RECIPE IMAGE
+                </p>
+                <p className="text-[10px] text-white/70 text-center mt-1 leading-relaxed"
+                >
+                  High-resolution JPEG or PNG.<br />Recommended 16:9 aspect ratio.
+                </p>
+              </div>
+            </div>
+            <div className="p-4"
+            >
+              <Input
+                {...register('image_url')}
+                placeholder="https://..."
+                className="h-9 rounded-md border-border/40 bg-muted/30 text-sm"
+              />
+            </div>
+          </div>
+
+          {/* Preparation */}
+          <div className="bg-white rounded-xl border border-border/40 shadow-sm p-5"
+          >
+            <div className="flex items-center gap-2 mb-4"
+            >
+              <ListChecks className="h-4 w-4 text-foreground" />
+              <h3 className="text-sm font-bold text-foreground"
+              >
+                Preparation
+              </h3>
+            </div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3"
+            >
+              Step-by-Step Guide
+            </p>
+            <Textarea
+              {...register('instructions.0.value')}
+              placeholder="1. Preheat the pan to high heat.&#10;2. Season the fillets with sea salt.&#10;3. Sear for 4 minutes on skin side..."
+              rows={8}
+              className="rounded-lg border-border/40 bg-muted/30 px-4 text-sm resize-none focus-visible:border-primary focus-visible:ring-primary/20"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Actions */}
+      <div className="flex items-center justify-end gap-3 pt-2"
+>>>>>>> 831ebf2 (admin pages ui changes)
       >
         <Button
           type="button"
           variant="outline"
           onClick={() => router.push('/admin/recipes')}
+<<<<<<< HEAD
           className="rounded-full px-8 text-sm font-semibold border-[rgba(219,192,193,0.3)] text-[#44151c] hover:bg-[#f8f2f3]"
+=======
+          className="h-10 px-6 text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground"
+>>>>>>> 831ebf2 (admin pages ui changes)
         >
           Cancel
         </Button>
         <Button
           type="submit"
           disabled={isSubmitting}
+<<<<<<< HEAD
           className="rounded-full px-8 text-sm font-semibold text-white hover:opacity-90"
           style={{ background: 'linear-gradient(135deg, #44151c 0%, #5e1f2a 100%)' }}
+=======
+          className="h-10 rounded-full px-8 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold uppercase tracking-wider"
+>>>>>>> 831ebf2 (admin pages ui changes)
         >
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {mode === 'create' ? 'Save Recipe' : 'Save Recipe'}

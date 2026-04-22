@@ -31,14 +31,16 @@ export default function RecipeDetailPage() {
     <Can
       permission="recipe:view"
       fallback={
+<<<<<<< HEAD
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12 flex flex-col items-center justify-center min-h-[400px]">
           <div className="p-5 rounded-xl bg-destructive/10 mb-6">
+=======
+        <div className="flex flex-col items-center justify-center min-h-[400px]">
+          <div className="p-5 rounded-2xl bg-destructive/10 mb-6">
+>>>>>>> 831ebf2 (admin pages ui changes)
             <ChefHat className="h-10 w-10 text-destructive" />
           </div>
-          <h2
-            className="text-2xl font-bold mb-2 text-primary"
-            style={{ fontFamily: 'Inter, sans-serif' }}
-          >
+          <h2 className="text-2xl font-bold mb-2 text-primary">
             Access Restricted
           </h2>
           <p className="text-muted-foreground text-center">
@@ -47,32 +49,16 @@ export default function RecipeDetailPage() {
         </div>
       }
     >
-      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
-        {/* Header */}
+      <div className="space-y-6">
+        {/* Back Link */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="mb-10 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-center sm:justify-between"
+          transition={{ duration: 0.3 }}
         >
-          <div>
-            <h1
-              className="text-[28px] font-extrabold uppercase tracking-tight text-primary sm:text-[32px] lg:text-[36px]"
-              style={{ fontFamily: 'Inter, sans-serif' }}
-            >
-              Recipe Details
-            </h1>
-            <p
-              className="mt-1 text-sm font-medium text-muted-foreground sm:text-[15px] lg:text-[16px]"
-              style={{ fontFamily: 'Inter, sans-serif' }}
-            >
-              View recipe information, ingredients, and nutrition.
-            </p>
-          </div>
-
           <Link
             href="/admin/recipes"
-            className="inline-flex items-center gap-2 rounded-full border border-border/60 px-5 py-2.5 text-sm font-semibold text-primary hover:bg-primary/5 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Recipes
@@ -81,6 +67,7 @@ export default function RecipeDetailPage() {
 
         {/* Content */}
         {isLoading ? (
+<<<<<<< HEAD
           <div className="space-y-6">
             <div className="rounded-xl bg-white border border-border/40 p-6 space-y-4">
               <Skeleton className="h-6 w-48 rounded-xl" />
@@ -105,6 +92,13 @@ export default function RecipeDetailPage() {
                 <Skeleton className="h-11 rounded-xl" />
                 <Skeleton className="h-11 rounded-xl" />
               </div>
+=======
+          <div className="space-y-5">
+            <Skeleton className="h-64 w-full rounded-xl" />
+            <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-5">
+              <Skeleton className="h-96 rounded-xl" />
+              <Skeleton className="h-96 rounded-xl" />
+>>>>>>> 831ebf2 (admin pages ui changes)
             </div>
           </div>
         ) : error || !recipe ? (
@@ -117,10 +111,7 @@ export default function RecipeDetailPage() {
             <div className="p-5 rounded-xl bg-destructive/10 mb-6">
               <ChefHat className="h-10 w-10 text-destructive" />
             </div>
-            <h2
-              className="text-2xl font-bold mb-2 text-primary"
-              style={{ fontFamily: 'Inter, sans-serif' }}
-            >
+            <h2 className="text-2xl font-bold mb-2 text-primary">
               Recipe Not Found
             </h2>
             <p className="text-muted-foreground text-center mb-6">

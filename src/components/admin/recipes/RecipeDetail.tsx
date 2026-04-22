@@ -1,5 +1,6 @@
 'use client';
 
+<<<<<<< HEAD
 import { motion } from 'motion/react';
 import {
   ChefHat,
@@ -13,10 +14,28 @@ import {
   Share2,
   CalendarDays,
 } from 'lucide-react';
+=======
+import { useRef } from 'react';
+import Image from 'next/image';
+>>>>>>> 831ebf2 (admin pages ui changes)
 import Link from 'next/link';
+import {
+  Printer,
+  Share2,
+  Pencil,
+  Trash2,
+  Archive,
+  Send,
+  Calendar,
+  Clock,
+  UtensilsCrossed,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
+<<<<<<< HEAD
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+=======
+>>>>>>> 831ebf2 (admin pages ui changes)
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,6 +58,7 @@ interface RecipeDetailProps {
   onStatusChange?: (status: RecipeStatus) => void;
 }
 
+<<<<<<< HEAD
 function StatusBadge({ status }: { status: RecipeStatus }) {
   const config = {
     [RecipeStatus.DRAFT]: { label: 'Draft', className: 'bg-white/20 text-white backdrop-blur-sm' },
@@ -136,8 +156,106 @@ export function RecipeDetail({ recipe, onDelete, onStatusChange }: RecipeDetailP
                 {recipe.description}
               </p>
             )}
+=======
+/* ─── Mock data for the Figma design ─── */
+const MOCK_INGREDIENTS: { name: string; quantity: string; unit: string }[] = [
+  { name: 'Wagyu Short Ribs', quantity: '1.5', unit: 'KG' },
+  { name: 'Bordeaux Red Wine', quantity: '750', unit: 'ML' },
+  { name: 'Mirepoix (Carrot, Celery, Onion)', quantity: '400', unit: 'G' },
+  { name: 'Beef Bone Marrow Broth', quantity: '1', unit: 'LITRE' },
+  { name: 'Fresh Thyme & Rosemary', quantity: '3', unit: 'SPRIGS' },
+  { name: 'Black Winter Truffle', quantity: '20', unit: 'G' },
+  { name: 'Yukon Gold Potatoes', quantity: '800', unit: 'G' },
+];
+
+const MOCK_STEPS = [
+  {
+    number: 1,
+    title: 'SEARING & AROMATICS',
+    description:
+      'Season the wagyu short ribs generously with sea salt and cracked black pepper. In a heavy-bottomed cast iron cocotte, sear the meat in grape-seed oil over high heat until a deep mahogany crust forms on all sides. Remove the meat and sauté the mirepoix until caramelised.',
+    image: '/images/admin/Gourmet%20Salad.png',
+  },
+  {
+    number: 2,
+    title: 'THE BRAISING PROCESS',
+    description:
+      'Deglaze the pot with the Bordeaux, scraping the bottom for fond. Reduce the wine by half, then return the ribs to the pot. Add the beef bone broth and aromatics. Cover with a cartouche and lid, then braise in a 140°C oven for 6 hours until fork-tender.',
+    image: undefined,
+  },
+  {
+    number: 3,
+    title: 'POMME PURÉE & FINISHING',
+    description:
+      'Pass cooked Yukon Gold potatoes through a fine tamis. Emulsify with 50% cold butter and fold in minced black truffles. Strain the braising liquid through a chinois and reduce to a nappé consistency. Glaze the ribs before serving.',
+    image: '/images/admin/Gourmet%20Salad.png',
+  },
+];
+
+const DEFAULT_RECIPE_IMAGE = '/images/admin/Gourmet%20Salad.png';
+
+export function RecipeDetail({ recipe, onDelete, onStatusChange }: RecipeDetailProps) {
+  const printRef = useRef<HTMLDivElement>(null);
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const createdDate = recipe.created_at
+    ? new Date(recipe.created_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    : 'Oct 14, 2023';
+
+  const updatedDate = recipe.updated_at
+    ? new Date(recipe.updated_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    : 'Jan 22, 2024';
+
+  return (
+    <div className="space-y-5" ref={printRef}>
+      {/* ─── Hero Image ─── */}
+      <div className="relative w-full rounded-xl overflow-hidden aspect-[21/9]"
+      >
+        <Image
+          src={recipe.image_url || DEFAULT_RECIPE_IMAGE}
+          alt={recipe.name}
+          fill
+          className="object-cover"
+          priority
+        />
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+        {/* Overlay content */}
+        <div className="absolute bottom-0 left-0 right-0 p-6"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center px-2 py-1 rounded-full bg-white/90 text-[10px] font-bold uppercase tracking-wider text-foreground"
+            >
+              {recipe.cuisine_type || 'Mediterranean'}
+            </span>
+            <span className="inline-flex items-center px-2 py-1 rounded-full bg-white/90 text-[10px] font-bold uppercase tracking-wider text-foreground"
+            >
+              Lunch
+            </span>
+>>>>>>> 831ebf2 (admin pages ui changes)
           </div>
+          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight"
+          >
+            {recipe.name}
+          </h1>
+          <p className="text-sm text-white/80 mt-1 font-medium uppercase tracking-wide"
+          >
+            {recipe.description || 'With truffle pomme purée & glazed spring vegetables'}
+          </p>
         </div>
+<<<<<<< HEAD
       </motion.div>
 
       {/* ===== TWO COLUMN: INGREDIENTS + PREPARATION ===== */}
@@ -375,11 +493,219 @@ export function RecipeDetail({ recipe, onDelete, onStatusChange }: RecipeDetailP
                     borderColor: 'rgba(219,192,193,0.4)',
                     backgroundColor: 'transparent',
                   }}
+=======
+      </div>
+
+      {/* ─── Two Column Layout ─── */}
+      <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-5"
+      >
+        {/* Left: Ingredients */}
+        <div className="bg-white rounded-xl border border-border/40 shadow-sm p-5 space-y-4"
+        >
+          <div className="flex items-center gap-2"
+          >
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center"
+            >
+              <UtensilsCrossed className="h-4 w-4 text-primary" />
+            </div>
+            <h2 className="text-sm font-bold text-foreground uppercase tracking-wider"
+            >
+              Ingredients
+            </h2>
+          </div>
+
+          <div className="space-y-0"
+          >
+            {(recipe.ingredients?.length ? recipe.ingredients : MOCK_INGREDIENTS).map(
+              (ing, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    'flex items-center justify-between py-3 text-sm',
+                    i > 0 && 'border-t border-border/30'
+                  )}
+                >
+                  <span className="font-medium text-foreground"
+                  >
+                    {ing.name}
+                  </span>
+                  <span className="text-muted-foreground font-semibold text-xs uppercase tracking-wider"
+                  >
+                    {`${ing.quantity} ${ing.unit}`}
+                  </span>
+                </div>
+              )
+            )}
+          </div>
+
+          {/* Meta dates */}
+          <div className="pt-4 border-t border-border/30 space-y-2"
+          >
+            <div className="flex items-center gap-2 text-xs text-muted-foreground"
+            >
+              <Calendar className="h-3.5 w-3.5" />
+              <span className="font-bold uppercase tracking-wider"
+              >Created on:</span>
+              <span>{createdDate}</span>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground"
+            >
+              <Clock className="h-3.5 w-3.5" />
+              <span className="font-bold uppercase tracking-wider"
+              >Last updated:</span>
+              <span>{updatedDate}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Preparation Steps */}
+        <div className="bg-white rounded-xl border border-border/40 shadow-sm p-5"
+        >
+          <div className="flex items-center gap-2 mb-6"
+          >
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center"
+            >
+              <UtensilsCrossed className="h-4 w-4 text-primary" />
+            </div>
+            <h2 className="text-sm font-bold text-foreground uppercase tracking-wider"
+            >
+              Preparation Steps
+            </h2>
+          </div>
+
+          <div className="space-y-8"
+          >
+            {(recipe.cooking_details?.instructions?.length
+              ? recipe.cooking_details.instructions.map((desc, i) => ({
+                  number: i + 1,
+                  title: `Step ${i + 1}`,
+                  description: desc,
+                  image: undefined,
+                }))
+              : MOCK_STEPS
+            ).map((step) => (
+              <div key={step.number} className="flex gap-4"
+              >
+                {/* Number circle */}
+                <div className="flex flex-col items-center"
+                >
+                  <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center shrink-0"
+                  >
+                    <span className="text-xs font-bold text-primary-foreground"
+                    >
+                      {step.number}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 space-y-3"
+                >
+                  <h3 className="text-xs font-bold text-foreground uppercase tracking-wider"
+                  >
+                    {step.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed"
+                  >
+                    {step.description}
+                  </p>
+                  {step.image && (
+                    <div className="relative aspect-video rounded-lg overflow-hidden bg-muted max-w-sm"
+                    >
+                      <Image
+                        src={step.image}
+                        alt={step.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Bottom Actions ─── */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white rounded-xl border border-border/40 shadow-sm p-5"
+      >
+        <div>
+          <p className="text-xs font-bold text-foreground uppercase tracking-wider"
+          >
+            Culinary Concierge
+          </p>
+          <p className="text-xs text-muted-foreground mt-0.5"
+          >
+            Operational Excellence in Fine Dining
+          </p>
+        </div>
+        <div className="flex items-center gap-3"
+        >
+          <Button
+            variant="outline"
+            className="rounded-full h-9 px-5 text-xs font-semibold border-border/40"
+            onClick={handlePrint}
+          >
+            <Printer className="mr-2 h-3.5 w-3.5" />
+            Print Recipe
+          </Button>
+          <Button
+            variant="outline"
+            className="rounded-full h-9 px-5 text-xs font-semibold border-border/40"
+          >
+            <Share2 className="mr-2 h-3.5 w-3.5" />
+            Share Link
+          </Button>
+        </div>
+      </div>
+
+      {/* ─── Admin Actions ─── */}
+      <Can permission="recipe:edit:global"
+      >
+        <div className="flex items-center justify-end gap-2"
+        >
+          {recipe.status === RecipeStatus.DRAFT && onStatusChange && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onStatusChange(RecipeStatus.PUBLISHED)}
+              className="rounded-full h-9 px-4"
+            >
+              <Send className="mr-2 h-4 w-4" />
+              Publish
+            </Button>
+          )}
+          {recipe.status === RecipeStatus.PUBLISHED && onStatusChange && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onStatusChange(RecipeStatus.ARCHIVED)}
+              className="rounded-full h-9 px-4"
+            >
+              <Archive className="mr-2 h-4 w-4" />
+              Archive
+            </Button>
+          )}
+          <Button variant="outline" size="sm" asChild className="rounded-full h-9 px-4"
+          >
+            <Link href={`/admin/recipes/${recipe._id}/edit`}
+            >
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit
+            </Link>
+          </Button>
+          {onDelete && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="sm" className="rounded-full h-9 px-4"
+>>>>>>> 831ebf2 (admin pages ui changes)
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete
                 </Button>
               </AlertDialogTrigger>
+<<<<<<< HEAD
               <AlertDialogContent
                 className="rounded-xl"
                 style={{ border: '1px solid rgba(219,192,193,0.2)' }}
@@ -406,6 +732,20 @@ export function RecipeDetail({ recipe, onDelete, onStatusChange }: RecipeDetailP
                   <AlertDialogAction
                     onClick={onDelete}
                     className="rounded-full bg-red-600 text-white hover:bg-red-700"
+=======
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Recipe</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to delete this recipe? This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={onDelete}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+>>>>>>> 831ebf2 (admin pages ui changes)
                   >
                     Delete
                   </AlertDialogAction>
@@ -414,7 +754,11 @@ export function RecipeDetail({ recipe, onDelete, onStatusChange }: RecipeDetailP
             </AlertDialog>
           )}
         </div>
+<<<<<<< HEAD
       </motion.div>
+=======
+      </Can>
+>>>>>>> 831ebf2 (admin pages ui changes)
     </div>
   );
 }

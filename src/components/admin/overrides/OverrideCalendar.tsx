@@ -1,7 +1,11 @@
 'use client';
 
 import { useMemo } from 'react';
+<<<<<<< HEAD
 import { Leaf, Drumstick, X } from 'lucide-react';
+=======
+import { Leaf, Drumstick, X, CalendarX } from 'lucide-react';
+>>>>>>> 831ebf2 (admin pages ui changes)
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useOverrideCalendar } from '@/api/hooks/useOverrides';
@@ -84,10 +88,17 @@ export function OverrideCalendar({ outletId, year, month, onDateClick }: Overrid
 
   if (isLoading) {
     return (
+<<<<<<< HEAD
       <div className="rounded-3xl bg-white p-4" style={{ border: '1px solid rgba(219,192,193,0.2)' }}>
         <div className="grid grid-cols-7 gap-1">
           {Array.from({ length: 42 }).map((_, i) => (
             <Skeleton key={i} className="h-24 rounded-xl" />
+=======
+      <div className="bg-white rounded-xl border border-border/40 shadow-sm p-4">
+        <div className="grid grid-cols-7 gap-1">
+          {Array.from({ length: 42 }).map((_, i) => (
+            <Skeleton key={i} className="h-24 rounded-lg" />
+>>>>>>> 831ebf2 (admin pages ui changes)
           ))}
         </div>
       </div>
@@ -95,6 +106,7 @@ export function OverrideCalendar({ outletId, year, month, onDateClick }: Overrid
   }
 
   return (
+<<<<<<< HEAD
     <div className="rounded-3xl bg-white overflow-hidden" style={{ border: '1px solid rgba(219,192,193,0.2)' }}>
       <div className="grid grid-cols-7">
         {/* Header row */}
@@ -107,28 +119,54 @@ export function OverrideCalendar({ outletId, year, month, onDateClick }: Overrid
               borderBottom: '1px solid rgba(219,192,193,0.2)',
               backgroundColor: 'rgba(68,21,28,0.03)',
             }}
+=======
+    <div className="bg-white rounded-xl border border-border/40 shadow-sm overflow-hidden">
+      {/* Weekday headers */}
+      <div className="grid grid-cols-7 border-b border-border/30">
+        {WEEKDAYS.map((wd) => (
+          <div
+            key={wd}
+            className="p-2.5 text-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground bg-muted/30"
+>>>>>>> 831ebf2 (admin pages ui changes)
           >
             {wd}
           </div>
         ))}
+<<<<<<< HEAD
 
         {/* Day cells */}
+=======
+      </div>
+
+      {/* Day cells */}
+      <div className="grid grid-cols-7">
+>>>>>>> 831ebf2 (admin pages ui changes)
         {calendarDays.map((dayInfo, idx) => {
           const breakfast = getMealOverride(dayInfo.date, MealType.BREAKFAST);
           const lunch = getMealOverride(dayInfo.date, MealType.LUNCH);
           const dinner = getMealOverride(dayInfo.date, MealType.DINNER);
           const hasAnyOverride = breakfast || lunch || dinner;
+<<<<<<< HEAD
           const isToday = dayInfo.isCurrentMonth && dayInfo.date === new Date().toISOString().split('T')[0];
+=======
+>>>>>>> 831ebf2 (admin pages ui changes)
 
           return (
             <div
               key={idx}
               className={cn(
+<<<<<<< HEAD
                 'min-h-[80px] sm:min-h-[100px] border-b border-r p-1.5 sm:p-2 cursor-pointer transition-colors hover:bg-[rgba(68,21,28,0.03)] last:border-r-0',
                 !dayInfo.isCurrentMonth && 'opacity-30',
                 hasAnyOverride && 'bg-[rgba(68,21,28,0.02)]',
               )}
               style={{ borderColor: 'rgba(219,192,193,0.15)' }}
+=======
+                'min-h-[100px] border-b border-r p-2 cursor-pointer transition-colors hover:bg-muted/20 last:border-r-0',
+                !dayInfo.isCurrentMonth && 'bg-muted/10',
+                hasAnyOverride && 'bg-primary/[0.02]'
+              )}
+>>>>>>> 831ebf2 (admin pages ui changes)
               onClick={() => {
                 const overrides = [breakfast, lunch, dinner].filter((o): o is MealRosterOverride => !!o);
                 if (overrides.length === 1) {
@@ -139,10 +177,15 @@ export function OverrideCalendar({ outletId, year, month, onDateClick }: Overrid
                 }
               }}
             >
+<<<<<<< HEAD
+=======
+              {/* Day number */}
+>>>>>>> 831ebf2 (admin pages ui changes)
               <div className="flex items-center justify-between mb-1.5">
                 <span
                   className={cn(
                     'text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full',
+<<<<<<< HEAD
                     isToday
                       ? 'text-white'
                       : dayInfo.isCurrentMonth
@@ -150,10 +193,18 @@ export function OverrideCalendar({ outletId, year, month, onDateClick }: Overrid
                         : 'text-[#554243]',
                   )}
                   style={isToday ? { backgroundColor: '#44151c' } : {}}
+=======
+                    dayInfo.isCurrentMonth
+                      ? 'text-foreground'
+                      : 'text-muted-foreground',
+                    hasAnyOverride && dayInfo.isCurrentMonth && 'bg-primary text-primary-foreground'
+                  )}
+>>>>>>> 831ebf2 (admin pages ui changes)
                 >
                   {dayInfo.day}
                 </span>
                 {hasAnyOverride && (
+<<<<<<< HEAD
                   <span
                     className="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full"
                     style={{
@@ -162,10 +213,18 @@ export function OverrideCalendar({ outletId, year, month, onDateClick }: Overrid
                     }}
                   >
                     {([breakfast, lunch, dinner].filter(Boolean).length)} override
+=======
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">
+                    Override
+>>>>>>> 831ebf2 (admin pages ui changes)
                   </span>
                 )}
               </div>
 
+<<<<<<< HEAD
+=======
+              {/* Meal overrides */}
+>>>>>>> 831ebf2 (admin pages ui changes)
               <div className="space-y-1">
                 {([MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER] as const).map((mt) => {
                   const ov = getMealOverride(dayInfo.date, mt);
@@ -173,9 +232,18 @@ export function OverrideCalendar({ outletId, year, month, onDateClick }: Overrid
 
                   if (ov.is_closed) {
                     return (
+<<<<<<< HEAD
                       <div key={mt} className="flex items-center gap-1 text-[10px] font-medium" style={{ color: '#ff0004' }}>
                         <X className="h-2.5 w-2.5 shrink-0" />
                         <span className="truncate line-through">{mt.slice(0, 3)}</span>
+=======
+                      <div
+                        key={mt}
+                        className="flex items-center gap-1 text-[10px] text-destructive bg-destructive/5 rounded px-1.5 py-0.5"
+                      >
+                        <CalendarX className="h-2.5 w-2.5 shrink-0" />
+                        <span className="truncate font-medium">{mt.slice(0, 3)} Closed</span>
+>>>>>>> 831ebf2 (admin pages ui changes)
                       </div>
                     );
                   }
@@ -185,10 +253,20 @@ export function OverrideCalendar({ outletId, year, month, onDateClick }: Overrid
                   if (!vegName && !nonvegName) return null;
 
                   return (
+<<<<<<< HEAD
                     <div key={mt} className="flex items-center gap-1 text-[10px]">
                       {vegName && <Leaf className="h-2.5 w-2.5 text-[#00990f] shrink-0" />}
                       {nonvegName && <Drumstick className="h-2.5 w-2.5 text-[#ff0004] shrink-0" />}
                       <span className="truncate font-medium" style={{ color: '#44151c' }}>
+=======
+                    <div
+                      key={mt}
+                      className="flex items-center gap-1 text-[10px] bg-muted/30 rounded px-1.5 py-0.5"
+                    >
+                      {vegName && <Leaf className="h-2.5 w-2.5 text-success shrink-0" />}
+                      {nonvegName && <Drumstick className="h-2.5 w-2.5 text-primary shrink-0" />}
+                      <span className="truncate text-foreground font-medium">
+>>>>>>> 831ebf2 (admin pages ui changes)
                         {vegName || nonvegName}
                       </span>
                     </div>

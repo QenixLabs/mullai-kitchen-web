@@ -5,11 +5,15 @@ import { format } from 'date-fns';
 import {
   Building2,
   Search,
+<<<<<<< HEAD
   ListFilter,
   ClipboardList,
   PackageOpen,
   Bike,
   IndianRupee,
+=======
+  X,
+>>>>>>> 831ebf2 (admin pages ui changes)
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
@@ -175,7 +179,7 @@ export default function OrdersPage() {
   const user = useCurrentUser();
   const canViewAnyOutlet = useHasPermission('outlet:view:any');
 
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedOutletId, setSelectedOutletId] = useState<string>('');
   const [mealType, setMealType] = useState<string>('');
   const [status, setStatus] = useState<string>('');
@@ -216,6 +220,7 @@ export default function OrdersPage() {
     }
   }, [isSuperAdmin, user?.assigned_outlet_id]);
 
+<<<<<<< HEAD
   // Auto-select first outlet for admin/super-admin when list loads
   useEffect(() => {
     if (isSuperAdmin && !selectedOutletId && outletsData?.data?.length) {
@@ -226,6 +231,9 @@ export default function OrdersPage() {
   const dateParam = selectedDate
     ? format(selectedDate, 'yyyy-MM-dd')
     : undefined;
+=======
+  const dateParam = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined;
+>>>>>>> 831ebf2 (admin pages ui changes)
 
   const { data, isLoading } = useAdminOrders({
     date: dateParam,
@@ -253,6 +261,7 @@ export default function OrdersPage() {
     setStatusOpen(true);
   }, []);
 
+<<<<<<< HEAD
   const displayOrders = data?.data?.length
     ? data.data.map((o) => ({
         ...o,
@@ -261,6 +270,24 @@ export default function OrdersPage() {
             ?.name || 'Central Kitchen',
       }))
     : MOCK_ORDERS;
+=======
+  const handleClearFilters = useCallback(() => {
+    setSelectedDate(undefined);
+    setMealType('');
+    setStatus('');
+    setSearch('');
+    setDebouncedSearch('');
+    if (isSuperAdmin) setSelectedOutletId('');
+    setPage(1);
+  }, [isSuperAdmin]);
+
+  const activeFilters = [
+    selectedDate && { label: format(selectedDate, 'MMM d, yyyy'), onRemove: () => setSelectedDate(undefined) },
+    mealType && { label: mealType, onRemove: () => setMealType('') },
+    status && { label: status.replace(/_/g, ' '), onRemove: () => setStatus('') },
+    search && { label: `Search: "${search}"`, onRemove: () => { setSearch(''); setDebouncedSearch(''); } },
+  ].filter(Boolean) as { label: string; onRemove: () => void }[];
+>>>>>>> 831ebf2 (admin pages ui changes)
 
   return (
     <Can
@@ -435,6 +462,29 @@ export default function OrdersPage() {
           </div>
         </div>
 
+        {/* Active Filters */}
+        {activeFilters.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs text-muted-foreground">Active filters:</span>
+            {activeFilters.map((f, i) => (
+              <button
+                key={i}
+                onClick={f.onRemove}
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 transition-colors"
+              >
+                {f.label}
+                <X className="h-3 w-3" />
+              </button>
+            ))}
+            <button
+              onClick={handleClearFilters}
+              className="text-xs font-semibold text-muted-foreground hover:text-foreground underline"
+            >
+              Clear all
+            </button>
+          </div>
+        )}
+
         {/* Order Cards Grid */}
         {isLoading ? (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -466,6 +516,32 @@ export default function OrdersPage() {
               </div>
             ))}
           </div>
+<<<<<<< HEAD
+=======
+        ) : orders.length === 0 ? (
+          <div className="bg-white rounded-xl border border-border/40 shadow-sm p-12 text-center">
+            <Truck className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
+            <h3 className="text-lg font-semibold text-foreground mb-1">
+              No orders found
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              {activeFilters.length > 0
+                ? 'No orders match your current filters.'
+                : 'There are no orders in the system yet.'}
+            </p>
+            {activeFilters.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleClearFilters}
+                className="rounded-full h-9 px-4"
+              >
+                <X className="mr-1.5 h-3.5 w-3.5" />
+                Clear all filters
+              </Button>
+            )}
+          </div>
+>>>>>>> 831ebf2 (admin pages ui changes)
         ) : (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {displayOrders.map((order) => (
