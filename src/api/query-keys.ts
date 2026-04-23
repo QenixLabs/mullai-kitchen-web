@@ -1,4 +1,11 @@
 import type { AdminOrderListParams } from '@/api/types/admin-order.types';
+import type {
+  AdminCorporateOrderListParams,
+  AdminCorporateInvoiceListParams,
+  AdminCorporateDailyOrderListParams,
+  AdminCorporateCompanyListParams,
+  PaginationParams,
+} from '@/api/types/admin-corporate.types';
 
 export const authKeys = {
   all: () => ["auth"] as const,
@@ -197,4 +204,25 @@ export const adminRouteKeys = {
   all: (outletId: string) => ['admin', 'outlets', outletId, 'routes'] as const,
   lists: (outletId: string) => [...adminRouteKeys.all(outletId), 'list'] as const,
   list: (outletId: string, params?: { date?: string }) => [...adminRouteKeys.lists(outletId), params] as const,
+};
+
+export const adminCorporateKeys = {
+  all: ['admin', 'corporate'] as const,
+  lists: () => [...adminCorporateKeys.all, 'list'] as const,
+  list: (params?: AdminCorporateOrderListParams) => [...adminCorporateKeys.lists(), params] as const,
+  details: () => [...adminCorporateKeys.all, 'detail'] as const,
+  detail: (id: string) => [...adminCorporateKeys.details(), id] as const,
+  modifications: (id: string) => [...adminCorporateKeys.all, 'modifications', id] as const,
+  invoices: (id: string) => [...adminCorporateKeys.all, 'invoices', id] as const,
+  dailyOrders: (id: string, params?: AdminCorporateDailyOrderListParams) => [...adminCorporateKeys.all, 'daily-orders', id, params] as const,
+  invoiceLists: () => [...adminCorporateKeys.all, 'invoice-list'] as const,
+  invoiceList: (params?: AdminCorporateInvoiceListParams) => [...adminCorporateKeys.invoiceLists(), params] as const,
+  dailyOrderLists: () => [...adminCorporateKeys.all, 'daily-order-list'] as const,
+  dailyOrderList: (params?: AdminCorporateDailyOrderListParams) => [...adminCorporateKeys.dailyOrderLists(), params] as const,
+  dailyOrderSummary: (params?: { outlet_id?: string; date?: string }) => [...adminCorporateKeys.all, 'daily-order-summary', params] as const,
+  companies: () => [...adminCorporateKeys.all, 'companies'] as const,
+  companyList: (params?: AdminCorporateCompanyListParams) => [...adminCorporateKeys.companies(), params] as const,
+  companyDetail: (id: string) => [...adminCorporateKeys.all, 'company', id] as const,
+  companyOrders: (id: string, params?: PaginationParams) => [...adminCorporateKeys.all, 'company-orders', id, params] as const,
+  companyInvoices: (id: string, params?: PaginationParams) => [...adminCorporateKeys.all, 'company-invoices', id, params] as const,
 };

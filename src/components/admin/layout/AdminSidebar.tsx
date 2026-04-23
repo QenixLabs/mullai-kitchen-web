@@ -21,6 +21,7 @@ import {
   ChevronRight,
   CreditCard,
   CalendarCheck,
+  Building2,
 } from "lucide-react";
 
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
@@ -151,6 +152,39 @@ const ADMIN_NAV_GROUPS: NavGroup[] = [
         icon: CalendarCheck,
         label: "Subscriptions",
         permission: ["subscription:view:any", "subscription:view:outlet"],
+        requireAll: false,
+      },
+    ],
+  },
+  {
+    label: "Corporate",
+    items: [
+      {
+        href: "/admin/corporate/orders",
+        icon: ClipboardList,
+        label: "Corporate Orders",
+        permission: ["corporate:view:any", "corporate:view:outlet"],
+        requireAll: false,
+      },
+      {
+        href: "/admin/corporate/invoices",
+        icon: CreditCard,
+        label: "Corporate Invoices",
+        permission: "corporate:invoice",
+        requireAll: true,
+      },
+      {
+        href: "/admin/corporate/daily-orders",
+        icon: CalendarCheck,
+        label: "Corp. Daily Orders",
+        permission: "corporate:kitchen",
+        requireAll: true,
+      },
+      {
+        href: "/admin/corporate/companies",
+        icon: Building2,
+        label: "Companies",
+        permission: ["corporate:view:any", "corporate:view:outlet"],
         requireAll: false,
       },
     ],

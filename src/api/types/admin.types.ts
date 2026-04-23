@@ -89,6 +89,18 @@ export interface IDashboardAlert {
 }
 
 /**
+ * Corporate metrics for dashboard
+ */
+export interface ICorporateMetrics {
+  activeOrders: number;
+  overdueInvoices: number;
+  todayMeals: number;
+  ordersTrend?: IKPITrend;
+  invoicesTrend?: IKPITrend;
+  mealsTrend?: IKPITrend;
+}
+
+/**
  * Dashboard response from API
  */
 export interface IDashboardResponse {
@@ -99,6 +111,7 @@ export interface IDashboardResponse {
   outlets?: IOutletMetrics;
   kitchen?: IKitchenMetrics;
   routes?: IRouteMetrics;
+  corporate?: ICorporateMetrics;
   alerts?: IDashboardAlert[];
   lastUpdated?: string;
 }

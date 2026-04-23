@@ -13,6 +13,9 @@ import {
   UtensilsCrossed,
   Route,
   AlertTriangle,
+  Building2,
+  CreditCard,
+  CalendarCheck,
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -109,6 +112,36 @@ export default function AdminDashboard() {
             value={data?.routes?.active ?? 0}
             trend={data?.routes?.trend}
             icon={Route}
+          />
+        </Can>
+
+        {/* Active Corporate Orders */}
+        <Can permission={["corporate:view:any", "corporate:view:outlet"]} requireAll={false}>
+          <KPICard
+            label="Active Corporate Orders"
+            value={data?.corporate?.activeOrders ?? 0}
+            trend={data?.corporate?.ordersTrend}
+            icon={Building2}
+          />
+        </Can>
+
+        {/* Overdue Corp. Invoices */}
+        <Can permission="corporate:invoice">
+          <KPICard
+            label="Overdue Corp. Invoices"
+            value={data?.corporate?.overdueInvoices ?? 0}
+            trend={data?.corporate?.invoicesTrend}
+            icon={CreditCard}
+          />
+        </Can>
+
+        {/* Today's Corporate Meals */}
+        <Can permission="corporate:kitchen">
+          <KPICard
+            label="Today's Corporate Meals"
+            value={data?.corporate?.todayMeals ?? 0}
+            trend={data?.corporate?.mealsTrend}
+            icon={CalendarCheck}
           />
         </Can>
       </div>
