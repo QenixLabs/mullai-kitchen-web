@@ -8,6 +8,24 @@ export interface KitchenReportItem {
   total: number;
 }
 
+export interface KitchenReportCorporateItem {
+  corporate_order_id: string;
+  order_id?: string;
+  company_name: string;
+  veg_count: number;
+  nonveg_count: number;
+  total_meals: number;
+  delivery_address?: {
+    address_line: string;
+    area: string;
+    landmark?: string;
+    pincode: string;
+    city: string;
+    state: string;
+  };
+  meal_types: string[];
+}
+
 export interface KitchenReportSummary {
   breakfast_count: number;
   lunch_count: number;
@@ -18,6 +36,9 @@ export interface KitchenReportSummary {
 export interface KitchenReport {
   summary: KitchenReportSummary;
   items: KitchenReportItem[];
+  corporate_summary?: Record<string, number>;
+  combined_summary?: Record<string, number>;
+  corporate_items?: KitchenReportCorporateItem[];
 }
 
 export const adminKitchenApi = {

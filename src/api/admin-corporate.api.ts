@@ -44,8 +44,8 @@ export const adminCorporateApi = {
     return response.data;
   },
 
-  getDetail: async (id: string): Promise<AdminCorporateOrderDetailResponse> => {
-    const response = await apiClient.get<AdminCorporateOrderDetailResponse>(`${BASE}/orders/${id}`);
+  getDetail: async (id: string): Promise<ICorporateOrder> => {
+    const response = await apiClient.get<ICorporateOrder>(`${BASE}/orders/${id}`);
     return response.data;
   },
 

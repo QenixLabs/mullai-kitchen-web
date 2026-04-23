@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Can } from '@/components/Auth/can';
 import {
   useAdminCorporateOrderDetail,
+  useAdminCorporateOrderModifications,
+  useAdminCorporateOrderInvoices,
   useAdminCorporateOrderDailyOrders,
 } from '@/api/hooks/useAdminCorporate';
 import { UpdateStatusDialog } from '@/components/admin/corporate/UpdateStatusDialog';
@@ -25,17 +27,18 @@ const statusVariant: Record<string, 'default' | 'secondary' | 'outline' | 'destr
 
 export default function CorporateOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { data: detailData, isLoading } = useAdminCorporateOrderDetail(id);
+  const { data: order, isLoading } = useAdminCorporateOrderDetail(id);
+  const { data: modificationsData } = useAdminCorporateOrderModifications(id);
+  const { data: invoicesData } = useAdminCorporateOrderInvoices(id);
   const { data: dailyOrdersData } = useAdminCorporateOrderDailyOrders(id, { page: 1, limit: 20 });
 
   const [showUpdateStatusDialog, setShowUpdateStatusDialog] = useState(false);
 
   if (isLoading) return <div className="flex justify-center py-8 text-muted-foreground">Loading order...</div>;
-  if (!detailData) return <div className="flex justify-center py-8 text-muted-foreground">Order not found</div>;
+  if (!order) return <div className="flex justify-center py-8 text-muted-foreground">Order not found</div>;
 
-  const order = detailData.order;
-  const modifications = detailData.modifications ?? [];
-  const invoices = detailData.invoices ?? [];
+  const modifications = modificationsData?.data ?? [];
+  const invoices = invoicesData?.data ?? [];
   const dailyOrders = dailyOrdersData?.data ?? [];
   const dailyOrdersTotalPages = dailyOrdersData?.totalPages ?? 1;
 
@@ -147,7 +150,7 @@ export default function CorporateOrderDetailPage({ params }: { params: Promise<{
   );
 }
 
-function OverviewTab({ order }: { order: NonNullable<ReturnType<typeof useAdminCorporateOrderDetail>['data']>['order'] }) {
+function OverviewTab({ order }: { order: NonNullable<ReturnType<typeof useAdminCorporateOrderDetail>['data']> }) {
   return (
     <div className="space-y-4">
       <Card>

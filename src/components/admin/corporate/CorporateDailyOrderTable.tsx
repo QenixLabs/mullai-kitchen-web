@@ -71,9 +71,9 @@ export function CorporateDailyOrderTable({
             {data.map((order) => (
               <TableRow key={order._id}>
                 <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
-                <TableCell className="font-medium">{order.corporate_order_id}</TableCell>
+                <TableCell className="font-medium">{order.order_id || order.corporate_order_id}</TableCell>
                 <TableCell>
-                  {order.delivery_address?.city || '-'}
+                  {order.company_name || '-'}
                 </TableCell>
                 <TableCell>{order.veg_count}</TableCell>
                 <TableCell>{order.nonveg_count}</TableCell>

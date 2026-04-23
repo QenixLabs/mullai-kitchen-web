@@ -7,6 +7,7 @@ import type { KitchenReportSummary } from '@/api/admin-kitchen.api';
 
 interface KitchenSummaryCardsProps {
   summary?: KitchenReportSummary;
+  combined_summary?: Record<string, number>;
   loading?: boolean;
 }
 
@@ -47,33 +48,64 @@ function MealCard({ title, count, icon, loading }: MealCardProps) {
   );
 }
 
-export function KitchenSummaryCards({ summary, loading }: KitchenSummaryCardsProps) {
+export function KitchenSummaryCards({ summary, combined_summary, loading }: KitchenSummaryCardsProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <MealCard
-        title="Breakfast"
-        count={summary?.breakfast_count ?? 0}
-        icon={<Sunrise className="h-4 w-4 text-muted-foreground" />}
-        loading={loading}
-      />
-      <MealCard
-        title="Lunch"
-        count={summary?.lunch_count ?? 0}
-        icon={<Sun className="h-4 w-4 text-muted-foreground" />}
-        loading={loading}
-      />
-      <MealCard
-        title="Dinner"
-        count={summary?.dinner_count ?? 0}
-        icon={<Moon className="h-4 w-4 text-muted-foreground" />}
-        loading={loading}
-      />
-      <MealCard
-        title="Total Meals"
-        count={summary?.total ?? 0}
-        icon={<UtensilsCrossed className="h-4 w-4 text-muted-foreground" />}
-        loading={loading}
-      />
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <MealCard
+          title="Breakfast"
+          count={summary?.breakfast_count ?? 0}
+          icon={<Sunrise className="h-4 w-4 text-muted-foreground" />}
+          loading={loading}
+        />
+        <MealCard
+          title="Lunch"
+          count={summary?.lunch_count ?? 0}
+          icon={<Sun className="h-4 w-4 text-muted-foreground" />}
+          loading={loading}
+        />
+        <MealCard
+          title="Dinner"
+          count={summary?.dinner_count ?? 0}
+          icon={<Moon className="h-4 w-4 text-muted-foreground" />}
+          loading={loading}
+        />
+        <MealCard
+          title="Total Meals"
+          count={summary?.total ?? 0}
+          icon={<UtensilsCrossed className="h-4 w-4 text-muted-foreground" />}
+          loading={loading}
+        />
+      </div>
+
+      {combined_summary && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <MealCard
+            title="Combined Breakfast"
+            count={combined_summary.breakfast_count ?? 0}
+            icon={<Sunrise className="h-4 w-4 text-muted-foreground" />}
+            loading={loading}
+          />
+          <MealCard
+            title="Combined Lunch"
+            count={combined_summary.lunch_count ?? 0}
+            icon={<Sun className="h-4 w-4 text-muted-foreground" />}
+            loading={loading}
+          />
+          <MealCard
+            title="Combined Dinner"
+            count={combined_summary.dinner_count ?? 0}
+            icon={<Moon className="h-4 w-4 text-muted-foreground" />}
+            loading={loading}
+          />
+          <MealCard
+            title="Combined Total"
+            count={combined_summary.total ?? 0}
+            icon={<UtensilsCrossed className="h-4 w-4 text-muted-foreground" />}
+            loading={loading}
+          />
+        </div>
+      )}
     </div>
   );
 }

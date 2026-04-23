@@ -348,6 +348,8 @@ export interface ICreateCorporateOrderResponse {
 export interface ICorporateDailyOrder {
   _id: string;
   corporate_order_id: string;
+  order_id?: string;
+  company_name?: string;
   date: string;
   veg_count: number;
   nonveg_count: number;

@@ -15,6 +15,7 @@ import {
   type MarkInvoicePaidPayload,
 } from "@/api/admin-corporate.api";
 import { adminCorporateKeys } from "@/api/query-keys";
+import type { ICorporateOrder } from "@/api/types/corporate.types";
 
 export function useAdminCorporateOrders(params?: AdminCorporateOrderListParams) {
   return useQuery({
@@ -25,7 +26,7 @@ export function useAdminCorporateOrders(params?: AdminCorporateOrderListParams) 
 }
 
 export function useAdminCorporateOrderDetail(id: string | null) {
-  return useQuery({
+  return useQuery<ICorporateOrder>({
     queryKey: adminCorporateKeys.detail(id!),
     queryFn: () => adminCorporateApi.getDetail(id!),
     enabled: !!id,

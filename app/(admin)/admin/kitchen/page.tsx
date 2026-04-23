@@ -20,6 +20,8 @@ import { useOutlets } from '@/api/hooks/useOutlets';
 import { useKitchenReport } from '@/api/hooks/useAdminKitchen';
 import { KitchenSummaryCards } from '@/components/admin/kitchen/KitchenSummaryCards';
 import { KitchenItemsTable } from '@/components/admin/kitchen/KitchenItemsTable';
+import { KitchenCorporateSummary } from '@/components/admin/kitchen/KitchenCorporateSummary';
+import { KitchenCorporateBreakdown } from '@/components/admin/kitchen/KitchenCorporateBreakdown';
 
 export default function KitchenPage() {
   const user = useCurrentUser();
@@ -139,12 +141,25 @@ export default function KitchenPage() {
         {/* Summary Cards */}
         <KitchenSummaryCards
           summary={report?.summary}
+          combined_summary={report?.combined_summary}
           loading={reportLoading}
         />
 
         {/* Items Table */}
         <KitchenItemsTable
           items={report?.items}
+          loading={reportLoading}
+        />
+
+        {/* Corporate Summary */}
+        <KitchenCorporateSummary
+          corporate_summary={report?.corporate_summary}
+          loading={reportLoading}
+        />
+
+        {/* Corporate Breakdown */}
+        <KitchenCorporateBreakdown
+          items={report?.corporate_items}
           loading={reportLoading}
         />
 
