@@ -78,6 +78,7 @@ export function CorporateInvoiceTable({
               <TableHead>Invoice #</TableHead>
               <TableHead>Company</TableHead>
               <TableHead>Type</TableHead>
+              <TableHead>Billing Period</TableHead>
               <TableHead>Cycle #</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead>Status</TableHead>
@@ -92,6 +93,11 @@ export function CorporateInvoiceTable({
                 <TableCell>{invoice.company_name}</TableCell>
                 <TableCell>
                   <Badge variant="outline">{typeLabel[invoice.type] || invoice.type}</Badge>
+                </TableCell>
+                <TableCell>
+                  {invoice.billing_period_start && invoice.billing_period_end
+                    ? `${new Date(invoice.billing_period_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${new Date(invoice.billing_period_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+                    : '-'}
                 </TableCell>
                 <TableCell>{invoice.cycle_number ?? '-'}</TableCell>
                 <TableCell>Rs. {invoice.grand_total.toLocaleString()}</TableCell>
@@ -112,7 +118,7 @@ export function CorporateInvoiceTable({
                         <Eye className="h-4 w-4" />
                       </Link>
                     </Button>
-                    {invoice.status === 'pending' && (
+                    {['pending', 'overdue'].includes(invoice.status) && (
                       <Can permission="corporate:invoice">
                         <Button
                           variant="ghost"

@@ -150,4 +150,5 @@ export interface UpdateCorporateOrderStatusPayload {
 
 export interface MarkInvoicePaidPayload {
   payment_reference?: string;
+  paid_at?: string;
 }
