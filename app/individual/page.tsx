@@ -1,6 +1,5 @@
 import { LandingNavbar } from "../landing/Navbar";
 import { LandingFooter } from "../landing/Footer";
-import { PromoBanner } from "../landing/PromoBanner";
 import { HeroSection } from "./HeroSection";
 import { PlansSection } from "./PlansSection";
 import { HowItWorksSection } from "./HowItWorksSection";
@@ -33,7 +32,6 @@ export default function IndividualPage() {
 
       <LandingFooter />
       <TrustedCompaniesSection />
-      <PromoBanner />
     </div>
   );
 }

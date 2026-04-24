@@ -1,7 +1,6 @@
 export { LandingNavbar } from "./Navbar";
 export { HeroSection } from "./HeroSection";
 export { ScaleOfCookingSection } from "./ScaleOfCookingSection";
-export { PromoBanner } from "./PromoBanner";
 export { LiveKitchenStatus } from "./LiveKitchenStatus";
 export { HowItWorksSection } from "./HowItWorksSection";
 export { SafetyMeasuresSection } from "./SafetyMeasuresSection";

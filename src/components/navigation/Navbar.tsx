@@ -55,7 +55,7 @@ export function Navbar() {
               {/* Logo */}
               <div className="flex-shrink-0">
                 <Link href="/">
-                  <Image src="/logo.png" alt="Mullai Kitchen" width={120} height={32} className="h-8 w-auto" priority />
+                  <Image src="/logo.png" alt="Mullai Kitchen" width={300} height={80} className="h-20 w-auto" priority />
                 </Link>
               </div>
 
