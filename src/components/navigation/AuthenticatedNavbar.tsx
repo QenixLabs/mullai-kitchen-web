@@ -23,7 +23,7 @@ export function AuthenticatedNavbar() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link href="/dashboard">
-          <Image src="/logo.png" alt="Mullai Kitchen" width={120} height={32} className="h-8 w-auto" priority />
+          <Image src="/logo.png" alt="Mullai Kitchen" width={300} height={80} className="h-20 w-auto" priority />
         </Link>
 
         <nav className="flex items-center gap-1 rounded-full border border-border bg-muted/50 p-1" aria-label="Main">

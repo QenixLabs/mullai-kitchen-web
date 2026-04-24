@@ -66,9 +66,9 @@ export function LandingNavbar() {
             <Image
               src="/logo-tranparent.png"
               alt="Mullai Kitchen Logo"
-              width={140}
-              height={40}
-              className="object-contain h-8 lg:h-9 w-auto"
+              width={300}
+              height={80}
+              className="object-contain h-20 w-auto"
             />
           </Link>
 
@@ -89,7 +89,7 @@ export function LandingNavbar() {
                 className="flex items-center gap-1 text-base font-semibold text-primary hover:text-primary/80 transition-colors h-auto p-0"
                 aria-expanded={showAreaDropdown}
               >
-                <span className="max-w-44 lg:max-w-none truncate">{selectedArea}, Chennai</span>
+                <span className="max-w-44 lg:max-w-none truncate">Chennai, Tamil Nadu</span>
                 <ChevronDown className={cn(
                   "h-4 w-4 transition-transform duration-300",
                   showAreaDropdown && "rotate-180"
@@ -137,6 +137,14 @@ export function LandingNavbar() {
         <div className="hidden xl:flex items-center gap-7">
           <Link href={aboutLink} className="text-base tracking-wide font-bold uppercase text-white/95 hover:text-white transition-colors">
             About
+          </Link>
+
+          <Link href="/#gallery" className="text-base tracking-wide font-bold uppercase text-white/95 hover:text-white transition-colors">
+            Gallery
+          </Link>
+
+          <Link href="/#kitchen" className="text-base tracking-wide font-bold uppercase text-white/95 hover:text-white transition-colors">
+            Kitchen
           </Link>
 
           <Link href={contactLink} className="text-base tracking-wide font-bold uppercase text-white/95 hover:text-white transition-colors">
@@ -228,6 +236,16 @@ export function LandingNavbar() {
                 <Link href={aboutLink} onClick={() => setIsMobileMenuOpen(false)}>
                   <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
                     About
+                  </Button>
+                </Link>
+                <Link href="/#gallery" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
+                    Gallery
+                  </Button>
+                </Link>
+                <Link href="/#kitchen" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
+                    Kitchen
                   </Button>
                 </Link>
                 <Link href={contactLink} onClick={() => setIsMobileMenuOpen(false)}>
