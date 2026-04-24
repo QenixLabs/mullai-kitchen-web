@@ -45,6 +45,7 @@ export function useBatchUpdateStatus() {
       adminOrderApi.batchUpdateStatus(routeId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminOrderKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: adminOrderKeys.details() });
       queryClient.invalidateQueries({ predicate: (query) => query.queryKey[0] === 'admin' && query.queryKey[1] === 'outlets' && query.queryKey[3] === 'routes' });
       toast.success("Orders updated");
     },

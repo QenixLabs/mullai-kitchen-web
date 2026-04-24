@@ -26,7 +26,7 @@ export enum MealType {
 
 export interface UnifiedOrder {
   _id: string;
-  source: 'daily' | 'addon';
+  source: 'daily' | 'addon' | 'corporate';
   customer_name: string;
   meal_type: MealType | string;
   recipe_name?: string;
@@ -74,4 +74,5 @@ export interface BatchUpdateStatusPayload {
   status: string;
   daily_order_ids?: string[];
   addon_order_ids?: string[];
+  corporate_order_ids?: string[];
 }

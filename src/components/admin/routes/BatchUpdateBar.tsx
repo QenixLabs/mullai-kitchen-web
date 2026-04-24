@@ -8,6 +8,7 @@ interface BatchUpdateBarProps {
   outletId: string;
   selectedDailyOrderIds: string[];
   selectedAddonOrderIds: string[];
+  selectedCorporateOrderIds: string[];
   onClearSelection: () => void;
 }
 
@@ -16,11 +17,12 @@ export function BatchUpdateBar({
   outletId,
   selectedDailyOrderIds,
   selectedAddonOrderIds,
+  selectedCorporateOrderIds,
   onClearSelection,
 }: BatchUpdateBarProps) {
   const batchUpdate = useBatchUpdateStatus();
 
-  const totalSelected = selectedDailyOrderIds.length + selectedAddonOrderIds.length;
+  const totalSelected = selectedDailyOrderIds.length + selectedAddonOrderIds.length + selectedCorporateOrderIds.length;
 
   if (totalSelected === 0) return null;
 
@@ -32,6 +34,7 @@ export function BatchUpdateBar({
           status: 'delivered',
           daily_order_ids: selectedDailyOrderIds.length > 0 ? selectedDailyOrderIds : undefined,
           addon_order_ids: selectedAddonOrderIds.length > 0 ? selectedAddonOrderIds : undefined,
+          corporate_order_ids: selectedCorporateOrderIds.length > 0 ? selectedCorporateOrderIds : undefined,
         },
       },
       { onSuccess: onClearSelection },
@@ -46,6 +49,7 @@ export function BatchUpdateBar({
           status: 'out_for_delivery',
           daily_order_ids: selectedDailyOrderIds.length > 0 ? selectedDailyOrderIds : undefined,
           addon_order_ids: selectedAddonOrderIds.length > 0 ? selectedAddonOrderIds : undefined,
+          corporate_order_ids: selectedCorporateOrderIds.length > 0 ? selectedCorporateOrderIds : undefined,
         },
       },
       { onSuccess: onClearSelection },

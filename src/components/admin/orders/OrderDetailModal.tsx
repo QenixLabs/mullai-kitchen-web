@@ -43,7 +43,11 @@ export function OrderDetailModal({ orderId, open, onOpenChange }: OrderDetailMod
               <span className="font-medium">{order.customer_name}</span>
 
               <span className="text-muted-foreground">Source</span>
-              <span className="capitalize">{order.source === 'addon' ? 'Add-on Order' : 'Daily Order'}</span>
+              <span className="capitalize">{
+                order.source === 'addon' ? 'Add-on Order' :
+                order.source === 'corporate' ? 'Corporate Order' :
+                'Daily Order'
+              }</span>
 
               <span className="text-muted-foreground">Meal Type</span>
               <span>{order.meal_type}</span>
