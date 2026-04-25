@@ -304,6 +304,7 @@ export interface ICorporateInvoice {
   status: CorporateInvoiceStatus;
   paid_at?: string;
   due_date?: string;
+  payment_reference?: string;
   created_at: string;
 }
 

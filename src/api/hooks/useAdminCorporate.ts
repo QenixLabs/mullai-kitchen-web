@@ -15,7 +15,7 @@ import {
   type MarkInvoicePaidPayload,
 } from "@/api/admin-corporate.api";
 import { adminCorporateKeys } from "@/api/query-keys";
-import type { ICorporateOrder } from "@/api/types/corporate.types";
+import type { ICorporateOrder, ICorporateInvoice } from "@/api/types/corporate.types";
 
 export function useAdminCorporateOrders(params?: AdminCorporateOrderListParams) {
   return useQuery({
@@ -91,6 +91,14 @@ export function useUpdateCorporateOrderStatus() {
     onError: (error: any) => {
       toast.error(error?.message || "Failed to update order status");
     },
+  });
+}
+
+export function useAdminCorporateInvoiceDetail(id: string | null) {
+  return useQuery<ICorporateInvoice>({
+    queryKey: adminCorporateKeys.invoiceDetail(id!),
+    queryFn: () => adminCorporateApi.getInvoice(id!),
+    enabled: !!id,
   });
 }
 

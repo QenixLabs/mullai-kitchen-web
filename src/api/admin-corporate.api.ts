@@ -79,6 +79,11 @@ export const adminCorporateApi = {
     return response.data;
   },
 
+  getInvoice: async (id: string): Promise<ICorporateInvoice> => {
+    const response = await apiClient.get<ICorporateInvoice>(`${BASE}/invoices/${id}`);
+    return response.data;
+  },
+
   markInvoicePaid: async (id: string, data: MarkInvoicePaidPayload): Promise<ICorporateInvoice> => {
     const response = await apiClient.put<ICorporateInvoice>(`${BASE}/invoices/${id}/mark-paid`, data);
     return response.data;
