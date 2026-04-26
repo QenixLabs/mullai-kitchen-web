@@ -28,5 +28,6 @@ export const config = {
     "/custom-plan-builder/:path*",
     "/corporate/:path*",
     "/admin/:path*",
+    "/delivery/:path*",
   ],
 };
