@@ -86,10 +86,10 @@ const ROLE_OPTIONS = [
 ];
 
 const VEHICLE_TYPE_OPTIONS = [
-  { value: 'Bike', label: 'Bike' },
-  { value: 'Scooter', label: 'Scooter' },
-  { value: 'Cycle', label: 'Cycle' },
-  { value: 'Other', label: 'Other' },
+  { value: 'BIKE', label: 'Bike' },
+  { value: 'SCOOTER', label: 'Scooter' },
+  { value: 'CYCLE', label: 'Cycle' },
+  { value: 'OTHER', label: 'Other' },
 ];
 
 export function CreateUserForm() {

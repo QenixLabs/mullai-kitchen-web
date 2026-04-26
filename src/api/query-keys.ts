@@ -1,4 +1,5 @@
 import type { AdminOrderListParams } from '@/api/types/admin-order.types';
+import type { CouponListParams } from '@/api/types/admin-coupon.types';
 import type {
   AdminCorporateOrderListParams,
   AdminCorporateInvoiceListParams,
@@ -174,6 +175,15 @@ export const planKeys = {
     [...planKeys.lists(), params] as const,
   details: () => [...planKeys.all, 'detail'] as const,
   detail: (id: string) => [...planKeys.details(), id] as const,
+};
+
+export const adminCouponKeys = {
+  all: ['admin', 'coupons'] as const,
+  lists: () => [...adminCouponKeys.all, 'list'] as const,
+  list: (params?: CouponListParams) => [...adminCouponKeys.lists(), params] as const,
+  details: () => [...adminCouponKeys.all, 'detail'] as const,
+  detail: (id: string) => [...adminCouponKeys.details(), id] as const,
+  stats: (id: string) => [...adminCouponKeys.all, 'stats', id] as const,
 };
 
 export const adminSubscriptionKeys = {

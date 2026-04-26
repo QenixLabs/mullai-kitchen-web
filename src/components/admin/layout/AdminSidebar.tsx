@@ -22,6 +22,7 @@ import {
   CreditCard,
   CalendarCheck,
   Building2,
+  TicketPercent,
 } from "lucide-react";
 
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
@@ -153,6 +154,13 @@ const ADMIN_NAV_GROUPS: NavGroup[] = [
         label: "Subscriptions",
         permission: ["subscription:view:any", "subscription:view:outlet"],
         requireAll: false,
+      },
+      {
+        href: "/admin/coupons",
+        icon: TicketPercent,
+        label: "Coupons",
+        permission: "coupon:manage",
+        requireAll: true,
       },
     ],
   },
