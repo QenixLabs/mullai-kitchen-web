@@ -1,8 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, Trash2, Play, CheckCircle2, UserPlus } from 'lucide-react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  ChevronDown,
+  ChevronUp,
+  Trash2,
+  Play,
+  CheckCircle2,
+  UserPlus,
+  Route as RouteIcon,
+  Truck,
+  Package,
+  Sparkles,
+  AlertTriangle,
+} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
@@ -21,17 +33,35 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Can } from '@/components/Auth/can';
 import { RouteStatusBadge } from './RouteStatusBadge';
 import { RouteDetailPanel } from './RouteDetailPanel';
 import { AssignPartnerDialog } from './AssignPartnerDialog';
-import { useStartRoute, useCompleteRoute, useDeleteRoute } from '@/api/hooks/useAdminRoutes';
+import {
+  useStartRoute,
+  useCompleteRoute,
+  useDeleteRoute,
+} from '@/api/hooks/useAdminRoutes';
 import type { DeliveryRoute } from '@/api/admin-route.api';
+import { cn } from '@/lib/utils';
 
 interface RouteListProps {
   routes: DeliveryRoute[];
   outletId: string;
   isLoading: boolean;
+}
+
+function getInitials(name?: string): string {
+  if (!name) return '?';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
 export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
@@ -46,9 +76,26 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-40 w-full" />
+          <Card key={i} className="overflow-hidden border-border/70 shadow-sm">
+            <CardContent className="p-0">
+              <div className="flex items-center justify-between border-b border-border/70 bg-gradient-to-b from-muted/40 to-muted/10 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-7 w-7 rounded-lg" />
+                  <Skeleton className="h-4 w-40" />
+                </div>
+                <Skeleton className="h-7 w-24" />
+              </div>
+              <div className="space-y-3 p-4">
+                <Skeleton className="h-2 w-full rounded-full" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-6 w-24" />
+                  <Skeleton className="h-6 w-32" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     );
@@ -56,21 +103,39 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
 
   if (routes.length === 0) {
     return (
-      <div className="flex justify-center py-8 text-muted-foreground">
-        No routes found. Generate routes to get started.
-      </div>
+      <Card className="overflow-hidden border-border/70 shadow-sm">
+        <CardContent className="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center">
+          <div className="rounded-full bg-muted p-3 text-muted-foreground">
+            <RouteIcon className="h-6 w-6" />
+          </div>
+          <div>
+            <h3 className="text-base font-semibold text-foreground">
+              No routes for this date
+            </h3>
+            <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+              Generate routes from the toolbar above to plan deliveries for the
+              selected outlet and date.
+            </p>
+          </div>
+          <span className="mt-1 inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary ring-1 ring-primary/15">
+            <Sparkles className="h-3 w-3" />
+            Tap Generate Routes
+          </span>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <>
-      <div className="space-y-4">
+    <TooltipProvider delayDuration={250}>
+      <div className="space-y-3">
         {routes.map((route) => {
           const isExpanded = expandedId === route._id;
           const progressPercent =
             route.order_count > 0
               ? Math.round((route.completed_stops / route.order_count) * 100)
               : 0;
+          const hasPartner = !!route.assigned_partner;
 
           return (
             <Collapsible
@@ -78,75 +143,68 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
               open={isExpanded}
               onOpenChange={(open) => setExpandedId(open ? route._id : null)}
             >
-              <Card>
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-2">
-                        <CollapsibleTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-6 w-6">
-                            {isExpanded ? (
-                              <ChevronUp className="h-4 w-4" />
-                            ) : (
-                              <ChevronDown className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </CollapsibleTrigger>
-                        <h3 className="font-semibold text-base">{route.name}</h3>
-                        <RouteStatusBadge status={route.status} />
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground ml-9">
-                        <span>{route.order_count} orders</span>
-                        {route.assigned_partner ? (
-                          <span>
-                            Partner: {route.assigned_partner.name}{route.assigned_partner.vehicle_number ? ` (${route.assigned_partner.vehicle_number})` : ''}
-                          </span>
-                        ) : (
-                          <span className="text-warning">No partner assigned</span>
-                        )}
-                      </div>
-
-                      {/* Progress bar */}
-                      <div className="ml-9 mt-2">
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-primary rounded-full transition-all"
-                              style={{ width: `${progressPercent}%` }}
-                            />
-                          </div>
-                          <span className="text-xs text-muted-foreground w-10 text-right">
-                            {progressPercent}%
-                          </span>
-                        </div>
-                      </div>
+              <Card className="overflow-hidden border-border/70 shadow-sm transition-shadow hover:shadow-md">
+                <CardContent className="p-0">
+                  {/* Header strip */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 bg-gradient-to-b from-muted/40 to-muted/10 px-4 py-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <CollapsibleTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground"
+                        >
+                          {isExpanded ? (
+                            <ChevronUp className="h-4 w-4" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </CollapsibleTrigger>
+                      <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/15">
+                        <RouteIcon className="h-3.5 w-3.5" />
+                      </span>
+                      <h3 className="truncate text-sm font-semibold tracking-tight text-foreground">
+                        {route.name}
+                      </h3>
+                      <RouteStatusBadge status={route.status} />
+                      <span className="hidden items-center gap-1 rounded-md border border-border/60 bg-background px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:inline-flex">
+                        <Package className="h-3 w-3" />
+                        {route.order_count} {route.order_count === 1 ? 'order' : 'orders'}
+                      </span>
                     </div>
 
-                    {/* Action buttons */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-1.5">
                       {route.status === 'DRAFT' && (
                         <>
                           <Can permission="route:assign">
                             <Button
                               size="sm"
                               variant="outline"
+                              className="h-8 gap-1.5"
                               onClick={() => setAssignDialogRouteId(route._id)}
                             >
-                              <UserPlus className="mr-1.5 h-3.5 w-3.5" />
-                              Assign Partner
+                              <UserPlus className="h-3.5 w-3.5" />
+                              {hasPartner ? 'Reassign' : 'Assign Partner'}
                             </Button>
                           </Can>
                           <Can permission="route:generate">
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => setDeleteConfirmId(route._id)}
-                              disabled={deleteRoute.isPending}
-                            >
-                              <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-                              Delete
-                            </Button>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  size="icon"
+                                  variant="outline"
+                                  className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                  onClick={() => setDeleteConfirmId(route._id)}
+                                  disabled={deleteRoute.isPending}
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent side="top">
+                                <p className="text-xs">Delete route</p>
+                              </TooltipContent>
+                            </Tooltip>
                           </Can>
                         </>
                       )}
@@ -154,10 +212,11 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
                         <Can permission="route:assign">
                           <Button
                             size="sm"
+                            className="h-8 gap-1.5"
                             onClick={() => startRoute.mutate(route._id)}
                             disabled={startRoute.isPending}
                           >
-                            <Play className="mr-1.5 h-3.5 w-3.5" />
+                            <Play className="h-3.5 w-3.5" />
                             Start Route
                           </Button>
                         </Can>
@@ -166,32 +225,78 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
                         <Can permission="route:assign">
                           <Button
                             size="sm"
+                            className="h-8 gap-1.5 bg-success text-success-foreground hover:bg-success/90"
                             onClick={() => setCompleteConfirmId(route._id)}
                             disabled={completeRoute.isPending}
-                            className="bg-success text-success-foreground hover:bg-success/90"
                           >
-                            <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
-                            Complete Route
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            Complete
                           </Button>
                         </Can>
                       )}
                     </div>
                   </div>
-                </CardHeader>
 
-                <CollapsibleContent>
-                  <Separator />
-                  <CardContent className="pt-4">
-                    <RouteDetailPanel route={route} outletId={outletId} />
-                  </CardContent>
-                </CollapsibleContent>
+                  {/* Body: progress + partner */}
+                  <div className="space-y-3 px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1">
+                        <div className="mb-1 flex items-center justify-between text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                          <span>Progress</span>
+                          <span className="tabular-nums text-foreground">
+                            {route.completed_stops}/{route.order_count} stops
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                            <div
+                              className={cn(
+                                'h-full rounded-full transition-all',
+                                progressPercent === 100
+                                  ? 'bg-success'
+                                  : progressPercent > 0
+                                    ? 'bg-primary'
+                                    : 'bg-muted',
+                              )}
+                              style={{ width: `${progressPercent}%` }}
+                            />
+                          </div>
+                          <span className="w-10 shrink-0 text-right text-xs font-semibold tabular-nums text-foreground">
+                            {progressPercent}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      {hasPartner ? (
+                        <PartnerChip partner={route.assigned_partner!} />
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 rounded-md border border-warning/20 bg-warning/10 px-2 py-1 text-xs font-medium text-warning">
+                          <AlertTriangle className="h-3 w-3" />
+                          No partner assigned
+                        </span>
+                      )}
+                      <span className="inline-flex items-center gap-1.5 rounded-md border border-border/60 bg-muted/40 px-2 py-1 text-xs font-medium text-muted-foreground sm:hidden">
+                        <Package className="h-3 w-3" />
+                        {route.order_count} {route.order_count === 1 ? 'order' : 'orders'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <CollapsibleContent>
+                    <Separator />
+                    <div className="px-4 py-4">
+                      <RouteDetailPanel route={route} outletId={outletId} />
+                    </div>
+                  </CollapsibleContent>
+                </CardContent>
               </Card>
             </Collapsible>
           );
         })}
       </div>
 
-      {/* Assign Partner Dialog */}
       {assignDialogRouteId && (
         <AssignPartnerDialog
           open={!!assignDialogRouteId}
@@ -203,53 +308,100 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
         />
       )}
 
-      {/* Delete Route Confirmation */}
-      <AlertDialog open={!!deleteConfirmId} onOpenChange={(open) => { if (!open) setDeleteConfirmId(null); }}>
+      <AlertDialog
+        open={!!deleteConfirmId}
+        onOpenChange={(open) => {
+          if (!open) setDeleteConfirmId(null);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Route</AlertDialogTitle>
+            <AlertDialogTitle className="flex items-center gap-2 text-base">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-destructive/10 text-destructive ring-1 ring-destructive/20">
+                <Trash2 className="h-3.5 w-3.5" />
+              </span>
+              Delete Route
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure? This will remove the route and clear route assignments from linked orders.
+              This permanently removes the route and unlinks any orders assigned to it. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
+          <div className="flex items-start gap-2 rounded-md border border-warning/20 bg-warning/10 px-3 py-2 text-xs text-warning">
+            <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+            <span>Linked orders will lose their route assignment and need to be re-routed.</span>
+          </div>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="h-9">Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="h-9 gap-1.5 bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
                 if (deleteConfirmId) deleteRoute.mutate(deleteConfirmId);
                 setDeleteConfirmId(null);
               }}
             >
-              Delete
+              <Trash2 className="h-3.5 w-3.5" />
+              Delete Route
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Complete Route Confirmation */}
-      <AlertDialog open={!!completeConfirmId} onOpenChange={(open) => { if (!open) setCompleteConfirmId(null); }}>
+      <AlertDialog
+        open={!!completeConfirmId}
+        onOpenChange={(open) => {
+          if (!open) setCompleteConfirmId(null);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Complete Route</AlertDialogTitle>
+            <AlertDialogTitle className="flex items-center gap-2 text-base">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-success/10 text-success ring-1 ring-success/20">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+              </span>
+              Complete Route
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Mark this route as completed?
+              Mark this route as completed. All remaining stops will be closed out and the partner will be released.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="h-9">Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-success text-success-foreground hover:bg-success/90"
+              className="h-9 gap-1.5 bg-success text-success-foreground hover:bg-success/90"
               onClick={() => {
                 if (completeConfirmId) completeRoute.mutate(completeConfirmId);
                 setCompleteConfirmId(null);
               }}
             >
-              Complete
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Complete Route
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </TooltipProvider>
+  );
+}
+
+function PartnerChip({
+  partner,
+}: {
+  partner: NonNullable<DeliveryRoute['assigned_partner']>;
+}) {
+  return (
+    <div className="inline-flex items-center gap-2 rounded-md border border-border/60 bg-background px-2 py-1">
+      <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold uppercase text-primary ring-1 ring-primary/15">
+        {getInitials(partner.name)}
+      </span>
+      <div className="flex items-center gap-1.5 text-xs">
+        <Truck className="h-3 w-3 text-muted-foreground" />
+        <span className="font-semibold text-foreground">{partner.name}</span>
+        {partner.vehicle_number && (
+          <code className="rounded bg-muted/60 px-1 py-px font-mono text-[10px] text-muted-foreground">
+            {partner.vehicle_number}
+          </code>
+        )}
+      </div>
+    </div>
   );
 }

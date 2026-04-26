@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import { format } from 'date-fns';
 import {
   CalendarDays,
   Building2,
@@ -19,6 +20,8 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import {
   useAdminCorporateDailyOrders,
   useAdminCorporateDailyOrdersSummary,
@@ -28,6 +31,7 @@ import { useCurrentUser } from '@/hooks/useUserStore';
 import { useHasPermission } from '@/hooks/useHasPermission';
 import { UserRole } from '@/api/types/user.types';
 import { CorporateDailyOrderTable } from '@/components/admin/corporate/CorporateDailyOrderTable';
+import { cn } from '@/lib/utils';
 
 export default function CorporateDailyOrdersPage() {
   const user = useCurrentUser();
@@ -39,7 +43,7 @@ export default function CorporateDailyOrdersPage() {
   const [outletId, setOutletId] = useState<string>('');
   const [page, setPage] = useState(1);
 
-  const dateStr = date ? date.toISOString().split('T')[0] : undefined;
+  const dateStr = date ? format(date, 'yyyy-MM-dd') : undefined;
 
   const { data: outletsData, isLoading: outletsLoading } = useOutlets(
     canViewAnyOutlet ? { status: 'active' } : undefined,
@@ -67,6 +71,7 @@ export default function CorporateDailyOrdersPage() {
 
   const summaries = summaryData?.summaries ?? [];
   const orders = ordersData?.data ?? [];
+  const total = ordersData?.total ?? 0;
 
   const totals = useMemo(() => {
     if (summaries.length > 0) {
@@ -92,123 +97,189 @@ export default function CorporateDailyOrdersPage() {
     );
   }, [summaries, orders]);
 
+  const isLoadingStats = ordersLoading || summaryLoading;
+
+  const isToday = useMemo(() => {
+    if (!date) return false;
+    const today = new Date();
+    return (
+      date.getFullYear() === today.getFullYear() &&
+      date.getMonth() === today.getMonth() &&
+      date.getDate() === today.getDate()
+    );
+  }, [date]);
+
   return (
-    <div className="space-y-8">
-      {/* Hero */}
-      <div>
-        <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">
-          <ClipboardList className="h-3.5 w-3.5" />
-          Corporate
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/15">
+            <ClipboardList className="h-4.5 w-4.5" />
+          </span>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Daily Orders</h1>
+            <p className="text-sm text-muted-foreground">
+              Daily corporate meal deliveries by date and outlet.
+            </p>
+          </div>
         </div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Daily Orders
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          View and manage daily corporate meal orders by date and outlet.
-        </p>
-        <div className="mt-3 h-1 w-16 rounded-full bg-gold" />
+        <div className="flex items-center gap-2">
+          <Badge
+            variant="secondary"
+            className="h-8 gap-1.5 border-0 bg-muted px-2.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
+          >
+            <ClipboardList className="h-3 w-3" />
+            {total} {total === 1 ? 'order' : 'orders'}
+          </Badge>
+        </div>
+      </div>
+
+      {/* KPI Row */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          icon={<Building2 className="h-4 w-4" />}
+          label="Total Orders"
+          value={isLoadingStats ? '—' : totals.total_orders.toString()}
+          sub={isLoadingStats ? 'Loading' : 'Across selected scope'}
+          tone="primary"
+        />
+        <StatCard
+          icon={<Salad className="h-4 w-4" />}
+          label="Veg Meals"
+          value={isLoadingStats ? '—' : totals.total_veg.toString()}
+          sub={isLoadingStats ? 'Loading' : 'Vegetarian portions'}
+          tone="success"
+        />
+        <StatCard
+          icon={<Drumstick className="h-4 w-4" />}
+          label="Non-Veg Meals"
+          value={isLoadingStats ? '—' : totals.total_nonveg.toString()}
+          sub={isLoadingStats ? 'Loading' : 'Non-vegetarian portions'}
+          tone="destructive"
+        />
+        <StatCard
+          icon={<Utensils className="h-4 w-4" />}
+          label="Total Meals"
+          value={isLoadingStats ? '—' : totals.total_meals.toString()}
+          sub={isLoadingStats ? 'Loading' : 'All portions combined'}
+          tone="info"
+        />
       </div>
 
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="flex items-center gap-2 rounded-lg border border-input bg-card px-3 py-2 focus-within:ring-1 focus-within:ring-gold/50">
-          <CalendarDays className="h-4 w-4 text-muted-foreground" />
-          <DatePicker
-            value={date}
-            onChange={(d) => {
-              setDate(d);
-              setPage(1);
-            }}
-            placeholder="Select date"
-            className="w-44 border-0 bg-transparent focus-visible:ring-0"
-          />
-        </div>
-
-        <Select
-          value={outletId}
-          onValueChange={(v) => {
-            setOutletId(v === 'all' ? '' : v);
-            setPage(1);
-          }}
-          disabled={!isSuperAdmin && !!user?.assigned_outlet_id}
-        >
-          <SelectTrigger className="w-56 h-10 rounded-lg border-input bg-card">
-            <SelectValue
-              placeholder={outletsLoading ? 'Loading outlets...' : 'Select outlet'}
+      <Card className="border-border/70 shadow-sm">
+        <CardContent className="flex flex-wrap items-center gap-3 p-4">
+          {/* Date */}
+          <div className="flex items-center gap-2">
+            <span className="hidden text-xs font-semibold uppercase tracking-wider text-muted-foreground sm:inline">
+              Date
+            </span>
+            <DatePicker
+              date={date}
+              onDateChange={(d) => {
+                setDate(d);
+                setPage(1);
+              }}
+              placeholder="Select date"
+              className="h-9 w-[200px]"
             />
-          </SelectTrigger>
-          <SelectContent>
-            {isSuperAdmin && <SelectItem value="all">All Outlets</SelectItem>}
-            {outletsData?.data?.map((outlet) => (
-              <SelectItem key={outlet._id} value={outlet._id}>
-                {outlet.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+            {isToday && (
+              <Badge
+                variant="secondary"
+                className="h-5 border-0 bg-primary/10 px-1.5 text-[10px] font-semibold uppercase tracking-wide text-primary"
+              >
+                <CalendarDays className="mr-1 h-3 w-3" />
+                Today
+              </Badge>
+            )}
+          </div>
 
-      {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          icon={<Building2 className="h-4 w-4 text-primary" />}
-          label="Total Orders"
-          value={ordersLoading || summaryLoading ? '-' : totals.total_orders.toString()}
-        />
-        <StatCard
-          icon={<Salad className="h-4 w-4 text-success" />}
-          label="Veg Meals"
-          value={ordersLoading || summaryLoading ? '-' : totals.total_veg.toString()}
-          color="text-success"
-        />
-        <StatCard
-          icon={<Drumstick className="h-4 w-4 text-destructive" />}
-          label="Non-Veg Meals"
-          value={ordersLoading || summaryLoading ? '-' : totals.total_nonveg.toString()}
-          color="text-destructive"
-        />
-        <StatCard
-          icon={<Utensils className="h-4 w-4 text-gold" />}
-          label="Total Meals"
-          value={ordersLoading || summaryLoading ? '-' : totals.total_meals.toString()}
-          color="text-gold"
-        />
-      </div>
+          {/* Outlet */}
+          {canViewAnyOutlet && (
+            <>
+              <Separator orientation="vertical" className="hidden h-9 lg:block" />
+              <div className="flex items-center gap-2">
+                <span className="hidden text-xs font-semibold uppercase tracking-wider text-muted-foreground sm:inline">
+                  Outlet
+                </span>
+                {outletsLoading ? (
+                  <Skeleton className="h-9 w-[220px]" />
+                ) : (
+                  <Select
+                    value={outletId || 'all'}
+                    onValueChange={(v) => {
+                      setOutletId(v === 'all' ? '' : v);
+                      setPage(1);
+                    }}
+                    disabled={!isSuperAdmin && !!user?.assigned_outlet_id}
+                  >
+                    <SelectTrigger className="h-9 w-[220px] gap-2">
+                      <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
+                      <SelectValue placeholder="All Outlets" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {isSuperAdmin && <SelectItem value="all">All Outlets</SelectItem>}
+                      {outletsData?.data?.map((outlet) => (
+                        <SelectItem key={outlet._id} value={outlet._id}>
+                          {outlet.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
 
+      {/* Table */}
       <CorporateDailyOrderTable
-        data={ordersData?.data ?? []}
+        data={orders}
         isLoading={ordersLoading}
         page={page}
         totalPages={ordersData?.totalPages ?? 1}
-        total={ordersData?.total ?? 0}
+        total={total}
         onPageChange={setPage}
       />
     </div>
   );
 }
 
-function StatCard({
-  icon,
-  label,
-  value,
-  color,
-}: {
+interface StatCardProps {
   icon: React.ReactNode;
   label: string;
   value: string;
-  color?: string;
-}) {
+  sub?: string;
+  tone: 'primary' | 'info' | 'success' | 'destructive';
+}
+
+function StatCard({ icon, label, value, sub, tone }: StatCardProps) {
+  const toneStyles = {
+    primary: 'bg-primary/10 text-primary ring-primary/15',
+    info: 'bg-info/15 text-info ring-info/20',
+    success: 'bg-success/15 text-success ring-success/20',
+    destructive: 'bg-rose-50 text-rose-600 ring-rose-100',
+  } as const;
+
   return (
-    <Card className="border-border/60 shadow-sm hover:shadow-primary transition-shadow">
-      <CardContent className="flex items-center gap-4 p-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-          {icon}
-        </div>
-        <div>
-          <p className={`text-2xl font-bold leading-none ${color || 'text-foreground'}`}>
-            {value}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">{label}</p>
+    <Card className="border-border/70 shadow-sm transition-shadow hover:shadow-md">
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between gap-2">
+          <div className="space-y-1">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
+            <p className="text-2xl font-bold leading-none tracking-tight text-foreground">{value}</p>
+            {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
+          </div>
+          <span
+            className={cn(
+              'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ring-1',
+              toneStyles[tone],
+            )}
+          >
+            {icon}
+          </span>
         </div>
       </CardContent>
     </Card>
