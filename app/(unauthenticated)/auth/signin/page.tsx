@@ -32,7 +32,7 @@ import { usePlanIntentStore } from "@/providers/plan-intent-store-provider";
 import { cn } from "@/lib/utils";
 import { formatAuthError, getAuthErrorTitle } from "@/lib/auth-errors";
 
-import { isAdminRole } from "@/api/types/user.types";
+import { isAdminRole, isDeliveryPartnerRole } from "@/api/types/user.types";
 
 const AUTH_ROUTES = new Set(["/auth/signin", "/auth/signup"]);
 
@@ -85,6 +85,11 @@ function SignInForm() {
 
     if (isAdminRole(authenticatedUser?.role)) {
       router.push("/admin");
+      return;
+    }
+
+    if (isDeliveryPartnerRole(authenticatedUser?.role)) {
+      router.push("/delivery");
       return;
     }
 
