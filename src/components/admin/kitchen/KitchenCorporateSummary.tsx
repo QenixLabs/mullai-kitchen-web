@@ -1,82 +1,107 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Building2, Sun, Sunset, Moon, UtensilsCrossed } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Building2, Sunrise, Sun, Moon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface KitchenCorporateSummaryProps {
   corporate_summary?: Record<string, number>;
   loading?: boolean;
 }
 
-interface MealCardProps {
-  title: string;
+type Tone = 'breakfast' | 'lunch' | 'dinner' | 'total';
+
+const TONE_STYLES: Record<Tone, string> = {
+  breakfast: 'bg-amber-50 text-amber-700 ring-amber-100',
+  lunch: 'bg-orange-50 text-orange-700 ring-orange-100',
+  dinner: 'bg-indigo-50 text-indigo-700 ring-indigo-100',
+  total: 'bg-info/15 text-info ring-info/20',
+};
+
+interface StatProps {
+  label: string;
   count: number;
   icon: React.ReactNode;
+  tone: Tone;
   loading?: boolean;
 }
 
-function MealCard({ title, count, icon, loading }: MealCardProps) {
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <Skeleton className="h-4 w-20" />
-          <Skeleton className="h-4 w-4" />
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-8 w-12" />
-        </CardContent>
-      </Card>
-    );
-  }
-
+function Stat({ label, count, icon, tone, loading }: StatProps) {
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {title}
-        </CardTitle>
+    <div className="flex items-center gap-2.5 rounded-lg border border-border/60 bg-background px-3 py-2.5">
+      <span
+        className={cn(
+          'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md ring-1',
+          TONE_STYLES[tone],
+        )}
+      >
         {icon}
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{count}</div>
-      </CardContent>
-    </Card>
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
+        {loading ? (
+          <Skeleton className="mt-1 h-5 w-10" />
+        ) : (
+          <p className="text-lg font-bold leading-tight text-foreground">{count}</p>
+        )}
+      </div>
+    </div>
   );
 }
 
 export function KitchenCorporateSummary({ corporate_summary, loading }: KitchenCorporateSummaryProps) {
-  if (!corporate_summary) {
-    return null;
-  }
+  if (!corporate_summary) return null;
+
+  const total = corporate_summary.total ?? 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <MealCard
-        title="Corporate Breakfast"
-        count={corporate_summary.breakfast_count ?? 0}
-        icon={<Sunrise className="h-4 w-4 text-muted-foreground" />}
-        loading={loading}
-      />
-      <MealCard
-        title="Corporate Lunch"
-        count={corporate_summary.lunch_count ?? 0}
-        icon={<Sun className="h-4 w-4 text-muted-foreground" />}
-        loading={loading}
-      />
-      <MealCard
-        title="Corporate Dinner"
-        count={corporate_summary.dinner_count ?? 0}
-        icon={<Moon className="h-4 w-4 text-muted-foreground" />}
-        loading={loading}
-      />
-      <MealCard
-        title="Corporate Total"
-        count={corporate_summary.total ?? 0}
-        icon={<Building2 className="h-4 w-4 text-muted-foreground" />}
-        loading={loading}
-      />
-    </div>
+    <Card className="border-border/70 bg-muted/20 shadow-sm">
+      <CardContent className="p-4">
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-info/15 text-info ring-1 ring-info/20">
+              <Building2 className="h-3.5 w-3.5" />
+            </span>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Corporate Orders
+            </p>
+          </div>
+          <span className="text-[11px] text-muted-foreground">
+            {total === 0 ? 'No corporate meals' : `${total} corporate meal${total === 1 ? '' : 's'} today`}
+          </span>
+        </div>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <Stat
+            label="Breakfast"
+            count={corporate_summary.breakfast_count ?? 0}
+            icon={<Sun className="h-4 w-4" />}
+            tone="breakfast"
+            loading={loading}
+          />
+          <Stat
+            label="Lunch"
+            count={corporate_summary.lunch_count ?? 0}
+            icon={<Sunset className="h-4 w-4" />}
+            tone="lunch"
+            loading={loading}
+          />
+          <Stat
+            label="Dinner"
+            count={corporate_summary.dinner_count ?? 0}
+            icon={<Moon className="h-4 w-4" />}
+            tone="dinner"
+            loading={loading}
+          />
+          <Stat
+            label="Total"
+            count={total}
+            icon={<UtensilsCrossed className="h-4 w-4" />}
+            tone="total"
+            loading={loading}
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
