@@ -32,7 +32,6 @@ export function OutletOverrideSelector({ onOutletChange }: OutletOverrideSelecto
     }
   }, [isSuperAdmin, user?.assigned_outlet_id, onOutletChange]);
 
-  // Auto-select first outlet for SUPER_ADMIN when list loads
   useEffect(() => {
     if (isSuperAdmin && !selectedOutletId && outletsData?.data?.length) {
       const firstId = outletsData.data[0]._id;
@@ -48,19 +47,30 @@ export function OutletOverrideSelector({ onOutletChange }: OutletOverrideSelecto
 
   if (!isSuperAdmin) {
     if (!selectedOutletId) {
-      return <Skeleton className="h-10 w-64" />;
+      return <Skeleton className="h-9 w-64" />;
     }
-    return null;
+    const outlet = outletsData?.data?.find((o) => o._id === selectedOutletId);
+    return (
+      <div className="inline-flex h-9 items-center gap-2 rounded-lg border border-border/70 bg-background px-3 text-sm">
+        <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary">
+          <Building2 className="h-3.5 w-3.5" />
+        </span>
+        <span className="font-medium text-foreground">{outlet?.name || 'Your outlet'}</span>
+      </div>
+    );
   }
 
   return (
-    <div className="flex items-center gap-3">
-      <Building2 className="h-4 w-4 text-muted-foreground" />
+    <div className="flex items-center gap-2">
+      <span className="hidden text-xs font-semibold uppercase tracking-wider text-muted-foreground sm:inline">
+        Outlet
+      </span>
       {isLoading ? (
-        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-9 w-64" />
       ) : (
         <Select value={selectedOutletId} onValueChange={handleOutletChange}>
-          <SelectTrigger className="w-64">
+          <SelectTrigger className="h-9 w-[260px] gap-2">
+            <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
             <SelectValue placeholder="Select an outlet" />
           </SelectTrigger>
           <SelectContent>
