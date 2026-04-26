@@ -19,6 +19,10 @@ export function isAdminRole(role: string | undefined): boolean {
   return !!role && (ADMIN_PANEL_ROLES as readonly string[]).includes(role);
 }
 
+export function isDeliveryPartnerRole(role: string | undefined): boolean {
+  return role === UserRole.DeliveryPartner;
+}
+
 export interface IUser {
   _id: string;
   name: string;
