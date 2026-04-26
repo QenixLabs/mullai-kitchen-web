@@ -1,19 +1,19 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { motion } from 'motion/react';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAvailablePermissions } from '@/api/hooks/usePermissions';
 import { cn } from '@/lib/utils';
-import { ShieldCheck, ShieldOff, Search } from 'lucide-react';
+import { ShieldCheck, ShieldOff, Search, Shield, Check } from 'lucide-react';
 
 interface AddOverrideDialogProps {
   existingGrants: string[];
@@ -57,134 +57,150 @@ export function AddOverrideDialog({
   }, [search, alreadyOverridden, categories]);
 
   const handleAdd = () => {
-    if (selected) {
-      onAdd(selected, type);
-    }
+    if (selected) onAdd(selected, type);
   };
+
+  const isGrant = type === 'grant';
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="max-w-lg rounded-2xl p-0 overflow-hidden">
-        <DialogHeader className="px-6 pt-6 pb-2">
-          <DialogTitle
-            className="text-xl font-bold text-primary"
-            style={{ fontFamily: 'Inter, sans-serif' }}
-          >
+      <DialogContent className="max-w-lg gap-0 p-0">
+        <DialogHeader className="space-y-1 border-b border-border/70 px-5 py-4">
+          <DialogTitle className="flex items-center gap-2 text-base">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/15">
+              <Shield className="h-3.5 w-3.5" />
+            </span>
             Add Permission Override
           </DialogTitle>
+          <DialogDescription>
+            Choose whether to grant or revoke a specific permission for this user.
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="px-6 space-y-4 pb-2">
-          {/* Grant / Revoke pill toggle */}
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setType('grant')}
-              className={cn(
-                'flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200',
-                type === 'grant'
-                  ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted',
-              )}
-            >
-              <ShieldCheck className="h-4 w-4" />
-              Grant
-            </button>
-            <button
-              type="button"
-              onClick={() => setType('revoke')}
-              className={cn(
-                'flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200',
-                type === 'revoke'
-                  ? 'bg-red-500 text-white shadow-lg shadow-red-500/20'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted',
-              )}
-            >
-              <ShieldOff className="h-4 w-4" />
-              Revoke
-            </button>
+        <div className="space-y-3 px-5 py-4">
+          {/* Grant / Revoke segmented toggle */}
+          <div>
+            <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Override Type
+            </p>
+            <div className="inline-flex h-9 items-center rounded-md border border-border/70 bg-muted p-1">
+              <button
+                type="button"
+                onClick={() => setType('grant')}
+                className={cn(
+                  'inline-flex h-7 items-center gap-1.5 rounded-sm px-3 text-xs font-semibold uppercase tracking-wide transition-all',
+                  isGrant
+                    ? 'bg-success/15 text-success ring-1 ring-success/20'
+                    : 'text-muted-foreground hover:text-foreground',
+                )}
+              >
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Grant
+              </button>
+              <button
+                type="button"
+                onClick={() => setType('revoke')}
+                className={cn(
+                  'inline-flex h-7 items-center gap-1.5 rounded-sm px-3 text-xs font-semibold uppercase tracking-wide transition-all',
+                  !isGrant
+                    ? 'bg-destructive/15 text-destructive ring-1 ring-destructive/20'
+                    : 'text-muted-foreground hover:text-foreground',
+                )}
+              >
+                <ShieldOff className="h-3.5 w-3.5" />
+                Revoke
+              </button>
+            </div>
           </div>
 
-          {/* Search input */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search permissions..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 rounded-xl border-border/40 bg-muted/30 focus:bg-white"
-            />
+          {/* Search */}
+          <div>
+            <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Permission
+            </p>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search permissions..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-9 pl-9"
+              />
+            </div>
           </div>
 
-          {/* Scrollable permission list */}
-          <div className="h-[300px] overflow-y-auto rounded-2xl border border-border/30 bg-muted/20">
-            <div className="p-2 space-y-1">
+          {/* Permission list */}
+          <div className="rounded-md border border-border/70 bg-muted/20">
+            <div className="max-h-[260px] space-y-1 overflow-y-auto p-1.5">
               {filteredPermissions.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12">
-                  <p className="text-sm text-muted-foreground">
-                    No permissions available
+                <div className="flex flex-col items-center justify-center gap-1.5 py-10 text-center">
+                  <Search className="h-5 w-5 text-muted-foreground/60" />
+                  <p className="text-xs text-muted-foreground">
+                    {search ? 'No permissions match your search.' : 'No permissions available.'}
                   </p>
                 </div>
               ) : (
-                filteredPermissions.map((perm) => (
-                  <button
-                    key={perm.key}
-                    className={cn(
-                      'w-full text-left px-4 py-3 rounded-xl text-sm flex items-center gap-3 transition-all duration-150',
-                      selected === perm.key
-                        ? 'bg-primary/5 border border-primary/20 shadow-sm'
-                        : 'hover:bg-white/60 border border-transparent',
-                    )}
-                    onClick={() => setSelected(perm.key)}
-                  >
-                    <div
+                filteredPermissions.map((perm) => {
+                  const isSelected = selected === perm.key;
+                  return (
+                    <button
+                      key={perm.key}
+                      type="button"
+                      onClick={() => setSelected(perm.key)}
                       className={cn(
-                        'h-4 w-4 rounded-full border-2 shrink-0 transition-all duration-150 flex items-center justify-center',
-                        selected === perm.key
-                          ? 'bg-primary border-primary'
-                          : 'border-muted-foreground/40',
+                        'flex w-full items-center gap-2.5 rounded-md border px-2.5 py-2 text-left transition-colors',
+                        isSelected
+                          ? 'border-primary/20 bg-primary/5'
+                          : 'border-transparent hover:border-border/70 hover:bg-background',
                       )}
                     >
-                      {selected === perm.key && (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="h-1.5 w-1.5 rounded-full bg-white"
-                        />
-                      )}
-                    </div>
-                    <div>
-                      <div className="font-semibold text-primary">{perm.label}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {perm.category}
+                      <span
+                        className={cn(
+                          'inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full ring-1 transition-colors',
+                          isSelected
+                            ? 'bg-primary text-primary-foreground ring-primary'
+                            : 'bg-background ring-border',
+                        )}
+                      >
+                        {isSelected && <Check className="h-2.5 w-2.5" />}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className={cn(
+                            'truncate text-xs font-semibold',
+                            isSelected ? 'text-foreground' : 'text-foreground/80',
+                          )}
+                        >
+                          {perm.label}
+                        </p>
+                        <p className="truncate text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                          {perm.category}
+                        </p>
                       </div>
-                    </div>
-                  </button>
-                ))
+                    </button>
+                  );
+                })
               )}
             </div>
           </div>
         </div>
 
-        <DialogFooter className="px-6 py-4 border-t border-border/30 bg-muted/10">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            className="rounded-full border-border/60 px-5 font-semibold"
-          >
+        <DialogFooter className="gap-2 border-t border-border/70 bg-muted/20 px-5 py-3">
+          <Button variant="outline" onClick={onClose} className="h-9">
             Cancel
           </Button>
           <Button
             onClick={handleAdd}
             disabled={!selected}
             className={cn(
-              'rounded-full px-5 font-semibold text-white transition-colors',
-              type === 'grant'
-                ? 'bg-emerald-500 hover:bg-emerald-600'
-                : 'bg-red-500 hover:bg-red-600',
+              'h-9 gap-1.5',
+              isGrant
+                ? 'bg-success text-success-foreground hover:bg-success/90'
+                : 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
             )}
           >
-            Add {type === 'grant' ? 'Grant' : 'Revoke'}
+            {isGrant ? <ShieldCheck className="h-3.5 w-3.5" /> : <ShieldOff className="h-3.5 w-3.5" />}
+            Add {isGrant ? 'Grant' : 'Revoke'}
           </Button>
         </DialogFooter>
       </DialogContent>

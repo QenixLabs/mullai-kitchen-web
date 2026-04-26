@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Select,
   SelectContent,
@@ -29,8 +30,7 @@ import {
   useAvailablePermissions,
 } from '@/api/hooks/usePermissions';
 import { useHasPermission } from '@/hooks/useHasPermission';
-import { Loader2, Save, RotateCcw, Shield } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Loader2, Save, RotateCcw, Shield, AlertTriangle } from 'lucide-react';
 
 const EDITABLE_ROLES = [
   { value: 'outletAdmin', label: 'Outlet Admin' },
@@ -51,8 +51,9 @@ export function RolePermissionEditor() {
   const resetMutation = useResetRolePermissions();
 
   const categories = availablePermissions?.categories || [];
-
   const currentRoleData = rolePermissions?.find((rp) => rp.role === selectedRole);
+  const selectedRoleLabel =
+    EDITABLE_ROLES.find((r) => r.value === selectedRole)?.label || selectedRole;
 
   useEffect(() => {
     if (currentRoleData) {
@@ -82,134 +83,129 @@ export function RolePermissionEditor() {
   const isSaving = updateMutation.isPending || resetMutation.isPending;
 
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-2xl bg-white border border-border/40 p-4 shadow-sm"
-      >
-        <div className="flex items-center gap-4">
-          <div className="p-2.5 rounded-xl bg-primary/5">
-            <Shield className="h-5 w-5 text-primary" />
-          </div>
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-              Selected Role
-            </p>
-            <Select value={selectedRole} onValueChange={setSelectedRole}>
-              <SelectTrigger className="w-[200px] border-0 bg-transparent p-0 h-auto text-base font-semibold text-primary focus:ring-0">
-                <SelectValue placeholder="Select role" />
-              </SelectTrigger>
-              <SelectContent>
-                {EDITABLE_ROLES.map((role) => (
-                  <SelectItem key={role.value} value={role.value}>
-                    {role.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {canEdit && (
-          <div className="flex gap-2">
-            <Button
-              onClick={handleSave}
-              disabled={!isDirty || isSaving}
-              className="rounded-full bg-primary px-5 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
-            >
-              {isSaving ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Save className="mr-2 h-4 w-4" />
-              )}
-              Save Changes
-            </Button>
-
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  disabled={isSaving}
-                  className="rounded-full border-border/60 px-5 text-sm font-semibold hover:bg-muted/60"
-                >
-                  <RotateCcw className="mr-2 h-4 w-4" />
-                  Reset to Default
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="rounded-2xl">
-                <AlertDialogHeader>
-                  <AlertDialogTitle
-                    className="text-xl font-bold text-primary"
-                    style={{ fontFamily: 'Inter, sans-serif' }}
-                  >
-                    Reset Permissions
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-[15px]">
-                    This will reset all permissions for the{' '}
-                    <span className="font-semibold text-primary">
-                      {EDITABLE_ROLES.find((r) => r.value === selectedRole)?.label}
-                    </span>{' '}
-                    role back to their default values. Any custom changes will be
-                    lost.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="rounded-full px-5">
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleReset}
-                    className="rounded-full bg-primary px-5 text-white hover:bg-primary/90"
-                  >
-                    Reset
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        )}
-      </motion.div>
-
-      <AnimatePresence mode="wait">
-        {isLoading ? (
-          <motion.div
-            key="loading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="space-y-4"
-          >
-            <div className="rounded-3xl bg-white border border-border/40 p-6 space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="space-y-3">
-                  <Skeleton className="h-10 w-3/4 rounded-2xl" />
-                  <div className="grid grid-cols-3 gap-3">
-                    <Skeleton className="h-10 rounded-xl" />
-                    <Skeleton className="h-10 rounded-xl" />
-                    <Skeleton className="h-10 rounded-xl" />
-                  </div>
-                </div>
-              ))}
+    <div className="space-y-5">
+      {/* Toolbar */}
+      <Card className="border-border/70 shadow-sm">
+        <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/15">
+              <Shield className="h-4 w-4" />
+            </span>
+            <div className="space-y-0.5">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Selected Role
+              </p>
+              <Select value={selectedRole} onValueChange={setSelectedRole}>
+                <SelectTrigger className="h-8 w-[200px] border-0 bg-transparent p-0 text-sm font-semibold text-foreground hover:text-foreground focus:ring-0">
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  {EDITABLE_ROLES.map((role) => (
+                    <SelectItem key={role.value} value={role.value}>
+                      {role.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="matrix"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
-            <PermissionMatrix
-              categories={categories}
-              permissions={permissions}
-              onChange={handlePermissionChange}
-              readOnly={!canEdit}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+
+          {canEdit && (
+            <div className="flex items-center gap-2">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={isSaving}
+                    className="h-9 gap-1.5"
+                  >
+                    <RotateCcw className="h-3.5 w-3.5" />
+                    Reset to Default
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-2 text-base">
+                      <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-warning/10 text-warning ring-1 ring-warning/20">
+                        <RotateCcw className="h-3.5 w-3.5" />
+                      </span>
+                      Reset Permissions
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You're about to reset permissions for the{' '}
+                      <span className="font-semibold text-foreground">
+                        {selectedRoleLabel}
+                      </span>{' '}
+                      role to their default values. Any custom changes will be lost.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="flex items-start gap-2 rounded-md border border-warning/20 bg-warning/10 px-3 py-2 text-xs text-warning">
+                    <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                    <span>
+                      This affects every user assigned to this role. Individual user
+                      overrides remain untouched.
+                    </span>
+                  </div>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="h-9">Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleReset}
+                      className="h-9 gap-1.5 bg-warning text-warning-foreground hover:bg-warning/90"
+                    >
+                      <RotateCcw className="h-3.5 w-3.5" />
+                      Reset Role
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+
+              <Button
+                onClick={handleSave}
+                disabled={!isDirty || isSaving}
+                size="sm"
+                className="h-9 gap-1.5"
+              >
+                {isSaving ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Save className="h-3.5 w-3.5" />
+                )}
+                Save Changes
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Matrix */}
+      {isLoading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="border-border/70 shadow-sm">
+              <CardContent className="space-y-3 p-4">
+                <div className="flex items-center gap-2.5">
+                  <Skeleton className="h-7 w-7 rounded-lg" />
+                  <Skeleton className="h-3.5 w-36" />
+                  <Skeleton className="ml-auto h-5 w-16 rounded-full" />
+                </div>
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+                  <Skeleton className="h-9 rounded-md" />
+                  <Skeleton className="h-9 rounded-md" />
+                  <Skeleton className="h-9 rounded-md" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <PermissionMatrix
+          categories={categories}
+          permissions={permissions}
+          onChange={handlePermissionChange}
+          readOnly={!canEdit}
+        />
+      )}
     </div>
   );
 }

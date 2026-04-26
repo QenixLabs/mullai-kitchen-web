@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
   Plus,
@@ -9,12 +9,16 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
-  X,
+  X as XIcon,
   Clock,
+  UserCheck,
+  UserX,
+  AlertTriangle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -48,6 +52,7 @@ type StatusFilter = 'all' | 'active' | 'inactive' | 'pending';
 
 export default function UsersPage() {
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('all');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [outletFilter, setOutletFilter] = useState('all');
@@ -56,9 +61,21 @@ export default function UsersPage() {
     user: AdminUser;
     newStatus: 'active' | 'inactive';
   } | null>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    debounceTimerRef.current = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 300);
+    return () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    };
+  }, [search]);
 
   const queryParams: AdminUserListParams = {
-    search: search || undefined,
+    search: debouncedSearch || undefined,
     role: roleFilter === 'all' ? undefined : roleFilter,
     status: statusFilter === 'all' ? undefined : statusFilter,
     outlet_id: outletFilter === 'all' ? undefined : outletFilter,
@@ -88,230 +105,238 @@ export default function UsersPage() {
     setStatusTarget(null);
   }, [statusTarget, updateStatusMutation]);
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearch(value);
-    setPage(1);
-  }, []);
-
   const hasActiveFilters =
-    search || roleFilter !== 'all' || statusFilter !== 'all' || outletFilter !== 'all';
+    !!debouncedSearch || roleFilter !== 'all' || statusFilter !== 'all' || outletFilter !== 'all';
 
-  const clearFilters = useCallback(() => {
+  const clearFilters = () => {
     setSearch('');
+    setDebouncedSearch('');
     setRoleFilter('all');
     setStatusFilter('all');
     setOutletFilter('all');
     setPage(1);
-  }, []);
+  };
 
   const showPendingCard = !hasActiveFilters && page === 1 && pendingCount > 0;
+  const start = useMemo(() => (page - 1) * PAGE_SIZE + 1, [page]);
+  const end = Math.min(page * PAGE_SIZE, total);
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            User Management
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Oversee access, assign roles, and onboard new culinary staff across your network.
-          </p>
+      {/* Page Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/15">
+            <Users className="h-4.5 w-4.5" />
+          </span>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">User Management</h1>
+            <p className="text-sm text-muted-foreground">
+              Oversee access, assign roles, and onboard staff across the network.
+            </p>
+          </div>
         </div>
-
-        <Can
-          permission={['user:create:admin', 'user:create:hub', 'user:create:delivery']}
-          requireAll={false}
-        >
-          <Link href="/admin/users/create">
-            <Button className="rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground px-6 shadow-md">
-              <Plus className="mr-2 h-4 w-4" />
-              Onboard New User
+        <div className="flex items-center gap-2">
+          <Badge
+            variant="secondary"
+            className="h-8 gap-1.5 border-0 bg-muted px-2.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
+          >
+            <Users className="h-3 w-3" />
+            {total} {total === 1 ? 'user' : 'users'}
+          </Badge>
+          <Can
+            permission={['user:create:admin', 'user:create:hub', 'user:create:delivery']}
+            requireAll={false}
+          >
+            <Button size="sm" className="h-9 gap-1.5" asChild>
+              <Link href="/admin/users/create">
+                <Plus className="h-4 w-4" />
+                Onboard User
+              </Link>
             </Button>
-          </Link>
-        </Can>
+          </Can>
+        </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* KPI Row */}
       <UserStatsGrid />
 
-      {/* Filter Strip */}
-      <div className="rounded-3xl border border-border/40 bg-card/60 p-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-          <div className="relative flex-1 min-w-0">
+      {/* Toolbar */}
+      <Card className="border-border/70 shadow-sm">
+        <CardContent className="flex flex-wrap items-center gap-3 p-4">
+          <div className="relative max-w-sm flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search by name, email, or phone..."
               value={search}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-9 rounded-xl border-border/60 bg-background"
+              onChange={(e) => setSearch(e.target.value)}
+              className="h-9 pl-9"
             />
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <Select
+            value={roleFilter}
+            onValueChange={(v) => {
+              setRoleFilter(v as RoleFilter);
+              setPage(1);
+            }}
+          >
+            <SelectTrigger className="h-9 w-[170px]">
+              <SelectValue placeholder="All Roles" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All roles</SelectItem>
+              <SelectItem value="superAdmin">Super Admin</SelectItem>
+              <SelectItem value="outletAdmin">Hub Owner</SelectItem>
+              <SelectItem value="deliveryPartner">Delivery Partner</SelectItem>
+              <SelectItem value="customer">Customer</SelectItem>
+              <SelectItem value="corporate">Corporate</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={statusFilter}
+            onValueChange={(v) => {
+              setStatusFilter(v as StatusFilter);
+              setPage(1);
+            }}
+          >
+            <SelectTrigger className="h-9 w-[160px]">
+              <SelectValue placeholder="All Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Can permission="outlet:view:any">
             <Select
-              value={roleFilter}
+              value={outletFilter}
               onValueChange={(v) => {
-                setRoleFilter(v as RoleFilter);
+                setOutletFilter(v);
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-full sm:w-[170px] rounded-xl border-border/60 bg-background">
-                <SelectValue placeholder="All Roles" />
+              <SelectTrigger className="h-9 w-[180px]">
+                <SelectValue placeholder="All Outlets" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="superAdmin">Super Admin</SelectItem>
-                <SelectItem value="outletAdmin">Hub Owner</SelectItem>
-                <SelectItem value="deliveryPartner">Delivery Partner</SelectItem>
-                <SelectItem value="customer">Customer</SelectItem>
-                <SelectItem value="corporate">Corporate</SelectItem>
+                <SelectItem value="all">All outlets</SelectItem>
+                {outlets.map((outlet) => (
+                  <SelectItem key={outlet._id} value={outlet._id}>
+                    {outlet.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
+          </Can>
 
-            <Select
-              value={statusFilter}
-              onValueChange={(v) => {
-                setStatusFilter(v as StatusFilter);
-                setPage(1);
-              }}
+          {hasActiveFilters && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="h-9 gap-1.5 text-muted-foreground hover:text-foreground"
             >
-              <SelectTrigger className="w-full sm:w-[160px] rounded-xl border-border/60 bg-background">
-                <SelectValue placeholder="All Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Can permission="outlet:view:any">
-              <Select
-                value={outletFilter}
-                onValueChange={(v) => {
-                  setOutletFilter(v);
-                  setPage(1);
-                }}
-              >
-                <SelectTrigger className="w-full sm:w-[180px] rounded-xl border-border/60 bg-background">
-                  <SelectValue placeholder="All Outlets" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Outlets</SelectItem>
-                  {outlets.map((outlet) => (
-                    <SelectItem key={outlet._id} value={outlet._id}>
-                      {outlet.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Can>
-
-            {hasActiveFilters && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearFilters}
-                className="rounded-full text-muted-foreground hover:text-foreground"
-              >
-                <X className="mr-1 h-3 w-3" />
-                Clear
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
+              <XIcon className="h-3.5 w-3.5" />
+              Clear
+            </Button>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Content */}
       {isError ? (
-        <Card className="rounded-3xl border-border/40">
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <div className="rounded-full bg-destructive/10 p-4 mb-4">
-              <AlertCircle className="h-6 w-6 text-destructive" />
+        <Card className="overflow-hidden border-border/70 shadow-sm">
+          <CardContent className="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center">
+            <div className="rounded-full bg-destructive/10 p-3 text-destructive">
+              <AlertCircle className="h-6 w-6" />
             </div>
-            <h3 className="text-lg font-semibold text-foreground mb-1">
-              Failed to load users
-            </h3>
-            <p className="text-sm text-muted-foreground mb-6">
-              Something went wrong while fetching the user list.
-            </p>
-            <Button
-              onClick={() => refetch()}
-              variant="outline"
-              size="sm"
-              className="rounded-full"
-            >
-              Try Again
+            <div>
+              <h3 className="text-base font-semibold text-foreground">Failed to load users</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Something went wrong while fetching the user list.
+              </p>
+            </div>
+            <Button onClick={() => refetch()} variant="outline" size="sm" className="h-8">
+              Try again
             </Button>
           </CardContent>
         </Card>
       ) : isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="bg-card rounded-3xl border border-border/40 p-5 space-y-4"
-            >
-              <div className="flex items-center gap-3">
-                <Skeleton className="h-12 w-12 rounded-full" />
-                <div className="space-y-2 flex-1">
-                  <Skeleton className="h-4 w-3/4 rounded-xl" />
-                  <Skeleton className="h-3 w-1/2 rounded-xl" />
+            <Card key={i} className="border-border/70 shadow-sm">
+              <CardContent className="space-y-3 p-4">
+                <div className="flex items-center gap-2.5">
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <div className="flex-1 space-y-1.5">
+                    <Skeleton className="h-3.5 w-3/4" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-5 w-20 rounded-full" />
-                <Skeleton className="h-4 w-24 rounded-xl" />
-                <Skeleton className="h-4 w-32 rounded-xl" />
-              </div>
-              <Skeleton className="h-px w-full" />
-              <div className="flex items-center justify-between">
-                <Skeleton className="h-6 w-24 rounded-lg" />
-                <Skeleton className="h-8 w-24 rounded-xl" />
-              </div>
-            </div>
+                <div className="space-y-1.5">
+                  <Skeleton className="h-5 w-20 rounded-full" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+                <Skeleton className="h-px w-full" />
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-5 w-20 rounded-md" />
+                  <Skeleton className="h-7 w-24 rounded-md" />
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       ) : users.length === 0 ? (
-        <Card className="rounded-3xl border-border/40">
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <div className="rounded-full bg-muted p-4 mb-4">
-              <Users className="h-6 w-6 text-muted-foreground" />
+        <Card className="overflow-hidden border-border/70 shadow-sm">
+          <CardContent className="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center">
+            <div className="rounded-full bg-muted p-3 text-muted-foreground">
+              <Users className="h-6 w-6" />
             </div>
-            <h3 className="text-lg font-semibold text-foreground mb-1">
-              No users found
-            </h3>
-            <p className="text-sm text-muted-foreground mb-6 text-center ">
-              {hasActiveFilters
-                ? 'No users match your current filters. Try adjusting your search or filters.'
-                : 'Get started by creating your first user.'}
-            </p>
+            <div>
+              <h3 className="text-base font-semibold text-foreground">No users found</h3>
+              <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+                {hasActiveFilters
+                  ? 'No users match your filters. Try adjusting your search or filter selections.'
+                  : 'Get started by onboarding your first staff member.'}
+              </p>
+            </div>
             {!hasActiveFilters && (
               <Can
                 permission={['user:create:admin', 'user:create:hub', 'user:create:delivery']}
                 requireAll={false}
               >
-                <Link href="/admin/users/create">
-                  <Button size="sm" className="rounded-full">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create User
-                  </Button>
-                </Link>
+                <Button size="sm" className="h-8 gap-1.5" asChild>
+                  <Link href="/admin/users/create">
+                    <Plus className="h-3.5 w-3.5" />
+                    Onboard User
+                  </Link>
+                </Button>
               </Can>
             )}
           </CardContent>
         </Card>
       ) : (
         <>
-          {total > 0 && (
-            <p className="text-sm text-muted-foreground">
-              Showing {users.length} of {total} staff member{total !== 1 ? 's' : ''}
-            </p>
-          )}
+          <div className="flex items-center justify-between text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <span>
+              Showing{' '}
+              <span className="font-semibold tabular-nums text-foreground">
+                {start}–{end}
+              </span>{' '}
+              of <span className="font-semibold tabular-nums text-foreground">{total}</span>
+            </span>
+            <span className="hidden sm:inline">
+              Page <span className="tabular-nums text-foreground">{page}</span> of{' '}
+              <span className="tabular-nums text-foreground">{totalPages}</span>
+            </span>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {users.map((user) => (
               <UserCard
                 key={user._id}
@@ -322,25 +347,24 @@ export default function UsersPage() {
               />
             ))}
 
-            {/* Pending Onboarding Card */}
             {showPendingCard && (
               <button
                 onClick={() => {
                   setStatusFilter('pending');
                   setPage(1);
                 }}
-                className="group flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border/60 bg-card/40 p-8 text-center hover:border-primary/40 hover:bg-primary/5 transition-colors cursor-pointer min-h-[240px]"
+                className="group flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-border/70 bg-card/40 p-6 text-center transition-colors hover:border-warning/40 hover:bg-warning/5"
               >
-                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/60 text-white shadow-lg">
-                  <Clock className="h-6 w-6" />
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-warning/15 text-warning ring-1 ring-warning/20">
+                  <Clock className="h-5 w-5" />
+                </span>
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground">Pending Onboarding</h3>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {pendingCount} applicant{pendingCount !== 1 ? 's' : ''} awaiting verification
+                  </p>
                 </div>
-                <h3 className="text-base font-semibold text-foreground mb-1">
-                  Pending Onboarding
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {pendingCount} applicant{pendingCount !== 1 ? 's' : ''} awaiting verification
-                </p>
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary group-hover:bg-primary/20 transition-colors">
+                <span className="inline-flex items-center gap-1 rounded-md border border-warning/20 bg-warning/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-warning transition-colors group-hover:bg-warning/15">
                   Review Pending
                 </span>
               </button>
@@ -349,77 +373,59 @@ export default function UsersPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-muted-foreground">
-                Page {page} of {totalPages}
-              </p>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={page <= 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="rounded-lg"
-                >
-                  <ChevronLeft className="mr-1 h-4 w-4" />
-                  Prev
-                </Button>
-
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter((p) => {
-                      if (p === 1 || p === totalPages) return true;
-                      if (Math.abs(p - page) <= 1) return true;
-                      return false;
-                    })
-                    .reduce<(number | 'ellipsis')[]>((acc, p, idx, arr) => {
-                      if (idx > 0) {
-                        const prev = arr[idx - 1];
-                        if (p - prev > 1) {
-                          acc.push('ellipsis');
-                        }
-                      }
-                      acc.push(p);
-                      return acc;
-                    }, [])
-                    .map((item, idx) =>
-                      item === 'ellipsis' ? (
-                        <span
-                          key={`ellipsis-${idx}`}
-                          className="px-1 text-muted-foreground"
-                        >
-                          ...
-                        </span>
-                      ) : (
-                        <Button
-                          key={item}
-                          variant={page === item ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => setPage(item)}
-                          className={cn(
-                            'h-8 w-8 p-0 rounded-lg',
-                            page === item &&
-                              'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-sm',
-                          )}
-                        >
-                          {item}
-                        </Button>
-                      ),
-                    )}
+            <Card className="border-border/70 shadow-sm">
+              <CardContent className="flex flex-col items-center justify-between gap-2 px-4 py-2.5 text-[11px] text-muted-foreground sm:flex-row">
+                <span>
+                  Showing <span className="font-semibold tabular-nums text-foreground">{start}–{end}</span>{' '}
+                  of <span className="font-semibold tabular-nums text-foreground">{total}</span>
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    variant="outline"
+                    size="icon-sm"
+                    disabled={page <= 1}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  {Array.from({ length: totalPages }).map((_, i) => {
+                    const p = i + 1;
+                    const near = Math.abs(p - page) <= 1 || p === 1 || p === totalPages;
+                    if (!near) {
+                      if (p === page - 2 || p === page + 2)
+                        return (
+                          <span key={p} className="px-1 text-xs text-muted-foreground">
+                            …
+                          </span>
+                        );
+                      return null;
+                    }
+                    return (
+                      <Button
+                        key={p}
+                        variant={page === p ? 'default' : 'outline'}
+                        size="icon-sm"
+                        onClick={() => setPage(p)}
+                        className={cn(
+                          'text-xs',
+                          page === p && 'bg-primary text-primary-foreground hover:bg-primary/90',
+                        )}
+                      >
+                        {p}
+                      </Button>
+                    );
+                  })}
+                  <Button
+                    variant="outline"
+                    size="icon-sm"
+                    disabled={page >= totalPages}
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
                 </div>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={page >= totalPages}
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  className="rounded-lg"
-                >
-                  Next
-                  <ChevronRight className="ml-1 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           )}
         </>
       )}
@@ -431,33 +437,58 @@ export default function UsersPage() {
           if (!open) setStatusTarget(null);
         }}
       >
-        <AlertDialogContent className="rounded-2xl border-border !max-w-4xl">
+        <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-lg font-semibold">
+            <AlertDialogTitle className="flex items-center gap-2 text-base">
+              <span
+                className={cn(
+                  'inline-flex h-7 w-7 items-center justify-center rounded-lg ring-1',
+                  isActivating
+                    ? 'bg-success/10 text-success ring-success/20'
+                    : 'bg-destructive/10 text-destructive ring-destructive/20',
+                )}
+              >
+                {isActivating ? (
+                  <UserCheck className="h-3.5 w-3.5" />
+                ) : (
+                  <UserX className="h-3.5 w-3.5" />
+                )}
+              </span>
               {isActivating ? 'Activate User' : 'Deactivate User'}
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-sm text-muted-foreground">
-              Are you sure you want to{' '}
-              {isActivating ? 'activate' : 'deactivate'}{' '}
-              <span className="font-semibold text-foreground">
-                {statusTarget?.user.name}
-              </span>
-              ?
-              {!isActivating &&
-                ' This will restrict their access to the platform.'}
+            <AlertDialogDescription>
+              You're about to {isActivating ? 'activate' : 'deactivate'}{' '}
+              <span className="font-semibold text-foreground">{statusTarget?.user.name}</span>.
+              {isActivating
+                ? ' They will regain access to the platform immediately.'
+                : ' This will restrict their access to the platform.'}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+          {!isActivating && (
+            <div className="flex items-start gap-2 rounded-md border border-warning/20 bg-warning/10 px-3 py-2 text-xs text-warning">
+              <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              <span>
+                Active sessions, scheduled deliveries, and login tokens will be revoked immediately.
+              </span>
+            </div>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel className="h-9">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleStatusConfirm}
               className={cn(
-                'rounded-full',
-                !isActivating &&
-                  'bg-destructive text-white hover:bg-destructive/90',
+                'h-9 gap-1.5',
+                isActivating
+                  ? 'bg-success text-success-foreground hover:bg-success/90'
+                  : 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
               )}
             >
-              {isActivating ? 'Activate' : 'Deactivate'}
+              {isActivating ? (
+                <UserCheck className="h-3.5 w-3.5" />
+              ) : (
+                <UserX className="h-3.5 w-3.5" />
+              )}
+              {isActivating ? 'Activate User' : 'Deactivate User'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

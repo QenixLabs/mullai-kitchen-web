@@ -1,47 +1,95 @@
 'use client';
 
 import { Users, Shield, Store, Bike } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUserStats } from '@/api/hooks/useAdminUsers';
+import { cn } from '@/lib/utils';
 
-const STATS = [
-  { key: 'totalStaff' as const, label: 'Total Staff', icon: Users, color: 'text-primary', bg: 'bg-primary/10' },
-  { key: 'admins' as const, label: 'Admins', icon: Shield, color: 'text-blue-600', bg: 'bg-blue-500/10' },
-  { key: 'hubOwners' as const, label: 'Hub Owners', icon: Store, color: 'text-amber-600', bg: 'bg-amber-500/10' },
-  { key: 'activeRiders' as const, label: 'Active Riders', icon: Bike, color: 'text-emerald-600', bg: 'bg-emerald-500/10' },
-];
+interface StatCardProps {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  sub?: string;
+  tone: 'primary' | 'success' | 'muted' | 'info' | 'warning';
+  isLoading?: boolean;
+}
+
+function StatCard({ icon, label, value, sub, tone, isLoading }: StatCardProps) {
+  const toneStyles = {
+    primary: 'bg-primary/10 text-primary ring-primary/15',
+    success: 'bg-success/15 text-success ring-success/20',
+    muted: 'bg-muted text-muted-foreground ring-border',
+    info: 'bg-info/15 text-info ring-info/20',
+    warning: 'bg-warning/15 text-warning ring-warning/20',
+  } as const;
+
+  return (
+    <Card className="border-border/70 shadow-sm transition-shadow hover:shadow-md">
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between gap-2">
+          <div className="space-y-1">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
+            {isLoading ? (
+              <Skeleton className="h-7 w-16 rounded-md" />
+            ) : (
+              <p className="text-2xl font-bold leading-none tracking-tight tabular-nums text-foreground">
+                {value}
+              </p>
+            )}
+            {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
+          </div>
+          <span
+            className={cn(
+              'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ring-1',
+              toneStyles[tone],
+            )}
+          >
+            {icon}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export function UserStatsGrid() {
   const stats = useUserStats();
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {STATS.map((stat) => {
-        const Icon = stat.icon;
-        const value = stats[stat.key];
-        return (
-          <div
-            key={stat.key}
-            className="bg-card rounded-3xl p-5 sm:p-6 border border-border/40 shadow-sm"
-          >
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className={`flex h-8 w-8 items-center justify-center rounded-xl ${stat.bg}`}>
-                <Icon className={`h-4 w-4 ${stat.color}`} />
-              </div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                {stat.label}
-              </span>
-            </div>
-            {stats.isLoading ? (
-              <Skeleton className="h-9 w-20 rounded-xl" />
-            ) : (
-              <p className="text-2xl sm:text-3xl font-bold text-foreground tabular-nums">
-                {value.toLocaleString()}
-              </p>
-            )}
-          </div>
-        );
-      })}
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <StatCard
+        icon={<Users className="h-4 w-4" />}
+        label="Total Staff"
+        value={stats.totalStaff.toLocaleString()}
+        sub={stats.totalStaff === 0 ? 'No users yet' : 'Across all roles'}
+        tone="primary"
+        isLoading={stats.isLoading}
+      />
+      <StatCard
+        icon={<Shield className="h-4 w-4" />}
+        label="Admins"
+        value={stats.admins.toLocaleString()}
+        sub={stats.admins === 0 ? 'None onboarded' : 'Super admin access'}
+        tone="info"
+        isLoading={stats.isLoading}
+      />
+      <StatCard
+        icon={<Store className="h-4 w-4" />}
+        label="Hub Owners"
+        value={stats.hubOwners.toLocaleString()}
+        sub={stats.hubOwners === 0 ? 'None assigned' : 'Outlet operators'}
+        tone="warning"
+        isLoading={stats.isLoading}
+      />
+      <StatCard
+        icon={<Bike className="h-4 w-4" />}
+        label="Active Riders"
+        value={stats.activeRiders.toLocaleString()}
+        sub={stats.activeRiders === 0 ? 'No riders live' : 'Currently delivering'}
+        tone="success"
+        isLoading={stats.isLoading}
+      />
     </div>
   );
 }

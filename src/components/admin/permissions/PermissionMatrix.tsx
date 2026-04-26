@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   ChevronDown,
   ChevronRight,
@@ -31,7 +31,7 @@ export const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: st
   'user-management': Users,
   'menu-recipes': UtensilsCrossed,
   'subscriptions-plans': CreditCard,
-  'invoices': FileText,
+  invoices: FileText,
   'orders-delivery': Truck,
   'reports-analytics': BarChart3,
   'system-configuration': Settings,
@@ -45,7 +45,12 @@ interface PermissionMatrixProps {
   readOnly?: boolean;
 }
 
-export function PermissionMatrix({ categories, permissions, onChange, readOnly = false }: PermissionMatrixProps) {
+export function PermissionMatrix({
+  categories,
+  permissions,
+  onChange,
+  readOnly = false,
+}: PermissionMatrixProps) {
   const [openCategories, setOpenCategories] = useState<Set<string>>(
     new Set(categories.map((c) => c.key)),
   );
@@ -80,125 +85,104 @@ export function PermissionMatrix({ categories, permissions, onChange, readOnly =
 
   return (
     <div className="space-y-3">
-      {categories.map((category, index) => {
+      {categories.map((category) => {
         const isOpen = openCategories.has(category.key);
         const allSelected = category.permissions.every((p) => permissions.has(p.key));
+        const selectedCount = category.permissions.filter((p) =>
+          permissions.has(p.key),
+        ).length;
         const Icon = CATEGORY_ICONS[category.key] || Shield;
-        const selectedCount = category.permissions.filter((p) => permissions.has(p.key)).length;
+        const isFullySelected = selectedCount === category.permissions.length;
+        const isPartial = selectedCount > 0 && !isFullySelected;
 
         return (
-          <motion.div
-            key={category.key}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.05 }}
-            whileHover={{ y: -2 }}
-            className="rounded-2xl bg-white border border-border/40 shadow-sm overflow-hidden"
-          >
-            <div
-              className="flex items-center gap-3 px-5 py-4 cursor-pointer select-none"
-              onClick={() => toggleCategory(category.key)}
-            >
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0 hover:bg-muted/60"
+          <Card key={category.key} className="overflow-hidden border-border/70 shadow-sm">
+            <CardContent className="p-0">
+              {/* Header */}
+              <button
+                type="button"
+                onClick={() => toggleCategory(category.key)}
+                className="flex w-full items-center gap-2.5 border-b border-border/70 bg-gradient-to-b from-muted/40 to-muted/10 px-4 py-3 text-left transition-colors hover:bg-muted/40"
               >
-                <AnimatePresence mode="wait" initial={false}>
+                <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground">
                   {isOpen ? (
-                    <motion.div
-                      key="down"
-                      initial={{ rotate: -90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: -90, opacity: 0 }}
-                      transition={{ duration: 0.15 }}
-                    >
-                      <ChevronDown className="h-4 w-4 text-primary" />
-                    </motion.div>
+                    <ChevronDown className="h-4 w-4" />
                   ) : (
-                    <motion.div
-                      key="right"
-                      initial={{ rotate: 90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: 90, opacity: 0 }}
-                      transition={{ duration: 0.15 }}
-                    >
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                    </motion.div>
+                    <ChevronRight className="h-4 w-4" />
                   )}
-                </AnimatePresence>
-              </Button>
-              <div className="p-1.5 rounded-lg bg-primary/5">
-                <Icon className="h-4 w-4 text-primary" />
-              </div>
-              <span
-                className="flex-1 font-semibold text-primary"
-                style={{ fontFamily: 'Inter, sans-serif' }}
-              >
-                {category.label}
-              </span>
-              <span className="text-sm font-medium text-muted-foreground mr-2">
-                {selectedCount}/{category.permissions.length}
-              </span>
-              {!readOnly && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-7 rounded-full text-xs font-semibold border-border/60 hover:bg-muted/60"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleAllInCategory(category);
-                  }}
+                </span>
+                <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/15">
+                  <Icon className="h-3.5 w-3.5" />
+                </span>
+                <span className="flex-1 truncate text-sm font-semibold tracking-tight text-foreground">
+                  {category.label}
+                </span>
+                <span
+                  className={cn(
+                    'inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide ring-1',
+                    isFullySelected
+                      ? 'bg-success/15 text-success ring-success/20'
+                      : isPartial
+                        ? 'bg-info/15 text-info ring-info/20'
+                        : 'bg-muted text-muted-foreground ring-border',
+                  )}
                 >
-                  {allSelected ? 'Deselect All' : 'Select All'}
-                </Button>
-              )}
-            </div>
-            <AnimatePresence initial={false}>
+                  <span className="tabular-nums">{selectedCount}</span>
+                  <span className="opacity-50">/</span>
+                  <span className="tabular-nums">{category.permissions.length}</span>
+                </span>
+                {!readOnly && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 gap-1.5 px-2 text-[11px]"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleAllInCategory(category);
+                    }}
+                  >
+                    {allSelected ? 'Deselect All' : 'Select All'}
+                  </Button>
+                )}
+              </button>
+
+              {/* Body */}
               {isOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2, ease: 'easeInOut' }}
-                  className="overflow-hidden"
-                >
-                  <div className="grid grid-cols-1 gap-1.5 border-t border-border/30 px-5 py-3 md:grid-cols-2 lg:grid-cols-3">
-                    {category.permissions.map((perm) => {
-                      const isChecked = permissions.has(perm.key);
-                      return (
-                        <label
-                          key={perm.key}
+                <div className="grid grid-cols-1 gap-1.5 px-3 py-3 md:grid-cols-2 lg:grid-cols-3">
+                  {category.permissions.map((perm) => {
+                    const isChecked = permissions.has(perm.key);
+                    return (
+                      <label
+                        key={perm.key}
+                        className={cn(
+                          'flex items-center gap-2.5 rounded-md border px-2.5 py-2 text-xs transition-colors',
+                          readOnly ? 'cursor-default' : 'cursor-pointer',
+                          isChecked
+                            ? 'border-primary/20 bg-primary/5 text-foreground'
+                            : 'border-transparent text-muted-foreground hover:border-border/70 hover:bg-muted/40',
+                        )}
+                      >
+                        <Checkbox
+                          checked={isChecked}
+                          onCheckedChange={() => togglePermission(perm.key)}
+                          disabled={readOnly}
+                          className={cn('shrink-0', isChecked && 'border-primary')}
+                        />
+                        <span
                           className={cn(
-                            'flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm transition-all duration-150',
-                            readOnly ? 'cursor-default' : 'cursor-pointer',
-                            isChecked
-                              ? 'bg-primary/5 border border-primary/10'
-                              : 'hover:bg-muted/40 border border-transparent',
+                            'truncate font-medium',
+                            isChecked && 'text-foreground',
                           )}
                         >
-                          <Checkbox
-                            checked={isChecked}
-                            onCheckedChange={() => togglePermission(perm.key)}
-                            disabled={readOnly}
-                            className={cn(isChecked && 'border-primary')}
-                          />
-                          <span
-                            className={cn(
-                              'font-medium',
-                              isChecked ? 'text-primary' : 'text-primary/70',
-                            )}
-                          >
-                            {perm.label}
-                          </span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </motion.div>
+                          {perm.label}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
               )}
-            </AnimatePresence>
-          </motion.div>
+            </CardContent>
+          </Card>
         );
       })}
     </div>

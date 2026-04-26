@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import {
   useUserPermissions,
@@ -13,7 +13,6 @@ import {
 import { Can } from '@/components/Auth/can';
 import { AddOverrideDialog } from './AddOverrideDialog';
 import {
-  Loader2,
   Plus,
   X,
   Shield,
@@ -21,7 +20,6 @@ import {
   ShieldOff,
   KeyRound,
 } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
 import { CATEGORY_ICONS } from './PermissionMatrix';
 
 interface UserPermissionDetailProps {
@@ -29,10 +27,40 @@ interface UserPermissionDetailProps {
   userName?: string;
 }
 
-export function UserPermissionDetail({
-  userId,
-  userName,
-}: UserPermissionDetailProps) {
+function HeaderStrip({
+  icon: Icon,
+  title,
+  subtitle,
+  action,
+}: {
+  icon: React.ElementType;
+  title: string;
+  subtitle?: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-2 border-b border-border/70 bg-gradient-to-b from-muted/40 to-muted/10 px-4 py-3">
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/15">
+          <Icon className="h-3.5 w-3.5" />
+        </span>
+        <div className="min-w-0">
+          <h3 className="truncate text-sm font-semibold tracking-tight text-foreground">
+            {title}
+          </h3>
+          {subtitle && (
+            <p className="truncate text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+              {subtitle}
+            </p>
+          )}
+        </div>
+      </div>
+      {action}
+    </div>
+  );
+}
+
+export function UserPermissionDetail({ userId }: UserPermissionDetailProps) {
   const { data: permDetail, isLoading } = useUserPermissions(userId);
   const { data: availablePermissions } = useAvailablePermissions();
   const updateMutation = useUpdateUserPermissions();
@@ -40,22 +68,24 @@ export function UserPermissionDetail({
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="rounded-3xl bg-white border border-border/40 p-6 space-y-4">
-          <Skeleton className="h-8 w-48 rounded-2xl" />
-          <div className="flex flex-wrap gap-2">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-7 w-24 rounded-[9px]" />
-            ))}
-          </div>
-          <Separator />
-          <Skeleton className="h-8 w-36 rounded-2xl" />
-          <div className="flex flex-wrap gap-2">
-            {[1, 2].map((i) => (
-              <Skeleton key={i} className="h-7 w-20 rounded-[9px]" />
-            ))}
-          </div>
-        </div>
+      <div className="space-y-5">
+        <Card className="overflow-hidden border-border/70 shadow-sm">
+          <CardContent className="space-y-4 p-4">
+            <Skeleton className="h-5 w-40" />
+            <div className="flex flex-wrap gap-2">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-6 w-24 rounded-full" />
+              ))}
+            </div>
+            <Separator />
+            <Skeleton className="h-5 w-36" />
+            <div className="flex flex-wrap gap-2">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-6 w-20 rounded-full" />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -96,7 +126,6 @@ export function UserPermissionDetail({
     setShowAddDialog(false);
   };
 
-  // Build a label lookup from API categories
   const permissionLabels = new Map<string, string>();
   const categories = availablePermissions?.categories || [];
   for (const cat of categories) {
@@ -109,7 +138,6 @@ export function UserPermissionDetail({
     return permissionLabels.get(key) || key;
   };
 
-  // Group effective permissions by category (from API)
   const effectiveByCategory = categories
     .map((cat) => ({
       ...cat,
@@ -119,72 +147,63 @@ export function UserPermissionDetail({
     }))
     .filter((cat) => cat.effective.length > 0);
 
-  // Also include any effective permissions not in any category
   const allKnownKeys = new Set(categories.flatMap((c) => c.permissions.map((p) => p.key)));
-  const uncategorized = permDetail.effectivePermissions.filter((p) => !allKnownKeys.has(p));
+  const uncategorized = permDetail.effectivePermissions.filter(
+    (p) => !allKnownKeys.has(p),
+  );
 
   return (
-    <div className="space-y-6">
-      {/* Overrides section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <Card className="rounded-3xl bg-white border border-border/40 shadow-sm overflow-hidden">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-primary/5">
-                  <Shield className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <CardTitle
-                    className="text-lg font-bold text-primary"
-                    style={{ fontFamily: 'Inter, sans-serif' }}
-                  >
-                    Permission Overrides
-                  </CardTitle>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mt-0.5">
-                    Individual grants and revokes for this user
-                  </p>
-                </div>
-              </div>
+    <div className="space-y-5">
+      {/* Overrides Card */}
+      <Card className="overflow-hidden border-border/70 shadow-sm">
+        <CardContent className="p-0">
+          <HeaderStrip
+            icon={Shield}
+            title="Permission Overrides"
+            subtitle="Individual grants and revokes"
+            action={
               <Can permission={['permission:grant', 'permission:revoke']}>
                 <Button
                   size="sm"
                   onClick={() => setShowAddDialog(true)}
-                  className="rounded-full bg-primary px-5 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+                  className="h-8 gap-1.5"
                 >
-                  <Plus className="h-4 w-4 mr-1" /> Add Override
+                  <Plus className="h-3.5 w-3.5" />
+                  Add Override
                 </Button>
               </Can>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-5 pt-0">
+            }
+          />
+          <div className="space-y-4 px-4 py-4">
             {/* Grants */}
             <div>
-              <h4 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2 mb-3">
-                <ShieldCheck className="h-4 w-4 text-emerald-500" />
-                Granted ({grants.size})
-              </h4>
+              <div className="mb-2 flex items-center gap-2">
+                <ShieldCheck className="h-3.5 w-3.5 text-success" />
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Granted
+                </span>
+                <span className="rounded-md border border-success/20 bg-success/10 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-success">
+                  {grants.size}
+                </span>
+              </div>
               {grants.size === 0 ? (
-                <div className="flex flex-col items-center py-6 rounded-2xl bg-muted/30">
-                  <ShieldCheck className="h-6 w-6 text-muted-foreground/40 mb-2" />
-                  <p className="text-sm text-muted-foreground">No individual grants</p>
+                <div className="flex items-center justify-center rounded-md border border-dashed border-border/70 bg-muted/30 px-3 py-5 text-xs text-muted-foreground">
+                  No individual grants
                 </div>
               ) : (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5">
                   {permDetail.grants.map((perm) => (
                     <span
                       key={perm}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[9px] bg-emerald-500 text-white text-sm font-semibold"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 py-0.5 pl-2 pr-1 text-xs font-medium text-success"
                     >
+                      <span className="h-1.5 w-1.5 rounded-full bg-success" />
                       {getPermissionLabel(perm)}
                       <Can permission={['permission:grant']}>
                         <button
+                          type="button"
                           onClick={() => handleRemoveOverride(perm, 'grant')}
-                          className="ml-0.5 hover:bg-white/20 rounded-full p-0.5 transition-colors"
+                          className="ml-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full text-success/70 transition-colors hover:bg-success/15 hover:text-success"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -195,31 +214,37 @@ export function UserPermissionDetail({
               )}
             </div>
 
-            <Separator className="bg-border/30" />
+            <Separator className="bg-border/50" />
 
             {/* Revokes */}
             <div>
-              <h4 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2 mb-3">
-                <ShieldOff className="h-4 w-4 text-red-500" />
-                Revoked ({revokes.size})
-              </h4>
+              <div className="mb-2 flex items-center gap-2">
+                <ShieldOff className="h-3.5 w-3.5 text-destructive" />
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Revoked
+                </span>
+                <span className="rounded-md border border-destructive/20 bg-destructive/10 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-destructive">
+                  {revokes.size}
+                </span>
+              </div>
               {revokes.size === 0 ? (
-                <div className="flex flex-col items-center py-6 rounded-2xl bg-muted/30">
-                  <ShieldOff className="h-6 w-6 text-muted-foreground/40 mb-2" />
-                  <p className="text-sm text-muted-foreground">No individual revokes</p>
+                <div className="flex items-center justify-center rounded-md border border-dashed border-border/70 bg-muted/30 px-3 py-5 text-xs text-muted-foreground">
+                  No individual revokes
                 </div>
               ) : (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5">
                   {permDetail.revokes.map((perm) => (
                     <span
                       key={perm}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[9px] bg-red-500 text-white text-sm font-semibold"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-destructive/20 bg-destructive/10 py-0.5 pl-2 pr-1 text-xs font-medium text-destructive"
                     >
+                      <span className="h-1.5 w-1.5 rounded-full bg-destructive" />
                       {getPermissionLabel(perm)}
                       <Can permission={['permission:revoke']}>
                         <button
+                          type="button"
                           onClick={() => handleRemoveOverride(perm, 'revoke')}
-                          className="ml-0.5 hover:bg-white/20 rounded-full p-0.5 transition-colors"
+                          className="ml-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full text-destructive/70 transition-colors hover:bg-destructive/15 hover:text-destructive"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -229,99 +254,88 @@ export function UserPermissionDetail({
                 </div>
               )}
             </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Effective permissions summary */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.1 }}
-      >
-        <Card className="rounded-3xl bg-white border border-border/40 shadow-sm overflow-hidden">
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-primary/5">
-                <KeyRound className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <CardTitle
-                  className="text-lg font-bold text-primary"
-                  style={{ fontFamily: 'Inter, sans-serif' }}
-                >
-                  Effective Permissions
-                </CardTitle>
-                <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mt-0.5">
-                  {permDetail.effectivePermissions.length} active permissions
-                </p>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4 pt-0">
-            {effectiveByCategory.map((cat, index) => {
-              const Icon = CATEGORY_ICONS[cat.key] || Shield;
-              return (
-                <motion.div
-                  key={cat.key}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.1 + index * 0.05 }}
-                >
-                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2 mb-2">
-                    <Icon className="h-3.5 w-3.5 text-primary/50" />
-                    {cat.label} ({cat.effective.length}/{cat.permissions.length})
-                  </h4>
-                  <div className="flex flex-wrap gap-1.5">
-                    {cat.effective.map((p) => (
-                      <span
-                        key={p.key}
-                        className="inline-flex items-center px-3 py-1 rounded-[9px] bg-primary/5 border border-primary/10 text-xs font-semibold text-primary"
-                      >
-                        {p.label}
-                      </span>
-                    ))}
-                  </div>
-                </motion.div>
-              );
-            })}
-            {uncategorized.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 + effectiveByCategory.length * 0.05 }}
-              >
-                <h4 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2 mb-2">
-                  <Shield className="h-3.5 w-3.5 text-primary/50" />
-                  Other ({uncategorized.length})
-                </h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {uncategorized.map((key) => (
-                    <span
-                      key={key}
-                      className="inline-flex items-center px-3 py-1 rounded-[9px] bg-primary/5 border border-primary/10 text-xs font-semibold text-primary"
-                    >
-                      {getPermissionLabel(key)}
-                    </span>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      {/* Add Override Dialog */}
-      <AnimatePresence>
-        {showAddDialog && (
-          <AddOverrideDialog
-            existingGrants={permDetail.grants}
-            existingRevokes={permDetail.revokes}
-            onAdd={handleAddOverride}
-            onClose={() => setShowAddDialog(false)}
+      {/* Effective Permissions Card */}
+      <Card className="overflow-hidden border-border/70 shadow-sm">
+        <CardContent className="p-0">
+          <HeaderStrip
+            icon={KeyRound}
+            title="Effective Permissions"
+            subtitle={`${permDetail.effectivePermissions.length} active`}
           />
-        )}
-      </AnimatePresence>
+          <div className="space-y-4 px-4 py-4">
+            {effectiveByCategory.length === 0 && uncategorized.length === 0 ? (
+              <div className="flex items-center justify-center rounded-md border border-dashed border-border/70 bg-muted/30 px-3 py-6 text-xs text-muted-foreground">
+                No effective permissions
+              </div>
+            ) : (
+              <>
+                {effectiveByCategory.map((cat) => {
+                  const Icon = CATEGORY_ICONS[cat.key] || Shield;
+                  return (
+                    <div key={cat.key}>
+                      <div className="mb-2 flex items-center gap-2">
+                        <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                          {cat.label}
+                        </span>
+                        <span className="rounded-md border border-border/60 bg-muted px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-muted-foreground">
+                          {cat.effective.length}/{cat.permissions.length}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {cat.effective.map((p) => (
+                          <span
+                            key={p.key}
+                            className="inline-flex items-center rounded-md bg-primary/5 px-2 py-0.5 text-xs font-medium text-foreground/80 ring-1 ring-primary/15"
+                          >
+                            {p.label}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+                {uncategorized.length > 0 && (
+                  <div>
+                    <div className="mb-2 flex items-center gap-2">
+                      <Shield className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Other
+                      </span>
+                      <span className="rounded-md border border-border/60 bg-muted px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-muted-foreground">
+                        {uncategorized.length}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {uncategorized.map((key) => (
+                        <span
+                          key={key}
+                          className="inline-flex items-center rounded-md bg-primary/5 px-2 py-0.5 text-xs font-medium text-foreground/80 ring-1 ring-primary/15"
+                        >
+                          {getPermissionLabel(key)}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {showAddDialog && (
+        <AddOverrideDialog
+          existingGrants={permDetail.grants}
+          existingRevokes={permDetail.revokes}
+          onAdd={handleAddOverride}
+          onClose={() => setShowAddDialog(false)}
+        />
+      )}
     </div>
   );
 }

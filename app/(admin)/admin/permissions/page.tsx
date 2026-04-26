@@ -1,52 +1,52 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RolePermissionEditor } from '@/components/admin/permissions/RolePermissionEditor';
 import { AuditLogViewer } from '@/components/admin/permissions/AuditLogViewer';
-import { Shield, ScrollText } from 'lucide-react';
+import { ShieldCheck, ScrollText } from 'lucide-react';
 
 export default function PermissionsPage() {
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
-      <div className="mb-10 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1
-            className="text-[28px] font-extrabold uppercase tracking-tight text-primary sm:text-[32px] lg:text-[36px]"
-            style={{ fontFamily: 'Inter, sans-serif' }}
-          >
-            Permission Management
-          </h1>
-          <p
-            className="mt-1 text-sm font-medium text-[#554243] sm:text-[15px] lg:text-[16px]"
-            style={{ fontFamily: 'Inter, sans-serif' }}
-          >
-            Configure roles and permissions for different user types and access
-            levels.
-          </p>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/15">
+            <ShieldCheck className="h-4.5 w-4.5" />
+          </span>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              Permission Management
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Configure roles, individual overrides, and review the audit trail.
+            </p>
+          </div>
         </div>
       </div>
 
-      <Tabs defaultValue="roles" className="space-y-6">
-        <TabsList className="rounded-full bg-muted/60 p-1">
+      {/* Tabs */}
+      <Tabs defaultValue="roles" className="space-y-5">
+        <TabsList className="inline-flex h-9 items-center rounded-md bg-muted p-1 text-muted-foreground">
           <TabsTrigger
             value="roles"
-            className="flex items-center gap-2 rounded-full px-5 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            className="inline-flex h-7 items-center gap-1.5 rounded-sm px-3 text-[11px] font-semibold uppercase tracking-wide transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
           >
-            <Shield className="h-4 w-4" />
+            <ShieldCheck className="h-3.5 w-3.5" />
             Role Permissions
           </TabsTrigger>
           <TabsTrigger
             value="audit"
-            className="flex items-center gap-2 rounded-full px-5 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            className="inline-flex h-7 items-center gap-1.5 rounded-sm px-3 text-[11px] font-semibold uppercase tracking-wide transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
           >
-            <ScrollText className="h-4 w-4" />
+            <ScrollText className="h-3.5 w-3.5" />
             Audit Log
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="roles">
+        <TabsContent value="roles" className="mt-0">
           <RolePermissionEditor />
         </TabsContent>
 
-        <TabsContent value="audit">
+        <TabsContent value="audit" className="mt-0">
           <AuditLogViewer />
         </TabsContent>
       </Tabs>
