@@ -226,7 +226,7 @@ export function RecipeTable({ recipes, isLoading = false, onDelete, onStatusChan
       </Card>
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}>
-        <AlertDialogContent className="rounded-sm border-border">
+        <AlertDialogContent className="rounded-sm border-border min-w-[360px]">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-lg font-semibold">Delete Recipe</AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-muted-foreground">

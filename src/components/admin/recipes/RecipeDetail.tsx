@@ -81,7 +81,7 @@ export function RecipeDetail({ recipe, onDelete, onStatusChange }: RecipeDetailP
                     <Trash2 className="mr-2 h-4 w-4" />Delete
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="min-w-[360px]">
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete Recipe</AlertDialogTitle>
                     <AlertDialogDescription>

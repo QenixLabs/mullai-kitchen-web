@@ -27,13 +27,14 @@ import type {
 export const deliveryQueryKeys = {
   all: ["delivery"] as const,
   routes: () => [...deliveryQueryKeys.all, "routes"] as const,
-  myRoutes: (params?: { date?: string; status?: DeliveryRouteStatus }) =>
+  myRoutes: (params?: { date?: string; status?: DeliveryRouteStatus; meal_type?: string }) =>
     [
       ...deliveryQueryKeys.routes(),
       "list",
       {
         date: params?.date ?? "today",
         status: params?.status ?? "all",
+        meal_type: params?.meal_type ?? "all",
       },
     ] as const,
   routeDetail: (id: string) =>
@@ -45,7 +46,7 @@ export const deliveryQueryKeys = {
 
 /** List the current partner's routes for the given date / status. */
 export function useMyRoutes(
-  params?: { date?: string; status?: DeliveryRouteStatus },
+  params?: { date?: string; status?: DeliveryRouteStatus; meal_type?: string },
 ) {
   return useQuery({
     queryKey: deliveryQueryKeys.myRoutes(params),

@@ -10,6 +10,12 @@ import { useStartRoute } from "@/api/hooks/useDeliveryRoutes";
 import type { DeliveryRouteSummary } from "@/api/types/delivery.types";
 import { cn } from "@/lib/utils";
 
+const MEAL_TYPE_STYLES: Record<string, string> = {
+  breakfast: "bg-warning/10 text-warning",
+  lunch: "bg-info/10 text-info",
+  dinner: "bg-primary/10 text-primary",
+};
+
 interface RouteCardProps {
   route: DeliveryRouteSummary;
 }
@@ -38,6 +44,10 @@ export function RouteCard({ route }: RouteCardProps) {
 
   const dateLabel = safeFormat(route.delivery_date, "EEE, d MMM");
   const timeLabel = safeFormat(route.estimated_start_time, "h:mm a");
+
+  const mealTypeClass =
+    MEAL_TYPE_STYLES[route.meal_type?.toLowerCase() ?? ""] ??
+    "bg-muted text-muted-foreground";
 
   const goToDetail = () => router.push(`/delivery/routes/${route.id}`);
 
@@ -122,9 +132,21 @@ export function RouteCard({ route }: RouteCardProps) {
       )}
     >
       <header className="flex items-start justify-between gap-2">
-        <h2 className="min-w-0 flex-1 truncate text-base font-bold text-foreground">
-          {route.name}
-        </h2>
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <h2 className="truncate text-base font-bold text-foreground">
+            {route.name}
+          </h2>
+          {route.meal_type ? (
+            <span
+              className={cn(
+                "inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+                mealTypeClass,
+              )}
+            >
+              {route.meal_type}
+            </span>
+          ) : null}
+        </div>
         <RouteStatusBadge status={route.status} />
       </header>
 

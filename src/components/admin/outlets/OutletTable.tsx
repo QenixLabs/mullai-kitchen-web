@@ -449,7 +449,7 @@ export function OutletTable({
           if (!open) setDeleteTarget(null);
         }}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="min-w-[360px]">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-base">
               <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-destructive/10 text-destructive ring-1 ring-destructive/20">

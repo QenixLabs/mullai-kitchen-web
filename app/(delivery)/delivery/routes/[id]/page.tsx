@@ -246,7 +246,7 @@ export default function DeliveryRouteDetailPage() {
           if (!completeRoute.isPending) setConfirmCompleteOpen(open);
         }}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="min-w-[360px]">
           <AlertDialogHeader>
             <AlertDialogTitle>Complete this route?</AlertDialogTitle>
             <AlertDialogDescription>

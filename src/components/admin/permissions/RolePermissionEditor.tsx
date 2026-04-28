@@ -124,7 +124,7 @@ export function RolePermissionEditor() {
                     Reset to Default
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="min-w-[360px]">
                   <AlertDialogHeader>
                     <AlertDialogTitle className="flex items-center gap-2 text-base">
                       <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-warning/10 text-warning ring-1 ring-warning/20">

@@ -116,7 +116,7 @@ function MarkOrderPaidButton({
             Mark Payment as Paid
           </Button>
         </AlertDialogTrigger>
-        <AlertDialogContent className="rounded-2xl">
+        <AlertDialogContent className="rounded-2xl min-w-[360px]">
           <AlertDialogHeader>
             <AlertDialogTitle>Mark Payment as Paid</AlertDialogTitle>
             <AlertDialogDescription>

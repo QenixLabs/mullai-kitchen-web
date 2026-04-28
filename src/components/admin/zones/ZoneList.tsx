@@ -397,7 +397,7 @@ export function ZoneList({
         open={!!deleteZoneId}
         onOpenChange={() => setDeleteZoneId(null)}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="min-w-[360px]">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Delivery Zone</AlertDialogTitle>
             <AlertDialogDescription>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { format } from "date-fns";
 import { FaInbox, FaSyncAlt, FaExclamationTriangle } from "react-icons/fa";
 
@@ -9,6 +9,13 @@ import { RouteCard } from "@/components/delivery/RouteCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+
+const MEAL_TABS = [
+  { key: "all", label: "All" },
+  { key: "Breakfast", label: "Breakfast" },
+  { key: "Lunch", label: "Lunch" },
+  { key: "Dinner", label: "Dinner" },
+] as const;
 
 /**
  * Today screen for delivery partners.
@@ -26,6 +33,8 @@ export default function DeliveryTodayPage() {
     [],
   );
 
+  const [mealFilter, setMealFilter] = useState<(typeof MEAL_TABS)[number]["key"]>("all");
+
   const {
     data: routes,
     isLoading,
@@ -33,7 +42,10 @@ export default function DeliveryTodayPage() {
     error,
     refetch,
     isRefetching,
-  } = useMyRoutes({ date: today });
+  } = useMyRoutes({
+    date: today,
+    meal_type: mealFilter === "all" ? undefined : mealFilter,
+  });
 
   const renderContent = () => {
     if (isLoading) {
@@ -132,6 +144,27 @@ export default function DeliveryTodayPage() {
             )}
           />
         </Button>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {MEAL_TABS.map((tab) => {
+          const isActive = mealFilter === tab.key;
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setMealFilter(tab.key)}
+              className={cn(
+                "rounded-full px-4 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                isActive
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80",
+              )}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {renderContent()}

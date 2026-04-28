@@ -311,7 +311,7 @@ export function OverrideList({ outletId, dateFrom, dateUntil, onEdit }: Override
         </div>
 
         <AlertDialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}>
-          <AlertDialogContent>
+          <AlertDialogContent className="min-w-[360px]">
             <AlertDialogHeader>
               <AlertDialogTitle>Delete this override?</AlertDialogTitle>
               <AlertDialogDescription>

@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle2, Truck, X, ListChecks } from 'lucide-react';
+import { CheckCircle2, Truck, X, ListChecks, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useBatchUpdateStatus } from '@/api/hooks/useAdminOrders';
 
@@ -29,7 +29,7 @@ export function BatchUpdateBar({
 
   if (totalSelected === 0) return null;
 
-  const buildPayload = (status: 'delivered' | 'out_for_delivery') => ({
+  const buildPayload = (status: 'delivered' | 'out_for_delivery' | 'missed') => ({
     routeId,
     data: {
       status,
@@ -42,6 +42,10 @@ export function BatchUpdateBar({
 
   const handleMarkDelivered = () => {
     batchUpdate.mutate(buildPayload('delivered'), { onSuccess: onClearSelection });
+  };
+
+  const handleMarkMissed = () => {
+    batchUpdate.mutate(buildPayload('missed'), { onSuccess: onClearSelection });
   };
 
   const handleMarkOutForDelivery = () => {
@@ -74,6 +78,16 @@ export function BatchUpdateBar({
         >
           <Truck className="h-3.5 w-3.5" />
           Out for Delivery
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-8 gap-1.5 border-destructive/30 text-destructive hover:bg-destructive/10"
+          onClick={handleMarkMissed}
+          disabled={batchUpdate.isPending}
+        >
+          <AlertCircle className="h-3.5 w-3.5" />
+          Mark Missed
         </Button>
         <Button
           size="sm"

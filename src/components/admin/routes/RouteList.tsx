@@ -64,6 +64,29 @@ function getInitials(name?: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
+function MealTypeBadge({ mealType }: { mealType: string }) {
+  const normalized = mealType.trim().toLowerCase();
+  const styles =
+    normalized === 'breakfast'
+      ? 'bg-warning/10 text-warning border-warning/20'
+      : normalized === 'lunch'
+        ? 'bg-info/10 text-info border-info/20'
+        : normalized === 'dinner'
+          ? 'bg-primary/10 text-primary border-primary/20'
+          : 'bg-muted/40 text-muted-foreground border-border/60';
+
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center rounded-md border text-[11px] font-semibold uppercase tracking-wide px-1.5 py-0.5',
+        styles,
+      )}
+    >
+      {mealType}
+    </span>
+  );
+}
+
 export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [assignDialogRouteId, setAssignDialogRouteId] = useState<string | null>(null);
@@ -167,6 +190,9 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
                       <h3 className="truncate text-sm font-semibold tracking-tight text-foreground">
                         {route.name}
                       </h3>
+                      {route.meal_type && (
+                        <MealTypeBadge mealType={route.meal_type} />
+                      )}
                       <RouteStatusBadge status={route.status} />
                       <span className="hidden items-center gap-1 rounded-md border border-border/60 bg-background px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:inline-flex">
                         <Package className="h-3 w-3" />
@@ -314,7 +340,7 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
           if (!open) setDeleteConfirmId(null);
         }}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="min-w-[360px]">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-base">
               <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-destructive/10 text-destructive ring-1 ring-destructive/20">
@@ -352,7 +378,7 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
           if (!open) setCompleteConfirmId(null);
         }}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="min-w-[360px]">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-base">
               <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-success/10 text-success ring-1 ring-success/20">

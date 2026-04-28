@@ -8,6 +8,7 @@ import {
   Truck,
   User,
   PackageOpen,
+  AlertCircle,
 } from 'lucide-react';
 import {
   Table,
@@ -150,6 +151,10 @@ export function RouteDetailPanel({ route, outletId }: RouteDetailPanelProps) {
     updateStatus.mutate({ id: orderId, data: { status: 'delivered' } });
   };
 
+  const handleMarkMissed = (orderId: string) => {
+    updateStatus.mutate({ id: orderId, data: { status: 'missed', notes: 'Marked missed by admin' } });
+  };
+
   const getAddress = (order: (typeof orders)[0]): string => {
     if (order.full_address) return order.full_address;
     if (order.delivery_address) {
@@ -281,6 +286,9 @@ export function RouteDetailPanel({ route, outletId }: RouteDetailPanelProps) {
                     const isLast = index === orders.length - 1;
                     const isDelivered =
                       order.status === 'delivered' || order.status === 'Delivered';
+                    const isMissed =
+                      order.status === 'missed' || order.status === 'Missed';
+                    const isTerminal = isDelivered || isMissed;
                     return (
                       <TableRow
                         key={order._id}
@@ -332,28 +340,52 @@ export function RouteDetailPanel({ route, outletId }: RouteDetailPanelProps) {
                           <OrderStatusBadge status={order.status} />
                         </TableCell>
                         <TableCell className="px-4 py-3 text-right">
-                          {!isDelivered ? (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 gap-1.5"
-                                  onClick={() => handleMarkDelivered(order._id)}
-                                  disabled={updateStatus.isPending}
-                                >
-                                  <CheckCircle2 className="h-3.5 w-3.5" />
-                                  Delivered
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent side="top">
-                                <p className="text-xs">Mark this order as delivered</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          ) : (
+                          {!isTerminal ? (
+                            <div className="flex items-center justify-end gap-1.5">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-8 gap-1.5"
+                                    onClick={() => handleMarkDelivered(order._id)}
+                                    disabled={updateStatus.isPending}
+                                  >
+                                    <CheckCircle2 className="h-3.5 w-3.5" />
+                                    Delivered
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="top">
+                                  <p className="text-xs">Mark this order as delivered</p>
+                                </TooltipContent>
+                              </Tooltip>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-8 gap-1.5 border-destructive/30 text-destructive hover:bg-destructive/10"
+                                    onClick={() => handleMarkMissed(order._id)}
+                                    disabled={updateStatus.isPending}
+                                  >
+                                    <AlertCircle className="h-3.5 w-3.5" />
+                                    Missed
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="top">
+                                  <p className="text-xs">Mark this order as missed</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </div>
+                          ) : isDelivered ? (
                             <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide text-success">
                               <CheckCircle2 className="h-3 w-3" />
                               Done
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide text-destructive">
+                              <AlertCircle className="h-3 w-3" />
+                              Missed
                             </span>
                           )}
                         </TableCell>

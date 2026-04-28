@@ -17,6 +17,7 @@ export interface DeliveryRoute {
   stops?: number;
   completed_stops: number;
   estimated_start_time?: string;
+  meal_type?: string;
   order_generation_date: string;
   published_at?: string;
   started_at?: string;

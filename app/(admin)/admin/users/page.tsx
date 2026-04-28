@@ -437,7 +437,7 @@ export default function UsersPage() {
           if (!open) setStatusTarget(null);
         }}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="min-w-[360px]">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-base">
               <span

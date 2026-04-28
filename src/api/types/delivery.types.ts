@@ -51,6 +51,8 @@ export interface DeliveryRouteSummary {
   completed_stops: number;
   /** ISO date-time string when set. */
   estimated_start_time?: string;
+  /** Meal type for this route (e.g. breakfast, lunch, dinner). */
+  meal_type?: string;
 }
 
 /** Order row inside a stop, returned by `GET /delivery/routes/:id`. */
@@ -153,4 +155,6 @@ export interface ListMyRoutesParams {
   date?: string;
   /** Restrict to routes in a specific status. */
   status?: DeliveryRouteStatus;
+  /** Restrict to routes for a specific meal type. */
+  meal_type?: string;
 }
