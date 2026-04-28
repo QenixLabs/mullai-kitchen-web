@@ -84,8 +84,9 @@ export function OrderDetailModal({ orderId, open, onOpenChange }: OrderDetailMod
                 <>
                   <span className="text-muted-foreground">Address</span>
                   <span>
-                    {order.delivery_address.address_line}, {order.delivery_address.area},{' '}
-                    {order.delivery_address.city} - {order.delivery_address.pincode}
+                    {typeof order.delivery_address === 'string'
+                      ? order.delivery_address
+                      : `${order.delivery_address.address_line ?? ''}, ${order.delivery_address.area ?? ''}, ${order.delivery_address.city ?? ''} - ${order.delivery_address.pincode ?? ''}`}
                   </span>
                 </>
               )}

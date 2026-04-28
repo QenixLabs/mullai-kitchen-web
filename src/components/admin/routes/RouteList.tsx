@@ -112,7 +112,7 @@ export function RouteList({ routes, outletId, isLoading }: RouteListProps) {
             <h3 className="text-base font-semibold text-foreground">
               No routes for this date
             </h3>
-            <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-muted-foreground">
               Generate routes from the toolbar above to plan deliveries for the
               selected outlet and date.
             </p>
