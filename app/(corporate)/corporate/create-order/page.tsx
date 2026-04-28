@@ -63,9 +63,9 @@ export default function CreateOrderPage() {
 
   // Always start fresh when visiting the create-order page
   useEffect(() => {
-    draftStore.clearDraft();
+    useOrderDraftStore.getState().clearDraft();
     setCurrentStep(1);
-  }, [draftStore]);
+  }, []);
 
   // Reverse geocoding to auto-fill address fields from coordinates
   const reverseGeocode = async (lat: number, lng: number) => {
@@ -200,8 +200,9 @@ export default function CreateOrderPage() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/incompatible-library
     const subscription = form.watch((value) => {
+      const store = useOrderDraftStore.getState();
       if (value.delivery_address) {
-        draftStore.updateDeliveryAddress({
+        store.updateDeliveryAddress({
           addressLine: value.delivery_address.address_line || "",
           area: value.delivery_address.area || "",
           city: value.delivery_address.city || "",
@@ -210,23 +211,23 @@ export default function CreateOrderPage() {
           landmark: value.delivery_address.landmark || "",
         });
       }
-      draftStore.updateSchedule({
+      store.updateSchedule({
         selectedDays: (value.selected_days || []).filter((d): d is string => !!d),
         mealTypes: (value.meal_types || []).filter((m): m is string => !!m),
         startDate: value.start_date || "",
         endDate: value.end_date || "",
         billingCycleDays: value.billing_cycle_days || undefined,
       });
-      draftStore.updatePreferences({
+      store.updatePreferences({
         headcount: value.headcount || 0,
         vegCount: value.veg_count || 0,
         nonvegCount: value.nonveg_count || 0,
         notes: value.notes || "",
       });
-      draftStore.setStep(currentStep);
+      store.setStep(currentStep);
     });
     return () => subscription.unsubscribe();
-  }, [form, draftStore, currentStep]);
+  }, [form, currentStep]);
 
   // Clear stale refine error when veg + nonveg matches headcount
   useEffect(() => {
