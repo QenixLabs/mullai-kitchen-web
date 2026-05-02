@@ -1,197 +1,231 @@
-"use client";
+'use client';
 
-import { Can } from "@/components/Auth/can";
-import { KPICard } from "@/components/admin/dashboard/KPICard";
-import { QuickActionsPanel } from "@/components/admin/dashboard/QuickActionsPanel";
-import { useAdminDashboard } from "@/hooks/useAdminDashboard";
-import {
-  TrendingUp,
-  ClipboardList,
-  BarChart3,
-  Users,
-  Store,
-  UtensilsCrossed,
-  Route,
-  AlertTriangle,
-  Building2,
-  CreditCard,
-  CalendarCheck,
-} from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { format, subDays } from 'date-fns';
+import { BarChart3, CalendarDays, Lock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useHasPermission } from '@/hooks/useHasPermission';
+import { useCurrentUser } from '@/hooks/useUserStore';
+import { useOutlets } from '@/api/hooks/useOutlets';
+import { useOperationsReport, useFinancialReport } from '@/api/hooks/useAdminReports';
+import { UserRole } from '@/api/types/user.types';
+import { ReportFilters } from '@/components/admin/reports/ReportFilters';
+import { OperationsReport } from '@/components/admin/reports/OperationsReport';
+import { FinancialReport } from '@/components/admin/reports/FinancialReport';
+import type { ReportGranularity } from '@/api/types/admin.types';
 
 export default function AdminDashboard() {
-  const { data, isLoading, error } = useAdminDashboard();
+  const user = useCurrentUser();
+  const isSuperAdmin =
+    user?.role === UserRole.SuperAdmin || user?.role === UserRole.Admin;
+  const canViewAnyOutlet = useHasPermission('outlet:view:any');
+  const canViewOperations = useHasPermission(
+    ['report:outlet', 'report:cross-outlet'],
+    false,
+  );
+  const canViewFinancial = useHasPermission('report:financial');
+  const canViewAnyReport = canViewOperations || canViewFinancial;
 
-  if (isLoading) {
+  const { data: outletsData, isLoading: outletsLoading } = useOutlets(
+    canViewAnyOutlet ? { status: 'active' } : undefined,
+  );
+
+  const [filters, setFilters] = useState<{
+    startDate: Date | undefined;
+    endDate: Date | undefined;
+    outletId: string | undefined;
+    granularity: ReportGranularity;
+  }>({
+    startDate: subDays(new Date(), 30),
+    endDate: new Date(),
+    outletId: undefined,
+    granularity: 'daily',
+  });
+
+  // Bootstrap outlet selection for non-super-admins
+  useEffect(() => {
+    if (!isSuperAdmin && user?.assigned_outlet_id) {
+      setFilters((prev) => ({ ...prev, outletId: user.assigned_outlet_id }));
+    }
+  }, [isSuperAdmin, user?.assigned_outlet_id]);
+
+  useEffect(() => {
+    if (canViewAnyOutlet && !filters.outletId && outletsData?.data?.length) {
+      setFilters((prev) => ({
+        ...prev,
+        outletId: outletsData.data[0]._id,
+      }));
+    }
+  }, [canViewAnyOutlet, filters.outletId, outletsData?.data]);
+
+  const queryParams = useMemo(() => {
+    if (!filters.startDate || !filters.endDate) return null;
+    const base = {
+      start_date: format(filters.startDate, 'yyyy-MM-dd'),
+      end_date: format(filters.endDate, 'yyyy-MM-dd'),
+      outlet_id: filters.outletId,
+    };
+    return base;
+  }, [filters.startDate, filters.endDate, filters.outletId]);
+
+  const operationsParams = useMemo(() => {
+    if (!queryParams) return null;
+    return {
+      ...queryParams,
+      granularity: filters.granularity,
+    };
+  }, [queryParams, filters.granularity]);
+
+  const financialParams = useMemo(() => {
+    if (!queryParams) return null;
+    return queryParams;
+  }, [queryParams]);
+
+  const {
+    data: operationsData,
+    isLoading: operationsLoading,
+  } = useOperationsReport(operationsParams ?? { start_date: '', end_date: '' });
+
+  const {
+    data: financialData,
+    isLoading: financialLoading,
+  } = useFinancialReport(financialParams ?? { start_date: '', end_date: '' });
+
+  const handleFiltersChange = useCallback(
+    (next: typeof filters) => {
+      setFilters(next);
+    },
+    [],
+  );
+
+  // Determine default active tab
+  const defaultTab = useMemo(() => {
+    if (canViewOperations) return 'operations';
+    if (canViewFinancial) return 'financial';
+    return 'operations';
+  }, [canViewOperations, canViewFinancial]);
+
+  const [activeTab, setActiveTab] = useState(defaultTab);
+
+  useEffect(() => {
+    setActiveTab((prev) => {
+      if (prev === 'operations' && !canViewOperations && canViewFinancial) {
+        return 'financial';
+      }
+      if (prev === 'financial' && !canViewFinancial && canViewOperations) {
+        return 'operations';
+      }
+      return prev;
+    });
+  }, [canViewOperations, canViewFinancial]);
+
+  if (!canViewAnyReport) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <KPICard label="Loading..." loading />
-        <KPICard label="Loading..." loading />
-        <KPICard label="Loading..." loading />
-        <KPICard label="Loading..." loading />
+      <div className="flex flex-col items-center justify-center gap-4 px-6 py-24 text-center">
+        <div className="rounded-full bg-muted p-4 text-muted-foreground">
+          <Lock className="h-8 w-8" />
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold text-foreground">
+            Access Denied
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            You do not have permission to view reports. Contact your
+            administrator for access.
+          </p>
+        </div>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center p-8 text-destructive">
-        <p>Failed to load dashboard data. Please try again.</p>
-      </div>
-    );
-  }
+  const outlets = outletsData?.data ?? [];
+  const dateRangeLabel =
+    filters.startDate && filters.endDate
+      ? `${format(filters.startDate, 'dd MMM yyyy')} – ${format(
+          filters.endDate,
+          'dd MMM yyyy',
+        )}`
+      : '—';
 
   return (
     <div className="space-y-6">
-      {/* KPI Cards Row */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* Active Subscriptions */}
-        <Can permission="subscription:view:any">
-          <KPICard
-            label="Active Subscriptions"
-            value={data?.subscriptions?.active}
-            trend={data?.subscriptions?.trend}
-            icon={TrendingUp}
-          />
-        </Can>
-
-        {/* Today&apos;s Orders */}
-        <Can permission={["order:view:any", "order:view:outlet"]} requireAll={false}>
-          <KPICard
-            label="Today's Orders"
-            value={data?.orders?.today}
-            trend={data?.orders?.trend}
-            icon={ClipboardList}
-          />
-        </Can>
-
-        {/* Monthly Revenue */}
-        <Can permission="report:financial">
-          <KPICard
-            label="Monthly Revenue"
-            value={data?.revenue?.month}
-            formatValue={(v) => `₹${(Number(v) / 1000).toFixed(0)}k`}
-            trend={data?.revenue?.trend}
-            icon={BarChart3}
-          />
-        </Can>
-
-        {/* Active Users */}
-        <Can permission="user:view:any">
-          <KPICard
-            label="Active Users"
-            value={data?.users?.total}
-            trend={data?.users?.trend}
-            icon={Users}
-          />
-        </Can>
-
-        {/* Active Outlets */}
-        <Can permission="outlet:view:any">
-          <KPICard
-            label="Active Outlets"
-            value={data?.outlets?.active}
-            trend={data?.outlets?.trend}
-            icon={Store}
-          />
-        </Can>
-
-        {/* Kitchen Status */}
-        <Can permission="order:kitchen">
-          <KPICard
-            label="Kitchen Status"
-            value={data?.kitchen?.mealsToday ?? 0}
-            trend={data?.kitchen?.trend}
-            icon={UtensilsCrossed}
-          />
-        </Can>
-
-        {/* Routes Progress */}
-        <Can permission="route:assign">
-          <KPICard
-            label="Routes Progress"
-            value={data?.routes?.active ?? 0}
-            trend={data?.routes?.trend}
-            icon={Route}
-          />
-        </Can>
-
-        {/* Active Corporate Orders */}
-        <Can permission={["corporate:view:any", "corporate:view:outlet"]} requireAll={false}>
-          <KPICard
-            label="Active Corporate Orders"
-            value={data?.corporate?.activeOrders ?? 0}
-            trend={data?.corporate?.ordersTrend}
-            icon={Building2}
-          />
-        </Can>
-
-        {/* Overdue Corp. Invoices */}
-        <Can permission="corporate:invoice">
-          <KPICard
-            label="Overdue Corp. Invoices"
-            value={data?.corporate?.overdueInvoices ?? 0}
-            trend={data?.corporate?.invoicesTrend}
-            icon={CreditCard}
-          />
-        </Can>
-
-        {/* Today's Corporate Meals */}
-        <Can permission="corporate:kitchen">
-          <KPICard
-            label="Today's Corporate Meals"
-            value={data?.corporate?.todayMeals ?? 0}
-            trend={data?.corporate?.mealsTrend}
-            icon={CalendarCheck}
-          />
-        </Can>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="mt-6">
-        <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
-        <QuickActionsPanel />
-      </div>
-
-      {/* System Alerts - Super Admin only */}
-      <Can permission="config:system">
-        <div className="rounded-lg border bg-card">
-          <div className="p-4">
-            <h3 className="text-sm font-semibold flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-warning" />
-              System Alerts
-            </h3>
-            <div className="mt-3">
-              {data?.alerts && data.alerts.length > 0 ? (
-                <div className="space-y-3">
-                  {data.alerts.map((alert) => (
-                    <div
-                      key={alert.id}
-                      className="flex items-start gap-2 p-2 rounded-md bg-muted/50"
-                    >
-                      <span
-                        className={`text-xs font-medium ${
-                          alert.type === "error"
-                            ? "text-red-500"
-                            : alert.type === "warning"
-                            ? "text-yellow-500"
-                            : "text-blue-500"
-                        }`}
-                      >
-                        {alert.type}
-                      </span>
-                      <span className="flex-1 text-sm">{alert.message}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  No alerts at this time
-                </p>
-              )}
-            </div>
+      {/* PageHeader */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/15">
+            <BarChart3 className="h-4.5 w-4.5" />
+          </span>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              Reports & Analytics
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Operations and financial performance across outlets and time
+              periods.
+            </p>
           </div>
         </div>
-      </Can>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge
+            variant="secondary"
+            className="h-8 gap-1.5 border-0 bg-muted px-2.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
+          >
+            <CalendarDays className="h-3 w-3" />
+            {dateRangeLabel}
+          </Badge>
+          <Badge
+            variant="secondary"
+            className="h-8 gap-1.5 border-0 bg-muted px-2.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
+          >
+            <BarChart3 className="h-3 w-3" />
+            {filters.granularity}
+          </Badge>
+        </div>
+      </div>
+
+      {/* Filters */}
+      {outletsLoading ? (
+        <Skeleton className="h-[72px] w-full rounded-md" />
+      ) : (
+        <ReportFilters
+          filters={filters}
+          onChange={handleFiltersChange}
+          outlets={outlets}
+          canViewAnyOutlet={canViewAnyOutlet}
+        />
+      )}
+
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList>
+          {canViewOperations && (
+            <TabsTrigger value="operations">Operations</TabsTrigger>
+          )}
+          {canViewFinancial && (
+            <TabsTrigger value="financial">Financial</TabsTrigger>
+          )}
+        </TabsList>
+
+        {canViewOperations && (
+          <TabsContent value="operations">
+            <OperationsReport
+              data={operationsData ?? []}
+              isLoading={operationsLoading}
+            />
+          </TabsContent>
+        )}
+
+        {canViewFinancial && (
+          <TabsContent value="financial">
+            <FinancialReport
+              data={financialData}
+              isLoading={financialLoading}
+            />
+          </TabsContent>
+        )}
+      </Tabs>
     </div>
   );
 }

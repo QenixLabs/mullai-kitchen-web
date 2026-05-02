@@ -133,6 +133,8 @@ export const ADMIN_ROUTES = {
   ADMIN_SUBSCRIPTION_RESUME: (id: string) => `/admin/subscriptions/${id}/resume`,
   ADMIN_SUBSCRIPTION_SKIP_DATES: (id: string) => `/admin/subscriptions/${id}/skip-dates`,
   ADMIN_SUBSCRIPTION_ACTIVITY: (id: string) => `/admin/subscriptions/${id}/activity`,
+  REPORTS_OPERATIONS: '/admin/reports/operations',
+  REPORTS_FINANCIAL: '/admin/reports/financial',
 } as const;
 
 export const ADMIN_COUPON_ROUTES = {

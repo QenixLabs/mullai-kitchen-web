@@ -115,3 +115,55 @@ export interface IDashboardResponse {
   alerts?: IDashboardAlert[];
   lastUpdated?: string;
 }
+
+// Report types
+export type ReportGranularity = 'daily' | 'weekly' | 'monthly';
+
+export interface IOperationsReportQuery {
+  start_date: string;
+  end_date: string;
+  outlet_id?: string;
+  granularity?: ReportGranularity;
+}
+
+export interface IOperationsReportItem {
+  period: string;
+  orders_count: number;
+  revenue: number;
+  delivery_success_rate: number;
+  avg_delivery_time_minutes: number;
+  breakdown: {
+    breakfast: number;
+    lunch: number;
+    dinner: number;
+  };
+}
+
+export interface IFinancialReportQuery {
+  start_date: string;
+  end_date: string;
+  outlet_id?: string;
+}
+
+export interface IPaymentMethodDistribution {
+  method: string;
+  amount: number;
+  percentage: number;
+}
+
+export interface IDailyFinancialBreakdown {
+  date: string;
+  total: number;
+  subscription: number;
+  one_time: number;
+}
+
+export interface IFinancialReportResponse {
+  total_revenue: number;
+  subscription_revenue: number;
+  one_time_revenue: number;
+  refunds: number;
+  outstanding: number;
+  payment_methods: IPaymentMethodDistribution[];
+  daily_breakdown: IDailyFinancialBreakdown[];
+}

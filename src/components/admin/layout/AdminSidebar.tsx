@@ -15,7 +15,6 @@ import {
   UtensilsCrossed,
   ClipboardList,
   Route,
-  BarChart3,
   Settings,
   LogOut,
   ChevronRight,
@@ -205,13 +204,6 @@ const ADMIN_NAV_GROUPS: NavGroup[] = [
         icon: Route,
         label: "Routes",
         permission: "route:assign",
-        requireAll: true,
-      },
-      {
-        href: "/admin/reports",
-        icon: BarChart3,
-        label: "Reports",
-        permission: "report:outlet",
         requireAll: true,
       },
       {

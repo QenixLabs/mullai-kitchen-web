@@ -7,6 +7,7 @@ import type {
   AdminCorporateCompanyListParams,
   PaginationParams,
 } from '@/api/types/admin-corporate.types';
+import type { IOperationsReportQuery, IFinancialReportQuery } from '@/api/types/admin.types';
 
 export const authKeys = {
   all: () => ["auth"] as const,
@@ -237,4 +238,9 @@ export const adminCorporateKeys = {
   companyDetail: (id: string) => [...adminCorporateKeys.all, 'company', id] as const,
   companyOrders: (id: string, params?: PaginationParams) => [...adminCorporateKeys.all, 'company-orders', id, params] as const,
   companyInvoices: (id: string, params?: PaginationParams) => [...adminCorporateKeys.all, 'company-invoices', id, params] as const,
+};
+
+export const adminReportKeys = {
+  operations: (params: IOperationsReportQuery) => ['admin', 'reports', 'operations', params] as const,
+  financial: (params: IFinancialReportQuery) => ['admin', 'reports', 'financial', params] as const,
 };
