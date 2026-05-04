@@ -259,7 +259,7 @@ export function AdminSidebar() {
         </Link>
       </SidebarHeader>
 
-      <SidebarContent className="flex flex-col h-full overflow-y-auto gap-0">
+      <SidebarContent className="flex flex-col h-full overflow-y-auto gap-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {ADMIN_NAV_GROUPS.map((group, groupIdx) => (
           <Collapsible
             key={group.label}
