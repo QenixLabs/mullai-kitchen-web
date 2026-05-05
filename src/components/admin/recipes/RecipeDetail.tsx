@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { ChefHat, Clock, Users, Flame, Globe, Building2, Pencil, Trash2, Archive, Send } from 'lucide-react';
+import { ChefHat, Clock, Users, Flame, Globe, Building2, Pencil, Trash2, Archive, Send, ListChecks } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -71,6 +71,11 @@ export function RecipeDetail({ recipe, onDelete, onStatusChange }: RecipeDetailP
                 <Archive className="mr-2 h-4 w-4" />Archive
               </Button>
             )}
+            <Can permission="inventory:manage">
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/admin/recipes/${recipe._id}/ingredients`}><ListChecks className="mr-2 h-4 w-4" />Manage BOM</Link>
+              </Button>
+            </Can>
             <Button variant="outline" size="sm" asChild>
               <Link href={`/admin/recipes/${recipe._id}/edit`}><Pencil className="mr-2 h-4 w-4" />Edit</Link>
             </Button>

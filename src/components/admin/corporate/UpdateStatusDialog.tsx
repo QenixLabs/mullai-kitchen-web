@@ -34,6 +34,7 @@ const STATUS_TONES: Record<CorporateOrderStatus, string> = {
   pending_payment: 'border-warning/20 bg-warning/10 text-warning',
   active: 'border-info/20 bg-info/10 text-info',
   completed: 'border-success/20 bg-success/10 text-success',
+  cancelled: 'border-destructive/20 bg-destructive/10 text-destructive',
 };
 
 interface UpdateStatusDialogProps {

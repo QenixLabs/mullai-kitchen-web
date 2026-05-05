@@ -22,6 +22,10 @@ import {
   CalendarCheck,
   Building2,
   TicketPercent,
+  Warehouse,
+  Package,
+  ArrowLeftRight,
+  Truck,
 } from "lucide-react";
 
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
@@ -46,6 +50,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { PermissionNavItem } from "./PermissionNavItem";
+import { InventoryHelpDialog } from "@/components/admin/inventory/InventoryHelpDialog";
 
 interface NavItem {
   href: string;
@@ -133,6 +138,46 @@ const ADMIN_NAV_GROUPS: NavGroup[] = [
         icon: ClipboardList,
         label: "Orders",
         permission: "order:view:outlet",
+        requireAll: true,
+      },
+    ],
+  },
+  {
+    label: "Inventory",
+    items: [
+      {
+        href: "/admin/inventory/ingredients",
+        icon: ChefHat,
+        label: "Ingredients",
+        permission: "inventory:view",
+        requireAll: true,
+      },
+      {
+        href: "/admin/inventory/stock",
+        icon: Package,
+        label: "Stock",
+        permission: "inventory:view",
+        requireAll: true,
+      },
+      {
+        href: "/admin/inventory/movements",
+        icon: ArrowLeftRight,
+        label: "Movements",
+        permission: "inventory:view",
+        requireAll: true,
+      },
+      {
+        href: "/admin/inventory/suppliers",
+        icon: Truck,
+        label: "Suppliers",
+        permission: "inventory:view",
+        requireAll: true,
+      },
+      {
+        href: "/admin/inventory/procurement",
+        icon: ClipboardList,
+        label: "Procurement",
+        permission: "inventory:view",
         requireAll: true,
       },
     ],
@@ -267,9 +312,17 @@ export function AdminSidebar() {
           >
             <SidebarGroup className="px-3 py-1">
               <CollapsibleTrigger asChild>
-                <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden cursor-pointer select-none text-sidebar-foreground/40 text-xs font-semibold uppercase tracking-wider px-2 mb-1 hover:text-sidebar-foreground/70 transition-colors [&>svg]:transition-transform [&>svg]:duration-200">
+                <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden cursor-pointer select-none text-sidebar-foreground/40 text-xs font-semibold uppercase tracking-wider px-2 mb-1 hover:text-sidebar-foreground/70 transition-colors [&>svg]:transition-transform [&>svg]:duration-200"
+>
                   <span>{group.label}</span>
-                  <ChevronRight className="ml-auto h-3 w-3 group-data-[state=open]/collapsible:rotate-90" />
+                  <div className="ml-auto flex items-center gap-1">
+                    {group.label === 'Inventory' && (
+                      <span onClick={(e) => e.stopPropagation()}>
+                        <InventoryHelpDialog />
+                      </span>
+                    )}
+                    <ChevronRight className="h-3 w-3 group-data-[state=open]/collapsible:rotate-90" />
+                  </div>
                 </SidebarGroupLabel>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -287,13 +340,14 @@ export function AdminSidebar() {
                           permission={item.permission}
                           requireAll={item.requireAll}
                         >
-                          <SidebarMenuItem>
+                          <SidebarMenuItem className="group flex items-center justify-between"
+>
                             <SidebarMenuButton
                               asChild
                               isActive={isActive}
                               tooltip={item.label}
                               className={cn(
-                                "h-10 w-full rounded-lg px-3 flex items-center gap-3 transition-all duration-200 group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:px-0",
+                                "h-10 flex-1 rounded-lg px-3 flex items-center gap-3 transition-all duration-200 group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:px-0",
                                 isActive
                                   ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold"
                                   : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"

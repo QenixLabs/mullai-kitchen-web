@@ -244,3 +244,25 @@ export const adminReportKeys = {
   operations: (params: IOperationsReportQuery) => ['admin', 'reports', 'operations', params] as const,
   financial: (params: IFinancialReportQuery) => ['admin', 'reports', 'financial', params] as const,
 };
+
+export const inventoryKeys = {
+  all: ['admin', 'inventory'] as const,
+  ingredientLists: () => [...inventoryKeys.all, 'ingredients', 'list'] as const,
+  ingredientList: (params?: unknown) => [...inventoryKeys.ingredientLists(), params] as const,
+  ingredientDetails: () => [...inventoryKeys.all, 'ingredients', 'detail'] as const,
+  ingredientDetail: (id: string) => [...inventoryKeys.ingredientDetails(), id] as const,
+  supplierLists: () => [...inventoryKeys.all, 'suppliers', 'list'] as const,
+  supplierList: (params?: unknown) => [...inventoryKeys.supplierLists(), params] as const,
+  supplierDetails: () => [...inventoryKeys.all, 'suppliers', 'detail'] as const,
+  supplierDetail: (id: string) => [...inventoryKeys.supplierDetails(), id] as const,
+  stockLists: () => [...inventoryKeys.all, 'stock'] as const,
+  stockLevels: (outletId?: string) => [...inventoryKeys.stockLists(), 'levels', outletId] as const,
+  lowStock: (outletId?: string) => [...inventoryKeys.stockLists(), 'low', outletId] as const,
+  movementLists: () => [...inventoryKeys.all, 'movements', 'list'] as const,
+  movementList: (params?: unknown) => [...inventoryKeys.movementLists(), params] as const,
+  purchaseOrderLists: () => [...inventoryKeys.all, 'purchase-orders', 'list'] as const,
+  purchaseOrderList: (params?: unknown) => [...inventoryKeys.purchaseOrderLists(), params] as const,
+  purchaseOrderDetails: () => [...inventoryKeys.all, 'purchase-orders', 'detail'] as const,
+  purchaseOrderDetail: (id: string) => [...inventoryKeys.purchaseOrderDetails(), id] as const,
+  recipeIngredients: (recipeId: string) => [...inventoryKeys.all, 'recipe-ingredients', recipeId] as const,
+};
