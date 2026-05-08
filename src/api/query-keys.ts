@@ -245,6 +245,10 @@ export const adminReportKeys = {
   financial: (params: IFinancialReportQuery) => ['admin', 'reports', 'financial', params] as const,
 };
 
+export const adminDashboardKeys = {
+  overview: ['admin', 'dashboard', 'overview'] as const,
+};
+
 export const inventoryKeys = {
   all: ['admin', 'inventory'] as const,
   ingredientLists: () => [...inventoryKeys.all, 'ingredients', 'list'] as const,

@@ -95,6 +95,7 @@ export interface ICorporateMetrics {
   activeOrders: number;
   overdueInvoices: number;
   todayMeals: number;
+  outstandingAmount?: number;
   ordersTrend?: IKPITrend;
   invoicesTrend?: IKPITrend;
   mealsTrend?: IKPITrend;

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { format, subDays } from 'date-fns';
-import { BarChart3 } from 'lucide-react';
+import { BarChart3, LayoutDashboard } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,10 +10,15 @@ import { useHasPermission } from '@/hooks/useHasPermission';
 import { useCurrentUser } from '@/hooks/useUserStore';
 import { useOutlets } from '@/api/hooks/useOutlets';
 import { useOperationsReport, useFinancialReport } from '@/api/hooks/useAdminReports';
+import { useDashboardData } from '@/api/hooks/useAdminDashboard';
 import { UserRole } from '@/api/types/user.types';
 import { ReportFilters } from '@/components/admin/reports/ReportFilters';
 import { OperationsReport } from '@/components/admin/reports/OperationsReport';
 import { FinancialReport } from '@/components/admin/reports/FinancialReport';
+import { DashboardAlerts } from '@/components/admin/dashboard/DashboardAlerts';
+import { DashboardQuickActions } from '@/components/admin/dashboard/DashboardQuickActions';
+import { DashboardKpiCards } from '@/components/admin/dashboard/DashboardKpiCards';
+import { DashboardCorporatePulse } from '@/components/admin/dashboard/DashboardCorporatePulse';
 import type { ReportGranularity } from '@/api/types/admin.types';
 
 export default function AdminDashboard() {
@@ -92,6 +97,11 @@ export default function AdminDashboard() {
     isLoading: financialLoading,
   } = useFinancialReport(financialParams ?? { start_date: '', end_date: '' });
 
+  const {
+    data: dashboardData,
+    isLoading: dashboardLoading,
+  } = useDashboardData();
+
   const handleFiltersChange = useCallback(
     (next: typeof filters) => {
       setFilters(next);
@@ -146,14 +156,14 @@ export default function AdminDashboard() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex items-center gap-3">
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-dark text-primary-foreground shadow-lg shadow-primary/20">
-            <BarChart3 className="h-5 w-5" />
+            <LayoutDashboard className="h-5 w-5" />
           </span>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Reports & Analytics
+              Admin Dashboard
             </h1>
             <p className="text-sm text-muted-foreground">
-              Operations and financial performance across outlets and time periods.
+              Overview, alerts, and reports across all outlets.
             </p>
           </div>
         </div>
@@ -168,6 +178,32 @@ export default function AdminDashboard() {
           Live Data
         </Badge>
       </div>
+
+      {/* Dashboard Overview */}
+      {canViewAnyReport && (
+        <div className="space-y-4">
+          <DashboardAlerts alerts={dashboardData?.alerts} isLoading={dashboardLoading} />
+          <DashboardQuickActions />
+          <DashboardKpiCards data={dashboardData} isLoading={dashboardLoading} />
+          <DashboardCorporatePulse data={dashboardData?.corporate} isLoading={dashboardLoading} />
+        </div>
+      )}
+
+      {/* Section Divider */}
+      {canViewAnyReport && (
+        <div className="flex items-center gap-4 pt-2">
+          <div className="h-px flex-1 bg-border/60" />
+          <div className="flex items-center gap-2.5">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/15">
+              <BarChart3 className="h-3.5 w-3.5" />
+            </span>
+            <h2 className="text-sm font-semibold tracking-tight text-foreground">
+              Reports & Analytics
+            </h2>
+          </div>
+          <div className="h-px flex-1 bg-border/60" />
+        </div>
+      )}
 
       {/* Filters */}
       {outletsLoading ? (
