@@ -3,7 +3,7 @@
 
 @variant dark (&:not(*));
 :root {
-  --background: 0 0% 90%;
+  --background: 30 14% 96%;
   --foreground: 0 0% 10%;
   --card: 0 0% 100%;
   --card-foreground: 0 0% 10%;

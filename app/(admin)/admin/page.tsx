@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { format, subDays } from 'date-fns';
-import { BarChart3, CalendarDays, Lock } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -44,7 +44,6 @@ export default function AdminDashboard() {
     granularity: 'daily',
   });
 
-  // Bootstrap outlet selection for non-super-admins
   useEffect(() => {
     if (!isSuperAdmin && user?.assigned_outlet_id) {
       setFilters((prev) => ({ ...prev, outletId: user.assigned_outlet_id }));
@@ -100,7 +99,6 @@ export default function AdminDashboard() {
     [],
   );
 
-  // Determine default active tab
   const defaultTab = useMemo(() => {
     if (canViewOperations) return 'operations';
     if (canViewFinancial) return 'financial';
@@ -125,7 +123,7 @@ export default function AdminDashboard() {
     return (
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-24 text-center">
         <div className="rounded-full bg-muted p-4 text-muted-foreground">
-          <Lock className="h-8 w-8" />
+          <BarChart3 className="h-8 w-8" />
         </div>
         <div>
           <h2 className="text-lg font-semibold text-foreground">
@@ -141,53 +139,39 @@ export default function AdminDashboard() {
   }
 
   const outlets = outletsData?.data ?? [];
-  const dateRangeLabel =
-    filters.startDate && filters.endDate
-      ? `${format(filters.startDate, 'dd MMM yyyy')} – ${format(
-          filters.endDate,
-          'dd MMM yyyy',
-        )}`
-      : '—';
 
   return (
     <div className="space-y-6">
-      {/* PageHeader */}
+      {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/15">
-            <BarChart3 className="h-4.5 w-4.5" />
+        <div className="flex items-center gap-3">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-dark text-primary-foreground shadow-lg shadow-primary/20">
+            <BarChart3 className="h-5 w-5" />
           </span>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Reports & Analytics
             </h1>
             <p className="text-sm text-muted-foreground">
-              Operations and financial performance across outlets and time
-              periods.
+              Operations and financial performance across outlets and time periods.
             </p>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge
-            variant="secondary"
-            className="h-8 gap-1.5 border-0 bg-muted px-2.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
-          >
-            <CalendarDays className="h-3 w-3" />
-            {dateRangeLabel}
-          </Badge>
-          <Badge
-            variant="secondary"
-            className="h-8 gap-1.5 border-0 bg-muted px-2.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
-          >
-            <BarChart3 className="h-3 w-3" />
-            {filters.granularity}
-          </Badge>
-        </div>
+        <Badge
+          variant="secondary"
+          className="h-8 gap-1.5 border-0 bg-primary/5 px-3 text-[11px] font-semibold uppercase tracking-wide text-primary"
+        >
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+          </span>
+          Live Data
+        </Badge>
       </div>
 
       {/* Filters */}
       {outletsLoading ? (
-        <Skeleton className="h-[72px] w-full rounded-md" />
+        <Skeleton className="h-[72px] w-full rounded-xl" />
       ) : (
         <ReportFilters
           filters={filters}
@@ -199,12 +183,22 @@ export default function AdminDashboard() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList>
+        <TabsList className="bg-background p-1 shadow-sm border border-border/50 rounded-lg">
           {canViewOperations && (
-            <TabsTrigger value="operations">Operations</TabsTrigger>
+            <TabsTrigger
+              value="operations"
+              className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all"
+            >
+              Operations
+            </TabsTrigger>
           )}
           {canViewFinancial && (
-            <TabsTrigger value="financial">Financial</TabsTrigger>
+            <TabsTrigger
+              value="financial"
+              className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all"
+            >
+              Financial
+            </TabsTrigger>
           )}
         </TabsList>
 
