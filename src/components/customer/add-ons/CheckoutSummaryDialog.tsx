@@ -76,10 +76,12 @@ export function CheckoutSummaryDialog({
     return d.toISOString().split("T")[0];
   }, [maxDeliveryDate]);
 
-  // Update local cart when props change
+  // Reset local cart to prop whenever dialog opens (avoid stale state from previous open)
   useEffect(() => {
-    setLocalCartItems(cartItems);
-  }, [cartItems]);
+    if (isOpen) {
+      setLocalCartItems(cartItems);
+    }
+  }, [isOpen, cartItems]);
 
   // Auto-select first meal type when mealTypes become available
   useEffect(() => {
@@ -87,6 +89,14 @@ export function CheckoutSummaryDialog({
       setSelectedMealType(mealTypes[0]);
     }
   }, [mealTypes, selectedMealType]);
+
+  // Reset processing/error states when dialog closes
+  useEffect(() => {
+    if (!isOpen) {
+      setIsProcessing(false);
+      setCheckoutError(null);
+    }
+  }, [isOpen]);
 
   // Client-side total for display (no server call until confirm)
   const walletBalance = walletData?.balance || 0;
@@ -143,6 +153,16 @@ export function CheckoutSummaryDialog({
         delivery_date: deliveryDate,
         apply_wallet: useWallet,
       });
+
+      // Validate server total matches client total to catch pricing drift
+      if (result.total_amount !== clientSideTotal) {
+        toast.error("Pricing mismatch", {
+          description: `Cart total changed on server. Please review your cart and try again.`,
+        });
+        setCheckoutError("Cart total mismatch. Please review and try again.");
+        setIsProcessing(false);
+        return;
+      }
 
       // Step 2a: If wallet payment and fully covered by balance, create order directly
       if (useWallet && result.amount_to_pay === 0) {

@@ -399,7 +399,7 @@ export function useCheckout(): UseCheckoutReturn {
   );
 
   const handlePaymentDismissed = useCallback(() => {
-    paymentStore.setPaymentCancelled();
+    paymentStore.resetPayment();
   }, [paymentStore]);
 
   const setSelectedPayment = useCallback((payment: PaymentMethod) => {
