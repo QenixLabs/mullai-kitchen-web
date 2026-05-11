@@ -140,7 +140,7 @@ export default function RecipeIngredientsPage() {
 
   return (
     <Can
-      permission="recipe:edit"
+      permission="inventory:manage"
       fallback={
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12 flex flex-col items-center justify-center min-h-[400px]">
           <div className="p-5 rounded-2xl bg-destructive/10 mb-6">

@@ -228,8 +228,9 @@ export function CouponTable({
                               size="icon"
                               className="h-8 w-8 text-muted-foreground hover:text-foreground"
                               asChild
+                              disabled={!coupon._id}
                             >
-                              <Link href={`/admin/coupons/${coupon._id}`}>
+                              <Link href={coupon._id ? `/admin/coupons/${coupon._id}` : '#'}>
                                 <Eye className="h-4 w-4" />
                               </Link>
                             </Button>
