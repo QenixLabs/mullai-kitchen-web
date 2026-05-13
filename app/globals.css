@@ -45,7 +45,7 @@
   --skin: 31 53% 64%;              /* #D4A574 */
   --skin-mid: 30 45% 60%;          /* #c49a6a - Mid tone */
   --skin-light: 30 48% 82%;        /* #ECD1B4 */
-  --skin-foreground: 0 0% 10%;
+  --skin-foreground: 0 0% 10%;                                                  
 
   /* Secondary colors */
   --secondary-alt: 0 1% 47%;       /* #797778 - Secondary gray */
