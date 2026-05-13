@@ -150,10 +150,15 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+function isValidId(value: string) {
+  return !!value && value !== 'undefined' && /^[0-9a-fA-F]{24}$/.test(value);
+}
+
 export default function CouponDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { data: coupon, isLoading: couponLoading } = useAdminCoupon(id);
-  const { data: stats, isLoading: statsLoading } = useCouponStats(id);
+  const validId = isValidId(id) ? id : null;
+  const { data: coupon, isLoading: couponLoading } = useAdminCoupon(validId);
+  const { data: stats, isLoading: statsLoading } = useCouponStats(validId);
   const [editMode, setEditMode] = useState(false);
 
   const isLoading = couponLoading || statsLoading;
