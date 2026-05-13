@@ -58,7 +58,7 @@ export function OnboardingShell({
   const stepText = `Step ${normalizedStep + 1} of ${totalSteps}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-accent to-muted px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10">
+    <div className="min-h-screen px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10">
       <div
         className={cn(
           "mx-auto w-full max-w-4xl md:max-w-5xl overflow-hidden rounded-sm border border-border bg-card shadow-xl",

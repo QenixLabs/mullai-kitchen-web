@@ -266,45 +266,45 @@ export function ZoneList({
 
           {/* Zones Table */}
           {filteredZones.length > 0 ? (
-            <div className="border rounded-sm overflow-hidden">
+            <div className="border rounded-sm overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/50 hover:bg-muted/50">
-                    <TableHead>Zone</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Outlet</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="min-w-[200px]">Zone</TableHead>
+                    <TableHead className="w-[100px] hidden sm:table-cell">Type</TableHead>
+                    <TableHead className="min-w-[150px]">Outlet</TableHead>
+                    <TableHead className="w-[120px]">Status</TableHead>
+                    <TableHead className="w-[100px] hidden md:table-cell">Created</TableHead>
+                    <TableHead className="w-[100px] text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredZones.map((zone) => (
                     <TableRow key={zone._id}>
-                      <TableCell>
+                      <TableCell className="whitespace-normal">
                         <div className="space-y-1">
                           <p className="font-medium">{zone.name}</p>
                           {zone.description && (
-                            <p className="text-sm text-muted-foreground line-clamp-1">
+                            <p className="text-sm text-muted-foreground line-clamp-2">
                               {zone.description}
                             </p>
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <Badge
                           variant="secondary"
-                          className="gap-1"
+                          className="gap-1 whitespace-nowrap"
                         >
                           {zone.zone_type === "POLYGON" ? (
                             <>
                               <Square className="h-3 w-3" />
-                              Polygon
+                              <span className="hidden lg:inline">Polygon</span>
                             </>
                           ) : (
                             <>
                               <Circle className="h-3 w-3" />
-                              Circle
+                              <span className="hidden lg:inline">Circle</span>
                               {zone.radius_km && (
                                 <span className="ml-1">({zone.radius_km} km)</span>
                               )}
@@ -312,10 +312,10 @@ export function ZoneList({
                           )}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-normal">
                         <div className="flex items-center gap-2">
-                          <Store className="h-4 w-4 text-muted-foreground" />
-                          <span>{getOutletName(zone.outlet_id)}</span>
+                          <Store className="h-4 w-4 text-muted-foreground shrink-0" />
+                          <span className="line-clamp-1">{getOutletName(zone.outlet_id)}</span>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -328,7 +328,7 @@ export function ZoneList({
                           />
                           <Badge
                             variant={zone.is_active ? "default" : "secondary"}
-                            className="text-xs"
+                            className="text-xs hidden sm:inline-flex"
                           >
                             {zone.is_active ? (
                               <>
@@ -344,14 +344,15 @@ export function ZoneList({
                           </Badge>
                         </div>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="text-muted-foreground hidden md:table-cell whitespace-nowrap">
                         {format(new Date(zone.created_at), "MMM d, yyyy")}
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-1">
                           <Button
                             variant="ghost"
                             size="icon"
+                            className="h-8 w-8"
                             onClick={() => onEdit(zone)}
                           >
                             <Pencil className="h-4 w-4" />
@@ -359,7 +360,7 @@ export function ZoneList({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="text-destructive hover:text-destructive"
+                            className="h-8 w-8 text-destructive hover:text-destructive"
                             onClick={() => setDeleteZoneId(zone._id)}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -396,7 +397,7 @@ export function ZoneList({
         open={!!deleteZoneId}
         onOpenChange={() => setDeleteZoneId(null)}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="min-w-[360px]">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Delivery Zone</AlertDialogTitle>
             <AlertDialogDescription>

@@ -7,6 +7,7 @@ import { CorporateSidebar } from "@/components/navigation/CorporateSidebar";
 import { CorporateMobileBottomNav } from "@/components/navigation/CorporateMobileBottomNav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { useAuthHydrated, useIsAuthenticated, useCurrentUser } from "@/hooks/useUserStore";
+import { UserRole } from "@/api/types/user.types";
 
 interface CorporateLayoutProps {
   children: ReactNode;
@@ -44,7 +45,7 @@ export default function CorporateLayout({
   }, [hasHydrated, isAuthenticated, router]);
 
   useEffect(() => {
-    if (hasHydrated && isAuthenticated && user?.role !== "corporate") {
+    if (hasHydrated && isAuthenticated && user?.role !== UserRole.Corporate) {
       router.replace("/plans");
     }
   }, [hasHydrated, isAuthenticated, user?.role, router]);
@@ -63,7 +64,7 @@ export default function CorporateLayout({
     );
   }
 
-  if (user?.role !== "corporate") {
+  if (user?.role !== UserRole.Corporate) {
     return (
       <div className="p-6 text-sm text-slate-600">
         Redirecting...

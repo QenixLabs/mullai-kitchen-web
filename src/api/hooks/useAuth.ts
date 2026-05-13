@@ -87,7 +87,7 @@ export function useLogout() {
     onSettled: () => {
       clearTokenPair();
       clearSession();
-      queryClient.removeQueries({ queryKey: authKeys.all() });
+      queryClient.clear();
     },
   });
 }

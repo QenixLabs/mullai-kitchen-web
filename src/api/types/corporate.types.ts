@@ -118,30 +118,47 @@ export interface UpdateCorporateProfileDto {
  * Corporate Order Status Enum
  * Defines the different states of a corporate order
  */
-export type CorporateOrderStatus =
-  | 'draft'
-  | 'pending_payment'
-  | 'active'
-  | 'completed'
-  | 'cancelled';
+export const CorporateOrderStatus = {
+  DRAFT: 'draft',
+  PENDING_PAYMENT: 'pending_payment',
+  ACTIVE: 'active',
+  COMPLETED: 'completed',
+  CANCELLED: 'cancelled',
+} as const;
+export type CorporateOrderStatus = (typeof CorporateOrderStatus)[keyof typeof CorporateOrderStatus];
 
 /**
  * Corporate Payment Status Enum
  * Defines the payment status of a corporate order
  */
-export type CorporatePaymentStatus = 'pending' | 'paid' | 'overdue';
+export const CorporatePaymentStatus = {
+  PENDING: 'pending',
+  PAID: 'paid',
+  OVERDUE: 'overdue',
+} as const;
+export type CorporatePaymentStatus = (typeof CorporatePaymentStatus)[keyof typeof CorporatePaymentStatus];
 
 /**
  * Corporate Invoice Type Enum
  * Defines the type of invoice (proforma or final)
  */
-export type CorporateInvoiceType = 'proforma' | 'cycle';
+export const CorporateInvoiceType = {
+  PROFORMA: 'proforma',
+  CYCLE: 'cycle',
+} as const;
+export type CorporateInvoiceType = (typeof CorporateInvoiceType)[keyof typeof CorporateInvoiceType];
 
 /**
  * Corporate Invoice Status Enum
  * Defines the status of a corporate invoice
  */
-export type CorporateInvoiceStatus = 'pending' | 'paid' | 'overdue' | 'cancelled';
+export const CorporateInvoiceStatus = {
+  PENDING: 'pending',
+  PAID: 'paid',
+  OVERDUE: 'overdue',
+  CANCELLED: 'cancelled',
+} as const;
+export type CorporateInvoiceStatus = (typeof CorporateInvoiceStatus)[keyof typeof CorporateInvoiceStatus];
 
 // ===========================================
 // Request Types
@@ -287,6 +304,7 @@ export interface ICorporateInvoice {
   status: CorporateInvoiceStatus;
   paid_at?: string;
   due_date?: string;
+  payment_reference?: string;
   created_at: string;
 }
 
@@ -331,6 +349,8 @@ export interface ICreateCorporateOrderResponse {
 export interface ICorporateDailyOrder {
   _id: string;
   corporate_order_id: string;
+  order_id?: string;
+  company_name?: string;
   date: string;
   veg_count: number;
   nonveg_count: number;

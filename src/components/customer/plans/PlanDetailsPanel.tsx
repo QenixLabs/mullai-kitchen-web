@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FaCalendarWeek, FaCheckCircle, FaMapMarkerAlt, FaShoppingCart, FaUtensils } from "react-icons/fa";
 
 import type { PlanBrowseItem } from "@/api/types/customer.types";
@@ -53,6 +54,17 @@ export function PlanDetailsPanel({
       </CardHeader>
 
       <CardContent className="space-y-5">
+        {plan.image_url && (
+          <div className="relative h-40 w-full overflow-hidden rounded-lg">
+            <Image
+              src={plan.image_url}
+              alt={plan.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 400px"
+            />
+          </div>
+        )}
         <div className="rounded-sm border border-primary/10 bg-primary/5 p-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Plan price</p>
           <p className="mt-1 text-2xl font-bold text-gray-900">{currencyFormatter.format(plan.price)}</p>

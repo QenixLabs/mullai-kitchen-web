@@ -116,8 +116,9 @@ export const createPaymentStore = (
         },
         setPaymentCancelled: () => {
           set({
+
+            ...defaultPaymentState,
             status: "cancelled",
-            errorMessage: null,
           });
         },
         resetPayment: () => {

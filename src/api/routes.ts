@@ -10,6 +10,7 @@ export const AUTH_ROUTES = {
   VERIFY_SIGNUP_OTP: "/auth/verify-signup-otp",
   CHANGE_PASSWORD: "/auth/change-password",
   CORPORATE_REGISTER: "/auth/corporate/register",
+  PERMISSIONS: "/auth/permissions",
 } as const;
 
 export const USER_ROUTES = {
@@ -96,4 +97,49 @@ export const ADD_ON_ROUTES = {
   PREPARE_CHECKOUT: (id: string) => `/customer/subscriptions/${id}/add-ons/prepare-checkout`,
   CREATE_ORDER: (id: string) => `/customer/subscriptions/${id}/add-ons/create-order`,
   ACTIVE_ORDERS: (id: string) => `/customer/subscriptions/${id}/add-ons`,
+} as const;
+
+export const ADMIN_ROUTES = {
+  DASHBOARD: "/admin/dashboard",
+  USERS: '/admin/users',
+  USER_DETAIL: (id: string) => `/admin/users/${id}`,
+  CREATE_ADMIN: '/admin/users/admin',
+  CREATE_HUB_OWNER: '/admin/users/hub-owner',
+  CREATE_DELIVERY_PARTNER: '/admin/users/delivery-partner',
+  USER_STATUS: (id: string) => `/admin/users/${id}/status`,
+  USER_INVOICES: (id: string) => `/admin/users/${id}/invoices`,
+  USER_SUBSCRIPTIONS: (id: string) => `/admin/users/${id}/subscriptions`,
+  USER_CORPORATE_ORDERS: (id: string) => `/admin/users/${id}/corporate-orders`,
+  USER_MARK_INVOICE_PAID: (userId: string, invoiceId: string) => `/admin/users/${userId}/invoices/${invoiceId}/mark-paid`,
+  USER_MARK_ORDER_PAID: (userId: string, orderId: string) => `/admin/users/${userId}/corporate-orders/${orderId}/mark-paid`,
+  RECIPES: '/admin/recipes',
+  RECIPE_DETAIL: (id: string) => `/admin/recipes/${id}`,
+  RECIPE_STATUS: (id: string) => `/admin/recipes/${id}/status`,
+  RECIPE_SELECT: '/admin/recipes/select',
+  OUTLET_TEMPLATES: (outletId: string) => `/admin/outlets/${outletId}/templates`,
+  OUTLET_TEMPLATE_GRID: (outletId: string) => `/admin/outlets/${outletId}/templates/grid`,
+  OUTLET_TEMPLATE_DETAIL: (outletId: string, id: string) => `/admin/outlets/${outletId}/templates/${id}`,
+  OUTLET_TEMPLATE_TOGGLE: (outletId: string, id: string) => `/admin/outlets/${outletId}/templates/${id}/toggle-publish`,
+  OUTLET_TEMPLATE_BULK_COPY: (outletId: string) => `/admin/outlets/${outletId}/templates/bulk-copy`,
+  OUTLET_OVERRIDES: (outletId: string) => `/admin/outlets/${outletId}/overrides`,
+  OUTLET_OVERRIDE_CALENDAR: (outletId: string) => `/admin/outlets/${outletId}/overrides/calendar`,
+  OUTLET_OVERRIDE_DETAIL: (outletId: string, id: string) => `/admin/outlets/${outletId}/overrides/${id}`,
+  PLANS: '/admin/plans',
+  PLAN_DETAIL: (id: string) => `/admin/plans/${id}`,
+  PLAN_STATUS: (id: string) => `/admin/plans/${id}/status`,
+  ADMIN_SUBSCRIPTIONS: '/admin/subscriptions',
+  ADMIN_SUBSCRIPTION_DETAIL: (id: string) => `/admin/subscriptions/${id}`,
+  ADMIN_SUBSCRIPTION_PAUSE: (id: string) => `/admin/subscriptions/${id}/pause`,
+  ADMIN_SUBSCRIPTION_RESUME: (id: string) => `/admin/subscriptions/${id}/resume`,
+  ADMIN_SUBSCRIPTION_SKIP_DATES: (id: string) => `/admin/subscriptions/${id}/skip-dates`,
+  ADMIN_SUBSCRIPTION_ACTIVITY: (id: string) => `/admin/subscriptions/${id}/activity`,
+  REPORTS_OPERATIONS: '/admin/reports/operations',
+  REPORTS_FINANCIAL: '/admin/reports/financial',
+} as const;
+
+export const ADMIN_COUPON_ROUTES = {
+  BASE: '/admin/coupons',
+  DETAIL: (id: string) => `/admin/coupons/${id}`,
+  STATUS: (id: string) => `/admin/coupons/${id}/status`,
+  STATS: (id: string) => `/admin/coupons/${id}/stats`,
 } as const;
