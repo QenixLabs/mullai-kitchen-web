@@ -12,3 +12,12 @@ export function useKitchenReport(outletId: string | null, date?: string) {
     staleTime: 1000 * 60 * 2,
   });
 }
+
+export function useConsumptionProjection(outletId: string | null, date?: string) {
+  return useQuery({
+    queryKey: adminKitchenKeys.consumption(outletId!, date),
+    queryFn: () => adminKitchenApi.getConsumptionProjection(outletId!, date),
+    enabled: !!outletId,
+    staleTime: 1000 * 60 * 2,
+  });
+}

@@ -135,6 +135,7 @@ export const ADMIN_ROUTES = {
   ADMIN_SUBSCRIPTION_ACTIVITY: (id: string) => `/admin/subscriptions/${id}/activity`,
   REPORTS_OPERATIONS: '/admin/reports/operations',
   REPORTS_FINANCIAL: '/admin/reports/financial',
+  REPORTS_REVENUE_ANALYTICS: '/admin/reports/revenue-analytics',
 } as const;
 
 export const ADMIN_COUPON_ROUTES = {

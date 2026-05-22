@@ -41,11 +41,37 @@ export interface KitchenReport {
   corporate_items?: KitchenReportCorporateItem[];
 }
 
+export interface IngredientConsumptionProjection {
+  ingredient_id: string;
+  ingredient_name: string;
+  total_quantity: number;
+  unit: string;
+  recipes: Array<{
+    recipe_id: string;
+    count: number;
+    quantity_per_recipe: number;
+    wastage_factor: number;
+  }>;
+}
+
 export const adminKitchenApi = {
   getReport: async (outletId: string, date?: string): Promise<KitchenReport> => {
     const response = await apiClient.get<KitchenReport>(`/admin/outlets/${outletId}/kitchen-report`, {
       params: { date },
     });
+    return response.data;
+  },
+
+  getConsumptionProjection: async (
+    outletId: string,
+    date?: string,
+  ): Promise<IngredientConsumptionProjection[]> => {
+    const response = await apiClient.get<IngredientConsumptionProjection[]>(
+      `/admin/inventory/consumption-projection`,
+      {
+        params: { outlet_id: outletId, date },
+      },
+    );
     return response.data;
   },
 };

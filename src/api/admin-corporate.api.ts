@@ -118,4 +118,9 @@ export const adminCorporateApi = {
     const response = await apiClient.get<AdminCorporateCompanyInvoicesResponse>(`${BASE}/companies/${id}/invoices`, { params });
     return response.data;
   },
+
+  updateCompanyServiceCharge: async (id: string, data: { service_charge_enabled?: boolean; service_charge_percentage?: number }): Promise<AdminCorporateCompany> => {
+    const response = await apiClient.put<AdminCorporateCompany>(`${BASE}/companies/${id}/service-charge`, data);
+    return response.data;
+  },
 };

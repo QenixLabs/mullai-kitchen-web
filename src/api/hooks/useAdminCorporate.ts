@@ -183,3 +183,26 @@ export function useAdminCorporateCompanyInvoices(
     staleTime: 1000 * 60 * 5,
   });
 }
+
+export function useUpdateCompanyServiceCharge() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { service_charge_enabled?: boolean; service_charge_percentage?: number };
+    }) => adminCorporateApi.updateCompanyServiceCharge(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: adminCorporateKeys.companyDetail(variables.id),
+      });
+      toast.success("Company service charge settings updated");
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "Failed to update service charge settings");
+    },
+  });
+}

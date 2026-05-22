@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import {
   Wallet, Package, Briefcase, Users, Building2, ChefHat, Route, AlertTriangle,
+  Receipt, PackageOpen, Warehouse,
   TrendingUp, TrendingDown, Minus,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -95,6 +96,7 @@ export function DashboardKpiCards({ data, isLoading }: DashboardKpiCardsProps) {
   const canViewRoutes = useHasPermission('route:assign');
   const canViewUsers = useHasPermission('user:view:any');
   const canViewSubscriptions = useHasPermission('subscription:view:any');
+  const canViewInventory = useHasPermission('inventory:view');
 
   const formatCurrency = (n?: number) => (n ? `₹${n.toLocaleString('en-IN')}` : '₹0');
 
@@ -181,6 +183,33 @@ export function DashboardKpiCards({ data, isLoading }: DashboardKpiCardsProps) {
           value={formatCurrency(data?.corporate?.outstandingAmount)}
           sub={`${data?.corporate?.overdueInvoices ?? 0} overdue invoices`}
           tone="destructive"
+        />
+      )}
+      {canViewInventory && (
+        <StatCard
+          icon={<Receipt className="h-4.5 w-4.5" />}
+          label="Ingredient Expense Today"
+          value={formatCurrency(data?.expenses?.totalExpense)}
+          sub={`Stock used: ${(data?.expenses?.totalStockUsed ?? 0).toLocaleString('en-IN')}`}
+          tone="destructive"
+        />
+      )}
+      {canViewInventory && (
+        <StatCard
+          icon={<PackageOpen className="h-4.5 w-4.5" />}
+          label="Total Stock Used"
+          value={(data?.expenses?.totalStockUsed ?? 0).toLocaleString('en-IN')}
+          sub="Today's consumption"
+          tone="warning"
+        />
+      )}
+      {canViewInventory && (
+        <StatCard
+          icon={<Warehouse className="h-4.5 w-4.5" />}
+          label="Inventory Value"
+          value={formatCurrency(data?.expenses?.remainingInventoryValue)}
+          sub="Current stock value"
+          tone="success"
         />
       )}
     </div>

@@ -9,16 +9,18 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useHasPermission } from '@/hooks/useHasPermission';
 import { useCurrentUser } from '@/hooks/useUserStore';
 import { useOutlets } from '@/api/hooks/useOutlets';
-import { useOperationsReport, useFinancialReport } from '@/api/hooks/useAdminReports';
+import { useOperationsReport, useFinancialReport, useRevenueAnalytics } from '@/api/hooks/useAdminReports';
 import { useDashboardData } from '@/api/hooks/useAdminDashboard';
 import { UserRole } from '@/api/types/user.types';
 import { ReportFilters } from '@/components/admin/reports/ReportFilters';
 import { OperationsReport } from '@/components/admin/reports/OperationsReport';
 import { FinancialReport } from '@/components/admin/reports/FinancialReport';
+import { RevenueAnalyticsReport } from '@/components/admin/reports/RevenueAnalyticsReport';
 import { DashboardAlerts } from '@/components/admin/dashboard/DashboardAlerts';
 import { DashboardQuickActions } from '@/components/admin/dashboard/DashboardQuickActions';
 import { DashboardKpiCards } from '@/components/admin/dashboard/DashboardKpiCards';
 import { DashboardCorporatePulse } from '@/components/admin/dashboard/DashboardCorporatePulse';
+import { DashboardIngredientUsage } from '@/components/admin/dashboard/DashboardIngredientUsage';
 import type { ReportGranularity } from '@/api/types/admin.types';
 
 export default function AdminDashboard() {
@@ -31,6 +33,7 @@ export default function AdminDashboard() {
     false,
   );
   const canViewFinancial = useHasPermission('report:financial');
+  const canViewInventory = useHasPermission('inventory:view');
   const canViewAnyReport = canViewOperations || canViewFinancial;
 
   const { data: outletsData, isLoading: outletsLoading } = useOutlets(
@@ -98,6 +101,11 @@ export default function AdminDashboard() {
   } = useFinancialReport(financialParams ?? { start_date: '', end_date: '' });
 
   const {
+    data: revenueAnalyticsData,
+    isLoading: revenueAnalyticsLoading,
+  } = useRevenueAnalytics(financialParams ?? { start_date: '', end_date: '' });
+
+  const {
     data: dashboardData,
     isLoading: dashboardLoading,
   } = useDashboardData();
@@ -111,7 +119,7 @@ export default function AdminDashboard() {
 
   const defaultTab = useMemo(() => {
     if (canViewOperations) return 'operations';
-    if (canViewFinancial) return 'financial';
+    if (canViewFinancial) return 'revenue';
     return 'operations';
   }, [canViewOperations, canViewFinancial]);
 
@@ -119,10 +127,11 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     setActiveTab((prev) => {
-      if (prev === 'operations' && !canViewOperations && canViewFinancial) {
-        return 'financial';
+      if (prev === 'operations' && !canViewOperations) {
+        if (canViewFinancial) return 'revenue';
+        return prev;
       }
-      if (prev === 'financial' && !canViewFinancial && canViewOperations) {
+      if ((prev === 'financial' || prev === 'revenue') && !canViewFinancial && canViewOperations) {
         return 'operations';
       }
       return prev;
@@ -186,6 +195,12 @@ export default function AdminDashboard() {
           <DashboardQuickActions />
           <DashboardKpiCards data={dashboardData} isLoading={dashboardLoading} />
           <DashboardCorporatePulse data={dashboardData?.corporate} isLoading={dashboardLoading} />
+          {canViewInventory && (
+            <DashboardIngredientUsage
+              data={dashboardData?.ingredientUsage}
+              isLoading={dashboardLoading}
+            />
+          )}
         </div>
       )}
 
@@ -236,6 +251,14 @@ export default function AdminDashboard() {
               Financial
             </TabsTrigger>
           )}
+          {canViewFinancial && (
+            <TabsTrigger
+              value="revenue"
+              className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all"
+            >
+              Revenue
+            </TabsTrigger>
+          )}
         </TabsList>
 
         {canViewOperations && (
@@ -252,6 +275,15 @@ export default function AdminDashboard() {
             <FinancialReport
               data={financialData}
               isLoading={financialLoading}
+            />
+          </TabsContent>
+        )}
+
+        {canViewFinancial && (
+          <TabsContent value="revenue">
+            <RevenueAnalyticsReport
+              data={revenueAnalyticsData}
+              isLoading={revenueAnalyticsLoading}
             />
           </TabsContent>
         )}

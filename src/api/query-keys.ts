@@ -7,7 +7,7 @@ import type {
   AdminCorporateCompanyListParams,
   PaginationParams,
 } from '@/api/types/admin-corporate.types';
-import type { IOperationsReportQuery, IFinancialReportQuery } from '@/api/types/admin.types';
+import type { IOperationsReportQuery, IFinancialReportQuery, IRevenueAnalyticsQuery } from '@/api/types/admin.types';
 
 export const authKeys = {
   all: () => ["auth"] as const,
@@ -201,6 +201,8 @@ export const adminKitchenKeys = {
   all: ['admin', 'kitchen'] as const,
   report: (outletId: string, date?: string) =>
     [...adminKitchenKeys.all, 'report', outletId, date] as const,
+  consumption: (outletId: string, date?: string) =>
+    [...adminKitchenKeys.all, 'consumption', outletId, date] as const,
 };
 
 export const adminOrderKeys = {
@@ -243,6 +245,7 @@ export const adminCorporateKeys = {
 export const adminReportKeys = {
   operations: (params: IOperationsReportQuery) => ['admin', 'reports', 'operations', params] as const,
   financial: (params: IFinancialReportQuery) => ['admin', 'reports', 'financial', params] as const,
+  revenueAnalytics: (params: IRevenueAnalyticsQuery) => ['admin', 'reports', 'revenue-analytics', params] as const,
 };
 
 export const adminDashboardKeys = {

@@ -324,3 +324,68 @@ export function RevenueAreaChart({ data }: RevenueAreaChartProps) {
     </ResponsiveContainer>
   );
 }
+
+/* ─── Revenue vs Expense Chart ─── */
+interface RevenueExpenseChartProps {
+  data: Array<{
+    date: string;
+    individual_revenue: number;
+    corporate_revenue: number;
+    ingredient_expense: number;
+  }>;
+}
+
+export function RevenueExpenseChart({ data }: RevenueExpenseChartProps) {
+  const maxVal = Math.max(
+    ...data.flatMap(d => [d.individual_revenue + d.corporate_revenue, d.ingredient_expense]),
+    1,
+  );
+
+  return (
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+        <defs>
+          <linearGradient id="mkIndFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={BRAND_COLORS.primaryLight} />
+            <stop offset="100%" stopColor={BRAND_COLORS.primary} />
+          </linearGradient>
+          <linearGradient id="mkCorpFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={BRAND_COLORS.gold} />
+            <stop offset="100%" stopColor={BRAND_COLORS.goldLight} />
+          </linearGradient>
+        </defs>
+
+        <CartesianGrid strokeDasharray="4 4" stroke="hsl(var(--border))" vertical={false} />
+        <XAxis
+          dataKey="date"
+          tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+          axisLine={{ stroke: 'hsl(var(--border))' }}
+          tickLine={false}
+          dy={8}
+        />
+        <YAxis
+          tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+          axisLine={false}
+          tickLine={false}
+          dx={-4}
+          tickFormatter={(v: number) => `₹${(v / 1000).toFixed(0)}k`}
+          domain={[0, Math.ceil(maxVal * 1.2)]}
+        />
+        <Tooltip content={<ChartTooltip />} />
+        <Legend
+          verticalAlign="top"
+          height={28}
+          iconType="circle"
+          iconSize={8}
+          formatter={(value: string) => (
+            <span className="text-xs font-medium text-muted-foreground ml-1">{value}</span>
+          )}
+        />
+
+        <Bar dataKey="individual_revenue" name="Individual Revenue" stackId="revenue" fill="url(#mkIndFill)" radius={[0, 0, 0, 0]} maxBarSize={36} />
+        <Bar dataKey="corporate_revenue" name="Corporate Revenue" stackId="revenue" fill="url(#mkCorpFill)" radius={[4, 4, 0, 0]} maxBarSize={36} />
+        <Bar dataKey="ingredient_expense" name="Ingredient Expense" fill={BRAND_COLORS.rose} radius={[4, 4, 0, 0]} maxBarSize={36} opacity={0.85} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}

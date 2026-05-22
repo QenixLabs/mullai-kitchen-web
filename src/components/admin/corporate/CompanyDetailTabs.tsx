@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import {
   Building2,
@@ -13,12 +14,15 @@ import {
   Eye,
   ClipboardList,
   CalendarDays,
+  Percent,
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -38,6 +42,7 @@ import {
   useAdminCorporateCompanyDetail,
   useAdminCorporateCompanyOrders,
   useAdminCorporateCompanyInvoices,
+  useUpdateCompanyServiceCharge,
 } from '@/api/hooks/useAdminCorporate';
 import type { ICorporateOrder, ICorporateInvoice } from '@/api/types/corporate.types';
 
@@ -255,6 +260,9 @@ export function CompanyDetailTabs({ companyId }: CompanyDetailTabsProps) {
                   icon={<Mail className="h-3.5 w-3.5 text-muted-foreground" />}
                 />
               </SectionCard>
+
+              {/* Service Charge Settings */}
+              <ServiceChargeSettings company={company} />
 
               {/* Billing Address */}
               <div className="md:col-span-2">
@@ -531,6 +539,101 @@ export function CompanyDetailTabs({ companyId }: CompanyDetailTabsProps) {
         </Tabs>
       </div>
     </TooltipProvider>
+  );
+}
+
+function ServiceChargeSettings({
+  company,
+}: {
+  company: {
+    _id: string;
+    service_charge_enabled: boolean;
+    service_charge_percentage: number;
+  };
+}) {
+  const updateServiceCharge = useUpdateCompanyServiceCharge();
+  const [enabled, setEnabled] = useState(company.service_charge_enabled);
+  const [percentage, setPercentage] = useState(
+    company.service_charge_percentage?.toString() || '0',
+  );
+
+  const handleToggle = (checked: boolean) => {
+    setEnabled(checked);
+    if (!checked) {
+      updateServiceCharge.mutate({
+        id: company._id,
+        data: { service_charge_enabled: false },
+      });
+    }
+  };
+
+  const handleSave = () => {
+    const pct = parseFloat(percentage);
+    if (isNaN(pct) || pct < 0 || pct > 100) {
+      return;
+    }
+    updateServiceCharge.mutate({
+      id: company._id,
+      data: {
+        service_charge_enabled: enabled,
+        service_charge_percentage: pct,
+      },
+    });
+  };
+
+  return (
+    <div className="md:col-span-2">
+      <SectionCard icon={<Percent className="h-4 w-4" />} title="Service Charge Settings">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-4 py-3">
+            <div className="space-y-0.5">
+              <p className="text-sm font-medium text-foreground">Enable Service Charge</p>
+              <p className="text-xs text-muted-foreground">
+                Apply service charge to this company&apos;s orders
+              </p>
+            </div>
+            <Switch
+              checked={enabled}
+              onCheckedChange={handleToggle}
+              disabled={updateServiceCharge.isPending}
+            />
+          </div>
+
+          {enabled && (
+            <div className="flex items-end gap-3">
+              <div className="flex-1 space-y-2">
+                <label className="text-sm font-medium text-foreground">
+                  Service Charge Percentage
+                </label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    min={0}
+                    max={100}
+                    step={0.1}
+                    value={percentage}
+                    onChange={(e) => setPercentage(e.target.value)}
+                    disabled={updateServiceCharge.isPending}
+                    className="pr-8"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                    %
+                  </span>
+                </div>
+              </div>
+              <Button
+                onClick={handleSave}
+                disabled={updateServiceCharge.isPending}
+                size="sm"
+                className="mb-0.5"
+              >
+                {updateServiceCharge.isPending ? 'Saving...' : 'Save'}
+              </Button>
+            </div>
+          )}
+        </div>
+      </SectionCard>
+    </div>
   );
 }
 

@@ -27,11 +27,12 @@ import { Can } from '@/components/Auth/can';
 import { useCurrentUser } from '@/hooks/useUserStore';
 import { useHasPermission } from '@/hooks/useHasPermission';
 import { useOutlets } from '@/api/hooks/useOutlets';
-import { useKitchenReport } from '@/api/hooks/useAdminKitchen';
+import { useKitchenReport, useConsumptionProjection } from '@/api/hooks/useAdminKitchen';
 import { KitchenSummaryCards } from '@/components/admin/kitchen/KitchenSummaryCards';
 import { KitchenItemsTable } from '@/components/admin/kitchen/KitchenItemsTable';
 import { KitchenCorporateSummary } from '@/components/admin/kitchen/KitchenCorporateSummary';
 import { KitchenCorporateBreakdown } from '@/components/admin/kitchen/KitchenCorporateBreakdown';
+import { KitchenIngredientConsumption } from '@/components/admin/kitchen/KitchenIngredientConsumption';
 
 export default function KitchenPage() {
   const user = useCurrentUser();
@@ -54,6 +55,7 @@ export default function KitchenPage() {
 
   const dateParam = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined;
   const { data: report, isLoading: reportLoading, error: reportError } = useKitchenReport(selectedOutletId, dateParam);
+  const { data: consumptionProjection, isLoading: consumptionLoading } = useConsumptionProjection(selectedOutletId, dateParam);
 
   const handleOutletChange = useCallback((value: string) => {
     setSelectedOutletId(value);
@@ -217,6 +219,12 @@ export default function KitchenPage() {
 
             {/* Corporate Breakdown */}
             <KitchenCorporateBreakdown items={report?.corporate_items} loading={reportLoading} />
+
+            {/* Ingredient Consumption */}
+            <KitchenIngredientConsumption
+              projections={consumptionProjection}
+              loading={consumptionLoading}
+            />
           </>
         ) : (
           <Card className="border-dashed">
