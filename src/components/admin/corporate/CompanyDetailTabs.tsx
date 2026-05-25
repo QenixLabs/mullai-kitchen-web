@@ -22,6 +22,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Can } from '@/components/Auth/can';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import {

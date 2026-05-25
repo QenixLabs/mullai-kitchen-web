@@ -53,6 +53,9 @@ export interface DeliveryRouteSummary {
   estimated_start_time?: string;
   /** Meal type for this route (e.g. breakfast, lunch, dinner). */
   meal_type?: string;
+  route_type?: 'individual' | 'corporate';
+  company_name?: string;
+  total_meals?: number;
 }
 
 /** Order row inside a stop, returned by `GET /delivery/routes/:id`. */
@@ -109,6 +112,7 @@ export interface UpdateStopBody {
   notes?: string;
   /** Required by the server when `status === 'missed'`. */
   failure_reason?: string;
+  delivery_proof_url?: string;
 }
 
 /** Response shape returned by the mark-stop endpoint. */
@@ -120,6 +124,7 @@ export interface UpdateStopResponse {
   /** ISO date-time string. */
   delivery_time?: string;
   failure_reason?: string;
+  delivery_proof_url?: string;
 }
 
 // ---------- Profile + availability ---------------------------------------

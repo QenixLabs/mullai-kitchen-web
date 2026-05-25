@@ -11,6 +11,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 
+import { DeliveryProofDialog } from "@/components/delivery/DeliveryProofDialog";
 import { MissedReasonDialog } from "@/components/delivery/MissedReasonDialog";
 import { Button } from "@/components/ui/button";
 import { useUpdateStop } from "@/api/hooks/useDeliveryRoutes";
@@ -63,17 +64,16 @@ export function StopCard({ stop, routeId, routeStatus }: StopCardProps) {
     null,
   );
 
+  const [proofTarget, setProofTarget] = useState<DeliveryOrderLine | null>(
+    null,
+  );
+
   const isPendingForOrder = (orderId: string) =>
     updateStop.isPending && updateStop.variables?.orderId === orderId;
 
   const handleDelivered = (order: DeliveryOrderLine) => {
     if (updateStop.isPending) return;
-    updateStop.mutate({
-      routeId,
-      orderType: order.type,
-      orderId: order.order_id,
-      body: { status: "delivered" },
-    });
+    setProofTarget(order);
   };
 
   const handleMissedSubmit = (reason: string) => {
@@ -87,6 +87,21 @@ export function StopCard({ stop, routeId, routeStatus }: StopCardProps) {
       },
       {
         onSuccess: () => setMissedTarget(null),
+      },
+    );
+  };
+
+  const handleProofSubmit = (proofUrl: string) => {
+    if (!proofTarget) return;
+    updateStop.mutate(
+      {
+        routeId,
+        orderType: proofTarget.type,
+        orderId: proofTarget.order_id,
+        body: { status: "delivered", delivery_proof_url: proofUrl },
+      },
+      {
+        onSuccess: () => setProofTarget(null),
       },
     );
   };
@@ -157,6 +172,19 @@ export function StopCard({ stop, routeId, routeStatus }: StopCardProps) {
           updateStop.variables?.orderId === missedTarget?.order_id
         }
         orderLabel={missedTarget?.customer_name}
+      />
+
+      <DeliveryProofDialog
+        open={Boolean(proofTarget)}
+        onOpenChange={(open) => {
+          if (!open) setProofTarget(null);
+        }}
+        onSubmit={handleProofSubmit}
+        isPending={
+          updateStop.isPending &&
+          updateStop.variables?.orderId === proofTarget?.order_id
+        }
+        orderLabel={proofTarget?.customer_name}
       />
     </>
   );
