@@ -37,6 +37,7 @@ function OrdersPageContent() {
 
   // Read initial status from URL query params (e.g., ?status=active)
   const initialStatus = searchParams.get("status") || "all";
+  const paymentStatusFilter = searchParams.get("payment_status");
 
   // Fetch all orders
   const { data: orders, isLoading, error, refetch } = useCorporateOrders();
@@ -49,13 +50,19 @@ function OrdersPageContent() {
   const filteredOrders = useMemo(() => {
     let result = orders ?? [];
 
-    // Filter by status
+    // Filter by order status
     if (activeStatus !== "all") {
       result = result.filter((order) => order.status === activeStatus);
     }
 
+    // Filter by payment_status from URL (e.g., ?payment_status=pending,overdue)
+    if (paymentStatusFilter) {
+      const allowed = paymentStatusFilter.split(",");
+      result = result.filter((order) => allowed.includes(order.payment_status));
+    }
+
     return result;
-  }, [orders, activeStatus]);
+  }, [orders, activeStatus, paymentStatusFilter]);
 
   // Pagination - first page shows 2 orders (plus create card = 3 total), other pages show 3 orders
   const totalOrderPages = Math.max(1, Math.ceil((filteredOrders.length - ORDERS_FIRST_PAGE) / ORDERS_PER_PAGE) + 1);

@@ -19,6 +19,7 @@ import type {
   CancelCorporateOrderPayload,
   UpdateCorporateOrderStatusPayload,
   MarkInvoicePaidPayload,
+  GeneratePaymentLinkResponse,
 } from '@/api/types/admin-corporate.types';
 import type {
   ICorporateOrder,
@@ -34,6 +35,7 @@ export type {
   CancelCorporateOrderPayload,
   UpdateCorporateOrderStatusPayload,
   MarkInvoicePaidPayload,
+  GeneratePaymentLinkResponse,
 };
 
 const BASE = '/admin/corporate';
@@ -86,6 +88,11 @@ export const adminCorporateApi = {
 
   markInvoicePaid: async (id: string, data: MarkInvoicePaidPayload): Promise<ICorporateInvoice> => {
     const response = await apiClient.put<ICorporateInvoice>(`${BASE}/invoices/${id}/mark-paid`, data);
+    return response.data;
+  },
+
+  generatePaymentLink: async (id: string): Promise<GeneratePaymentLinkResponse> => {
+    const response = await apiClient.post<GeneratePaymentLinkResponse>(`${BASE}/invoices/${id}/generate-payment-link`);
     return response.data;
   },
 

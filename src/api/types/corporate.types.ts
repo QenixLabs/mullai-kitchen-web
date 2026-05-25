@@ -310,6 +310,11 @@ export interface ICorporateInvoice {
   paid_at?: string;
   due_date?: string;
   payment_reference?: string;
+  payment_link_id?: string;
+  payment_link_url?: string;
+  payment_link_expires_at?: string;
+  payment_link_status?: string;
+  payment_link_reference_id?: string;
   created_at: string;
 }
 

@@ -14,6 +14,9 @@ import {
   CheckCircle2,
   Clock,
   AlertCircle,
+  ExternalLink,
+  Copy,
+  CreditCard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -271,6 +274,12 @@ function InvoiceCard({
               <StatusIcon className="h-3 w-3" />
               {statusConfig.label}
             </span>
+            {invoice.payment_link_url && invoice.status !== "paid" && invoice.status !== "cancelled" && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-primary/10 text-primary border-primary/20">
+                <ExternalLink className="h-3 w-3" />
+                Payment Link
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2 mt-0.5">
             <p className="text-sm font-semibold text-foreground truncate">
@@ -460,6 +469,20 @@ function InvoiceCard({
 function BillingSummary({ invoice }: { invoice: ICorporateInvoice }) {
   const hasAdjustment = invoice.total_modification !== 0;
   const isCredit = invoice.total_modification > 0;
+  const isPending = invoice.status === "pending" || invoice.status === "overdue";
+  const hasPaymentLink = !!invoice.payment_link_url && isPending;
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = async () => {
+    if (!invoice.payment_link_url) return;
+    try {
+      await navigator.clipboard.writeText(invoice.payment_link_url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
 
   return (
     <div className="p-5 sm:p-6 space-y-3">
@@ -503,21 +526,93 @@ function BillingSummary({ invoice }: { invoice: ICorporateInvoice }) {
           </span>
         </div>
       </div>
+
+      {/* Payment Link Info */}
+      {hasPaymentLink && (
+        <div className="pt-2 space-y-2">
+          {invoice.payment_link_expires_at && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              <span>Link expires {formatDateShort(invoice.payment_link_expires_at)}</span>
+            </div>
+          )}
+          {invoice.payment_link_status && (
+            <div className="flex items-center gap-1.5 text-xs">
+              <span className={cn(
+                "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
+                invoice.payment_link_status === "active"
+                  ? "bg-amber-50 text-amber-700 border-amber-200"
+                  : "bg-emerald-50 text-emerald-700 border-emerald-200"
+              )}>
+                {invoice.payment_link_status}
+              </span>
+            </div>
+          )}
+          <div className="flex items-center gap-2">
+            <a
+              href={invoice.payment_link_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="truncate text-xs text-primary underline underline-offset-2 hover:text-primary/80 max-w-[180px]"
+            >
+              {invoice.payment_link_url}
+            </a>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 text-muted-foreground hover:text-foreground"
+              onClick={handleCopyLink}
+            >
+              <Copy className="h-3 w-3" />
+            </Button>
+            {copied && <span className="text-[10px] text-emerald-600 font-semibold">Copied!</span>}
+          </div>
+        </div>
+      )}
+
       {invoice.due_date && invoice.status !== "paid" && (
-        <div className="pt-3 text-xs text-muted-foreground">
+        <div className="pt-1 text-xs text-muted-foreground">
           Due by {formatDateShort(invoice.due_date)}
         </div>
       )}
-      <Button
-        className="w-full h-10 rounded-full font-semibold text-sm mt-2"
-        style={{ backgroundColor: "#3D000C", color: "#FFFFFF" }}
-      >
-        <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="2" y="5" width="20" height="14" rx="2" />
-          <line x1="2" y1="10" x2="22" y2="10" />
-        </svg>
-        Download PDF
-      </Button>
+
+      {/* CTA Button */}
+      {hasPaymentLink ? (
+        <a
+          href={invoice.payment_link_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block"
+        >
+          <Button
+            className="w-full h-10 rounded-full font-semibold text-sm mt-2 gap-2"
+            style={{ backgroundColor: "#3D000C", color: "#FFFFFF" }}
+          >
+            <CreditCard className="h-4 w-4" />
+            Pay Now
+          </Button>
+        </a>
+      ) : invoice.status === "paid" ? (
+        <Button
+          className="w-full h-10 rounded-full font-semibold text-sm mt-2 gap-2"
+          variant="outline"
+          disabled
+        >
+          <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+          Paid
+        </Button>
+      ) : (
+        <Button
+          className="w-full h-10 rounded-full font-semibold text-sm mt-2"
+          style={{ backgroundColor: "#3D000C", color: "#FFFFFF" }}
+        >
+          <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="5" width="20" height="14" rx="2" />
+            <line x1="2" y1="10" x2="22" y2="10" />
+          </svg>
+          Download PDF
+        </Button>
+      )}
     </div>
   );
 }

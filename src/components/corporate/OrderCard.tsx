@@ -5,6 +5,7 @@ import { differenceInDays, parseISO } from "date-fns";
 import { IndianRupee, ArrowRight, ChevronRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrderStatusBadge } from "@/components/corporate/OrderStatusBadge";
+import { PaymentStatusBadge } from "@/components/corporate/PaymentStatusBadge";
 import type { ICorporateOrder } from "@/api/types/corporate.types";
 
 import { motion } from "framer-motion";
@@ -65,7 +66,7 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
     >
       <div className="flex flex-1 flex-col p-6">
         {/* Status Badges - Top */}
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-3 mb-4 flex-wrap">
           <div className="flex items-center gap-2">
             <span className={cn(
               "w-2.5 h-2.5 rounded-full",
@@ -75,17 +76,10 @@ export function OrderCard({ order, variant = "full" }: OrderCardProps) {
               "text-xs font-semibold tracking-wide",
               isActive ? "text-[#00990F]" : "text-gray-500"
             )}>
-              ACTIVE
+              {isActive ? "ACTIVE" : order.status === "completed" ? "COMPLETED" : order.status === "cancelled" ? "CANCELLED" : "DRAFT"}
             </span>
           </div>
-          {order.status === "pending_payment" && (
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FF962D]" />
-              <span className="text-xs font-semibold tracking-wide text-[#FF962D]">
-                PENDING
-              </span>
-            </div>
-          )}
+          <PaymentStatusBadge status={order.payment_status} />
         </div>
 
         {/* Order ID and Company Name */}

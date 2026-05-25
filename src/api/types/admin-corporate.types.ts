@@ -154,3 +154,10 @@ export interface MarkInvoicePaidPayload {
   payment_reference?: string;
   paid_at?: string;
 }
+
+export interface GeneratePaymentLinkResponse {
+  paymentLinkId: string;
+  paymentLinkUrl: string;
+  expiresAt: string;
+  whatsappSent: boolean;
+}

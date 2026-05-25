@@ -15,6 +15,7 @@ import {
   ClipboardList,
   CalendarDays,
   Percent,
+  Link2,
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
@@ -43,6 +44,7 @@ import {
   useAdminCorporateCompanyOrders,
   useAdminCorporateCompanyInvoices,
   useUpdateCompanyServiceCharge,
+  useGeneratePaymentLink,
 } from '@/api/hooks/useAdminCorporate';
 import type { ICorporateOrder, ICorporateInvoice } from '@/api/types/corporate.types';
 
@@ -84,6 +86,8 @@ export function CompanyDetailTabs({ companyId }: CompanyDetailTabsProps) {
     useAdminCorporateCompanyOrders(companyId, { page: 1, limit: 10 });
   const { data: invoicesData, isLoading: invoicesLoading } =
     useAdminCorporateCompanyInvoices(companyId, { page: 1, limit: 10 });
+  const generatePaymentLinkMutation = useGeneratePaymentLink();
+  const [generatingId, setGeneratingId] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -491,23 +495,48 @@ export function CompanyDetailTabs({ companyId }: CompanyDetailTabsProps) {
                               )}
                             </TableCell>
                             <TableCell className="px-4 py-3 text-right">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                                    asChild
-                                  >
-                                    <Link href={`/admin/corporate/invoices/${invoice._id}`}>
-                                      <Eye className="h-4 w-4" />
-                                    </Link>
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">
-                                  <p className="text-xs">View invoice</p>
-                                </TooltipContent>
-                              </Tooltip>
+                              <div className="flex items-center justify-end gap-1">
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                      asChild
+                                    >
+                                      <Link href={`/admin/corporate/invoices/${invoice._id}`}>
+                                        <Eye className="h-4 w-4" />
+                                      </Link>
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top">
+                                    <p className="text-xs">View invoice</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                                {['pending', 'overdue'].includes(invoice.status) && (
+                                  <Can permission="corporate:invoice">
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                          onClick={() => {
+                                            setGeneratingId(invoice._id);
+                                            generatePaymentLinkMutation.mutate(invoice._id);
+                                          }}
+                                          disabled={generatePaymentLinkMutation.isPending && generatingId === invoice._id}
+                                        >
+                                          <Link2 className="h-4 w-4" />
+                                        </Button>
+                                      </TooltipTrigger>
+                                      <TooltipContent side="top">
+                                        <p className="text-xs">Generate payment link</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </Can>
+                                )}
+                              </div>
                             </TableCell>
                           </TableRow>
                         );

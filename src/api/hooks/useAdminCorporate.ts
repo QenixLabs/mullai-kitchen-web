@@ -14,6 +14,7 @@ import {
   type UpdateCorporateOrderStatusPayload,
   type MarkInvoicePaidPayload,
 } from "@/api/admin-corporate.api";
+import { GeneratePaymentLinkResponse } from "@/api/types/admin-corporate.types";
 import { adminCorporateKeys } from "@/api/query-keys";
 import type { ICorporateOrder, ICorporateInvoice } from "@/api/types/corporate.types";
 
@@ -124,6 +125,25 @@ export function useMarkInvoicePaid() {
     },
     onError: (error: any) => {
       toast.error(error?.message || "Failed to mark invoice as paid");
+    },
+  });
+}
+
+export function useGeneratePaymentLink() {
+  const queryClient = useQueryClient();
+
+  return useMutation<GeneratePaymentLinkResponse, any, string>({
+    mutationFn: (id: string) => adminCorporateApi.generatePaymentLink(id),
+    onSuccess: (data, id) => {
+      queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoiceLists() });
+      queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoiceList() });
+      queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoiceDetail(id) });
+      queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoices(id) });
+      queryClient.invalidateQueries({ queryKey: adminCorporateKeys.companyInvoices(id) });
+      toast.success("Payment link generated and sent via WhatsApp");
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "Failed to generate payment link");
     },
   });
 }
