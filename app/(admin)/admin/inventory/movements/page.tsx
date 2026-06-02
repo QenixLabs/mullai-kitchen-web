@@ -159,6 +159,23 @@ export default function MovementsPage() {
     movementForm.setValue("outlet_id", selectedOutletId ?? "");
   }, [selectedOutletId]);
 
+  // Auto-set movement type based on reason
+  const watchedReason = movementForm.watch("reason");
+  useEffect(() => {
+    const reasonToType: Record<string, string> = {
+      CONSUMPTION: "OUT",
+      WASTE: "OUT",
+      PROCUREMENT: "IN",
+      RETURN: "IN",
+      ADJUSTMENT: "ADJUSTMENT",
+      TRANSFER: "OUT",
+    };
+    const expectedType = reasonToType[watchedReason];
+    if (expectedType && movementForm.getValues("type") !== expectedType) {
+      movementForm.setValue("type", expectedType as "IN" | "OUT" | "ADJUSTMENT");
+    }
+  }, [watchedReason, movementForm]);
+
   const onMovementSubmit: SubmitHandler<MovementFormValues> = (data) => {
     createMovement.mutate(
       {
