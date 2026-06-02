@@ -9,13 +9,21 @@ import { MapPin, Menu, X, ChevronDown, User2, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fadeInDown } from "./animations";
 import { cn } from "@/lib/utils";
-import { useIsAuthenticated, useAuthHydrated } from "@/hooks/useUserStore";
+import { useIsAuthenticated, useAuthHydrated, useCurrentUser } from "@/hooks/useUserStore";
+import { UserRole, isAdminRole, isDeliveryPartnerRole } from "@/api/types/user.types";
 
 const chennaiAreas = [
   "Anna Nagar", "T. Nagar", "Adyar", "Mylapore", "Velachery",
   "Nungambakkam", "Kodambakkam", "Porur", "Guindy", "Chromepet", "Tambaram", "ECR", "OMR", "Anna Salai",
   "Pallavaram", "Chetpet", "Poonamallee"
 ];
+
+function getDashboardUrl(role: string | undefined): string {
+  if (role === UserRole.Corporate) return "/corporate/dashboard";
+  if (isAdminRole(role)) return "/admin";
+  if (isDeliveryPartnerRole(role)) return "/delivery";
+  return "/plans";
+}
 
 export function LandingNavbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -27,6 +35,7 @@ export function LandingNavbar() {
   const pathname = usePathname();
   const isAuthenticated = useIsAuthenticated();
   const hasHydrated = useAuthHydrated();
+  const user = useCurrentUser();
 
   const isCorporatePage = pathname === "/" || pathname === "/corporate";
   const isIndividualPage = pathname === "/individual";
@@ -36,7 +45,7 @@ export function LandingNavbar() {
 
   const handleGetStarted = () => {
     if (!hasHydrated) return;
-    router.push(isAuthenticated ? "/plans" : "/auth/signup");
+    router.push(isAuthenticated ? getDashboardUrl(user?.role) : "/auth/signup");
   };
 
   useEffect(() => {
@@ -166,7 +175,11 @@ export function LandingNavbar() {
           )}
 
           <Button asChild className="bg-white hover:bg-white/90 text-primary font-bold rounded-full px-7 h-11 text-base tracking-wide shadow-lg transition-all active:scale-95">
-            <Link href="/auth/signin">LOGIN</Link>
+            {hasHydrated && isAuthenticated ? (
+              <Link href={getDashboardUrl(user?.role)}>MY DASHBOARD</Link>
+            ) : (
+              <Link href="/auth/signin">LOGIN</Link>
+            )}
           </Button>
         </div>
 
@@ -178,7 +191,11 @@ export function LandingNavbar() {
             size="sm"
             className="text-white/80 hover:text-white hover:bg-white/10 rounded-full px-4"
           >
-            <Link href="/auth/signin">Login</Link>
+            {hasHydrated && isAuthenticated ? (
+              <Link href={getDashboardUrl(user?.role)}>Dashboard</Link>
+            ) : (
+              <Link href="/auth/signin">Login</Link>
+            )}
           </Button>
 
           <Button
@@ -271,9 +288,15 @@ export function LandingNavbar() {
                     </Button>
                   </Link>
                 )}
-                <Button asChild variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
-                  <Link href="/auth/signin">Login to Account</Link>
-                </Button>
+                {hasHydrated && isAuthenticated ? (
+                  <Button asChild variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
+                    <Link href={getDashboardUrl(user?.role)}>My Dashboard</Link>
+                  </Button>
+                ) : (
+                  <Button asChild variant="outline" className="border-white/20 text-primary hover:bg-white/10 w-full rounded-xl h-12">
+                    <Link href="/auth/signin">Login to Account</Link>
+                  </Button>
+                )}
                 <Button onClick={handleGetStarted} className="bg-skin hover:bg-[#C39463] text-primary w-full font-bold rounded-xl h-12 shadow-lg shadow-skin/20">
                   {isAuthenticated ? "Dashboard" : "Get Started Now"}
                 </Button>

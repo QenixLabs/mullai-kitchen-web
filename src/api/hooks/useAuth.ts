@@ -88,6 +88,9 @@ export function useLogout() {
       clearTokenPair();
       clearSession();
       queryClient.clear();
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("mk-user-store");
+      }
     },
   });
 }
@@ -132,6 +135,9 @@ export function useDeleteAccount() {
       clearTokenPair();
       clearSession();
       queryClient.clear();
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("mk-user-store");
+      }
       toast.success("Account deleted successfully");
     },
     onError: (error: unknown) => {

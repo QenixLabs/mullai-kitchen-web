@@ -60,6 +60,9 @@ const refreshAccessToken = async (): Promise<string | null> => {
   if (!refreshToken) {
     clearTokenPair();
     notifyAuthStateChange(null);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("mk-user-store");
+    }
     return null;
   }
 
@@ -78,6 +81,9 @@ const refreshAccessToken = async (): Promise<string | null> => {
       if (!session?.access_token || !session?.refresh_token) {
         clearTokenPair();
         notifyAuthStateChange(null);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("mk-user-store");
+        }
         return null;
       }
 
@@ -88,6 +94,9 @@ const refreshAccessToken = async (): Promise<string | null> => {
     .catch(() => {
       clearTokenPair();
       notifyAuthStateChange(null);
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("mk-user-store");
+      }
       return null;
     })
     .finally(() => {
@@ -177,6 +186,9 @@ apiClient.interceptors.response.use(
         // Refresh failed - clear tokens and redirect to login
         notifyAuthStateChange(null);
         if (typeof window !== "undefined") {
+          // Explicitly clear Zustand persist key before redirect
+          // to guarantee isAuthenticated is false on next page load
+          localStorage.removeItem("mk-user-store");
           window.location.href = "/auth/signin";
         }
       }
