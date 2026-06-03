@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
-import { Loader2, Plus, Trash2, ChefHat, ListChecks, Clock, Flame, ArrowUpRight } from 'lucide-react';
+import { Loader2, Plus, Trash2, ChefHat, ListChecks, Clock, Flame, ArrowUpRight, Save } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,9 +19,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Can } from '@/components/Auth/can';
 import { useOutlets } from '@/api/hooks/useOutlets';
+import { useIngredients, useCreateIngredient } from '@/api/hooks/useInventory';
 import type { CreateRecipePayload, Recipe } from '@/api/types/menu.types';
+import type { CreateIngredientPayload } from '@/api/admin-inventory.api';
 
 const ingredientSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -54,11 +64,33 @@ interface RecipeFormProps {
   onSubmit: (data: CreateRecipePayload) => Promise<void>;
 }
 
+const CATEGORIES = [
+  'Dals & Pulses',
+  'Rice & Grains',
+  'Vegetables',
+  'Non-Veg',
+  'Spices & Condiments',
+  'Dairy',
+  'Dry Fruits & Nuts',
+  'Oils',
+  'Other',
+];
+
+const UNITS = ['KG', 'G', 'L', 'ML', 'PCS', 'DOZEN', 'PACKET', 'BOTTLE', 'BUNCH'];
+
 export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAddIngredientDialog, setShowAddIngredientDialog] = useState(false);
+  const [newIngredientName, setNewIngredientName] = useState('');
+  const [newIngredientCategory, setNewIngredientCategory] = useState('');
+  const [newIngredientUnit, setNewIngredientUnit] = useState('');
 
   const { data: outletsData } = useOutlets({ status: 'active' });
+  const { data: ingredientsData, refetch: refetchIngredients } = useIngredients({ limit: 500 });
+  const createIngredient = useCreateIngredient();
+
+  const inventoryIngredients = ingredientsData?.data ?? [];
 
   const {
     register,
@@ -113,6 +145,25 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
 
   const difficultyValue = watch('difficulty') || '';
   const outletRestrictionValue = watch('outlet_restriction') || 'global';
+
+  const handleAddNewIngredient = () => {
+    if (!newIngredientName.trim() || !newIngredientCategory || !newIngredientUnit) return;
+    const payload: CreateIngredientPayload = {
+      name: newIngredientName.trim(),
+      category: newIngredientCategory,
+      default_unit: newIngredientUnit,
+      status: 'ACTIVE',
+    };
+    createIngredient.mutate(payload, {
+      onSuccess: () => {
+        setShowAddIngredientDialog(false);
+        setNewIngredientName('');
+        setNewIngredientCategory('');
+        setNewIngredientUnit('');
+        refetchIngredients();
+      },
+    });
+  };
 
   const handleFormSubmit = async (data: RecipeFormData) => {
     setIsSubmitting(true);
@@ -270,6 +321,17 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
               <h3 className="text-base font-semibold text-primary">Ingredients</h3>
             </div>
             <div className="flex items-center gap-2">
+              {mode === 'edit' && initialData?._id && (
+                <Can permission="inventory:manage">
+                  <Link
+                    href={`/admin/recipes/${initialData._id}/ingredients`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border/60 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/5 transition-colors"
+                  >
+                    <Save className="h-3.5 w-3.5" />
+                    Manage BOM
+                  </Link>
+                </Can>
+              )}
               <Can permission="inventory:view">
                 <Link
                   href="/admin/inventory/ingredients"
@@ -302,12 +364,43 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
           )}
           {ingredientFields.map((field, index) => (
             <div key={field.id} className="flex items-end gap-2 p-3 rounded-xl bg-muted/20 border border-border/30">
-              <div className="flex-1 space-y-1">
+              <div className="flex-1 space-y-1 min-w-0">
                 <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Name</Label>
-                <Input
-                  {...register(`ingredients.${index}.name`)}
-                  placeholder="Ingredient name"
-                  className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
+                <Controller
+                  control={control}
+                  name={`ingredients.${index}.name`}
+                  render={({ field: selectField }) => {
+                    return (
+                      <Select
+                        value={selectField.value}
+                        onValueChange={(val) => {
+                          if (val === '__add_new__') {
+                            setShowAddIngredientDialog(true);
+                            return;
+                          }
+                          selectField.onChange(val);
+                          const ing = inventoryIngredients.find((i) => i.name === val);
+                          if (ing?.default_unit) {
+                            setValue(`ingredients.${index}.unit`, ing.default_unit);
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="h-11 rounded-xl border-border/60 bg-white text-sm">
+                          <SelectValue placeholder="Select ingredient" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {inventoryIngredients.map((ing) => (
+                            <SelectItem key={ing._id} value={ing.name}>
+                              {ing.name}
+                            </SelectItem>
+                          ))}
+                          <SelectItem value="__add_new__" className="text-primary font-semibold">
+                            + Add New Ingredient
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    );
+                  }}
                 />
               </div>
               <div className="w-24 space-y-1">
@@ -318,12 +411,28 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
                   className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
                 />
               </div>
-              <div className="w-24 space-y-1">
+              <div className="w-28 space-y-1">
                 <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Unit</Label>
-                <Input
-                  {...register(`ingredients.${index}.unit`)}
-                  placeholder="gms"
-                  className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
+                <Controller
+                  control={control}
+                  name={`ingredients.${index}.unit`}
+                  render={({ field: unitField }) => (
+                    <Select
+                      value={unitField.value}
+                      onValueChange={unitField.onChange}
+                    >
+                      <SelectTrigger className="h-11 rounded-xl border-border/60 bg-white text-sm">
+                        <SelectValue placeholder="Unit" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {UNITS.map((u) => (
+                          <SelectItem key={u} value={u}>
+                            {u}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 />
               </div>
               <Button
@@ -499,6 +608,74 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
           {mode === 'create' ? 'Create Recipe' : 'Update Recipe'}
         </Button>
       </motion.div>
+
+      {/* Add New Ingredient Dialog */}
+      <Dialog open={showAddIngredientDialog} onOpenChange={setShowAddIngredientDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Ingredient</DialogTitle>
+            <DialogDescription>
+              Create a new ingredient in the inventory catalog.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Name *</Label>
+              <Input
+                value={newIngredientName}
+                onChange={(e) => setNewIngredientName(e.target.value)}
+                placeholder="e.g., Basmati Rice"
+                className="h-11 rounded-xl"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Category *</Label>
+              <Select value={newIngredientCategory} onValueChange={setNewIngredientCategory}>
+                <SelectTrigger className="h-11 rounded-xl">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Default Unit *</Label>
+              <Select value={newIngredientUnit} onValueChange={setNewIngredientUnit}>
+                <SelectTrigger className="h-11 rounded-xl">
+                  <SelectValue placeholder="Select unit" />
+                </SelectTrigger>
+                <SelectContent>
+                  {UNITS.map((u) => (
+                    <SelectItem key={u} value={u}>{u}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowAddIngredientDialog(false)}
+              className="rounded-full"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              disabled={createIngredient.isPending || !newIngredientName.trim() || !newIngredientCategory || !newIngredientUnit}
+              onClick={handleAddNewIngredient}
+              className="rounded-full bg-primary text-white hover:bg-primary/90"
+            >
+              {createIngredient.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Create Ingredient
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </form>
   );
 }
