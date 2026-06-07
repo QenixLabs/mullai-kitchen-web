@@ -94,6 +94,7 @@ export default function OrdersPage() {
     meal_type: (mealType as MealType) || undefined,
     status: status || undefined,
     search: debouncedSearch || undefined,
+    source: 'daily,addon',
     page,
     limit: 10,
   });

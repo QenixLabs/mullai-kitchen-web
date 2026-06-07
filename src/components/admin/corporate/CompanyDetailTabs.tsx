@@ -48,7 +48,6 @@ import {
   useGeneratePaymentLink,
 } from '@/api/hooks/useAdminCorporate';
 import type { ICorporateOrder, ICorporateInvoice } from '@/api/types/corporate.types';
-import { Can } from '@/components/Auth/can';
 
 interface CompanyDetailTabsProps {
   companyId: string;
