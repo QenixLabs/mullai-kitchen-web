@@ -6,7 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
-import { Loader2, Plus, Trash2, ChefHat, ListChecks, Clock, Flame } from 'lucide-react';
+import { Loader2, Plus, Trash2, ChefHat, ListChecks, Clock, Flame, ArrowUpRight } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -268,18 +269,29 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
               </div>
               <h3 className="text-base font-semibold text-primary">Ingredients</h3>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                appendIngredient({ name: '', quantity: '', unit: '' })
-              }
-              className="rounded-full"
-            >
-              <Plus className="mr-1 h-3.5 w-3.5" />
-              Add
-            </Button>
+            <div className="flex items-center gap-2">
+              <Can permission="inventory:view">
+                <Link
+                  href="/admin/inventory/ingredients"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border/60 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/5 transition-colors"
+                >
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                  Manage Ingredients
+                </Link>
+              </Can>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  appendIngredient({ name: '', quantity: '', unit: '' })
+                }
+                className="rounded-full"
+              >
+                <Plus className="mr-1 h-3.5 w-3.5" />
+                Add
+              </Button>
+            </div>
           </div>
         </div>
         <div className="px-6 pb-6 space-y-3">
