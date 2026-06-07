@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
-import { Loader2, Plus, Trash2, ChefHat, ListChecks, Clock, Flame, ArrowUpRight } from 'lucide-react';
+import { Loader2, Plus, Trash2, ChefHat, ListChecks, Clock, Flame, ArrowUpRight, ChevronsUpDown } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,11 +19,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Can } from '@/components/Auth/can';
+import { cn } from '@/lib/utils';
 import { useOutlets } from '@/api/hooks/useOutlets';
+import { useIngredients } from '@/api/hooks/useInventory';
 import type { CreateRecipePayload, Recipe } from '@/api/types/menu.types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ingredientSchema = z.object({
+  ingredient_id: z.string().optional(),
   name: z.string().min(1, 'Name is required'),
   quantity: z.string().min(1, 'Quantity is required'),
   unit: z.string().min(1, 'Unit is required'),
@@ -47,6 +56,120 @@ const recipeSchema = z.object({
 });
 
 type RecipeFormData = z.infer<typeof recipeSchema>;
+
+function IngredientSelector({
+  value,
+  name,
+  onSelect,
+}: {
+  value: string;
+  name: string;
+  onSelect: (id: string, name: string, unit: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleSearchChange = (val: string) => {
+    setSearchQuery(val);
+    setPage(1);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => setDebouncedSearch(val), 300);
+  };
+
+  const { data, isLoading, isError } = useIngredients({
+    search: debouncedSearch || undefined,
+    page,
+    limit: 20,
+  });
+
+  const ingredients = data?.data ?? [];
+  const totalPages = data?.totalPages ?? 1;
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          className="h-11 w-full justify-between rounded-xl border-border/60 bg-white px-4 text-sm font-normal"
+        >
+          {name || 'Select ingredient'}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[300px] p-0" align="start">
+        <div className="p-2">
+          <Input
+            placeholder="Search ingredients..."
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="h-9 rounded-lg"
+          />
+        </div>
+        <div className="max-h-[240px] overflow-y-auto">
+          {isLoading ? (
+            <div className="space-y-2 p-2">
+              <Skeleton className="h-9 w-full rounded-lg" />
+              <Skeleton className="h-9 w-full rounded-lg" />
+              <Skeleton className="h-9 w-full rounded-lg" />
+            </div>
+          ) : isError ? (
+            <div className="p-4 text-sm text-destructive text-center">
+              Failed to load ingredients
+            </div>
+          ) : ingredients.length === 0 ? (
+            <div className="p-4 text-sm text-muted-foreground text-center">
+              No ingredients found
+            </div>
+          ) : (
+            <div className="p-1">
+              {ingredients.map((ing) => (
+                <button
+                  key={ing._id}
+                  className={cn(
+                    'w-full rounded-lg px-3 py-2 text-sm text-left hover:bg-accent transition-colors',
+                    value === ing._id && 'bg-accent'
+                  )}
+                  onClick={() => {
+                    onSelect(ing._id, ing.name, ing.default_unit);
+                    setOpen(false);
+                  }}
+                >
+                  {ing.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between border-t p-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => p - 1)}
+            >
+              Prev
+            </Button>
+            <span className="text-xs text-muted-foreground">
+              {page} / {totalPages}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 interface RecipeFormProps {
   mode: 'create' | 'edit';
@@ -74,7 +197,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
       description: initialData?.description || '',
       cuisine_type: initialData?.cuisine_type || '',
       difficulty: initialData?.difficulty || '',
-      ingredients: initialData?.ingredients || [],
+      ingredients: initialData?.ingredients?.map((i) => ({ ...i, ingredient_id: '' })) || [],
       prep_time: initialData?.cooking_details?.prep_time || '',
       cook_time: initialData?.cooking_details?.cook_time || '',
       servings: initialData?.cooking_details?.servings || ('' as any),
@@ -122,7 +245,9 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
         description: data.description || undefined,
         cuisine_type: data.cuisine_type || undefined,
         difficulty: data.difficulty || undefined,
-        ingredients: data.ingredients?.filter((i) => i.name),
+        ingredients: data.ingredients
+          ?.filter((i) => i.name)
+          .map((i) => ({ name: i.name, quantity: i.quantity, unit: i.unit })),
         cooking_details: {
           prep_time: data.prep_time || undefined,
           cook_time: data.cook_time || undefined,
@@ -284,7 +409,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  appendIngredient({ name: '', quantity: '', unit: '' })
+                  appendIngredient({ ingredient_id: '', name: '', quantity: '', unit: '' })
                 }
                 className="rounded-full"
               >
@@ -303,12 +428,17 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
           {ingredientFields.map((field, index) => (
             <div key={field.id} className="flex items-end gap-2 p-3 rounded-xl bg-muted/20 border border-border/30">
               <div className="flex-1 space-y-1">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Name</Label>
-                <Input
-                  {...register(`ingredients.${index}.name`)}
-                  placeholder="Ingredient name"
-                  className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
+                <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Ingredient</Label>
+                <IngredientSelector
+                  value={field.ingredient_id || ''}
+                  name={field.name || ''}
+                  onSelect={(id, n, unit) => {
+                    setValue(`ingredients.${index}.ingredient_id`, id);
+                    setValue(`ingredients.${index}.name`, n);
+                    setValue(`ingredients.${index}.unit`, unit);
+                  }}
                 />
+                <input type="hidden" {...register(`ingredients.${index}.name`)} />
               </div>
               <div className="w-24 space-y-1">
                 <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Qty</Label>
