@@ -127,7 +127,7 @@ function KpiCard({
   icon: React.ReactNode;
   label: string;
   value: string;
-  sub?: string;
+  sub?: React.ReactNode;
   tone: 'primary' | 'success' | 'warning' | 'info' | 'destructive' | 'muted';
   sparklineData?: number[];
   delay?: number;
