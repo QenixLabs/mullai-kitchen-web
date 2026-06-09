@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Building2,
@@ -587,14 +587,19 @@ function ServiceChargeSettings({
     company.service_charge_percentage?.toString() || '0',
   );
 
+  // Sync local state when parent prop changes (e.g. refetch or another admin updates)
+  useState(() => {
+    setEnabled(company.service_charge_enabled);
+    setPercentage(company.service_charge_percentage?.toString() || '0');
+  });
+
+  useEffect(() => {
+    setEnabled(company.service_charge_enabled);
+    setPercentage(company.service_charge_percentage?.toString() || '0');
+  }, [company._id, company.service_charge_enabled, company.service_charge_percentage]);
+
   const handleToggle = (checked: boolean) => {
     setEnabled(checked);
-    if (!checked) {
-      updateServiceCharge.mutate({
-        id: company._id,
-        data: { service_charge_enabled: false },
-      });
-    }
   };
 
   const handleSave = () => {

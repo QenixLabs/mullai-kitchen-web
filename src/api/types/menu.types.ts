@@ -30,6 +30,7 @@ export enum WeekDay {
 // ===========================================
 
 export interface Ingredient {
+  ingredient_id?: string;
   name: string;
   quantity: string;
   unit: string;

@@ -10,8 +10,6 @@ import {
   Pencil,
   Package,
   CheckCircle2,
-  Leaf,
-  Beef,
   ListChecks,
 } from 'lucide-react';
 import {
@@ -92,9 +90,9 @@ export default function AddOnsPage() {
     const all = data?.data ?? [];
     const totalAddOns = data?.total ?? 0;
     const available = all.filter((a) => a.is_available === true).length;
-    const veg = all.filter((a) => a.is_veg === true).length;
-    const nonVeg = all.filter((a) => a.is_veg === false).length;
-    return { total: totalAddOns, available, veg, nonVeg };
+    const withRecipe = all.filter((a) => !!a.recipe_id).length;
+    const withoutRecipe = totalAddOns - withRecipe;
+    return { total: totalAddOns, available, withRecipe, withoutRecipe };
   }, [data]);
 
   return (
@@ -131,16 +129,16 @@ export default function AddOnsPage() {
           tone="success"
         />
         <StatCard
-          icon={<Leaf className="h-4 w-4" />}
-          label="Veg"
-          value={isLoading ? '—' : stats.veg.toString()}
+          icon={<ListChecks className="h-4 w-4" />}
+          label="With Recipe"
+          value={isLoading ? '—' : stats.withRecipe.toString()}
           tone="success"
         />
         <StatCard
-          icon={<Beef className="h-4 w-4" />}
-          label="Non-Veg"
-          value={isLoading ? '—' : stats.nonVeg.toString()}
-          tone="muted"
+          icon={<ListChecks className="h-4 w-4" />}
+          label="No Recipe"
+          value={isLoading ? '—' : stats.withoutRecipe.toString()}
+          tone="warning"
         />
       </div>
 
@@ -269,6 +267,9 @@ export default function AddOnsPage() {
                     <TableHead className="hidden h-10 px-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground lg:table-cell">
                       Meal Type
                     </TableHead>
+                    <TableHead className="hidden h-10 px-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground md:table-cell">
+                      Recipe
+                    </TableHead>
                     <TableHead className="h-10 px-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Price
                     </TableHead>
@@ -310,6 +311,13 @@ export default function AddOnsPage() {
                           <span className="text-sm text-muted-foreground">
                             {addOn.meal_type?.length
                               ? addOn.meal_type.join(', ')
+                              : '—'}
+                          </span>
+                        </TableCell>
+                        <TableCell className="hidden px-4 py-3 md:table-cell">
+                          <span className="text-sm text-muted-foreground">
+                            {addOn.recipe_name || addOn.recipe_id
+                              ? (addOn.recipe_name || 'Linked')
                               : '—'}
                           </span>
                         </TableCell>

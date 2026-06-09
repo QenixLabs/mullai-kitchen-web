@@ -27,6 +27,7 @@ export interface CreateAddOnPayload {
   max_quantity_per_order?: number;
   preparation_time?: number;
   outlet_restriction?: string;
+  recipe_id?: string;
 }
 
 export interface UpdateAddOnPayload {
@@ -43,6 +44,7 @@ export interface UpdateAddOnPayload {
   max_quantity_per_order?: number;
   preparation_time?: number;
   outlet_restriction?: string;
+  recipe_id?: string;
 }
 
 // ─── API Functions ───────────────────────────────────────────────────────────

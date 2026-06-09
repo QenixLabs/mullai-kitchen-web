@@ -36,7 +36,7 @@ import {
 import { useRevenueAnalytics } from '@/api/hooks/useAdminReports';
 import type { ReportGranularity, IDailyRevenueBreakdown } from '@/api/types/admin.types';
 
-const formatCurrency = (n: number) => `₹${n.toLocaleString('en-IN')}`;
+const formatCurrency = (n?: number | null) => `₹${(n ?? 0).toLocaleString('en-IN')}`;
 
 type PeriodType = 'daily' | 'weekly' | 'monthly' | 'custom';
 type ChartType = 'bar' | 'area' | 'line';

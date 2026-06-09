@@ -30,6 +30,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Can } from '@/components/Auth/can';
 import { cn } from '@/lib/utils';
+import { sanitizeUrl } from '@/lib/sanitize';
 import { PlanStatus, MealType } from '@/api/types/admin-subscription.types';
 import type { Plan } from '@/api/types/admin-subscription.types';
 
@@ -134,7 +135,7 @@ export function PlanTable({
                   {plan.image_url ? (
                     <div className="relative h-10 w-10 overflow-hidden rounded-lg">
                       <Image
-                        src={plan.image_url}
+                        src={sanitizeUrl(plan.image_url) || ''}
                         alt={plan.name}
                         fill
                         unoptimized

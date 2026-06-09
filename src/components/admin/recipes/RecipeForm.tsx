@@ -198,7 +198,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
       description: initialData?.description || '',
       cuisine_type: initialData?.cuisine_type || '',
       difficulty: initialData?.difficulty || '',
-      ingredients: initialData?.ingredients?.map((i) => ({ ...i, ingredient_id: '' })) || [],
+      ingredients: initialData?.ingredients?.map((i) => ({ ...i, ingredient_id: i.ingredient_id || '' })) || [],
       prep_time: initialData?.cooking_details?.prep_time || '',
       cook_time: initialData?.cooking_details?.cook_time || '',
       servings: initialData?.cooking_details?.servings || ('' as any),
@@ -248,7 +248,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
         difficulty: data.difficulty || undefined,
         ingredients: data.ingredients
           ?.filter((i) => i.name)
-          .map((i) => ({ name: i.name, quantity: i.quantity, unit: i.unit })),
+          .map((i) => ({ name: i.name, quantity: i.quantity, unit: i.unit, ingredient_id: i.ingredient_id || undefined })),
         cooking_details: {
           prep_time: data.prep_time || undefined,
           cook_time: data.cook_time || undefined,

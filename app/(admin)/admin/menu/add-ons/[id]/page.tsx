@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAddOn, useDeleteAddOn } from '@/api/hooks/useAdminAddons';
+import { sanitizeUrl } from '@/lib/sanitize';
 
 export default function AddOnDetailPage() {
   const params = useParams();
@@ -157,7 +158,7 @@ export default function AddOnDetailPage() {
                 </div>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+              <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-5">
                 <StatItem
                   label="Price"
                   value={`₹${addOn.price.toLocaleString('en-IN')}`}
@@ -179,6 +180,10 @@ export default function AddOnDetailPage() {
                   value={
                     addOn.max_quantity_per_order?.toString() || '—'
                   }
+                />
+                <StatItem
+                  label="Recipe"
+                  value={addOn.recipe_name || addOn.recipe_id ? (addOn.recipe_name || 'Linked') : '—'}
                 />
               </div>
             </div>
@@ -213,7 +218,7 @@ export default function AddOnDetailPage() {
                   <h3 className="text-base font-semibold text-primary">Image</h3>
                 </div>
                 <img
-                  src={addOn.image}
+                  src={sanitizeUrl(addOn.image)}
                   alt={addOn.name}
                   className="max-h-64 rounded-xl object-cover"
                 />

@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/form';
 import { useAddOn, useUpdateAddOn } from '@/api/hooks/useAdminAddons';
 import { useOutlets } from '@/api/hooks/useOutlets';
+import { useRecipeSelect } from '@/api/hooks/useRecipes';
 import { ImageUploadField } from '@/components/admin/plans/ImageUploadField';
 import type { UpdateAddOnPayload } from '@/api/admin-addon.api';
 
@@ -37,13 +38,13 @@ const CATEGORIES = ['Beverage', 'Dessert', 'Side Dish', 'Extra Main'];
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner'];
 
 const addOnSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
+  name: z.string().min(1, 'Name is required').max(200, 'Name must be under 200 characters'),
   name_tamil: z.string().optional(),
   category: z.string().min(1, 'Category is required'),
   description: z.string().optional(),
   price: z.preprocess(
     (val) => val === '' || val === null || val === undefined ? undefined : Number(val),
-    z.number().nonnegative('Price must be positive'),
+    z.number().nonnegative('Price must be positive').max(999999, 'Price exceeds maximum allowed').refine((v) => !isNaN(v), 'Price must be a valid number'),
   ),
   quantity: z.string().optional(),
   image: z.string().optional(),
@@ -52,13 +53,14 @@ const addOnSchema = z.object({
   meal_type: z.array(z.string()).optional(),
   max_quantity_per_order: z.preprocess(
     (val) => val === '' || val === null || val === undefined ? undefined : Number(val),
-    z.number().nonnegative().optional(),
+    z.number().nonnegative().max(100, 'Max quantity must be 100 or less').optional().refine((v) => v === undefined || !isNaN(v), 'Must be a valid number'),
   ),
   preparation_time: z.preprocess(
     (val) => val === '' || val === null || val === undefined ? undefined : Number(val),
-    z.number().nonnegative().optional(),
+    z.number().nonnegative().max(1440, 'Preparation time must be 24 hours or less').optional().refine((v) => v === undefined || !isNaN(v), 'Must be a valid number'),
   ),
   outlet_restriction: z.string().optional(),
+  recipe_id: z.string().optional(),
 });
 
 type AddOnFormValues = z.infer<typeof addOnSchema>;
@@ -72,6 +74,7 @@ export default function EditAddOnPage() {
   const updateAddOn = useUpdateAddOn();
   const { data: outletsData } = useOutlets({ limit: 100 });
   const outlets = outletsData?.data ?? [];
+  const { data: recipes } = useRecipeSelect();
 
   const form = useForm<AddOnFormValues>({
     resolver: zodResolver(addOnSchema) as Resolver<AddOnFormValues>,
@@ -90,6 +93,7 @@ export default function EditAddOnPage() {
           max_quantity_per_order: addOn.max_quantity_per_order,
           preparation_time: addOn.preparation_time,
           outlet_restriction: addOn.outlet_restriction || '',
+          recipe_id: addOn.recipe_id || '',
         }
       : undefined,
   });
@@ -109,6 +113,7 @@ export default function EditAddOnPage() {
       max_quantity_per_order: data.max_quantity_per_order,
       preparation_time: data.preparation_time,
       outlet_restriction: data.outlet_restriction || undefined,
+      recipe_id: data.recipe_id || undefined,
     };
     updateAddOn.mutate(
       { id, data: payload },
@@ -290,18 +295,41 @@ export default function EditAddOnPage() {
                       />
                       <FormField
                         control={form.control}
-                        name="description"
+                        name="recipe_id"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                              <Input {...field} placeholder="Short description..." />
-                            </FormControl>
+                            <FormLabel>Recipe</FormLabel>
+                            <Select onValueChange={(v) => field.onChange(v === '__none__' ? '' : v)} value={field.value || '__none__'}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select recipe" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="__none__">None</SelectItem>
+                                {recipes?.map((r) => (
+                                  <SelectItem key={r._id} value={r._id}>{r.name}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                     </div>
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Short description..." />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </CardContent>
                 </Card>
 

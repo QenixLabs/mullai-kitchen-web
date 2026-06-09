@@ -134,12 +134,10 @@ export function useGeneratePaymentLink() {
 
   return useMutation<GeneratePaymentLinkResponse, any, string>({
     mutationFn: (id: string) => adminCorporateApi.generatePaymentLink(id),
-    onSuccess: (data, id) => {
+    onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoiceLists() });
       queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoiceList() });
       queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoiceDetail(id) });
-      queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoices(id) });
-      queryClient.invalidateQueries({ queryKey: adminCorporateKeys.companyInvoices(id) });
       toast.success("Payment link generated and sent via WhatsApp");
     },
     onError: (error: any) => {
