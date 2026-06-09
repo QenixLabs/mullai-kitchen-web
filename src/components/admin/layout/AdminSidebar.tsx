@@ -143,6 +143,18 @@ const ADMIN_NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: "Menu",
+    items: [
+      {
+        href: "/admin/menu/add-ons",
+        icon: UtensilsCrossed,
+        label: "Add-ons",
+        permission: "menu:view",
+        requireAll: true,
+      },
+    ],
+  },
+  {
     label: "Inventory",
     items: [
       {

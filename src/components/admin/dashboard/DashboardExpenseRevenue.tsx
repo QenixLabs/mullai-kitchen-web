@@ -321,7 +321,9 @@ export function DashboardExpenseRevenue() {
           </h3>
           {daily.length > 0 && (
             <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
-              {daily.length} {granularity}
+              {granularity === 'daily' && `Last ${daily.length} days`}
+              {granularity === 'weekly' && `Last ${daily.length} weeks`}
+              {granularity === 'monthly' && `Last ${daily.length} months`}
             </span>
           )}
         </div>

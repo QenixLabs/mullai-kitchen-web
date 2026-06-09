@@ -273,3 +273,11 @@ export const inventoryKeys = {
   purchaseOrderDetail: (id: string) => [...inventoryKeys.purchaseOrderDetails(), id] as const,
   recipeIngredients: (recipeId: string) => [...inventoryKeys.all, 'recipe-ingredients', recipeId] as const,
 };
+
+export const adminAddOnKeys = {
+  all: ['admin', 'add-ons'] as const,
+  lists: () => [...adminAddOnKeys.all, 'list'] as const,
+  list: (params?: unknown) => [...adminAddOnKeys.lists(), params] as const,
+  details: () => [...adminAddOnKeys.all, 'detail'] as const,
+  detail: (id: string) => [...adminAddOnKeys.details(), id] as const,
+};

@@ -17,6 +17,7 @@ export interface AddOnItem {
   is_available?: boolean;
   meal_type?: MealType[];
   max_quantity_per_order?: number;
+  preparation_time?: number;
   outlet_restriction?: string;
 }
 

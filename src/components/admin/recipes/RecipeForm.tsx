@@ -30,6 +30,7 @@ import { useOutlets } from '@/api/hooks/useOutlets';
 import { useIngredients } from '@/api/hooks/useInventory';
 import type { CreateRecipePayload, Recipe } from '@/api/types/menu.types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ImageUploadField } from '@/components/admin/plans/ImageUploadField';
 
 const ingredientSchema = z.object({
   ingredient_id: z.string().optional(),
@@ -339,43 +340,39 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="image_url" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Image URL</Label>
-              <Input
-                id="image_url"
-                {...register('image_url')}
-                placeholder="https://..."
-                className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
-              />
-              {errors.image_url && (
-                <p className="text-xs text-destructive">
-                  {errors.image_url.message}
-                </p>
-              )}
+              <Label htmlFor="outlet_restriction" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Outlet Restriction</Label>
+              <Can permission="recipe:create:global">
+                <Select
+                  value={outletRestrictionValue}
+                  onValueChange={(v) =>
+                    setValue('outlet_restriction', v === 'global' ? null : v)
+                  }
+                >
+                  <SelectTrigger className="h-11 rounded-xl border-border/60 bg-white text-sm">
+                    <SelectValue placeholder="Select scope" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="global">Global (All Outlets)</SelectItem>
+                    {(outletsData?.data || []).map((outlet) => (
+                      <SelectItem key={outlet._id} value={outlet._id}>
+                        {outlet.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Can>
             </div>
           </div>
-          <Can permission="recipe:create:global">
-            <div className="space-y-2">
-              <Label htmlFor="outlet_restriction" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Outlet Restriction</Label>
-              <Select
-                value={outletRestrictionValue}
-                onValueChange={(v) =>
-                  setValue('outlet_restriction', v === 'global' ? null : v)
-                }
-              >
-                <SelectTrigger className="h-11 rounded-xl border-border/60 bg-white text-sm">
-                  <SelectValue placeholder="Select scope" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="global">Global (All Outlets)</SelectItem>
-                  {(outletsData?.data || []).map((outlet) => (
-                    <SelectItem key={outlet._id} value={outlet._id}>
-                      {outlet.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </Can>
+          <div className="space-y-2">
+            <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Recipe Image</Label>
+            <ImageUploadField
+              value={watch('image_url') || ''}
+              onChange={(url) => setValue('image_url', url)}
+            />
+            {errors.image_url && (
+              <p className="text-xs text-destructive">{errors.image_url.message}</p>
+            )}
+          </div>
         </div>
       </motion.div>
 

@@ -144,3 +144,8 @@ export const ADMIN_COUPON_ROUTES = {
   STATUS: (id: string) => `/admin/coupons/${id}/status`,
   STATS: (id: string) => `/admin/coupons/${id}/stats`,
 } as const;
+
+export const ADMIN_ADDON_ROUTES = {
+  BASE: '/menu/add-ons',
+  DETAIL: (id: string) => `/menu/add-ons/${id}`,
+} as const;
