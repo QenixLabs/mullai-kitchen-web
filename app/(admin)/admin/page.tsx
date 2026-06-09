@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { LayoutDashboard } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useHasPermission } from '@/hooks/useHasPermission';
@@ -12,12 +11,14 @@ import { DashboardQuickActions } from '@/components/admin/dashboard/DashboardQui
 import { DashboardKpiCards } from '@/components/admin/dashboard/DashboardKpiCards';
 import { DashboardCorporatePulse } from '@/components/admin/dashboard/DashboardCorporatePulse';
 import { DashboardIngredientUsage } from '@/components/admin/dashboard/DashboardIngredientUsage';
+import { DashboardExpenseRevenue } from '@/components/admin/dashboard/DashboardExpenseRevenue';
 
 export default function AdminDashboard() {
   const user = useCurrentUser();
   const isSuperAdmin =
     user?.role === UserRole.SuperAdmin || user?.role === UserRole.Admin;
   const canViewInventory = useHasPermission('inventory:view');
+  const canViewFinancial = useHasPermission('report:financial');
 
   const {
     data: dashboardData,
@@ -58,6 +59,7 @@ export default function AdminDashboard() {
         <DashboardAlerts alerts={dashboardData?.alerts} isLoading={dashboardLoading} />
         <DashboardQuickActions />
         <DashboardKpiCards data={dashboardData} isLoading={dashboardLoading} />
+        {canViewFinancial && <DashboardExpenseRevenue />}
         <DashboardCorporatePulse data={dashboardData?.corporate} isLoading={dashboardLoading} />
         {canViewInventory && (
           <DashboardIngredientUsage

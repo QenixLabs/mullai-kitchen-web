@@ -201,21 +201,26 @@ export interface IRevenueAnalyticsQuery {
   start_date: string;
   end_date: string;
   outlet_id?: string;
+  granularity?: ReportGranularity;
 }
 
 export interface IDailyRevenueBreakdown {
   date: string;
   individual_revenue: number;
+  addon_revenue: number;
   corporate_revenue: number;
   total_revenue: number;
+  procurement_expense: number;
   ingredient_expense: number;
   profit_or_loss: number;
 }
 
 export interface IRevenueAnalyticsResponse {
   individual_revenue: number;
+  addon_revenue: number;
   corporate_revenue: number;
   total_revenue: number;
+  total_procurement_expense: number;
   total_ingredient_expense: number;
   profit_or_loss: number;
   daily_breakdown: IDailyRevenueBreakdown[];
