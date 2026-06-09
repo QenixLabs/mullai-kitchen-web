@@ -7,7 +7,6 @@ import { useCurrentUser } from '@/hooks/useUserStore';
 import { useDashboardData } from '@/api/hooks/useAdminDashboard';
 import { UserRole } from '@/api/types/user.types';
 import { DashboardAlerts } from '@/components/admin/dashboard/DashboardAlerts';
-import { DashboardQuickActions } from '@/components/admin/dashboard/DashboardQuickActions';
 import { DashboardKpiCards } from '@/components/admin/dashboard/DashboardKpiCards';
 import { DashboardCorporatePulse } from '@/components/admin/dashboard/DashboardCorporatePulse';
 import { DashboardIngredientUsage } from '@/components/admin/dashboard/DashboardIngredientUsage';
@@ -59,7 +58,6 @@ export default function AdminDashboard() {
         {canViewFinancial && <DashboardExpenseRevenue />}
         <DashboardKpiCards data={dashboardData} isLoading={dashboardLoading} />
         <DashboardAlerts alerts={dashboardData?.alerts} isLoading={dashboardLoading} />
-        <DashboardQuickActions />
         <DashboardCorporatePulse data={dashboardData?.corporate} isLoading={dashboardLoading} />
         {canViewInventory && (
           <DashboardIngredientUsage
