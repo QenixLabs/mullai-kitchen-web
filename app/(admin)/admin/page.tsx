@@ -55,11 +55,11 @@ export default function AdminDashboard() {
       </div>
 
       {/* Dashboard Overview */}
-      <div className="space-y-4">
+      <div className="space-y-5">
+        {canViewFinancial && <DashboardExpenseRevenue />}
+        <DashboardKpiCards data={dashboardData} isLoading={dashboardLoading} />
         <DashboardAlerts alerts={dashboardData?.alerts} isLoading={dashboardLoading} />
         <DashboardQuickActions />
-        <DashboardKpiCards data={dashboardData} isLoading={dashboardLoading} />
-        {canViewFinancial && <DashboardExpenseRevenue />}
         <DashboardCorporatePulse data={dashboardData?.corporate} isLoading={dashboardLoading} />
         {canViewInventory && (
           <DashboardIngredientUsage
