@@ -35,21 +35,7 @@ export function KitchenIngredientConsumption({
   }
 
   if (!projections || projections.length === 0) {
-    return (
-      <Card className="border-border/70 shadow-sm">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base font-semibold">
-            <Package className="h-4 w-4 text-primary" />
-            Ingredient Consumption
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            No ingredient consumption data available for the selected date.
-          </p>
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
 
   return (

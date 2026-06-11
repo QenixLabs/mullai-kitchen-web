@@ -9,6 +9,7 @@ import {
   ChefHat,
   CalendarOff,
   CalendarDays,
+  UtensilsCrossed,
 } from 'lucide-react';
 import {
   Select,
@@ -28,9 +29,8 @@ import { useCurrentUser } from '@/hooks/useUserStore';
 import { useHasPermission } from '@/hooks/useHasPermission';
 import { useOutlets } from '@/api/hooks/useOutlets';
 import { useKitchenReport, useConsumptionProjection } from '@/api/hooks/useAdminKitchen';
-import { KitchenSummaryCards } from '@/components/admin/kitchen/KitchenSummaryCards';
-import { KitchenItemsTable } from '@/components/admin/kitchen/KitchenItemsTable';
-import { KitchenCorporateSummary } from '@/components/admin/kitchen/KitchenCorporateSummary';
+import { KitchenReportSummary } from '@/components/admin/kitchen/KitchenReportSummary';
+import { MealSlotSection } from '@/components/admin/kitchen/MealSlotSection';
 import { KitchenCorporateBreakdown } from '@/components/admin/kitchen/KitchenCorporateBreakdown';
 import { KitchenIngredientConsumption } from '@/components/admin/kitchen/KitchenIngredientConsumption';
 
@@ -75,9 +75,37 @@ export default function KitchenPage() {
     );
   }, [selectedDate]);
 
-  const selectedOutletName = useMemo(() => {
-    return outletsData?.data?.find((o) => o._id === selectedOutletId)?.name;
+  const selectedOutlet = useMemo(() => {
+    return outletsData?.data?.find((o) => o._id === selectedOutletId);
   }, [outletsData?.data, selectedOutletId]);
+
+  const selectedOutletName = selectedOutlet?.name;
+  const operationalHours = selectedOutlet?.operational_hours;
+
+  const { breakfastItems, lunchItems, dinnerItems } = useMemo(() => {
+    const items = report?.items || [];
+    return {
+      breakfastItems: items.filter((i) => i.meal_type === 'Breakfast'),
+      lunchItems: items.filter((i) => i.meal_type === 'Lunch'),
+      dinnerItems: items.filter((i) => i.meal_type === 'Dinner'),
+    };
+  }, [report?.items]);
+
+  const corporateBreakfast = report?.corporate_summary?.breakfast_count ?? 0;
+  const corporateLunch = report?.corporate_summary?.lunch_count ?? 0;
+  const corporateDinner = report?.corporate_summary?.dinner_count ?? 0;
+
+  const totalCombined = report?.combined_summary?.total ?? 0;
+
+  const allSlotsEmpty =
+    !reportLoading &&
+    totalCombined === 0 &&
+    breakfastItems.length === 0 &&
+    lunchItems.length === 0 &&
+    dinnerItems.length === 0 &&
+    corporateBreakfast === 0 &&
+    corporateLunch === 0 &&
+    corporateDinner === 0;
 
   return (
     <Can
@@ -112,7 +140,7 @@ export default function KitchenPage() {
               <Printer className="mr-1.5 h-4 w-4" />
               Print
             </Button>
-            <Button variant="outline" size="sm" disabled className="h-9">
+            <Button variant="outline" size="sm" onClick={handlePrint} className="h-9">
               <FileDown className="mr-1.5 h-4 w-4" />
               Export PDF
             </Button>
@@ -204,27 +232,66 @@ export default function KitchenPage() {
 
         {selectedOutletId ? (
           <>
-            {/* Summary Cards */}
-            <KitchenSummaryCards
-              summary={report?.summary}
-              combined_summary={report?.combined_summary}
-              loading={reportLoading}
-            />
+            {allSlotsEmpty && !reportLoading ? (
+              <Card className="border-dashed">
+                <CardContent className="flex flex-col items-center justify-center gap-3 py-16 text-center">
+                  <div className="rounded-full bg-muted p-3 text-muted-foreground">
+                    <UtensilsCrossed className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-semibold text-foreground">No orders scheduled</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      No meals to prepare for {selectedOutletName || 'this outlet'} on{' '}
+                      {selectedDate ? format(selectedDate, 'PPP') : 'the selected date'}.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                {/* Summary bar */}
+                <KitchenReportSummary
+                  summary={report?.summary}
+                  combined_summary={report?.combined_summary}
+                  operationalHours={operationalHours}
+                  loading={reportLoading}
+                />
 
-            {/* Items Table */}
-            <KitchenItemsTable items={report?.items} loading={reportLoading} />
+                {/* Meal slot sections */}
+                <div className="space-y-4">
+                  <MealSlotSection
+                    mealType="Breakfast"
+                    operationalHours={operationalHours?.breakfast}
+                    recipes={breakfastItems}
+                    corporateCount={corporateBreakfast}
+                    loading={reportLoading}
+                  />
+                  <MealSlotSection
+                    mealType="Lunch"
+                    operationalHours={operationalHours?.lunch}
+                    recipes={lunchItems}
+                    corporateCount={corporateLunch}
+                    loading={reportLoading}
+                  />
+                  <MealSlotSection
+                    mealType="Dinner"
+                    operationalHours={operationalHours?.dinner}
+                    recipes={dinnerItems}
+                    corporateCount={corporateDinner}
+                    loading={reportLoading}
+                  />
+                </div>
 
-            {/* Corporate Summary */}
-            <KitchenCorporateSummary corporate_summary={report?.corporate_summary} loading={reportLoading} />
+                {/* Corporate Breakdown — kept as secondary detail */}
+                <KitchenCorporateBreakdown items={report?.corporate_items} loading={reportLoading} />
 
-            {/* Corporate Breakdown */}
-            <KitchenCorporateBreakdown items={report?.corporate_items} loading={reportLoading} />
-
-            {/* Ingredient Consumption */}
-            <KitchenIngredientConsumption
-              projections={consumptionProjection}
-              loading={consumptionLoading}
-            />
+                {/* Ingredient Consumption */}
+                <KitchenIngredientConsumption
+                  projections={consumptionProjection}
+                  loading={consumptionLoading}
+                />
+              </>
+            )}
           </>
         ) : (
           <Card className="border-dashed">
@@ -251,6 +318,53 @@ export default function KitchenPage() {
           aside,
           [data-sidebar],
           .print\\:hidden {
+            display: none !important;
+          }
+
+          /* Force background colors and borders to print */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          /* Reduce page padding and margins */
+          main, .space-y-6 {
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+
+          /* Compact card spacing */
+          .border-border\/70 {
+            margin-bottom: 0.5rem !important;
+          }
+
+          /* Hide all buttons in print */
+          button {
+            display: none !important;
+          }
+
+          /* Force collapsible content visible */
+          [data-state='closed'] {
+            display: block !important;
+          }
+
+          /* Avoid page breaks inside meal slot cards */
+          .overflow-hidden {
+            break-inside: avoid;
+          }
+
+          /* Compact table and list padding */
+          .px-4 {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+          }
+          .py-3, .py-2\\.5 {
+            padding-top: 0.4rem !important;
+            padding-bottom: 0.4rem !important;
+          }
+
+          /* Hide empty state when data exists — keep layout clean */
+          .border-dashed {
             display: none !important;
           }
         }
