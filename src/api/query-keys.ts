@@ -197,14 +197,6 @@ export const adminSubscriptionKeys = {
   activity: (id: string) => [...adminSubscriptionKeys.all, 'activity', id] as const,
 };
 
-export const adminKitchenKeys = {
-  all: ['admin', 'kitchen'] as const,
-  report: (outletId: string, date?: string) =>
-    [...adminKitchenKeys.all, 'report', outletId, date] as const,
-  consumption: (outletId: string, date?: string) =>
-    [...adminKitchenKeys.all, 'consumption', outletId, date] as const,
-};
-
 export const adminOrderKeys = {
   all: ['admin', 'orders'] as const,
   lists: () => [...adminOrderKeys.all, 'list'] as const,

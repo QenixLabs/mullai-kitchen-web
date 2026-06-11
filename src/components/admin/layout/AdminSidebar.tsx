@@ -127,13 +127,6 @@ const ADMIN_NAV_GROUPS: NavGroup[] = [
         requireAll: true,
       },
       {
-        href: "/admin/kitchen",
-        icon: UtensilsCrossed,
-        label: "Kitchen Report",
-        permission: "order:kitchen",
-        requireAll: true,
-      },
-      {
         href: "/admin/orders",
         icon: ClipboardList,
         label: "Orders",
