@@ -60,6 +60,8 @@ export interface ICorporateProfile {
   delegate: ICorporateDelegate;
   billing_address: IBillingAddress;
   delivery_addresses: IDeliveryAddress[];
+  service_charge_enabled: boolean;
+  service_charge_percentage: number;
   created_at: string;
   updated_at: string;
 }
@@ -236,6 +238,9 @@ export interface ICorporateOrder {
   nonveg_price_per_meal: number;
   delivery_charge_per_day: number;
   tax_rate: number;
+  service_charge_enabled: boolean;
+  service_charge_percentage: number;
+  service_charge_amount: number;
   proforma_amount: number;
   total_modification_amount: number;
   billing_cycle_days: number;
@@ -305,6 +310,11 @@ export interface ICorporateInvoice {
   paid_at?: string;
   due_date?: string;
   payment_reference?: string;
+  payment_link_id?: string;
+  payment_link_url?: string;
+  payment_link_expires_at?: string;
+  payment_link_status?: string;
+  payment_link_reference_id?: string;
   created_at: string;
 }
 
@@ -399,6 +409,9 @@ export interface ICorporatePricingResponse {
   nonveg_amount: number;
   delivery_total: number;
   subtotal: number;
+  service_charge_enabled: boolean;
+  service_charge_percentage: number;
+  service_charge_amount: number;
   tax: number;
   grand_total: number;
 }

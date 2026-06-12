@@ -84,7 +84,7 @@ export interface CreatePlanPayload {
   plan_type?: PlanType;
 }
 
-export interface UpdatePlanPayload extends Partial<CreatePlanPayload> {}
+export type UpdatePlanPayload = Partial<CreatePlanPayload>;
 
 export interface PlanListParams {
   status?: PlanStatus;

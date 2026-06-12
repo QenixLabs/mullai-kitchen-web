@@ -30,6 +30,7 @@ export enum WeekDay {
 // ===========================================
 
 export interface Ingredient {
+  ingredient_id?: string;
   name: string;
   quantity: string;
   unit: string;
@@ -58,6 +59,7 @@ export interface Recipe {
   cooking_details?: CookingDetails;
   nutrition?: Nutrition;
   image_url?: string;
+  is_veg?: boolean;
   status: RecipeStatus;
   outlet_restriction?: string | null;
   created_at: string;
@@ -73,6 +75,7 @@ export interface CreateRecipePayload {
   cooking_details?: CookingDetails;
   nutrition?: Nutrition;
   image_url?: string;
+  is_veg?: boolean;
   outlet_restriction?: string | null;
 }
 

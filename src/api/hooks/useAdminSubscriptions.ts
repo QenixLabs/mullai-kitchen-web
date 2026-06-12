@@ -47,7 +47,7 @@ export function useAdminPauseSubscription() {
       queryClient.invalidateQueries({ queryKey: adminSubscriptionKeys.detail(variables.id) });
       toast.success("Subscription paused successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to pause subscription");
     },
   });
@@ -64,7 +64,7 @@ export function useAdminResumeSubscription() {
       queryClient.invalidateQueries({ queryKey: adminSubscriptionKeys.detail(variables.id) });
       toast.success("Subscription resumed successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to resume subscription");
     },
   });
@@ -81,7 +81,7 @@ export function useAdminSkipDates() {
       queryClient.invalidateQueries({ queryKey: adminSubscriptionKeys.detail(variables.id) });
       toast.success("Dates skipped successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to skip dates");
     },
   });

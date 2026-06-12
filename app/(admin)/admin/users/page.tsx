@@ -457,7 +457,7 @@ export default function UsersPage() {
               {isActivating ? 'Activate User' : 'Deactivate User'}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              You're about to {isActivating ? 'activate' : 'deactivate'}{' '}
+              You&rsquo;re about to {isActivating ? 'activate' : 'deactivate'}{' '}
               <span className="font-semibold text-foreground">{statusTarget?.user.name}</span>.
               {isActivating
                 ? ' They will regain access to the platform immediately.'

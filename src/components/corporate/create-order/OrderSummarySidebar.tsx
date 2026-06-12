@@ -224,6 +224,12 @@ export function OrderSummarySidebar({
                 <span>Delivery ({pricing.total_delivery_days} days × ₹{pricing.delivery_charge_per_day})</span>
                 <span>{formatCurrency(pricing.delivery_total)}</span>
               </div>
+              {pricing.service_charge_enabled && pricing.service_charge_amount > 0 && (
+                <div className="flex justify-between text-gray-600">
+                  <span>Service Charge ({pricing.service_charge_percentage}%)</span>
+                  <span>{formatCurrency(pricing.service_charge_amount)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-gray-600">
                 <span>Taxes (GST {(pricing.tax_rate).toFixed(0)}%)</span>
                 <span>{formatCurrency(pricing.tax)}</span>

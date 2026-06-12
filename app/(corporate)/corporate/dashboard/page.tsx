@@ -66,12 +66,9 @@ function LiveOperationsCard({ count }: { count: number }) {
   );
 }
 
-function FinancialPendingsCard({ count }: { count: number }) {
-  // Calculate total pending amount (mock calculation based on orders)
-  const pendingAmount = count * 12551.4; // Mock calculation
-
+function FinancialPendingsCard({ count, amount }: { count: number; amount: number }) {
   return (
-    <Link href="/corporate/orders?payment=pending,overdue">
+    <Link href="/corporate/orders?payment_status=pending,overdue">
       <motion.div
         whileHover={{ y: -4 }}
         className="relative overflow-hidden rounded-3xl p-6 h-full cursor-pointer group border border-black"
@@ -84,12 +81,12 @@ function FinancialPendingsCard({ count }: { count: number }) {
 
           <div className="flex items-baseline gap-0.5 mb-3">
             <span className="text-4xl font-bold text-primary tracking-tight">
-              ₹{pendingAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              ₹{amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
 
           <p className="text-sm font-medium text-muted-foreground">
-            Unsettled Cycle Records
+            {count} Unsettled {count === 1 ? 'Cycle' : 'Cycles'}
           </p>
         </div>
       </motion.div>
@@ -305,6 +302,11 @@ export default function CorporateDashboardPage() {
     (o) => o.payment_status === "pending" || o.payment_status === "overdue",
   );
 
+  const pendingAmount = pendingInvoices.reduce(
+    (sum, o) => sum + (o.final_amount || 0),
+    0,
+  );
+
   const upcomingDelivery = activeOrders
     .filter((o) => new Date(o.start_date) > new Date())
     .sort(
@@ -414,7 +416,7 @@ export default function CorporateDashboardPage() {
       {/* Stats Cards Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
         <LiveOperationsCard count={activeOrders.length} />
-        <FinancialPendingsCard count={pendingInvoices.length} />
+        <FinancialPendingsCard count={pendingInvoices.length} amount={pendingAmount} />
         <NextAllocationCard order={upcomingDelivery} />
       </div>
 
@@ -538,8 +540,21 @@ export default function CorporateDashboardPage() {
                       </TableCell>
                       <TableCell className="py-5">
                         <div className="flex justify-center">
-                          <span className="inline-flex items-center px-4 py-1.5 rounded-[9px] bg-amber-500 text-white text-sm font-semibold">
-                            Pending
+                          <span
+                            className={cn(
+                              "inline-flex items-center px-4 py-1.5 rounded-[9px] text-white text-sm font-semibold",
+                              order.payment_status === "paid"
+                                ? "bg-emerald-500"
+                                : order.payment_status === "overdue"
+                                  ? "bg-red-500"
+                                  : "bg-amber-500",
+                            )}
+                          >
+                            {order.payment_status === "paid"
+                              ? "Paid"
+                              : order.payment_status === "overdue"
+                                ? "Overdue"
+                                : "Pending"}
                           </span>
                         </div>
                       </TableCell>

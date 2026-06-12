@@ -71,7 +71,7 @@ export const permissionApi = {
   updateUserPermissions: async (
     userId: string,
     data: { grants: string[]; revokes: string[] },
-  ): Promise<any> => {
+  ): Promise<IUserPermissionDetail> => {
     const response = await apiClient.put(`${BASE}/users/${userId}`, data);
     return response.data;
   },

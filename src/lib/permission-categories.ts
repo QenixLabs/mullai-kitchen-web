@@ -50,6 +50,8 @@ export const PERMISSION_CATEGORIES: PermissionCategory[] = [
     label: 'Menu & Recipes',
     icon: UtensilsCrossed,
     permissions: [
+      { key: 'menu:view', label: 'View Menu' },
+      { key: 'menu:manage', label: 'Manage Menu' },
       { key: 'recipe:create:global', label: 'Create Global Recipe' },
       { key: 'recipe:edit:global', label: 'Edit Global Recipe' },
       { key: 'recipe:view', label: 'View Recipes' },

@@ -86,18 +86,6 @@ export default function StockPage() {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!isSuperAdmin && user?.assigned_outlet_id) {
-      setSelectedOutletId(user.assigned_outlet_id);
-    }
-  }, [isSuperAdmin, user?.assigned_outlet_id]);
-
-  useEffect(() => {
-    if (canViewAnyOutlet && !selectedOutletId && outletsData?.data?.length) {
-      setSelectedOutletId(outletsData.data[0]._id);
-    }
-  }, [canViewAnyOutlet, selectedOutletId, outletsData?.data]);
-
-  useEffect(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => setDebouncedSearch(search), 300);
     return () => {
@@ -105,8 +93,22 @@ export default function StockPage() {
     };
   }, [search]);
 
+  const effectiveOutletId = useMemo(() => {
+    if (!isSuperAdmin) return user?.assigned_outlet_id || null;
+    if (selectedOutletId) return selectedOutletId;
+    if (outletsData?.data?.length) return outletsData.data[0]._id;
+    return null;
+  }, [isSuperAdmin, user?.assigned_outlet_id, selectedOutletId, outletsData?.data]);
+
+  const effectiveOutletId = useMemo(() => {
+    if (!isSuperAdmin) return user?.assigned_outlet_id || null;
+    if (selectedOutletId) return selectedOutletId;
+    if (outletsData?.data?.length) return outletsData.data[0]._id;
+    return null;
+  }, [isSuperAdmin, user?.assigned_outlet_id, selectedOutletId, outletsData?.data]);
+
   const { data: stockData, isLoading } = useStockLevels(
-    selectedOutletId ?? undefined,
+    effectiveOutletId ?? undefined,
   );
 
   const rows = useMemo(() => {
@@ -136,8 +138,8 @@ export default function StockPage() {
   }, [stockData]);
 
   const selectedOutlet = useMemo(
-    () => outletsData?.data?.find((o) => o._id === selectedOutletId),
-    [outletsData?.data, selectedOutletId],
+    () => outletsData?.data?.find((o) => o._id === effectiveOutletId),
+    [outletsData?.data, effectiveOutletId],
   );
 
   const adjustStock = useAdjustStock();
@@ -154,7 +156,7 @@ export default function StockPage() {
   type AdjustFormValues = z.infer<typeof adjustSchema>;
 
   const adjustForm = useForm<AdjustFormValues>({
-    resolver: zodResolver(adjustSchema) as any,
+    resolver: zodResolver(adjustSchema),
     defaultValues: {
       outlet_id: "",
       ingredient_id: "",
@@ -175,7 +177,7 @@ export default function StockPage() {
         typeof item.ingredient_id === "object" ? item.ingredient_id.name : "";
       const unit =
         typeof item.ingredient_id === "object"
-          ? (item.ingredient_id as any).default_unit || item.unit
+          ? (item.ingredient_id as { default_unit?: string }).default_unit || item.unit
           : item.unit;
       adjustForm.reset({
         outlet_id: selectedOutletId ?? "",

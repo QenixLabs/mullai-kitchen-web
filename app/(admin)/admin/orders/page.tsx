@@ -74,26 +74,22 @@ export default function OrdersPage() {
     canViewAnyOutlet ? { status: 'active' } : undefined,
   );
 
-  useEffect(() => {
-    if (!isSuperAdmin && user?.assigned_outlet_id) {
-      setSelectedOutletId(user.assigned_outlet_id);
-    }
-  }, [isSuperAdmin, user?.assigned_outlet_id]);
-
-  useEffect(() => {
-    if (isSuperAdmin && !selectedOutletId && outletsData?.data?.length) {
-      setSelectedOutletId(outletsData.data[0]._id);
-    }
-  }, [isSuperAdmin, selectedOutletId, outletsData?.data?.length]);
+  const effectiveOutletId = useMemo(() => {
+    if (!isSuperAdmin) return user?.assigned_outlet_id || '';
+    if (selectedOutletId) return selectedOutletId;
+    if (outletsData?.data?.length) return outletsData.data[0]._id;
+    return '';
+  }, [isSuperAdmin, user?.assigned_outlet_id, selectedOutletId, outletsData?.data]);
 
   const dateParam = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined;
 
   const { data, isLoading } = useAdminOrders({
     date: dateParam,
-    outlet_id: selectedOutletId || undefined,
+    outlet_id: effectiveOutletId || undefined,
     meal_type: (mealType as MealType) || undefined,
     status: status || undefined,
     search: debouncedSearch || undefined,
+    source: 'daily,addon',
     page,
     limit: 10,
   });

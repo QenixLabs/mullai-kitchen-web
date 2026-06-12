@@ -9,6 +9,7 @@ import {
   ChevronRight,
   FileText,
   CalendarDays,
+  Link2,
 } from 'lucide-react';
 import {
   Table,
@@ -41,6 +42,8 @@ interface CorporateInvoiceTableProps {
   onPageChange: (page: number) => void;
   onMarkPaid?: (id: string) => void;
   isMarkingPaid?: boolean;
+  onGeneratePaymentLink?: (id: string) => void;
+  isGeneratingPaymentLink?: boolean;
 }
 
 const statusClass: Record<string, string> = {
@@ -89,8 +92,11 @@ export function CorporateInvoiceTable({
   onPageChange,
   onMarkPaid,
   isMarkingPaid,
+  onGeneratePaymentLink,
+  isGeneratingPaymentLink,
 }: CorporateInvoiceTableProps) {
   const [markingId, setMarkingId] = useState<string | null>(null);
+  const [generatingId, setGeneratingId] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -273,6 +279,25 @@ export function CorporateInvoiceTable({
                               </TooltipTrigger>
                               <TooltipContent side="top">
                                 <p className="text-xs">Mark as paid</p>
+                              </TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                  onClick={() => {
+                                    setGeneratingId(invoice._id);
+                                    onGeneratePaymentLink?.(invoice._id);
+                                  }}
+                                  disabled={isGeneratingPaymentLink && generatingId === invoice._id}
+                                >
+                                  <Link2 className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent side="top">
+                                <p className="text-xs">Generate payment link</p>
                               </TooltipContent>
                             </Tooltip>
                           </Can>

@@ -17,7 +17,10 @@ export interface AddOnItem {
   is_available?: boolean;
   meal_type?: MealType[];
   max_quantity_per_order?: number;
+  preparation_time?: number;
   outlet_restriction?: string;
+  recipe_id?: string;
+  recipe_name?: string;
 }
 
 // Response for independent add-on fetching (no subscription context)

@@ -1,26 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { ChefHat, Route, Building2, Briefcase } from 'lucide-react';
+import { Route, Building2, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Can } from '@/components/Auth/can';
 
 export function DashboardQuickActions() {
   return (
     <div className="flex flex-wrap gap-2">
-      <Can permission="order:kitchen">
-        <Button
-          variant="outline"
-          asChild
-          className="h-9 gap-2 rounded-lg border-border/60 bg-background shadow-sm hover:bg-primary/5 hover:text-primary hover:border-primary/30 transition-colors"
-        >
-          <Link href="/admin/kitchen-report">
-            <ChefHat className="h-4 w-4" />
-            Kitchen Report
-          </Link>
-        </Button>
-      </Can>
-
       <Can permission="route:assign">
         <Button
           variant="outline"

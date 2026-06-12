@@ -8,12 +8,11 @@ import {
   Activity,
   Users,
   ClipboardList,
-  X as XIcon,
+  X,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useAdminCorporateCompanies } from '@/api/hooks/useAdminCorporate';
 import { CorporateCompanyTable } from '@/components/admin/corporate/CorporateCompanyTable';
 import { cn } from '@/lib/utils';
@@ -55,95 +54,78 @@ export default function CorporateCompaniesPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Page Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/15">
-            <Building2 className="h-4.5 w-4.5" />
-          </span>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">Companies</h1>
-            <p className="text-sm text-muted-foreground">
-              Manage corporate clients, delegates, and their active accounts.
-            </p>
-          </div>
+      <div>
+        <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">
+          <Building2 className="h-3.5 w-3.5" />
+          Corporate
         </div>
-        <div className="flex items-center gap-2">
-          <Badge
-            variant="secondary"
-            className="h-8 gap-1.5 border-0 bg-muted px-2.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
-          >
-            <Building2 className="h-3 w-3" />
-            {stats.total} {stats.total === 1 ? 'company' : 'companies'}
-          </Badge>
-          <Button size="sm" className="h-9 gap-1.5">
-            <Plus className="h-4 w-4" />
-            Add Company
-          </Button>
-        </div>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Companies</h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Manage corporate clients, delegates, and their active accounts.
+        </p>
+        <div className="mt-3 h-1 w-16 rounded-full bg-gold" />
       </div>
 
       {/* KPI Row */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          icon={<Building2 className="h-4 w-4" />}
+          icon={Building2}
           label="Total Companies"
-          value={isLoading ? '—' : stats.total.toString()}
-          sub={stats.total === 0 ? 'No companies yet' : 'Across all outlets'}
-          tone="primary"
+          value={isLoading ? '-' : stats.total.toString()}
+          color="bg-primary/10 text-primary"
         />
         <StatCard
-          icon={<Activity className="h-4 w-4" />}
+          icon={Activity}
           label="Active"
-          value={isLoading ? '—' : stats.active.toString()}
-          sub={stats.active === 0 ? 'None on this page' : 'With live orders'}
-          tone="success"
+          value={isLoading ? '-' : stats.active.toString()}
+          color="bg-success/10 text-success"
         />
         <StatCard
-          icon={<Users className="h-4 w-4" />}
+          icon={Users}
           label="Inactive"
-          value={isLoading ? '—' : stats.inactive.toString()}
-          sub={stats.inactive === 0 ? 'All engaged' : 'No active orders'}
-          tone="muted"
+          value={isLoading ? '-' : stats.inactive.toString()}
+          color="bg-muted text-muted-foreground"
         />
         <StatCard
-          icon={<ClipboardList className="h-4 w-4" />}
+          icon={ClipboardList}
           label="Active Orders"
-          value={isLoading ? '—' : stats.totalOrders.toString()}
-          sub={stats.totalOrders === 0 ? 'No active orders' : 'Combined this page'}
-          tone="info"
+          value={isLoading ? '-' : stats.totalOrders.toString()}
+          color="bg-info/10 text-info"
         />
       </div>
 
       {/* Toolbar */}
-      <Card className="border-border/70 shadow-sm">
-        <CardContent className="flex flex-wrap items-center gap-3 p-4">
-          <div className="relative max-w-sm flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search by company name..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="h-9 pl-9"
-            />
-          </div>
-          {debouncedSearch && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleClear}
-              className="h-9 gap-1.5 text-muted-foreground hover:text-foreground"
-            >
-              <XIcon className="h-3.5 w-3.5" />
-              Clear
-            </Button>
-          )}
-        </CardContent>
-      </Card>
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search by company name..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            className="pl-9"
+          />
+        </div>
+        {debouncedSearch && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClear}
+            className="text-muted-foreground"
+          >
+            <X data-icon="inline-start" className="h-3.5 w-3.5" />
+            Clear
+          </Button>
+        )}
+        <Button size="sm" className="ml-auto h-9 gap-1.5">
+          <Plus data-icon="inline-start" className="h-4 w-4" />
+          Add Company
+        </Button>
+      </div>
 
       <CorporateCompanyTable
         data={data?.data ?? []}
@@ -157,39 +139,29 @@ export default function CorporateCompaniesPage() {
   );
 }
 
-interface StatCardProps {
-  icon: React.ReactNode;
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  color,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string;
-  sub?: string;
-  tone: 'primary' | 'success' | 'muted' | 'info';
-}
-
-function StatCard({ icon, label, value, sub, tone }: StatCardProps) {
-  const toneStyles = {
-    primary: 'bg-primary/10 text-primary ring-primary/15',
-    success: 'bg-success/15 text-success ring-success/20',
-    muted: 'bg-muted text-muted-foreground ring-border',
-    info: 'bg-info/15 text-info ring-info/20',
-  } as const;
-
+  color: string;
+}) {
   return (
-    <Card className="border-border/70 shadow-sm transition-shadow hover:shadow-md">
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-2">
-          <div className="space-y-1">
-            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
-            <p className="text-2xl font-bold leading-none tracking-tight text-foreground">{value}</p>
-            {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
-          </div>
-          <span
-            className={cn(
-              'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ring-1',
-              toneStyles[tone],
-            )}
-          >
-            {icon}
-          </span>
+    <Card className="border-border/60 shadow-sm hover:shadow-md transition-shadow">
+      <CardContent className="flex items-center gap-4 p-5">
+        <div className={cn(
+          'flex size-11 items-center justify-center rounded-xl shrink-0',
+          color,
+        )}>
+          <Icon className="size-5" />
+        </div>
+        <div className="min-w-0">
+          <p className="text-2xl font-bold leading-none text-foreground">{value}</p>
+          <p className="text-xs text-muted-foreground mt-1.5">{label}</p>
         </div>
       </CardContent>
     </Card>

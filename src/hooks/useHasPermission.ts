@@ -28,6 +28,8 @@ export function useHasPermission(
   const userPermissions = user?.permissions || [];
 
   return useMemo(() => {
+    if (user?.role === 'superAdmin') return true;
+
     const required = Array.isArray(permissions) ? permissions : [permissions];
 
     if (requireAll) {
@@ -35,5 +37,5 @@ export function useHasPermission(
     } else {
       return required.some((p) => userPermissions.includes(p));
     }
-  }, [permissions, requireAll, userPermissions]);
+  }, [permissions, requireAll, userPermissions, user?.role]);
 }

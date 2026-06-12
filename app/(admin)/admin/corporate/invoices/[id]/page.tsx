@@ -19,6 +19,8 @@ import {
   Leaf,
   Drumstick,
   AlertTriangle,
+  Link2,
+  Copy,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -36,6 +38,7 @@ import { cn } from '@/lib/utils';
 import {
   useAdminCorporateInvoiceDetail,
   useMarkInvoicePaid,
+  useGeneratePaymentLink,
 } from '@/api/hooks/useAdminCorporate';
 import { Can } from '@/components/Auth/can';
 import { MarkPaidDialog } from '@/components/admin/corporate/MarkPaidDialog';
@@ -88,7 +91,9 @@ export default function CorporateInvoiceDetailPage({
   const { id } = use(params);
   const { data: invoice, isLoading } = useAdminCorporateInvoiceDetail(id);
   const markPaidMutation = useMarkInvoicePaid();
+  const generatePaymentLinkMutation = useGeneratePaymentLink();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   if (isLoading) {
     return (
@@ -157,6 +162,16 @@ export default function CorporateInvoiceDetailPage({
         onSuccess: () => setDialogOpen(false),
       },
     );
+  };
+
+  const handleCopyLink = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // ignore
+    }
   };
 
   return (
@@ -233,6 +248,16 @@ export default function CorporateInvoiceDetailPage({
                 >
                   <CheckCircle2 className="h-4 w-4" />
                   Mark as Paid
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 gap-1.5"
+                  onClick={() => generatePaymentLinkMutation.mutate(id)}
+                  disabled={generatePaymentLinkMutation.isPending}
+                >
+                  <Link2 className="h-4 w-4" />
+                  {generatePaymentLinkMutation.isPending ? 'Generating...' : 'Generate Payment Link'}
                 </Button>
               </Can>
             )}
@@ -353,7 +378,45 @@ export default function CorporateInvoiceDetailPage({
                 </code>
               </Field>
             )}
-            {!invoice.paid_at && !invoice.payment_reference && (
+            {invoice.payment_link_url && (
+              <Field label="Payment Link">
+                <div className="flex items-center gap-2">
+                  <a
+                    href={invoice.payment_link_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="truncate text-xs text-primary underline underline-offset-2 hover:text-primary/80 max-w-[180px]"
+                  >
+                    {invoice.payment_link_url}
+                  </a>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                    onClick={() => handleCopyLink(invoice.payment_link_url!)}
+                  >
+                    <Copy className="h-3 w-3" />
+                  </Button>
+                  {copied && <span className="text-[10px] text-success">Copied!</span>}
+                </div>
+              </Field>
+            )}
+            {invoice.payment_link_expires_at && (
+              <Field label="Link Expires">
+                <span className="inline-flex items-center gap-1.5 text-sm">
+                  <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" />
+                  {formatDate(invoice.payment_link_expires_at)}
+                </span>
+              </Field>
+            )}
+            {invoice.payment_link_status && (
+              <Field label="Link Status">
+                <StatusPill className={invoice.payment_link_status === 'active' ? statusClass.pending : statusClass.paid}>
+                  {invoice.payment_link_status}
+                </StatusPill>
+              </Field>
+            )}
+            {!invoice.paid_at && !invoice.payment_reference && !invoice.payment_link_url && (
               <p className="px-1 pb-1 text-xs text-muted-foreground">
                 No payment recorded yet.
               </p>
@@ -548,6 +611,16 @@ export default function CorporateInvoiceDetailPage({
                 >
                   <CheckCircle2 className="h-4 w-4" />
                   Mark as Paid
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 gap-1.5"
+                  onClick={() => generatePaymentLinkMutation.mutate(id)}
+                  disabled={generatePaymentLinkMutation.isPending}
+                >
+                  <Link2 className="h-4 w-4" />
+                  {generatePaymentLinkMutation.isPending ? 'Generating...' : 'Generate Payment Link'}
                 </Button>
               </Can>
             </CardContent>

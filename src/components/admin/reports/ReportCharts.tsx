@@ -324,3 +324,268 @@ export function RevenueAreaChart({ data }: RevenueAreaChartProps) {
     </ResponsiveContainer>
   );
 }
+
+/* ─── Sparkline ─── */
+interface SparklineProps {
+  data: number[];
+  color?: string;
+  height?: number;
+}
+
+export function Sparkline({ data, color = BRAND_COLORS.primary, height = 40 }: SparklineProps) {
+  if (data.length < 2) return <div style={{ height }} />;
+  const chartData = data.map((v, i) => ({ i, v }));
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+
+  return (
+    <ResponsiveContainer width="100%" height={height}>
+      <LineChart data={chartData}>
+        <defs>
+          <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity={0.2} />
+            <stop offset="100%" stopColor={color} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <Area type="monotone" dataKey="v" stroke="none" fill="url(#sparkFill)" />
+        <Line
+          type="monotone"
+          dataKey="v"
+          stroke={color}
+          strokeWidth={2}
+          dot={false}
+          activeDot={false}
+        />
+        <YAxis domain={[min - range * 0.1, max + range * 0.1]} hide />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+}
+
+/* ─── Revenue vs Expense Bar Chart ─── */
+interface RevenueExpenseChartProps {
+  data: Array<{
+    date: string;
+    individual_revenue: number;
+    addon_revenue?: number;
+    corporate_revenue: number;
+    procurement_expense?: number;
+    ingredient_expense: number;
+  }>;
+  visibleSeries?: Record<string, boolean>;
+}
+
+export function RevenueExpenseChart({ data, visibleSeries }: RevenueExpenseChartProps) {
+  const hasAddons = data.some(d => (d.addon_revenue ?? 0) > 0);
+  const hasProcurement = data.some(d => (d.procurement_expense ?? 0) > 0);
+
+  const maxVal = Math.max(
+    ...data.flatMap(d => [
+      d.individual_revenue + (d.addon_revenue ?? 0) + d.corporate_revenue,
+      (d.procurement_expense ?? 0) + d.ingredient_expense,
+    ]),
+    1,
+  );
+
+  const isVisible = (key: string) => visibleSeries?.[key] !== false;
+
+  return (
+    <ResponsiveContainer width="100%" height={320}>
+      <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+        <defs>
+          <linearGradient id="mkIndFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={BRAND_COLORS.primaryLight} />
+            <stop offset="100%" stopColor={BRAND_COLORS.primary} />
+          </linearGradient>
+          <linearGradient id="mkAddonFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={BRAND_COLORS.sky} />
+            <stop offset="100%" stopColor="#0284c7" />
+          </linearGradient>
+          <linearGradient id="mkCorpFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={BRAND_COLORS.gold} />
+            <stop offset="100%" stopColor={BRAND_COLORS.goldLight} />
+          </linearGradient>
+          <linearGradient id="mkProcFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={BRAND_COLORS.amber} />
+            <stop offset="100%" stopColor="#d97706" />
+          </linearGradient>
+        </defs>
+
+        <CartesianGrid strokeDasharray="4 4" stroke="hsl(var(--border))" vertical={false} />
+        <XAxis
+          dataKey="date"
+          tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+          axisLine={{ stroke: 'hsl(var(--border))' }}
+          tickLine={false}
+          dy={8}
+        />
+        <YAxis
+          tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+          axisLine={false}
+          tickLine={false}
+          dx={-4}
+          tickFormatter={(v: number) => `₹${(v / 1000).toFixed(0)}k`}
+          domain={[0, Math.ceil(maxVal * 1.2)]}
+        />
+        <Tooltip content={<ChartTooltip />} />
+        <Legend
+          verticalAlign="top"
+          height={28}
+          iconType="circle"
+          iconSize={8}
+          formatter={(value: string) => (
+            <span className="text-xs font-medium text-muted-foreground ml-1">{value}</span>
+          )}
+        />
+
+        {isVisible('individual') && <Bar dataKey="individual_revenue" name="Individual" stackId="revenue" fill="url(#mkIndFill)" radius={[0, 0, 0, 0]} maxBarSize={36} />}
+        {hasAddons && isVisible('addon') && <Bar dataKey="addon_revenue" name="Add-ons" stackId="revenue" fill="url(#mkAddonFill)" radius={[0, 0, 0, 0]} maxBarSize={36} />}
+        {isVisible('corporate') && <Bar dataKey="corporate_revenue" name="Corporate" stackId="revenue" fill="url(#mkCorpFill)" radius={hasAddons ? [0, 0, 0, 0] : [4, 4, 0, 0]} maxBarSize={36} />}
+        {hasProcurement && isVisible('procurement') && <Bar dataKey="procurement_expense" name="Procurement" stackId="expense" fill="url(#mkProcFill)" radius={[0, 0, 0, 0]} maxBarSize={36} />}
+        {isVisible('ingredient') && <Bar dataKey="ingredient_expense" name="Ingredient" stackId="expense" fill={BRAND_COLORS.rose} radius={[4, 4, 0, 0]} maxBarSize={36} opacity={0.85} />}
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+/* ─── Revenue vs Expense Area Chart ─── */
+interface RevenueExpenseAreaChartProps {
+  data: Array<{
+    date: string;
+    individual_revenue: number;
+    addon_revenue?: number;
+    corporate_revenue: number;
+    procurement_expense?: number;
+    ingredient_expense: number;
+  }>;
+  visibleSeries?: Record<string, boolean>;
+}
+
+export function RevenueExpenseAreaChart({ data, visibleSeries }: RevenueExpenseAreaChartProps) {
+  const isVisible = (key: string) => visibleSeries?.[key] !== false;
+  const maxVal = Math.max(
+    ...data.flatMap(d => [
+      d.individual_revenue + (d.addon_revenue ?? 0) + d.corporate_revenue,
+      (d.procurement_expense ?? 0) + d.ingredient_expense,
+    ]),
+    1,
+  );
+
+  return (
+    <ResponsiveContainer width="100%" height={320}>
+      <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+        <defs>
+          <linearGradient id="areaInd" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={BRAND_COLORS.primary} stopOpacity={0.4} />
+            <stop offset="100%" stopColor={BRAND_COLORS.primary} stopOpacity={0.02} />
+          </linearGradient>
+          <linearGradient id="areaCorp" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={BRAND_COLORS.gold} stopOpacity={0.4} />
+            <stop offset="100%" stopColor={BRAND_COLORS.gold} stopOpacity={0.02} />
+          </linearGradient>
+          <linearGradient id="areaExp" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={BRAND_COLORS.rose} stopOpacity={0.4} />
+            <stop offset="100%" stopColor={BRAND_COLORS.rose} stopOpacity={0.02} />
+          </linearGradient>
+        </defs>
+
+        <CartesianGrid strokeDasharray="4 4" stroke="hsl(var(--border))" vertical={false} />
+        <XAxis
+          dataKey="date"
+          tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+          axisLine={{ stroke: 'hsl(var(--border))' }}
+          tickLine={false}
+          dy={8}
+        />
+        <YAxis
+          tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+          axisLine={false}
+          tickLine={false}
+          dx={-4}
+          tickFormatter={(v: number) => `₹${(v / 1000).toFixed(0)}k`}
+          domain={[0, Math.ceil(maxVal * 1.2)]}
+        />
+        <Tooltip content={<ChartTooltip />} />
+        <Legend
+          verticalAlign="top"
+          height={28}
+          iconType="circle"
+          iconSize={8}
+          formatter={(value: string) => (
+            <span className="text-xs font-medium text-muted-foreground ml-1">{value}</span>
+          )}
+        />
+
+        {isVisible('individual') && <Area type="monotone" dataKey="individual_revenue" name="Individual" stackId="rev" stroke={BRAND_COLORS.primary} strokeWidth={2} fill="url(#areaInd)" />}
+        {isVisible('addon') && <Area type="monotone" dataKey="addon_revenue" name="Add-ons" stackId="rev" stroke={BRAND_COLORS.sky} strokeWidth={2} fill="url(#areaInd)" />}
+        {isVisible('corporate') && <Area type="monotone" dataKey="corporate_revenue" name="Corporate" stackId="rev" stroke={BRAND_COLORS.gold} strokeWidth={2} fill="url(#areaCorp)" />}
+        {isVisible('procurement') && <Area type="monotone" dataKey="procurement_expense" name="Procurement" stackId="exp" stroke={BRAND_COLORS.amber} strokeWidth={2} fill="url(#areaExp)" />}
+        {isVisible('ingredient') && <Area type="monotone" dataKey="ingredient_expense" name="Ingredient" stackId="exp" stroke={BRAND_COLORS.rose} strokeWidth={2} fill="url(#areaExp)" />}
+      </AreaChart>
+    </ResponsiveContainer>
+  );
+}
+
+/* ─── Revenue vs Expense Line Chart ─── */
+interface RevenueExpenseLineChartProps {
+  data: Array<{
+    date: string;
+    individual_revenue: number;
+    addon_revenue?: number;
+    corporate_revenue: number;
+    procurement_expense?: number;
+    ingredient_expense: number;
+  }>;
+  visibleSeries?: Record<string, boolean>;
+}
+
+export function RevenueExpenseLineChart({ data, visibleSeries }: RevenueExpenseLineChartProps) {
+  const isVisible = (key: string) => visibleSeries?.[key] !== false;
+  const maxVal = Math.max(
+    ...data.flatMap(d => [
+      d.individual_revenue + (d.addon_revenue ?? 0) + d.corporate_revenue,
+      (d.procurement_expense ?? 0) + d.ingredient_expense,
+    ]),
+    1,
+  );
+
+  return (
+    <ResponsiveContainer width="100%" height={320}>
+      <LineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="4 4" stroke="hsl(var(--border))" vertical={false} />
+        <XAxis
+          dataKey="date"
+          tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+          axisLine={{ stroke: 'hsl(var(--border))' }}
+          tickLine={false}
+          dy={8}
+        />
+        <YAxis
+          tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+          axisLine={false}
+          tickLine={false}
+          dx={-4}
+          tickFormatter={(v: number) => `₹${(v / 1000).toFixed(0)}k`}
+          domain={[0, Math.ceil(maxVal * 1.2)]}
+        />
+        <Tooltip content={<ChartTooltip />} />
+        <Legend
+          verticalAlign="top"
+          height={28}
+          iconType="circle"
+          iconSize={8}
+          formatter={(value: string) => (
+            <span className="text-xs font-medium text-muted-foreground ml-1">{value}</span>
+          )}
+        />
+
+        {isVisible('individual') && <Line type="monotone" dataKey="individual_revenue" name="Individual" stroke={BRAND_COLORS.primary} strokeWidth={2.5} dot={{ r: 3, fill: BRAND_COLORS.primary, strokeWidth: 2, stroke: '#fff' }} />}
+        {isVisible('addon') && <Line type="monotone" dataKey="addon_revenue" name="Add-ons" stroke={BRAND_COLORS.sky} strokeWidth={2.5} dot={{ r: 3, fill: BRAND_COLORS.sky, strokeWidth: 2, stroke: '#fff' }} />}
+        {isVisible('corporate') && <Line type="monotone" dataKey="corporate_revenue" name="Corporate" stroke={BRAND_COLORS.gold} strokeWidth={2.5} dot={{ r: 3, fill: BRAND_COLORS.gold, strokeWidth: 2, stroke: '#fff' }} />}
+        {isVisible('procurement') && <Line type="monotone" dataKey="procurement_expense" name="Procurement" stroke={BRAND_COLORS.amber} strokeWidth={2.5} dot={{ r: 3, fill: BRAND_COLORS.amber, strokeWidth: 2, stroke: '#fff' }} />}
+        {isVisible('ingredient') && <Line type="monotone" dataKey="ingredient_expense" name="Ingredient" stroke={BRAND_COLORS.rose} strokeWidth={2.5} dot={{ r: 3, fill: BRAND_COLORS.rose, strokeWidth: 2, stroke: '#fff' }} />}
+      </LineChart>
+    </ResponsiveContainer>
+  );
+}

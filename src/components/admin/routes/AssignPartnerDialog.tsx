@@ -41,7 +41,7 @@ export function AssignPartnerDialog({
   const [selectedPartnerId, setSelectedPartnerId] = useState<string | null>(null);
 
   const { data: partnersData, isLoading } = useAdminUsers({
-    role: UserRole.DeliveryPartner as any,
+    role: UserRole.DeliveryPartner,
     status: 'active',
     outlet_id: outletId,
     search: search || undefined,

@@ -38,7 +38,7 @@ export function useCreateAdminUser() {
       queryClient.invalidateQueries({ queryKey: adminUserKeys.lists() });
       toast.success("Admin user created successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to create admin user");
     },
   });
@@ -53,7 +53,7 @@ export function useCreateHubOwner() {
       queryClient.invalidateQueries({ queryKey: adminUserKeys.lists() });
       toast.success("Hub owner created successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to create hub owner");
     },
   });
@@ -68,7 +68,7 @@ export function useCreateDeliveryPartner() {
       queryClient.invalidateQueries({ queryKey: adminUserKeys.lists() });
       toast.success("Delivery partner created successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to create delivery partner");
     },
   });
@@ -85,7 +85,7 @@ export function useUpdateUserStatus() {
       queryClient.invalidateQueries({ queryKey: adminUserKeys.detail(variables.id) });
       toast.success("User status updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update user status");
     },
   });
@@ -101,22 +101,22 @@ export function useUserStats() {
       },
       {
         queryKey: adminUserKeys.list({ role: 'superAdmin', limit: 1 }),
-        queryFn: () => adminUserApi.list({ role: 'superAdmin' as any, limit: 1 }),
+        queryFn: () => adminUserApi.list({ role: 'superAdmin' as AdminUserListParams['role'], limit: 1 }),
         staleTime: 1000 * 60 * 5,
       },
       {
         queryKey: adminUserKeys.list({ role: 'outletAdmin', limit: 1 }),
-        queryFn: () => adminUserApi.list({ role: 'outletAdmin' as any, limit: 1 }),
+        queryFn: () => adminUserApi.list({ role: 'outletAdmin' as AdminUserListParams['role'], limit: 1 }),
         staleTime: 1000 * 60 * 5,
       },
       {
         queryKey: adminUserKeys.list({ role: 'deliveryPartner', status: 'active', limit: 1 }),
-        queryFn: () => adminUserApi.list({ role: 'deliveryPartner' as any, status: 'active', limit: 1 }),
+        queryFn: () => adminUserApi.list({ role: 'deliveryPartner' as AdminUserListParams['role'], status: 'active', limit: 1 }),
         staleTime: 1000 * 60 * 5,
       },
       {
         queryKey: adminUserKeys.list({ status: 'pending', limit: 1 }),
-        queryFn: () => adminUserApi.list({ status: 'pending' as any, limit: 1 }),
+        queryFn: () => adminUserApi.list({ status: 'pending' as AdminUserListParams['status'], limit: 1 }),
         staleTime: 1000 * 60 * 5,
       },
     ],

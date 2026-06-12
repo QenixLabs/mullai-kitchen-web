@@ -40,7 +40,7 @@ export function useCreateTemplate(outletId: string) {
       queryClient.invalidateQueries({ queryKey: templateKeys.grid(outletId) });
       toast.success("Template created successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to create template");
     },
   });
@@ -57,7 +57,7 @@ export function useUpdateTemplate(outletId: string) {
       queryClient.invalidateQueries({ queryKey: templateKeys.detail(outletId, variables.id) });
       toast.success("Template updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update template");
     },
   });
@@ -72,7 +72,7 @@ export function useDeleteTemplate(outletId: string) {
       queryClient.invalidateQueries({ queryKey: templateKeys.grid(outletId) });
       toast.success("Template deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to delete template");
     },
   });
@@ -88,7 +88,7 @@ export function useTogglePublish(outletId: string) {
       queryClient.invalidateQueries({ queryKey: templateKeys.detail(outletId, id) });
       toast.success("Publish status toggled");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to toggle publish");
     },
   });
@@ -103,7 +103,7 @@ export function useBulkCopy(outletId: string) {
       queryClient.invalidateQueries({ queryKey: templateKeys.all(variables.target_outlet_id) });
       toast.success("Templates copied successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to copy templates");
     },
   });

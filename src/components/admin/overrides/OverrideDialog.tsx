@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Loader2,
   Sun,
@@ -90,11 +90,38 @@ export function OverrideDialog({
   mealType: initialMealType,
   existing,
 }: OverrideDialogProps) {
-  const [mealType, setMealType] = useState<MealType>(initialMealType || MealType.LUNCH);
-  const [vegRecipeId, setVegRecipeId] = useState<string>('');
-  const [nonvegRecipeId, setNonvegRecipeId] = useState<string>('');
-  const [isClosed, setIsClosed] = useState(false);
-  const [reason, setReason] = useState('');
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <OverrideForm
+        key={String(open)}
+        onOpenChange={onOpenChange}
+        outletId={outletId}
+        date={date}
+        initialMealType={initialMealType}
+        existing={existing}
+      />
+    </Dialog>
+  );
+}
+
+function OverrideForm({
+  onOpenChange,
+  outletId,
+  date,
+  initialMealType,
+  existing,
+}: {
+  onOpenChange: (open: boolean) => void;
+  outletId: string;
+  date: string;
+  initialMealType?: MealType;
+  existing?: MealRosterOverride;
+}) {
+  const [mealType, setMealType] = useState<MealType>(initialMealType || existing?.meal_type || MealType.LUNCH);
+  const [vegRecipeId, setVegRecipeId] = useState<string>(existing?.veg_recipe_id || '');
+  const [nonvegRecipeId, setNonvegRecipeId] = useState<string>(existing?.nonveg_recipe_id || '');
+  const [isClosed, setIsClosed] = useState(existing?.is_closed || false);
+  const [reason, setReason] = useState(existing?.reason || '');
 
   const createOverride = useCreateOverride(outletId);
   const updateOverride = useUpdateOverride(outletId);
@@ -106,16 +133,6 @@ export function OverrideDialog({
   const isDeleting = deleteOverride.isPending;
 
   const dateInfo = useMemo(() => formatDate(date), [date]);
-
-  useEffect(() => {
-    if (open) {
-      setMealType(initialMealType || existing?.meal_type || MealType.LUNCH);
-      setVegRecipeId(existing?.veg_recipe_id || '');
-      setNonvegRecipeId(existing?.nonveg_recipe_id || '');
-      setIsClosed(existing?.is_closed || false);
-      setReason(existing?.reason || '');
-    }
-  }, [open, existing, initialMealType]);
 
   const recipeOptions = recipes || [];
   const hasAnyRecipe =

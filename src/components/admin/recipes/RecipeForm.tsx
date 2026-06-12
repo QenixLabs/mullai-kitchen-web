@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
-import { Loader2, Plus, Trash2, ChefHat, ListChecks, Clock, Flame } from 'lucide-react';
+import { Loader2, Plus, Trash2, ChefHat, ListChecks, Clock, Flame, ArrowUpRight, ChevronsUpDown, Leaf, Beef } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,11 +19,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Can } from '@/components/Auth/can';
+import { cn } from '@/lib/utils';
 import { useOutlets } from '@/api/hooks/useOutlets';
+import { useIngredients } from '@/api/hooks/useInventory';
 import type { CreateRecipePayload, Recipe } from '@/api/types/menu.types';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ImageUploadField } from '@/components/admin/plans/ImageUploadField';
 
 const ingredientSchema = z.object({
+  ingredient_id: z.string().optional(),
   name: z.string().min(1, 'Name is required'),
   quantity: z.string().min(1, 'Quantity is required'),
   unit: z.string().min(1, 'Unit is required'),
@@ -42,10 +53,125 @@ const recipeSchema = z.object({
   protein: z.string().optional(),
   carbs: z.string().optional(),
   image_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+  is_veg: z.boolean().optional(),
   outlet_restriction: z.string().nullable().optional(),
 });
 
 type RecipeFormData = z.infer<typeof recipeSchema>;
+
+function IngredientSelector({
+  value,
+  name,
+  onSelect,
+}: {
+  value: string;
+  name: string;
+  onSelect: (id: string, name: string, unit: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleSearchChange = (val: string) => {
+    setSearchQuery(val);
+    setPage(1);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => setDebouncedSearch(val), 300);
+  };
+
+  const { data, isLoading, isError } = useIngredients({
+    search: debouncedSearch || undefined,
+    page,
+    limit: 20,
+  });
+
+  const ingredients = data?.data ?? [];
+  const totalPages = data?.totalPages ?? 1;
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          className="h-11 w-full justify-between rounded-xl border-border/60 bg-white px-4 text-sm font-normal"
+        >
+          {name || 'Select ingredient'}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[300px] p-0" align="start">
+        <div className="p-2">
+          <Input
+            placeholder="Search ingredients..."
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="h-9 rounded-lg"
+          />
+        </div>
+        <div className="max-h-[240px] overflow-y-auto">
+          {isLoading ? (
+            <div className="space-y-2 p-2">
+              <Skeleton className="h-9 w-full rounded-lg" />
+              <Skeleton className="h-9 w-full rounded-lg" />
+              <Skeleton className="h-9 w-full rounded-lg" />
+            </div>
+          ) : isError ? (
+            <div className="p-4 text-sm text-destructive text-center">
+              Failed to load ingredients
+            </div>
+          ) : ingredients.length === 0 ? (
+            <div className="p-4 text-sm text-muted-foreground text-center">
+              No ingredients found
+            </div>
+          ) : (
+            <div className="p-1">
+              {ingredients.map((ing) => (
+                <button
+                  key={ing._id}
+                  className={cn(
+                    'w-full rounded-lg px-3 py-2 text-sm text-left hover:bg-accent transition-colors',
+                    value === ing._id && 'bg-accent'
+                  )}
+                  onClick={() => {
+                    onSelect(ing._id, ing.name, ing.default_unit);
+                    setOpen(false);
+                  }}
+                >
+                  {ing.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between border-t p-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => p - 1)}
+            >
+              Prev
+            </Button>
+            <span className="text-xs text-muted-foreground">
+              {page} / {totalPages}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 interface RecipeFormProps {
   mode: 'create' | 'edit';
@@ -67,21 +193,22 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
     watch,
     formState: { errors },
   } = useForm<RecipeFormData>({
-    resolver: zodResolver(recipeSchema) as any,
+    resolver: zodResolver(recipeSchema),
     defaultValues: {
       name: initialData?.name || '',
       description: initialData?.description || '',
       cuisine_type: initialData?.cuisine_type || '',
       difficulty: initialData?.difficulty || '',
-      ingredients: initialData?.ingredients || [],
+      ingredients: initialData?.ingredients?.map((i) => ({ ...i, ingredient_id: i.ingredient_id || '' })) || [],
       prep_time: initialData?.cooking_details?.prep_time || '',
       cook_time: initialData?.cooking_details?.cook_time || '',
-      servings: initialData?.cooking_details?.servings || ('' as any),
+      servings: initialData?.cooking_details?.servings || ('' as unknown as number),
       instructions: initialData?.cooking_details?.instructions?.map((s) => ({ value: s })) || [],
-      calories: initialData?.nutrition?.calories || ('' as any),
+      calories: initialData?.nutrition?.calories || ('' as string | number),
       protein: initialData?.nutrition?.protein || '',
       carbs: initialData?.nutrition?.carbs || '',
       image_url: initialData?.image_url || '',
+      is_veg: initialData?.is_veg,
       outlet_restriction: initialData?.outlet_restriction || null,
     },
   });
@@ -121,7 +248,9 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
         description: data.description || undefined,
         cuisine_type: data.cuisine_type || undefined,
         difficulty: data.difficulty || undefined,
-        ingredients: data.ingredients?.filter((i) => i.name),
+        ingredients: data.ingredients
+          ?.filter((i) => i.name)
+          .map((i) => ({ name: i.name, quantity: i.quantity, unit: i.unit, ingredient_id: i.ingredient_id || undefined })),
         cooking_details: {
           prep_time: data.prep_time || undefined,
           cook_time: data.cook_time || undefined,
@@ -134,6 +263,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
           carbs: data.carbs || undefined,
         },
         image_url: data.image_url || undefined,
+        is_veg: data.is_veg,
         outlet_restriction: data.outlet_restriction || null,
       };
       await onSubmit(payload);
@@ -195,7 +325,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
               className="rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div className="space-y-2">
               <Label htmlFor="difficulty" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Difficulty</Label>
               <Select
@@ -213,43 +343,70 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="image_url" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Image URL</Label>
-              <Input
-                id="image_url"
-                {...register('image_url')}
-                placeholder="https://..."
-                className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
-              />
-              {errors.image_url && (
-                <p className="text-xs text-destructive">
-                  {errors.image_url.message}
-                </p>
-              )}
+              <Label htmlFor="outlet_restriction" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Outlet Restriction</Label>
+              <Can permission="recipe:create:global">
+                <Select
+                  value={outletRestrictionValue}
+                  onValueChange={(v) =>
+                    setValue('outlet_restriction', v === 'global' ? null : v)
+                  }
+                >
+                  <SelectTrigger className="h-11 rounded-xl border-border/60 bg-white text-sm">
+                    <SelectValue placeholder="Select scope" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="global">Global (All Outlets)</SelectItem>
+                    {(outletsData?.data || []).map((outlet) => (
+                      <SelectItem key={outlet._id} value={outlet._id}>
+                        {outlet.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Can>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Food Type</Label>
+              <div className="flex gap-2 h-11">
+                <button
+                  type="button"
+                  onClick={() => setValue('is_veg', true)}
+                  className={cn(
+                    'flex-1 flex items-center justify-center gap-1.5 rounded-xl border text-sm font-medium transition-all',
+                    watch('is_veg') === true
+                      ? 'border-green-500 bg-green-50 text-green-700 shadow-sm'
+                      : 'border-border/60 bg-white text-muted-foreground hover:border-green-300',
+                  )}
+                >
+                  <Leaf className="h-4 w-4" />
+                  Veg
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setValue('is_veg', false)}
+                  className={cn(
+                    'flex-1 flex items-center justify-center gap-1.5 rounded-xl border text-sm font-medium transition-all',
+                    watch('is_veg') === false
+                      ? 'border-red-500 bg-red-50 text-red-700 shadow-sm'
+                      : 'border-border/60 bg-white text-muted-foreground hover:border-red-300',
+                  )}
+                >
+                  <Beef className="h-4 w-4" />
+                  Non-Veg
+                </button>
+              </div>
             </div>
           </div>
-          <Can permission="recipe:create:global">
-            <div className="space-y-2">
-              <Label htmlFor="outlet_restriction" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Outlet Restriction</Label>
-              <Select
-                value={outletRestrictionValue}
-                onValueChange={(v) =>
-                  setValue('outlet_restriction', v === 'global' ? null : v)
-                }
-              >
-                <SelectTrigger className="h-11 rounded-xl border-border/60 bg-white text-sm">
-                  <SelectValue placeholder="Select scope" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="global">Global (All Outlets)</SelectItem>
-                  {(outletsData?.data || []).map((outlet) => (
-                    <SelectItem key={outlet._id} value={outlet._id}>
-                      {outlet.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </Can>
+          <div className="space-y-2">
+            <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Recipe Image</Label>
+            <ImageUploadField
+              value={watch('image_url') || ''}
+              onChange={(url) => setValue('image_url', url)}
+            />
+            {errors.image_url && (
+              <p className="text-xs text-destructive">{errors.image_url.message}</p>
+            )}
+          </div>
         </div>
       </motion.div>
 
@@ -268,18 +425,29 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
               </div>
               <h3 className="text-base font-semibold text-primary">Ingredients</h3>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                appendIngredient({ name: '', quantity: '', unit: '' })
-              }
-              className="rounded-full"
-            >
-              <Plus className="mr-1 h-3.5 w-3.5" />
-              Add
-            </Button>
+            <div className="flex items-center gap-2">
+              <Can permission="inventory:view">
+                <Link
+                  href="/admin/inventory/ingredients"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border/60 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/5 transition-colors"
+                >
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                  Manage Ingredients
+                </Link>
+              </Can>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  appendIngredient({ ingredient_id: '', name: '', quantity: '', unit: '' })
+                }
+                className="rounded-full"
+              >
+                <Plus className="mr-1 h-3.5 w-3.5" />
+                Add
+              </Button>
+            </div>
           </div>
         </div>
         <div className="px-6 pb-6 space-y-3">
@@ -291,12 +459,17 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
           {ingredientFields.map((field, index) => (
             <div key={field.id} className="flex items-end gap-2 p-3 rounded-xl bg-muted/20 border border-border/30">
               <div className="flex-1 space-y-1">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Name</Label>
-                <Input
-                  {...register(`ingredients.${index}.name`)}
-                  placeholder="Ingredient name"
-                  className="h-11 rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
+                <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Ingredient</Label>
+                <IngredientSelector
+                  value={field.ingredient_id || ''}
+                  name={field.name || ''}
+                  onSelect={(id, n, unit) => {
+                    setValue(`ingredients.${index}.ingredient_id`, id);
+                    setValue(`ingredients.${index}.name`, n);
+                    setValue(`ingredients.${index}.unit`, unit);
+                  }}
                 />
+                <input type="hidden" {...register(`ingredients.${index}.name`)} />
               </div>
               <div className="w-24 space-y-1">
                 <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Qty</Label>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { format } from 'date-fns';
 import {
   Building2,
@@ -45,38 +45,33 @@ export default function RoutesPage() {
   const isSuperAdmin =
     user?.role === UserRole.SuperAdmin || user?.role === UserRole.Admin;
 
-  useEffect(() => {
-    if (!isSuperAdmin && user?.assigned_outlet_id) {
-      setSelectedOutletId(user.assigned_outlet_id);
-    }
-  }, [isSuperAdmin, user?.assigned_outlet_id]);
-
-  useEffect(() => {
-    if (canViewAnyOutlet && !selectedOutletId && outletsData?.data?.length) {
-      setSelectedOutletId(outletsData.data[0]._id);
-    }
-  }, [canViewAnyOutlet, selectedOutletId, outletsData?.data]);
+  const effectiveOutletId = useMemo(() => {
+    if (!isSuperAdmin) return user?.assigned_outlet_id || null;
+    if (selectedOutletId) return selectedOutletId;
+    if (outletsData?.data?.length) return outletsData.data[0]._id;
+    return null;
+  }, [isSuperAdmin, user?.assigned_outlet_id, selectedOutletId, outletsData?.data]);
 
   const dateParam = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined;
   const { data: routesData, isLoading: routesLoading } = useOutletRoutes(
-    selectedOutletId,
+    effectiveOutletId,
     dateParam,
   );
 
-  const generateRoutes = useGenerateRoutes(selectedOutletId ?? '');
+  const generateRoutes = useGenerateRoutes(effectiveOutletId ?? '');
 
   const handleOutletChange = useCallback((value: string) => {
     setSelectedOutletId(value);
   }, []);
 
   const handleGenerate = useCallback(() => {
-    if (!selectedOutletId || !dateParam) return;
+    if (!effectiveOutletId || !dateParam) return;
     generateRoutes.mutate({ date: dateParam });
-  }, [selectedOutletId, dateParam, generateRoutes]);
+  }, [effectiveOutletId, dateParam, generateRoutes]);
 
   const selectedOutlet = useMemo(
-    () => outletsData?.data?.find((o) => o._id === selectedOutletId),
-    [outletsData?.data, selectedOutletId],
+    () => outletsData?.data?.find((o) => o._id === effectiveOutletId),
+    [outletsData?.data, effectiveOutletId],
   );
 
   const stats = useMemo(() => {
@@ -94,7 +89,7 @@ export default function RoutesPage() {
     return { total, draft, published, inProgress, completed, totalOrders, completedStops };
   }, [routesData]);
 
-  if (!isSuperAdmin && !selectedOutletId) {
+  if (!isSuperAdmin && !effectiveOutletId) {
     return (
       <div className="space-y-6">
         <PageHeader
@@ -209,7 +204,7 @@ export default function RoutesPage() {
             <Can permission="route:generate">
               <Button
                 onClick={handleGenerate}
-                disabled={!selectedOutletId || !dateParam || generateRoutes.isPending}
+                disabled={!effectiveOutletId || !dateParam || generateRoutes.isPending}
                 className="h-9 gap-1.5"
               >
                 <Sparkles className="h-4 w-4" />

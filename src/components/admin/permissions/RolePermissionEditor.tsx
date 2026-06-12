@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -41,8 +41,7 @@ const EDITABLE_ROLES = [
 
 export function RolePermissionEditor() {
   const [selectedRole, setSelectedRole] = useState('outletAdmin');
-  const [permissions, setPermissions] = useState<Set<string>>(new Set());
-  const [isDirty, setIsDirty] = useState(false);
+  const [dirtyPermissions, setDirtyPermissions] = useState<Set<string> | null>(null);
 
   const canEdit = useHasPermission(['permission:grant', 'permission:revoke']);
   const { data: rolePermissions, isLoading } = useRolePermissions();
@@ -55,28 +54,32 @@ export function RolePermissionEditor() {
   const selectedRoleLabel =
     EDITABLE_ROLES.find((r) => r.value === selectedRole)?.label || selectedRole;
 
-  useEffect(() => {
-    if (currentRoleData) {
-      setPermissions(new Set(currentRoleData.permissions));
-      setIsDirty(false);
-    }
-  }, [currentRoleData]);
+  const permissions = useMemo(() => {
+    if (dirtyPermissions) return dirtyPermissions;
+    return new Set(currentRoleData?.permissions || []);
+  }, [dirtyPermissions, currentRoleData?.permissions]);
+
+  const isDirty = dirtyPermissions !== null;
+
+  const handleRoleChange = (role: string) => {
+    setSelectedRole(role);
+    setDirtyPermissions(null);
+  };
 
   const handlePermissionChange = (newPermissions: Set<string>) => {
-    setPermissions(newPermissions);
-    setIsDirty(true);
+    setDirtyPermissions(newPermissions);
   };
 
   const handleSave = () => {
     updateMutation.mutate(
       { role: selectedRole, permissions: Array.from(permissions) },
-      { onSuccess: () => setIsDirty(false) },
+      { onSuccess: () => setDirtyPermissions(null) },
     );
   };
 
   const handleReset = () => {
     resetMutation.mutate(selectedRole, {
-      onSuccess: () => setIsDirty(false),
+      onSuccess: () => setDirtyPermissions(null),
     });
   };
 
@@ -95,7 +98,7 @@ export function RolePermissionEditor() {
               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Selected Role
               </p>
-              <Select value={selectedRole} onValueChange={setSelectedRole}>
+              <Select value={selectedRole} onValueChange={handleRoleChange}>
                 <SelectTrigger className="h-8 w-[200px] border-0 bg-transparent p-0 text-sm font-semibold text-foreground hover:text-foreground focus:ring-0">
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
@@ -133,7 +136,7 @@ export function RolePermissionEditor() {
                       Reset Permissions
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                      You're about to reset permissions for the{' '}
+                      You&rsquo;re about to reset permissions for the{' '}
                       <span className="font-semibold text-foreground">
                         {selectedRoleLabel}
                       </span>{' '}

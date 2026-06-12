@@ -9,13 +9,11 @@ import {
   CalendarDays,
   Percent,
   IndianRupee,
-  Users,
-  ShoppingCart,
   BarChart3,
   Clock,
   CheckCircle2,
-  AlertTriangle,
   Search,
+  Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';

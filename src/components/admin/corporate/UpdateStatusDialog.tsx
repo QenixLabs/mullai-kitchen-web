@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ArrowRight, RefreshCw } from 'lucide-react';
 import {
   Dialog,
@@ -64,14 +64,29 @@ export function UpdateStatusDialog({
   open,
   onOpenChange,
 }: UpdateStatusDialogProps) {
-  const [status, setStatus] = useState<CorporateOrderStatus | ''>('');
-  const updateStatus = useUpdateCorporateOrderStatus();
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <UpdateStatusForm
+        key={String(open)}
+        orderId={orderId}
+        currentStatus={currentStatus}
+        onOpenChange={onOpenChange}
+      />
+    </Dialog>
+  );
+}
 
-  useEffect(() => {
-    if (open && currentStatus) {
-      setStatus(currentStatus);
-    }
-  }, [open, currentStatus]);
+function UpdateStatusForm({
+  orderId,
+  currentStatus,
+  onOpenChange,
+}: {
+  orderId: string | null;
+  currentStatus: CorporateOrderStatus | null;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const [status, setStatus] = useState<CorporateOrderStatus>(currentStatus || 'draft');
+  const updateStatus = useUpdateCorporateOrderStatus();
 
   const handleSubmit = () => {
     if (!orderId || !status) return;

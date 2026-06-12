@@ -7,7 +7,7 @@ import type {
   AdminCorporateCompanyListParams,
   PaginationParams,
 } from '@/api/types/admin-corporate.types';
-import type { IOperationsReportQuery, IFinancialReportQuery } from '@/api/types/admin.types';
+import type { IOperationsReportQuery, IFinancialReportQuery, IRevenueAnalyticsQuery } from '@/api/types/admin.types';
 
 export const authKeys = {
   all: () => ["auth"] as const,
@@ -197,12 +197,6 @@ export const adminSubscriptionKeys = {
   activity: (id: string) => [...adminSubscriptionKeys.all, 'activity', id] as const,
 };
 
-export const adminKitchenKeys = {
-  all: ['admin', 'kitchen'] as const,
-  report: (outletId: string, date?: string) =>
-    [...adminKitchenKeys.all, 'report', outletId, date] as const,
-};
-
 export const adminOrderKeys = {
   all: ['admin', 'orders'] as const,
   lists: () => [...adminOrderKeys.all, 'list'] as const,
@@ -243,6 +237,7 @@ export const adminCorporateKeys = {
 export const adminReportKeys = {
   operations: (params: IOperationsReportQuery) => ['admin', 'reports', 'operations', params] as const,
   financial: (params: IFinancialReportQuery) => ['admin', 'reports', 'financial', params] as const,
+  revenueAnalytics: (params: IRevenueAnalyticsQuery) => ['admin', 'reports', 'revenue-analytics', params] as const,
 };
 
 export const adminDashboardKeys = {
@@ -269,4 +264,12 @@ export const inventoryKeys = {
   purchaseOrderDetails: () => [...inventoryKeys.all, 'purchase-orders', 'detail'] as const,
   purchaseOrderDetail: (id: string) => [...inventoryKeys.purchaseOrderDetails(), id] as const,
   recipeIngredients: (recipeId: string) => [...inventoryKeys.all, 'recipe-ingredients', recipeId] as const,
+};
+
+export const adminAddOnKeys = {
+  all: ['admin', 'add-ons'] as const,
+  lists: () => [...adminAddOnKeys.all, 'list'] as const,
+  list: (params?: unknown) => [...adminAddOnKeys.lists(), params] as const,
+  details: () => [...adminAddOnKeys.all, 'detail'] as const,
+  detail: (id: string) => [...adminAddOnKeys.details(), id] as const,
 };

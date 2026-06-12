@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { format } from 'date-fns';
 import {
   CalendarDays,
@@ -49,22 +49,21 @@ export default function CorporateDailyOrdersPage() {
     canViewAnyOutlet ? { status: 'active' } : undefined,
   );
 
-  useEffect(() => {
-    if (!isSuperAdmin && user?.assigned_outlet_id) {
-      setOutletId(user.assigned_outlet_id);
-    }
-  }, [isSuperAdmin, user?.assigned_outlet_id]);
+  const effectiveOutletId = useMemo(() => {
+    if (!isSuperAdmin) return user?.assigned_outlet_id || '';
+    return outletId;
+  }, [isSuperAdmin, user?.assigned_outlet_id, outletId]);
 
   const { data: summaryData, isLoading: summaryLoading } =
     useAdminCorporateDailyOrdersSummary({
       date: dateStr,
-      outlet_id: outletId || undefined,
+      outlet_id: effectiveOutletId || undefined,
     });
 
   const { data: ordersData, isLoading: ordersLoading } =
     useAdminCorporateDailyOrders({
       date: dateStr,
-      outlet_id: outletId || undefined,
+      outlet_id: effectiveOutletId || undefined,
       page,
       limit: 10,
     });

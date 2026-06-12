@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Can } from '@/components/Auth/can';
+import { sanitizeUrl } from '@/lib/sanitize';
 import { cn } from '@/lib/utils';
 import type { Recipe } from '@/api/types/menu.types';
 import { RecipeStatus } from '@/api/types/menu.types';
@@ -114,7 +115,7 @@ export function RecipeDetail({ recipe, onDelete, onStatusChange }: RecipeDetailP
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.0 }}>
           <Card className="rounded-2xl border border-border/40 shadow-sm overflow-hidden">
             <CardContent className="p-0">
-              <img src={recipe.image_url} alt={recipe.name} className="w-full max-h-80 object-cover" />
+              <img src={sanitizeUrl(recipe.image_url)} alt={recipe.name} className="w-full max-h-80 object-cover" />
             </CardContent>
           </Card>
         </motion.div>

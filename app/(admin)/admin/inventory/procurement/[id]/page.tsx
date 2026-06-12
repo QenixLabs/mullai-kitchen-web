@@ -226,8 +226,8 @@ export default function PurchaseOrderDetailPage() {
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-                <InfoItem icon={<Building2 className="h-4 w-4" />} label="Outlet" value={po.outlet_id && typeof po.outlet_id === 'object' ? (po.outlet_id as any).name : '—'} />
-                <InfoItem icon={<Truck className="h-4 w-4" />} label="Supplier" value={po.supplier_id && typeof po.supplier_id === 'object' ? (po.supplier_id as any).name : '—'} />
+                <InfoItem icon={<Building2 className="h-4 w-4" />} label="Outlet" value={po.outlet_id && typeof po.outlet_id === 'object' ? (po.outlet_id as { name: string }).name : '—'} />
+                <InfoItem icon={<Truck className="h-4 w-4" />} label="Supplier" value={po.supplier_id && typeof po.supplier_id === 'object' ? (po.supplier_id as { name: string }).name : '—'} />
                 <InfoItem icon={<Calendar className="h-4 w-4" />} label="Order Date" value={po.order_date ? format(new Date(po.order_date), 'dd MMM yyyy') : '—'} />
                 <InfoItem icon={<Calendar className="h-4 w-4" />} label="Expected Delivery" value={po.expected_delivery_date ? format(new Date(po.expected_delivery_date), 'dd MMM yyyy') : '—'} />
                 <InfoItem icon={<Wallet className="h-4 w-4" />} label="Total Amount" value={formatCurrency(po.total_amount ?? 0)} />

@@ -5,7 +5,6 @@ import {
   Plus,
   Shield,
   Route,
-  UtensilsCrossed,
 } from "lucide-react";
 
 interface QuickAction {
@@ -34,12 +33,6 @@ const QUICK_ACTIONS: QuickAction[] = [
     href: "/admin/routes",
     icon: Route,
     permission: "route:generate",
-  },
-  {
-    label: "Kitchen Report",
-    href: "/admin/kitchen",
-    icon: UtensilsCrossed,
-    permission: "order:kitchen",
   },
 ];
 

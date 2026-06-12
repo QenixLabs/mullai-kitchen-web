@@ -25,7 +25,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useAdminCorporateInvoices, useMarkInvoicePaid } from '@/api/hooks/useAdminCorporate';
+import { useAdminCorporateInvoices, useMarkInvoicePaid, useGeneratePaymentLink } from '@/api/hooks/useAdminCorporate';
 import { useOutlets } from '@/api/hooks/useOutlets';
 import { useHasPermission } from '@/hooks/useHasPermission';
 import { CorporateInvoiceTable } from '@/components/admin/corporate/CorporateInvoiceTable';
@@ -74,6 +74,7 @@ export default function CorporateInvoicesPage() {
   });
 
   const markPaidMutation = useMarkInvoicePaid();
+  const generatePaymentLinkMutation = useGeneratePaymentLink();
 
   const invoices = data?.data ?? [];
   const total = data?.total ?? 0;
@@ -89,6 +90,10 @@ export default function CorporateInvoicesPage() {
     setSelectedInvoiceId(id);
     setDialogOpen(true);
   }, []);
+
+  const handleGeneratePaymentLink = useCallback((id: string) => {
+    generatePaymentLinkMutation.mutate(id);
+  }, [generatePaymentLinkMutation]);
 
   const handleDialogSubmit = (payload: { payment_reference?: string; paid_at?: string }) => {
     if (!selectedInvoiceId) return;
@@ -324,6 +329,8 @@ export default function CorporateInvoicesPage() {
         onPageChange={setPage}
         onMarkPaid={handleMarkPaid}
         isMarkingPaid={markPaidMutation.isPending}
+        onGeneratePaymentLink={handleGeneratePaymentLink}
+        isGeneratingPaymentLink={generatePaymentLinkMutation.isPending}
       />
 
       <MarkPaidDialog

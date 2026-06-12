@@ -99,10 +99,17 @@ export function PermissionMatrix({
           <Card key={category.key} className="overflow-hidden border-border/70 shadow-sm">
             <CardContent className="p-0">
               {/* Header */}
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => toggleCategory(category.key)}
-                className="flex w-full items-center gap-2.5 border-b border-border/70 bg-gradient-to-b from-muted/40 to-muted/10 px-4 py-3 text-left transition-colors hover:bg-muted/40"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleCategory(category.key);
+                  }
+                }}
+                className="flex w-full items-center gap-2.5 border-b border-border/70 bg-gradient-to-b from-muted/40 to-muted/10 px-4 py-3 text-left transition-colors hover:bg-muted/40 cursor-pointer"
               >
                 <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground">
                   {isOpen ? (
@@ -144,7 +151,7 @@ export function PermissionMatrix({
                     {allSelected ? 'Deselect All' : 'Select All'}
                   </Button>
                 )}
-              </button>
+              </div>
 
               {/* Body */}
               {isOpen && (

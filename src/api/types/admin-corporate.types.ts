@@ -106,6 +106,8 @@ export interface AdminCorporateCompany {
     area_landmark: string;
     state_country: string;
   };
+  service_charge_enabled: boolean;
+  service_charge_percentage: number;
   active_orders_count: number;
   total_orders_count: number;
   created_at: string;
@@ -151,4 +153,11 @@ export interface UpdateCorporateOrderStatusPayload {
 export interface MarkInvoicePaidPayload {
   payment_reference?: string;
   paid_at?: string;
+}
+
+export interface GeneratePaymentLinkResponse {
+  paymentLinkId: string;
+  paymentLinkUrl: string;
+  expiresAt: string;
+  whatsappSent: boolean;
 }

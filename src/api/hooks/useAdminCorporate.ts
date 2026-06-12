@@ -14,6 +14,7 @@ import {
   type UpdateCorporateOrderStatusPayload,
   type MarkInvoicePaidPayload,
 } from "@/api/admin-corporate.api";
+import { GeneratePaymentLinkResponse } from "@/api/types/admin-corporate.types";
 import { adminCorporateKeys } from "@/api/query-keys";
 import type { ICorporateOrder, ICorporateInvoice } from "@/api/types/corporate.types";
 
@@ -71,7 +72,7 @@ export function useCancelCorporateOrder() {
       queryClient.invalidateQueries({ queryKey: adminCorporateKeys.detail(variables.id) });
       toast.success("Corporate order cancelled successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to cancel corporate order");
     },
   });
@@ -88,7 +89,7 @@ export function useUpdateCorporateOrderStatus() {
       queryClient.invalidateQueries({ queryKey: adminCorporateKeys.detail(variables.id) });
       toast.success("Order status updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update order status");
     },
   });
@@ -122,8 +123,25 @@ export function useMarkInvoicePaid() {
       queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoices(variables.id) });
       toast.success("Invoice marked as paid");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to mark invoice as paid");
+    },
+  });
+}
+
+export function useGeneratePaymentLink() {
+  const queryClient = useQueryClient();
+
+  return useMutation<GeneratePaymentLinkResponse, { message?: string }, string>({
+    mutationFn: (id: string) => adminCorporateApi.generatePaymentLink(id),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoiceLists() });
+      queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoiceList() });
+      queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoiceDetail(id) });
+      toast.success("Payment link generated and sent via WhatsApp");
+    },
+    onError: (error: { message?: string }) => {
+      toast.error(error?.message || "Failed to generate payment link");
     },
   });
 }
@@ -181,5 +199,28 @@ export function useAdminCorporateCompanyInvoices(
     queryFn: () => adminCorporateApi.getCompanyInvoices(id!, params),
     enabled: !!id,
     staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useUpdateCompanyServiceCharge() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { service_charge_enabled?: boolean; service_charge_percentage?: number };
+    }) => adminCorporateApi.updateCompanyServiceCharge(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: adminCorporateKeys.companyDetail(variables.id),
+      });
+      toast.success("Company service charge settings updated");
+    },
+    onError: (error: { message?: string }) => {
+      toast.error(error?.message || "Failed to update service charge settings");
+    },
   });
 }

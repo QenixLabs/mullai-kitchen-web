@@ -102,6 +102,30 @@ export interface ICorporateMetrics {
 }
 
 /**
+ * Ingredient usage item for dashboard
+ */
+export interface IIngredientUsageItem {
+  ingredientId: string;
+  name: string;
+  category: string;
+  quantityUsed: number;
+  unit: string;
+  unitCost: number;
+  totalCost: number;
+}
+
+/**
+ * Expense metrics for dashboard
+ */
+export interface IExpenseMetrics {
+  totalExpense: number;
+  totalStockUsed: number;
+  remainingInventoryValue: number;
+  currency?: string;
+  trend?: IKPITrend;
+}
+
+/**
  * Dashboard response from API
  */
 export interface IDashboardResponse {
@@ -113,6 +137,8 @@ export interface IDashboardResponse {
   kitchen?: IKitchenMetrics;
   routes?: IRouteMetrics;
   corporate?: ICorporateMetrics;
+  expenses?: IExpenseMetrics;
+  ingredientUsage?: IIngredientUsageItem[];
   alerts?: IDashboardAlert[];
   lastUpdated?: string;
 }
@@ -167,4 +193,35 @@ export interface IFinancialReportResponse {
   outstanding: number;
   payment_methods: IPaymentMethodDistribution[];
   daily_breakdown: IDailyFinancialBreakdown[];
+}
+
+// Revenue Analytics Types
+
+export interface IRevenueAnalyticsQuery {
+  start_date: string;
+  end_date: string;
+  outlet_id?: string;
+  granularity?: ReportGranularity;
+}
+
+export interface IDailyRevenueBreakdown {
+  date: string;
+  individual_revenue: number;
+  addon_revenue: number;
+  corporate_revenue: number;
+  total_revenue: number;
+  procurement_expense: number;
+  ingredient_expense: number;
+  profit_or_loss: number;
+}
+
+export interface IRevenueAnalyticsResponse {
+  individual_revenue: number;
+  addon_revenue: number;
+  corporate_revenue: number;
+  total_revenue: number;
+  total_procurement_expense: number;
+  total_ingredient_expense: number;
+  profit_or_loss: number;
+  daily_breakdown: IDailyRevenueBreakdown[];
 }

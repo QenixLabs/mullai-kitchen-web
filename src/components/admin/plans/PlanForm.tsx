@@ -88,7 +88,7 @@ export function PlanForm({ plan }: PlanFormProps) {
       );
     } else {
       createPlan.mutate(
-        data as any,
+        data,
         { onSuccess: () => router.push('/admin/plans') },
       );
     }

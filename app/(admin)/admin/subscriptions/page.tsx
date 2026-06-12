@@ -11,10 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useAdminSubscriptions } from '@/api/hooks/useAdminSubscriptions';
 import { SubscriptionTable } from '@/components/admin/subscriptions/SubscriptionTable';
 import { SubscriptionStatus } from '@/api/types/admin-subscription.types';
+import { cn } from '@/lib/utils';
 
 export default function SubscriptionsPage() {
   const [search, setSearch] = useState('');
@@ -62,27 +63,28 @@ export default function SubscriptionsPage() {
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          icon={<Users className="h-4 w-4 text-primary" />}
+          icon={Users}
           label="Total Subscriptions"
           value={isLoading ? '-' : stats.total.toString()}
+          color="bg-primary/10 text-primary"
         />
         <StatCard
-          icon={<Play className="h-4 w-4 text-success" />}
+          icon={Play}
           label="Active"
           value={isLoading ? '-' : stats.active.toString()}
-          color="text-success"
+          color="bg-success/10 text-success"
         />
         <StatCard
-          icon={<Pause className="h-4 w-4 text-warning" />}
+          icon={Pause}
           label="Paused"
           value={isLoading ? '-' : stats.paused.toString()}
-          color="text-warning"
+          color="bg-warning/10 text-warning"
         />
         <StatCard
-          icon={<CalendarX className="h-4 w-4 text-muted-foreground" />}
+          icon={CalendarX}
           label="Expired / Cancelled"
           value={isLoading ? '-' : stats.inactive.toString()}
-          color="text-muted-foreground"
+          color="bg-muted text-muted-foreground"
         />
       </div>
 
@@ -129,7 +131,7 @@ export default function SubscriptionsPage() {
               setPage(1);
             }}
           >
-            <X className="mr-1 h-3.5 w-3.5" />
+            <X data-icon="inline-start" className="h-3.5 w-3.5" />
             Clear
           </Button>
         )}
@@ -148,27 +150,30 @@ export default function SubscriptionsPage() {
 }
 
 function StatCard({
-  icon,
+  icon: Icon,
   label,
   value,
   color,
 }: {
-  icon: React.ReactNode;
+  icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string;
-  color?: string;
+  color: string;
 }) {
   return (
-    <Card className="border-border/60 shadow-sm hover:shadow-primary transition-shadow">
-      <CardContent className="flex items-center gap-4 p-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-          {icon}
+    <Card className="border-border/60 shadow-sm hover:shadow-md transition-shadow">
+      <CardContent className="flex items-center gap-4 p-5">
+        <div className={cn(
+          'flex size-11 items-center justify-center rounded-xl shrink-0',
+          color,
+        )}>
+          <Icon className="size-5" />
         </div>
-        <div>
-          <p className={`text-2xl font-bold leading-none ${color || 'text-foreground'}`}>
+        <div className="min-w-0">
+          <p className="text-2xl font-bold leading-none text-foreground">
             {value}
           </p>
-          <p className="text-xs text-muted-foreground mt-1">{label}</p>
+          <p className="text-xs text-muted-foreground mt-1.5">{label}</p>
         </div>
       </CardContent>
     </Card>

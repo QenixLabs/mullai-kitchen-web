@@ -32,7 +32,7 @@ export function useUpdateRolePermissions() {
       queryClient.invalidateQueries({ queryKey: permissionKeys.auditLogs() });
       toast.success("Role permissions updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update role permissions");
     },
   });
@@ -48,7 +48,7 @@ export function useResetRolePermissions() {
       queryClient.invalidateQueries({ queryKey: permissionKeys.auditLogs() });
       toast.success("Role permissions reset to defaults");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to reset role permissions");
     },
   });
@@ -92,7 +92,7 @@ export function useUpdateUserPermissions() {
       queryClient.invalidateQueries({ queryKey: permissionKeys.auditLogs() });
       toast.success("User permissions updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update user permissions");
     },
   });

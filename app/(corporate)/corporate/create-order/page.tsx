@@ -349,6 +349,9 @@ export default function CreateOrderPage() {
     nonveg_amount: 0,
     delivery_total: 0,
     subtotal: 0,
+    service_charge_enabled: false,
+    service_charge_percentage: 0,
+    service_charge_amount: 0,
     tax: 0,
     grand_total: 0,
   }, [pricingResponse]);

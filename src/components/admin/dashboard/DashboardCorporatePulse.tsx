@@ -50,7 +50,7 @@ export function DashboardCorporatePulse({ data, isLoading }: DashboardCorporateP
             <p className="text-2xl font-bold text-foreground tabular-nums">{(data?.activeOrders ?? 0).toLocaleString('en-IN')}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Today's Meals</p>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Today&rsquo;s Meals</p>
             <p className="text-2xl font-bold text-foreground tabular-nums">{(data?.todayMeals ?? 0).toLocaleString('en-IN')}</p>
           </div>
           <div className="space-y-1">

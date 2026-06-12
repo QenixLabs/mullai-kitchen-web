@@ -92,8 +92,9 @@ export function OutletCreationWizard() {
         toast.success(`Outlet "${outlet.name}" created successfully`);
       }
       router.push('/admin/outlets');
-    } catch (error: any) {
-      toast.error(error?.message || 'Failed to create outlet');
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      toast.error(err?.message || 'Failed to create outlet');
     } finally {
       setIsSubmitting(false);
     }

@@ -19,6 +19,7 @@ import type {
   CancelCorporateOrderPayload,
   UpdateCorporateOrderStatusPayload,
   MarkInvoicePaidPayload,
+  GeneratePaymentLinkResponse,
 } from '@/api/types/admin-corporate.types';
 import type {
   ICorporateOrder,
@@ -34,6 +35,7 @@ export type {
   CancelCorporateOrderPayload,
   UpdateCorporateOrderStatusPayload,
   MarkInvoicePaidPayload,
+  GeneratePaymentLinkResponse,
 };
 
 const BASE = '/admin/corporate';
@@ -89,6 +91,11 @@ export const adminCorporateApi = {
     return response.data;
   },
 
+  generatePaymentLink: async (id: string): Promise<GeneratePaymentLinkResponse> => {
+    const response = await apiClient.post<GeneratePaymentLinkResponse>(`${BASE}/invoices/${id}/generate-payment-link`);
+    return response.data;
+  },
+
   listDailyOrders: async (params?: AdminCorporateDailyOrderListParams): Promise<AdminCorporateDailyOrderListResponse> => {
     const response = await apiClient.get<AdminCorporateDailyOrderListResponse>(`${BASE}/daily-orders`, { params });
     return response.data;
@@ -116,6 +123,11 @@ export const adminCorporateApi = {
 
   getCompanyInvoices: async (id: string, params?: PaginationParams): Promise<AdminCorporateCompanyInvoicesResponse> => {
     const response = await apiClient.get<AdminCorporateCompanyInvoicesResponse>(`${BASE}/companies/${id}/invoices`, { params });
+    return response.data;
+  },
+
+  updateCompanyServiceCharge: async (id: string, data: { service_charge_enabled?: boolean; service_charge_percentage?: number }): Promise<AdminCorporateCompany> => {
+    const response = await apiClient.put<AdminCorporateCompany>(`${BASE}/companies/${id}/service-charge`, data);
     return response.data;
   },
 };
