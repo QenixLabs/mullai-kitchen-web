@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
-import { Loader2, Plus, Trash2, ChefHat, ListChecks, Clock, Flame, ArrowUpRight, ChevronsUpDown } from 'lucide-react';
+import { Loader2, Plus, Trash2, ChefHat, ListChecks, Clock, Flame, ArrowUpRight, ChevronsUpDown, Leaf, Beef } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -53,6 +53,7 @@ const recipeSchema = z.object({
   protein: z.string().optional(),
   carbs: z.string().optional(),
   image_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+  is_veg: z.boolean().optional(),
   outlet_restriction: z.string().nullable().optional(),
 });
 
@@ -207,6 +208,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
       protein: initialData?.nutrition?.protein || '',
       carbs: initialData?.nutrition?.carbs || '',
       image_url: initialData?.image_url || '',
+      is_veg: initialData?.is_veg,
       outlet_restriction: initialData?.outlet_restriction || null,
     },
   });
@@ -261,6 +263,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
           carbs: data.carbs || undefined,
         },
         image_url: data.image_url || undefined,
+        is_veg: data.is_veg,
         outlet_restriction: data.outlet_restriction || null,
       };
       await onSubmit(payload);
@@ -322,7 +325,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
               className="rounded-xl border-border/60 bg-white px-4 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/30"
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div className="space-y-2">
               <Label htmlFor="difficulty" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Difficulty</Label>
               <Select
@@ -361,6 +364,37 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
                   </SelectContent>
                 </Select>
               </Can>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Food Type</Label>
+              <div className="flex gap-2 h-11">
+                <button
+                  type="button"
+                  onClick={() => setValue('is_veg', true)}
+                  className={cn(
+                    'flex-1 flex items-center justify-center gap-1.5 rounded-xl border text-sm font-medium transition-all',
+                    watch('is_veg') === true
+                      ? 'border-green-500 bg-green-50 text-green-700 shadow-sm'
+                      : 'border-border/60 bg-white text-muted-foreground hover:border-green-300',
+                  )}
+                >
+                  <Leaf className="h-4 w-4" />
+                  Veg
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setValue('is_veg', false)}
+                  className={cn(
+                    'flex-1 flex items-center justify-center gap-1.5 rounded-xl border text-sm font-medium transition-all',
+                    watch('is_veg') === false
+                      ? 'border-red-500 bg-red-50 text-red-700 shadow-sm'
+                      : 'border-border/60 bg-white text-muted-foreground hover:border-red-300',
+                  )}
+                >
+                  <Beef className="h-4 w-4" />
+                  Non-Veg
+                </button>
+              </div>
             </div>
           </div>
           <div className="space-y-2">

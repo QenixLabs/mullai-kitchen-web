@@ -136,6 +136,8 @@ export const ADMIN_ROUTES = {
   REPORTS_OPERATIONS: '/admin/reports/operations',
   REPORTS_FINANCIAL: '/admin/reports/financial',
   REPORTS_REVENUE_ANALYTICS: '/admin/reports/revenue-analytics',
+  KITCHEN_REPORT: (outletId: string) => `/admin/outlets/${outletId}/kitchen-report`,
+  KITCHEN_REPORT_PDF: (outletId: string) => `/admin/outlets/${outletId}/kitchen-report/pdf`,
 } as const;
 
 export const ADMIN_COUPON_ROUTES = {

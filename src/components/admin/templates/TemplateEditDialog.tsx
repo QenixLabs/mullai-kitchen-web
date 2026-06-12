@@ -144,11 +144,10 @@ function TemplateEditForm({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="overflow-hidden border-border/70 p-0 sm:max-w-lg"
-        showCloseButton={false}
-      >
+    <DialogContent
+      className="overflow-hidden border-border/70 p-0 sm:max-w-lg"
+      showCloseButton={false}
+    >
         {/* Header band */}
         <div className={cn('relative bg-gradient-to-br px-6 pb-5 pt-6', meta.accent)}>
           <button
@@ -335,7 +334,6 @@ function TemplateEditForm({
           </div>
         </DialogFooter>
       </DialogContent>
-    </Dialog>
   );
 }
 

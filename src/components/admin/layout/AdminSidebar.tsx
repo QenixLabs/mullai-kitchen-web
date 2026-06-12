@@ -26,6 +26,7 @@ import {
   Package,
   ArrowLeftRight,
   Truck,
+  Printer,
 } from "lucide-react";
 
 import { useAuthHydrated, useIsAuthenticated } from "@/hooks/useUserStore";
@@ -131,6 +132,13 @@ const ADMIN_NAV_GROUPS: NavGroup[] = [
         icon: ClipboardList,
         label: "Orders",
         permission: "order:view:outlet",
+        requireAll: true,
+      },
+      {
+        href: "/admin/kitchen-report",
+        icon: Printer,
+        label: "Kitchen Report",
+        permission: "order:kitchen",
         requireAll: true,
       },
     ],

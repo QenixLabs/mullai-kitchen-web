@@ -16,7 +16,7 @@ export default function AdminDashboard() {
   const user = useCurrentUser();
   const _isSuperAdmin =
     user?.role === UserRole.SuperAdmin || user?.role === UserRole.Admin;
-  const _canViewInventory = useHasPermission('inventory:view');
+  const canViewInventory = useHasPermission('inventory:view');
   const canViewFinancial = useHasPermission('report:financial');
 
   const {
