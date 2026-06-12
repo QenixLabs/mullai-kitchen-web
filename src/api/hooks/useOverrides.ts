@@ -39,7 +39,7 @@ export function useCreateOverride(outletId: string) {
       queryClient.invalidateQueries({ queryKey: overrideKeys.all(outletId) });
       toast.success("Override created successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to create override");
     },
   });
@@ -54,7 +54,7 @@ export function useUpdateOverride(outletId: string) {
       queryClient.invalidateQueries({ queryKey: overrideKeys.all(outletId) });
       toast.success("Override updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update override");
     },
   });
@@ -68,7 +68,7 @@ export function useDeleteOverride(outletId: string) {
       queryClient.invalidateQueries({ queryKey: overrideKeys.all(outletId) });
       toast.success("Override deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to delete override");
     },
   });

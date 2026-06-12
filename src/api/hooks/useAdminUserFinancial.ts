@@ -45,7 +45,7 @@ export function useMarkInvoicePaid(userId: string) {
       queryClient.invalidateQueries({ queryKey: adminUserFinancialKeys.subscriptions(userId) });
       toast.success("Invoice marked as paid successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to mark invoice as paid");
     },
   });
@@ -62,7 +62,7 @@ export function useMarkCorporateOrderPaid(userId: string) {
       queryClient.invalidateQueries({ queryKey: adminUserFinancialKeys.invoices(userId) });
       toast.success("Order payment marked as paid successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to mark order payment as paid");
     },
   });

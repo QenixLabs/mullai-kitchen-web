@@ -14,7 +14,7 @@ export interface IPermissionAuditLog {
   description: string;
   timestamp: string;
   ip_address?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   created_at?: string;
 }
 

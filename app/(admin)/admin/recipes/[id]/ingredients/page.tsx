@@ -73,7 +73,7 @@ export default function RecipeIngredientsPage() {
   const ingredients = ingredientsData?.data ?? [];
 
   const form = useForm<BOMFormValues>({
-    resolver: zodResolver(bomSchema) as any,
+    resolver: zodResolver(bomSchema),
     defaultValues: {
       items: [
         {

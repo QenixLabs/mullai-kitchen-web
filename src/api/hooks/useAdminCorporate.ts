@@ -72,7 +72,7 @@ export function useCancelCorporateOrder() {
       queryClient.invalidateQueries({ queryKey: adminCorporateKeys.detail(variables.id) });
       toast.success("Corporate order cancelled successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to cancel corporate order");
     },
   });
@@ -89,7 +89,7 @@ export function useUpdateCorporateOrderStatus() {
       queryClient.invalidateQueries({ queryKey: adminCorporateKeys.detail(variables.id) });
       toast.success("Order status updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update order status");
     },
   });
@@ -123,7 +123,7 @@ export function useMarkInvoicePaid() {
       queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoices(variables.id) });
       toast.success("Invoice marked as paid");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to mark invoice as paid");
     },
   });
@@ -132,7 +132,7 @@ export function useMarkInvoicePaid() {
 export function useGeneratePaymentLink() {
   const queryClient = useQueryClient();
 
-  return useMutation<GeneratePaymentLinkResponse, any, string>({
+  return useMutation<GeneratePaymentLinkResponse, { message?: string }, string>({
     mutationFn: (id: string) => adminCorporateApi.generatePaymentLink(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoiceLists() });
@@ -140,7 +140,7 @@ export function useGeneratePaymentLink() {
       queryClient.invalidateQueries({ queryKey: adminCorporateKeys.invoiceDetail(id) });
       toast.success("Payment link generated and sent via WhatsApp");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to generate payment link");
     },
   });
@@ -219,7 +219,7 @@ export function useUpdateCompanyServiceCharge() {
       });
       toast.success("Company service charge settings updated");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update service charge settings");
     },
   });

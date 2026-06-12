@@ -15,7 +15,7 @@ import { DashboardIngredientUsage } from '@/components/admin/dashboard/Dashboard
 
 export default function AdminDashboard() {
   const user = useCurrentUser();
-  const isSuperAdmin =
+  const _isSuperAdmin =
     user?.role === UserRole.SuperAdmin || user?.role === UserRole.Admin;
   const canViewInventory = useHasPermission('inventory:view');
 

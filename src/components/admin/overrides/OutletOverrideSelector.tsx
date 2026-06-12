@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Building2 } from 'lucide-react';
 import {
   Select,
@@ -22,34 +22,34 @@ export function OutletOverrideSelector({ onOutletChange }: OutletOverrideSelecto
   const user = useCurrentUser();
   const [selectedOutletId, setSelectedOutletId] = useState<string>('');
   const { data: outletsData, isLoading } = useOutlets({ status: 'active' });
+  const notifiedIdRef = useRef<string>('');
 
   const isSuperAdmin = user?.role === UserRole.SuperAdmin;
 
-  useEffect(() => {
-    if (!isSuperAdmin && user?.assigned_outlet_id) {
-      setSelectedOutletId(user.assigned_outlet_id);
-      onOutletChange(user.assigned_outlet_id);
-    }
-  }, [isSuperAdmin, user?.assigned_outlet_id, onOutletChange]);
+  const effectiveOutletId = useMemo(() => {
+    if (!isSuperAdmin) return user?.assigned_outlet_id || '';
+    if (selectedOutletId) return selectedOutletId;
+    if (outletsData?.data?.length) return outletsData.data[0]._id;
+    return '';
+  }, [isSuperAdmin, user?.assigned_outlet_id, selectedOutletId, outletsData?.data]);
 
   useEffect(() => {
-    if (isSuperAdmin && !selectedOutletId && outletsData?.data?.length) {
-      const firstId = outletsData.data[0]._id;
-      setSelectedOutletId(firstId);
-      onOutletChange(firstId);
+    if (effectiveOutletId && effectiveOutletId !== notifiedIdRef.current) {
+      notifiedIdRef.current = effectiveOutletId;
+      onOutletChange(effectiveOutletId);
     }
-  }, [isSuperAdmin, selectedOutletId, outletsData?.data, onOutletChange]);
+  }, [effectiveOutletId, onOutletChange]);
 
-  const handleOutletChange = (value: string) => {
+  const handleOutletChange = useCallback((value: string) => {
     setSelectedOutletId(value);
     onOutletChange(value);
-  };
+  }, [onOutletChange]);
 
   if (!isSuperAdmin) {
-    if (!selectedOutletId) {
+    if (!effectiveOutletId) {
       return <Skeleton className="h-9 w-64" />;
     }
-    const outlet = outletsData?.data?.find((o) => o._id === selectedOutletId);
+    const outlet = outletsData?.data?.find((o) => o._id === effectiveOutletId);
     return (
       <div className="inline-flex h-9 items-center gap-2 rounded-lg border border-border/70 bg-background px-3 text-sm">
         <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary">
@@ -68,7 +68,7 @@ export function OutletOverrideSelector({ onOutletChange }: OutletOverrideSelecto
       {isLoading ? (
         <Skeleton className="h-9 w-64" />
       ) : (
-        <Select value={selectedOutletId} onValueChange={handleOutletChange}>
+        <Select value={effectiveOutletId} onValueChange={handleOutletChange}>
           <SelectTrigger className="h-9 w-[260px] gap-2">
             <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
             <SelectValue placeholder="Select an outlet" />

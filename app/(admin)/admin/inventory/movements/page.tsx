@@ -45,12 +45,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import {
   Dialog,
   DialogContent,
@@ -141,7 +136,7 @@ export default function MovementsPage() {
   const ingredients = ingredientsData?.data ?? [];
 
   const movementForm = useForm<MovementFormValues>({
-    resolver: zodResolver(movementSchema) as any,
+    resolver: zodResolver(movementSchema),
     defaultValues: {
       outlet_id: selectedOutletId ?? "",
       ingredient_id: "",
@@ -199,18 +194,6 @@ export default function MovementsPage() {
   };
 
   useEffect(() => {
-    if (!isSuperAdmin && user?.assigned_outlet_id) {
-      setSelectedOutletId(user.assigned_outlet_id);
-    }
-  }, [isSuperAdmin, user?.assigned_outlet_id]);
-
-  useEffect(() => {
-    if (canViewAnyOutlet && !selectedOutletId && outletsData?.data?.length) {
-      setSelectedOutletId(outletsData.data[0]._id);
-    }
-  }, [canViewAnyOutlet, selectedOutletId, outletsData?.data]);
-
-  useEffect(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => setDebouncedSearch(search), 300);
     return () => {
@@ -218,9 +201,16 @@ export default function MovementsPage() {
     };
   }, [search]);
 
+  const effectiveOutletId = useMemo(() => {
+    if (!isSuperAdmin) return user?.assigned_outlet_id || null;
+    if (selectedOutletId) return selectedOutletId;
+    if (outletsData?.data?.length) return outletsData.data[0]._id;
+    return null;
+  }, [isSuperAdmin, user?.assigned_outlet_id, selectedOutletId, outletsData?.data]);
+
   const params = useMemo(
     () => ({
-      outlet_id: selectedOutletId ?? undefined,
+      outlet_id: effectiveOutletId ?? undefined,
       search: debouncedSearch || undefined,
       type: typeFilter === "all" ? undefined : typeFilter,
       from_date: fromDate ? fromDate.toISOString().split("T")[0] : undefined,
@@ -228,7 +218,7 @@ export default function MovementsPage() {
       page,
       limit: LIMIT,
     }),
-    [selectedOutletId, debouncedSearch, typeFilter, fromDate, toDate, page],
+    [effectiveOutletId, debouncedSearch, typeFilter, fromDate, toDate, page],
   );
 
   const { data, isLoading } = useStockMovements(params);
@@ -246,8 +236,8 @@ export default function MovementsPage() {
   }, [data]);
 
   const selectedOutlet = useMemo(
-    () => outletsData?.data?.find((o) => o._id === selectedOutletId),
-    [outletsData?.data, selectedOutletId],
+    () => outletsData?.data?.find((o) => o._id === effectiveOutletId),
+    [outletsData?.data, effectiveOutletId],
   );
 
   return (

@@ -14,9 +14,9 @@ import { DashboardExpenseRevenue } from '@/components/admin/dashboard/DashboardE
 
 export default function AdminDashboard() {
   const user = useCurrentUser();
-  const isSuperAdmin =
+  const _isSuperAdmin =
     user?.role === UserRole.SuperAdmin || user?.role === UserRole.Admin;
-  const canViewInventory = useHasPermission('inventory:view');
+  const _canViewInventory = useHasPermission('inventory:view');
   const canViewFinancial = useHasPermission('report:financial');
 
   const {

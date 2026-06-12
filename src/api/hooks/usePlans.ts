@@ -37,7 +37,7 @@ export function useCreatePlan() {
       queryClient.invalidateQueries({ queryKey: planKeys.lists() });
       toast.success("Plan created successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to create plan");
     },
   });
@@ -54,7 +54,7 @@ export function useUpdatePlan() {
       queryClient.invalidateQueries({ queryKey: planKeys.detail(variables.id) });
       toast.success("Plan updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update plan");
     },
   });
@@ -69,7 +69,7 @@ export function useDeletePlan() {
       queryClient.invalidateQueries({ queryKey: planKeys.lists() });
       toast.success("Plan deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to delete plan");
     },
   });
@@ -86,7 +86,7 @@ export function useUpdatePlanStatus() {
       queryClient.invalidateQueries({ queryKey: planKeys.detail(variables.id) });
       toast.success("Plan status updated");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update plan status");
     },
   });

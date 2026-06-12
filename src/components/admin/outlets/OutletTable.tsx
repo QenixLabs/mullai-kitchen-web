@@ -458,7 +458,7 @@ export function OutletTable({
               Delete Outlet
             </AlertDialogTitle>
             <AlertDialogDescription>
-              You're about to delete{' '}
+              You&rsquo;re about to delete{' '}
               <span className="font-semibold text-foreground">{deleteTarget?.name}</span>. This
               action cannot be undone.
             </AlertDialogDescription>

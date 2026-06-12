@@ -41,7 +41,7 @@ export function useCreateAddOn() {
       queryClient.invalidateQueries({ queryKey: adminAddOnKeys.lists() });
       toast.success("Add-on created successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to create add-on");
     },
   });
@@ -58,7 +58,7 @@ export function useUpdateAddOn() {
       queryClient.invalidateQueries({ queryKey: adminAddOnKeys.detail(variables.id) });
       toast.success("Add-on updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update add-on");
     },
   });
@@ -73,7 +73,7 @@ export function useDeleteAddOn() {
       queryClient.invalidateQueries({ queryKey: adminAddOnKeys.lists() });
       toast.success("Add-on deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to delete add-on");
     },
   });

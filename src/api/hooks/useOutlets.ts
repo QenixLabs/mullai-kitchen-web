@@ -31,7 +31,7 @@ export function useCreateOutlet() {
       queryClient.invalidateQueries({ queryKey: outletKeys.lists() });
       toast.success("Outlet created successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to create outlet");
     },
   });
@@ -48,7 +48,7 @@ export function useUpdateOutlet() {
       queryClient.invalidateQueries({ queryKey: outletKeys.detail(variables.id) });
       toast.success("Outlet updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update outlet");
     },
   });
@@ -63,7 +63,7 @@ export function useDeleteOutlet() {
       queryClient.invalidateQueries({ queryKey: outletKeys.lists() });
       toast.success("Outlet deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to delete outlet");
     },
   });

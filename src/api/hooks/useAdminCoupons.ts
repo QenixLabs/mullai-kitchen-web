@@ -37,7 +37,7 @@ export function useCreateCoupon() {
       queryClient.invalidateQueries({ queryKey: adminCouponKeys.lists() });
       toast.success('Coupon created successfully');
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || 'Failed to create coupon');
     },
   });
@@ -54,7 +54,7 @@ export function useUpdateCoupon() {
       queryClient.invalidateQueries({ queryKey: adminCouponKeys.detail(variables.id) });
       toast.success('Coupon updated successfully');
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || 'Failed to update coupon');
     },
   });
@@ -71,7 +71,7 @@ export function useUpdateCouponStatus() {
       queryClient.invalidateQueries({ queryKey: adminCouponKeys.detail(variables.id) });
       toast.success('Coupon status updated');
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || 'Failed to update coupon status');
     },
   });

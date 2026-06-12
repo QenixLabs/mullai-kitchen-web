@@ -221,6 +221,18 @@ const SERIES_CONFIG = [
   { key: 'ingredient', label: 'Ingredient', color: BRAND_COLORS.rose },
 ] as const;
 
+function ChangeBadge({ change }: { change: { pct: number; direction: 'up' | 'down' | 'flat' } }) {
+  if (change.direction === 'flat') return <span className="text-[10px] text-muted-foreground">—</span>;
+  const Icon = change.direction === 'up' ? TrendingUp : TrendingDown;
+  const color = change.direction === 'up' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50';
+  return (
+    <span className={cn('inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold', color)}>
+      <Icon className="h-3 w-3" />
+      {change.pct.toFixed(0)}%
+    </span>
+  );
+}
+
 export function DashboardExpenseRevenue() {
   const [period, setPeriod] = useState<PeriodType>('daily');
   const [chartType, setChartType] = useState<ChartType>('bar');
@@ -279,18 +291,6 @@ export function DashboardExpenseRevenue() {
     (prevData?.total_procurement_expense ?? 0) + (prevData?.total_ingredient_expense ?? 0),
   );
   const profitChange = getChange(data?.profit_or_loss ?? 0, prevData?.profit_or_loss ?? 0);
-
-  const ChangeBadge = ({ change }: { change: { pct: number; direction: 'up' | 'down' | 'flat' } }) => {
-    if (change.direction === 'flat') return <span className="text-[10px] text-muted-foreground">—</span>;
-    const Icon = change.direction === 'up' ? TrendingUp : TrendingDown;
-    const color = change.direction === 'up' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50';
-    return (
-      <span className={cn('inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold', color)}>
-        <Icon className="h-3 w-3" />
-        {change.pct.toFixed(0)}%
-      </span>
-    );
-  };
 
   // Extract sparkline data from daily breakdown
   const getSparkline = (key: keyof IDailyRevenueBreakdown): number[] =>

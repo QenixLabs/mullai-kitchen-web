@@ -214,7 +214,7 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
           {subscription.status === SubscriptionStatus.PAUSED && (
             <Button
               variant="outline"
-              onClick={() => resumeSubscription.mutate({ id } as any)}
+              onClick={() => resumeSubscription.mutate({ id, data: {} })}
               disabled={resumeSubscription.isPending}
             >
               <RotateCcw className="mr-2 h-4 w-4" />

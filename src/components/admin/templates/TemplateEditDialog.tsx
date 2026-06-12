@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Loader2,
   Leaf,
@@ -80,10 +80,35 @@ const MEAL_META: Record<MealType, {
 export function TemplateEditDialog({
   open, onOpenChange, outletId, dayOfWeek, mealType, effectiveFrom, existing,
 }: TemplateEditDialogProps) {
-  const [vegRecipeId, setVegRecipeId] = useState<string>('');
-  const [nonvegRecipeId, setNonvegRecipeId] = useState<string>('');
-  const [effectiveUntil, setEffectiveUntil] = useState('');
-  const [isPublished, setIsPublished] = useState(false);
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <TemplateEditForm
+        key={String(open)}
+        onOpenChange={onOpenChange}
+        outletId={outletId}
+        dayOfWeek={dayOfWeek}
+        mealType={mealType}
+        effectiveFrom={effectiveFrom}
+        existing={existing}
+      />
+    </Dialog>
+  );
+}
+
+function TemplateEditForm({
+  onOpenChange, outletId, dayOfWeek, mealType, effectiveFrom, existing,
+}: {
+  onOpenChange: (open: boolean) => void;
+  outletId: string;
+  dayOfWeek: WeekDay;
+  mealType: MealType;
+  effectiveFrom: string;
+  existing?: WeeklyMealTemplate;
+}) {
+  const [vegRecipeId, setVegRecipeId] = useState<string>(existing?.veg_recipe_id || '');
+  const [nonvegRecipeId, setNonvegRecipeId] = useState<string>(existing?.nonveg_recipe_id || '');
+  const [effectiveUntil, setEffectiveUntil] = useState(existing?.effective_until ? existing.effective_until.split('T')[0] : '');
+  const [isPublished, setIsPublished] = useState(existing?.is_published || false);
 
   const createTemplate = useCreateTemplate(outletId);
   const updateTemplate = useUpdateTemplate(outletId);
@@ -96,15 +121,6 @@ export function TemplateEditDialog({
 
   const recipeOptions = recipes || [];
   const hasAnyRecipe = (vegRecipeId && vegRecipeId !== 'none') || (nonvegRecipeId && nonvegRecipeId !== 'none');
-
-  useEffect(() => {
-    if (open) {
-      setVegRecipeId(existing?.veg_recipe_id || '');
-      setNonvegRecipeId(existing?.nonveg_recipe_id || '');
-      setEffectiveUntil(existing?.effective_until ? existing.effective_until.split('T')[0] : '');
-      setIsPublished(existing?.is_published || false);
-    }
-  }, [open, existing]);
 
   const handleSubmit = async () => {
     const payload = {

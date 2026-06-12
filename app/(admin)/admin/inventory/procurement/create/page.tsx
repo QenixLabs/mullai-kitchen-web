@@ -71,7 +71,7 @@ export default function CreatePurchaseOrderPage() {
     : '';
 
   const form = useForm<POFormValues>({
-    resolver: zodResolver(poSchema) as any,
+    resolver: zodResolver(poSchema),
     defaultValues: {
       outlet_id: defaultOutletId,
       supplier_id: '',

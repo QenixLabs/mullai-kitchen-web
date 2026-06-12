@@ -31,7 +31,7 @@ export function useCreateRecipe() {
       queryClient.invalidateQueries({ queryKey: recipeKeys.select() });
       toast.success("Recipe created successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to create recipe");
     },
   });
@@ -48,7 +48,7 @@ export function useUpdateRecipe() {
       queryClient.invalidateQueries({ queryKey: recipeKeys.select() });
       toast.success("Recipe updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update recipe");
     },
   });
@@ -63,7 +63,7 @@ export function useDeleteRecipe() {
       queryClient.invalidateQueries({ queryKey: recipeKeys.select() });
       toast.success("Recipe deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to delete recipe");
     },
   });
@@ -80,7 +80,7 @@ export function useUpdateRecipeStatus() {
       queryClient.invalidateQueries({ queryKey: recipeKeys.select() });
       toast.success("Recipe status updated");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update recipe status");
     },
   });

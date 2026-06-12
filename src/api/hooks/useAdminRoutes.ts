@@ -29,7 +29,7 @@ export function useGenerateRoutes(outletId: string) {
       queryClient.invalidateQueries({ queryKey: adminOrderKeys.lists() });
       toast.success("Routes generated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to generate routes");
     },
   });
@@ -45,7 +45,7 @@ export function useAssignPartner(outletId: string) {
       queryClient.invalidateQueries({ queryKey: adminRouteKeys.all(outletId) });
       toast.success("Partner assigned successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to assign partner");
     },
   });
@@ -61,7 +61,7 @@ export function useStartRoute(outletId: string) {
       queryClient.invalidateQueries({ queryKey: adminOrderKeys.lists() });
       toast.success("Route started");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to start route");
     },
   });
@@ -77,7 +77,7 @@ export function useCompleteRoute(outletId: string) {
       queryClient.invalidateQueries({ queryKey: adminOrderKeys.lists() });
       toast.success("Route completed");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to complete route");
     },
   });
@@ -93,7 +93,7 @@ export function useDeleteRoute(outletId: string) {
       queryClient.invalidateQueries({ queryKey: adminOrderKeys.lists() });
       toast.success("Route deleted");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to delete route");
     },
   });

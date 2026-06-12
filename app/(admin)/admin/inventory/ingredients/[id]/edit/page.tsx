@@ -69,7 +69,7 @@ export default function EditIngredientPage() {
   const updateIngredient = useUpdateIngredient();
 
   const form = useForm<IngredientFormValues>({
-    resolver: zodResolver(ingredientSchema) as any,
+    resolver: zodResolver(ingredientSchema),
     values: ingredient
       ? {
           name: ingredient.name,

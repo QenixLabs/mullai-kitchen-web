@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
   ClipboardList,
@@ -68,27 +68,22 @@ export default function ProcurementPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    if (!isSuperAdmin && user?.assigned_outlet_id) {
-      setSelectedOutletId(user.assigned_outlet_id);
-    }
-  }, [isSuperAdmin, user?.assigned_outlet_id]);
-
-  useEffect(() => {
-    if (canViewAnyOutlet && !selectedOutletId && outletsData?.data?.length) {
-      setSelectedOutletId(outletsData.data[0]._id);
-    }
-  }, [canViewAnyOutlet, selectedOutletId, outletsData?.data]);
+  const effectiveOutletId = useMemo(() => {
+    if (!isSuperAdmin) return user?.assigned_outlet_id || null;
+    if (selectedOutletId) return selectedOutletId;
+    if (outletsData?.data?.length) return outletsData.data[0]._id;
+    return null;
+  }, [isSuperAdmin, user?.assigned_outlet_id, selectedOutletId, outletsData?.data]);
 
   const params = useMemo(
     () => ({
-      outlet_id: selectedOutletId ?? undefined,
+      outlet_id: effectiveOutletId ?? undefined,
       supplier_id: supplierId === 'all' ? undefined : supplierId,
       status: statusFilter === 'all' ? undefined : statusFilter,
       page,
       limit: LIMIT,
     }),
-    [selectedOutletId, supplierId, statusFilter, page],
+    [effectiveOutletId, supplierId, statusFilter, page],
   );
 
   const { data, isLoading } = usePurchaseOrders(params);
@@ -327,7 +322,7 @@ export default function ProcurementPage() {
                         <TableCell className="px-4 py-3">
                           <span className="text-sm font-medium text-foreground">
                             {po.supplier_id && typeof po.supplier_id === 'object'
-                              ? (po.supplier_id as any).name
+                              ? (po.supplier_id as { name: string }).name
                               : '—'}
                           </span>
                         </TableCell>

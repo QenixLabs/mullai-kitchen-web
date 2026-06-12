@@ -192,7 +192,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
     watch,
     formState: { errors },
   } = useForm<RecipeFormData>({
-    resolver: zodResolver(recipeSchema) as any,
+    resolver: zodResolver(recipeSchema),
     defaultValues: {
       name: initialData?.name || '',
       description: initialData?.description || '',
@@ -201,9 +201,9 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
       ingredients: initialData?.ingredients?.map((i) => ({ ...i, ingredient_id: i.ingredient_id || '' })) || [],
       prep_time: initialData?.cooking_details?.prep_time || '',
       cook_time: initialData?.cooking_details?.cook_time || '',
-      servings: initialData?.cooking_details?.servings || ('' as any),
+      servings: initialData?.cooking_details?.servings || ('' as unknown as number),
       instructions: initialData?.cooking_details?.instructions?.map((s) => ({ value: s })) || [],
-      calories: initialData?.nutrition?.calories || ('' as any),
+      calories: initialData?.nutrition?.calories || ('' as string | number),
       protein: initialData?.nutrition?.protein || '',
       carbs: initialData?.nutrition?.carbs || '',
       image_url: initialData?.image_url || '',

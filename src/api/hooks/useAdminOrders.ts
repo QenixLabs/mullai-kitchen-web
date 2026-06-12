@@ -32,7 +32,7 @@ export function useUpdateOrderStatus() {
       queryClient.invalidateQueries({ predicate: (query) => query.queryKey[0] === 'admin' && query.queryKey[1] === 'outlets' && query.queryKey[3] === 'routes' });
       toast.success("Order status updated");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update order status");
     },
   });
@@ -49,7 +49,7 @@ export function useBatchUpdateStatus() {
       queryClient.invalidateQueries({ predicate: (query) => query.queryKey[0] === 'admin' && query.queryKey[1] === 'outlets' && query.queryKey[3] === 'routes' });
       toast.success("Orders updated");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to batch update orders");
     },
   });

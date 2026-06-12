@@ -50,7 +50,7 @@ export function useCreateIngredient() {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.ingredientLists() });
       toast.success("Ingredient created successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to create ingredient");
     },
   });
@@ -67,7 +67,7 @@ export function useUpdateIngredient() {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.ingredientDetail(variables.id) });
       toast.success("Ingredient updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update ingredient");
     },
   });
@@ -82,7 +82,7 @@ export function useDeleteIngredient() {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.ingredientLists() });
       toast.success("Ingredient deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to delete ingredient");
     },
   });
@@ -116,7 +116,7 @@ export function useCreateSupplier() {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.supplierLists() });
       toast.success("Supplier created successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to create supplier");
     },
   });
@@ -133,7 +133,7 @@ export function useUpdateSupplier() {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.supplierDetail(variables.id) });
       toast.success("Supplier updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update supplier");
     },
   });
@@ -148,7 +148,7 @@ export function useDeleteSupplier() {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.supplierLists() });
       toast.success("Supplier deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to delete supplier");
     },
   });
@@ -185,7 +185,7 @@ export function useAdjustStock() {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.lowStock() });
       toast.success("Stock adjusted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to adjust stock");
     },
   });
@@ -212,7 +212,7 @@ export function useCreateStockMovement() {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.lowStock() });
       toast.success("Stock movement recorded successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to record stock movement");
     },
   });
@@ -246,7 +246,7 @@ export function useCreatePurchaseOrder() {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.purchaseOrderLists() });
       toast.success("Purchase order created successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to create purchase order");
     },
   });
@@ -263,7 +263,7 @@ export function useUpdatePOStatus() {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.purchaseOrderDetail(variables.id) });
       toast.success("Purchase order status updated");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update purchase order status");
     },
   });
@@ -282,7 +282,7 @@ export function useReceiveGoods() {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.movementLists() });
       toast.success("Goods received successfully");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to receive goods");
     },
   });
@@ -308,7 +308,7 @@ export function useUpdateRecipeIngredients() {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.recipeIngredients(variables.recipeId) });
       toast.success("Recipe ingredients updated");
     },
-    onError: (error: any) => {
+    onError: (error: { message?: string }) => {
       toast.error(error?.message || "Failed to update recipe ingredients");
     },
   });

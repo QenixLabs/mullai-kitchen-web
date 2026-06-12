@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { CheckCircle2, CalendarDays, Hash } from 'lucide-react';
 import {
   Dialog,
@@ -28,15 +28,24 @@ export function MarkPaidDialog({
   onSubmit,
   isSubmitting,
 }: MarkPaidDialogProps) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <MarkPaidForm key={String(open)} onSubmit={onSubmit} isSubmitting={isSubmitting} onOpenChange={onOpenChange} />
+    </Dialog>
+  );
+}
+
+function MarkPaidForm({
+  onSubmit,
+  isSubmitting,
+  onOpenChange,
+}: {
+  onSubmit: (data: { payment_reference?: string; paid_at?: string }) => void;
+  isSubmitting?: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const [paymentReference, setPaymentReference] = useState('');
   const [paidDate, setPaidDate] = useState<Date | undefined>(new Date());
-
-  useEffect(() => {
-    if (open) {
-      setPaymentReference('');
-      setPaidDate(new Date());
-    }
-  }, [open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +56,6 @@ export function MarkPaidDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-base">
@@ -121,6 +129,5 @@ export function MarkPaidDialog({
           </div>
         </form>
       </DialogContent>
-    </Dialog>
   );
 }
