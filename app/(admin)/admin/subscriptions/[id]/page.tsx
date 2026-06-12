@@ -19,11 +19,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Can } from '@/components/Auth/can';
-import {
-  useAdminSubscriptionDetail,
-  useAdminPauseSubscription,
-  useAdminResumeSubscription,
-} from '@/api/hooks/useAdminSubscriptions';
+import { useAdminSubscriptionDetail, useAdminPauseSubscription, useAdminResumeSubscription } from '@/api/hooks/useAdminSubscriptions';
+import { usePausePeriods } from '@/api/hooks/use-subscription';
 import { SubscriptionStatus } from '@/api/types/admin-subscription.types';
 import { PauseDialog } from '@/components/admin/subscriptions/PauseDialog';
 import { SkipDatesDialog } from '@/components/admin/subscriptions/SkipDatesDialog';
@@ -42,6 +39,9 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
   const { data: subscription, isLoading } = useAdminSubscriptionDetail(id);
   const pauseSubscription = useAdminPauseSubscription();
   const resumeSubscription = useAdminResumeSubscription();
+  const { data: pausePeriodsData } = usePausePeriods(id);
+  const activePausePeriod = pausePeriodsData?.pause_periods?.find((p) => p.status === 'ACTIVE');
+
   const [showPauseDialog, setShowPauseDialog] = useState(false);
   const [showSkipDialog, setShowSkipDialog] = useState(false);
 
@@ -214,8 +214,14 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
           {subscription.status === SubscriptionStatus.PAUSED && (
             <Button
               variant="outline"
-              onClick={() => resumeSubscription.mutate({ id, data: {} })}
-              disabled={resumeSubscription.isPending}
+              onClick={() => {
+                if (!activePausePeriod) return;
+                resumeSubscription.mutate({
+                  id,
+                  data: { pause_period_id: activePausePeriod._id },
+                });
+              }}
+              disabled={resumeSubscription.isPending || !activePausePeriod}
             >
               <RotateCcw className="mr-2 h-4 w-4" />
               Resume Subscription

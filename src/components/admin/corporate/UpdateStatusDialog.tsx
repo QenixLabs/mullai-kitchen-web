@@ -65,24 +65,25 @@ export function UpdateStatusDialog({
   onOpenChange,
 }: UpdateStatusDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <UpdateStatusForm
-        key={String(open)}
-        orderId={orderId}
-        currentStatus={currentStatus}
-        onOpenChange={onOpenChange}
-      />
-    </Dialog>
+    <UpdateStatusForm
+      key={String(open)}
+      orderId={orderId}
+      currentStatus={currentStatus}
+      open={open}
+      onOpenChange={onOpenChange}
+    />
   );
 }
 
 function UpdateStatusForm({
   orderId,
   currentStatus,
+  open,
   onOpenChange,
 }: {
   orderId: string | null;
   currentStatus: CorporateOrderStatus | null;
+  open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
   const [status, setStatus] = useState<CorporateOrderStatus>(currentStatus || 'draft');

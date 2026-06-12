@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { ArrowLeft, ChefHat, Loader2 } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Can } from '@/components/Auth/can';
@@ -69,7 +69,7 @@ export default function EditIngredientPage() {
   const updateIngredient = useUpdateIngredient();
 
   const form = useForm<IngredientFormValues>({
-    resolver: zodResolver(ingredientSchema),
+    resolver: zodResolver(ingredientSchema) as Resolver<IngredientFormValues>,
     values: ingredient
       ? {
           name: ingredient.name,

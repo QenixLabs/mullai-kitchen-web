@@ -91,26 +91,27 @@ export function OverrideDialog({
   existing,
 }: OverrideDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <OverrideForm
-        key={String(open)}
-        onOpenChange={onOpenChange}
-        outletId={outletId}
-        date={date}
-        initialMealType={initialMealType}
-        existing={existing}
-      />
-    </Dialog>
+    <OverrideForm
+      key={String(open)}
+      open={open}
+      onOpenChange={onOpenChange}
+      outletId={outletId}
+      date={date}
+      initialMealType={initialMealType}
+      existing={existing}
+    />
   );
 }
 
 function OverrideForm({
+  open,
   onOpenChange,
   outletId,
   date,
   initialMealType,
   existing,
 }: {
+  open: boolean;
   onOpenChange: (open: boolean) => void;
   outletId: string;
   date: string;

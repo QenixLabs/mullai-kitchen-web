@@ -22,7 +22,7 @@ import {
   Hash,
 } from "lucide-react";
 import { format } from "date-fns";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm, type Resolver, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -136,7 +136,7 @@ export default function MovementsPage() {
   const ingredients = ingredientsData?.data ?? [];
 
   const movementForm = useForm<MovementFormValues>({
-    resolver: zodResolver(movementSchema),
+    resolver: zodResolver(movementSchema) as Resolver<MovementFormValues>,
     defaultValues: {
       outlet_id: selectedOutletId ?? "",
       ingredient_id: "",

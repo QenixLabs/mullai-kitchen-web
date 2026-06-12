@@ -62,7 +62,7 @@ import {
 } from "@/api/hooks/useInventory";
 import { UserRole } from "@/api/types/user.types";
 import { cn } from "@/lib/utils";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { StockLevel } from "@/api/admin-inventory.api";
@@ -92,13 +92,6 @@ export default function StockPage() {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [search]);
-
-  const effectiveOutletId = useMemo(() => {
-    if (!isSuperAdmin) return user?.assigned_outlet_id || null;
-    if (selectedOutletId) return selectedOutletId;
-    if (outletsData?.data?.length) return outletsData.data[0]._id;
-    return null;
-  }, [isSuperAdmin, user?.assigned_outlet_id, selectedOutletId, outletsData?.data]);
 
   const effectiveOutletId = useMemo(() => {
     if (!isSuperAdmin) return user?.assigned_outlet_id || null;
@@ -156,7 +149,7 @@ export default function StockPage() {
   type AdjustFormValues = z.infer<typeof adjustSchema>;
 
   const adjustForm = useForm<AdjustFormValues>({
-    resolver: zodResolver(adjustSchema),
+    resolver: zodResolver(adjustSchema) as Resolver<AdjustFormValues>,
     defaultValues: {
       outlet_id: "",
       ingredient_id: "",

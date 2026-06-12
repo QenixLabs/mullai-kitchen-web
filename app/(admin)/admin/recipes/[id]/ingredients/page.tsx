@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, Loader2, Plus, Trash2, ChefHat, Save } from 'lucide-react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
@@ -73,7 +73,7 @@ export default function RecipeIngredientsPage() {
   const ingredients = ingredientsData?.data ?? [];
 
   const form = useForm<BOMFormValues>({
-    resolver: zodResolver(bomSchema),
+    resolver: zodResolver(bomSchema) as Resolver<BOMFormValues>,
     defaultValues: {
       items: [
         {

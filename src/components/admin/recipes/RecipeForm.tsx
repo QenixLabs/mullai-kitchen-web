@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
@@ -193,7 +193,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
     watch,
     formState: { errors },
   } = useForm<RecipeFormData>({
-    resolver: zodResolver(recipeSchema),
+    resolver: zodResolver(recipeSchema) as Resolver<RecipeFormData>,
     defaultValues: {
       name: initialData?.name || '',
       description: initialData?.description || '',
@@ -204,7 +204,7 @@ export function RecipeForm({ mode, initialData, onSubmit }: RecipeFormProps) {
       cook_time: initialData?.cooking_details?.cook_time || '',
       servings: initialData?.cooking_details?.servings || ('' as unknown as number),
       instructions: initialData?.cooking_details?.instructions?.map((s) => ({ value: s })) || [],
-      calories: initialData?.nutrition?.calories || ('' as string | number),
+      calories: initialData?.nutrition?.calories || ('' as unknown as number),
       protein: initialData?.nutrition?.protein || '',
       carbs: initialData?.nutrition?.carbs || '',
       image_url: initialData?.image_url || '',

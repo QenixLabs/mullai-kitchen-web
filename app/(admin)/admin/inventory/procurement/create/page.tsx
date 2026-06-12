@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { ArrowLeft, ClipboardList, Loader2, Plus, Trash2 } from 'lucide-react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Can } from '@/components/Auth/can';
@@ -71,7 +71,7 @@ export default function CreatePurchaseOrderPage() {
     : '';
 
   const form = useForm<POFormValues>({
-    resolver: zodResolver(poSchema),
+    resolver: zodResolver(poSchema) as Resolver<POFormValues>,
     defaultValues: {
       outlet_id: defaultOutletId,
       supplier_id: '',
