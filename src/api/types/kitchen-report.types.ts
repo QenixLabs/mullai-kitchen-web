@@ -57,6 +57,17 @@ export interface CombinedMealTypeEntry {
   combined: { veg: number; nonveg: number; total: number };
 }
 
+export interface MealTemplateEntry {
+  meal_type: string;
+  source: 'weekly_template' | 'roster_override' | 'none';
+  is_closed?: boolean;
+  override_reason?: string | null;
+  veg_recipe_id: string | null;
+  veg_recipe_name: string | null;
+  nonveg_recipe_id: string | null;
+  nonveg_recipe_name: string | null;
+}
+
 export interface KitchenReportResponse {
   date: string;
   outlet: { id: string; name: string };
@@ -70,4 +81,5 @@ export interface KitchenReportResponse {
     };
     total: { veg: number; nonveg: number; total: number };
   };
+  meal_template: MealTemplateEntry[];
 }

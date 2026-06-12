@@ -52,7 +52,11 @@ import { useHasPermission } from '@/hooks/useHasPermission';
 import { useOutlets } from '@/api/hooks/useOutlets';
 import { useKitchenReport, downloadKitchenPdf } from '@/api/hooks/useKitchenReport';
 import { UserRole } from '@/api/types/user.types';
-import type { MealTypeBreakdown, CorporateCompanyItem } from '@/api/types/kitchen-report.types';
+import type {
+  MealTypeBreakdown,
+  CorporateCompanyItem,
+  MealTemplateEntry,
+} from '@/api/types/kitchen-report.types';
 import { cn } from '@/lib/utils';
 
 const mealTypeConfig: Record<
@@ -249,6 +253,107 @@ export default function KitchenReportPage() {
               tone="warning"
             />
           </div>
+
+          {/* Published Menu */}
+          {report.meal_template && report.meal_template.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <UtensilsCrossed className="size-4 text-primary" />
+                  Published Menu
+                </CardTitle>
+                <CardDescription>
+                  Recipes scheduled for production on this day
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {(['Breakfast', 'Lunch', 'Dinner'] as const).map((mt) => {
+                    const entry = report.meal_template.find(
+                      (e) => e.meal_type === mt,
+                    );
+                    if (!entry) return null;
+                    const lcKey = mt.toLowerCase();
+                    const config = mealTypeConfig[lcKey];
+                    const Icon = config?.icon;
+
+                    return (
+                      <div
+                        key={mt}
+                        className={cn(
+                          'rounded-sm border p-4 flex flex-col gap-2',
+                          entry.source === 'none' && 'opacity-50',
+                        )}
+                      >
+                        <div className="flex items-center gap-2">
+                          {Icon && <Icon className="size-4 text-primary" />}
+                          <span className="font-medium text-sm">
+                            {config?.label || mt}
+                          </span>
+                          {entry.source === 'roster_override' && (
+                            <Badge
+                              variant={
+                                entry.is_closed ? 'destructive' : 'warning'
+                              }
+                              className="text-xs"
+                            >
+                              {entry.is_closed ? 'Closed' : 'Override'}
+                            </Badge>
+                          )}
+                          {entry.source === 'weekly_template' && (
+                            <Badge
+                              variant="outline"
+                              className="text-xs"
+                            >
+                              Template
+                            </Badge>
+                          )}
+                          {entry.source === 'none' && (
+                            <Badge
+                              variant="outline"
+                              className="text-xs text-muted-foreground"
+                            >
+                              No menu
+                            </Badge>
+                          )}
+                        </div>
+
+                        {entry.is_closed && entry.override_reason && (
+                          <p className="text-xs text-muted-foreground">
+                            {entry.override_reason}
+                          </p>
+                        )}
+
+                        {(entry.source !== 'none' || entry.is_closed) &&
+                          !entry.is_closed && (
+                            <div className="flex flex-col gap-1 text-sm">
+                              <div className="flex items-center gap-2">
+                                <Leaf className="size-3.5 text-success" />
+                                <span className="truncate">
+                                  {entry.veg_recipe_name || '—'}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Beef className="size-3.5 text-destructive" />
+                                <span className="truncate">
+                                  {entry.nonveg_recipe_name || '—'}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+
+                        {entry.source === 'none' && (
+                          <p className="text-xs text-muted-foreground">
+                            No published menu for this meal
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Tabs */}
           <Tabs defaultValue="individual" className="w-full">
